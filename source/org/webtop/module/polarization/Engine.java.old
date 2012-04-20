@@ -1,0 +1,985 @@
+package webtop.polarization;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+import webtop.vrml.*;
+import webtop.vrml.output.*;
+
+import webtop.wsl.client.*;
+import webtop.wsl.script.*;
+import webtop.wsl.event.*;
+
+public class Engine
+	implements AnimationEngine,WSLScriptListener,WSLPlayerListener {
+	public static class EVector {
+		public float x,y,xphase,yphase;		// xphase is often 0
+		public float intensity() {return x*x+y*y;}
+		public void assign(EVector e)
+		{x=e.x; y=e.y; xphase=e.xphase; yphase=e.yphase;}
+		public String toString() {
+			return getClass().getName()+"[<"+x+','+y+">;{"+xphase+','+yphase+"}]";
+		}
+	}
+
+	// Note that the history modes map to Switch choices in the VRML file.
+	public static final int BEGIN_HIST=0,END_HIST=1, // which history?
+													HIST_OFF=0,HIST_DOTS=1,HIST_LINES=2, // display what?
+													MAX_HIST=2;
+	public static final String[] HIST_VALUES={"off","dots","lines"};
+
+	public static final float DEF_XAMP=1,DEF_YAMP=1,MAX_AMP=1,DEF_WAVELENGTH=550,
+														DEF_EPSILON=(float)Math.PI/2,DEF_ANGLE=0,
+														DEF_THICKNESS=0.5f;
+
+	// The VRML scale is 5 for full-range amplitude range.
+	// X_SCALE and Y_SCALE convert from internal electric field to VRML size.
+	// Z_SCALE converts from VRML size to nanometers (opposite of others!).
+	private static final float X_SCALE=5/DEF_XAMP,Y_SCALE=5/DEF_YAMP,Z_SCALE=100;
+
+	private static final float FILTER_SPACING=5;
+
+	public static final int PERIOD=30,MIN_DELAY=10;
+
+	private static final float TWO_PI=2*(float)Math.PI;
+
+	//The speed of the update wave is Z_STEP/T_STEP; the speed of polarized light
+	//is LIGHT_SPEED/Z_SCALE (see setWavelength() and render()).  We want these
+	//to be equal, so we set LIGHT_SPEED=Z_STEP*Z_SCALE/T_STEP.  Unpolarized
+	//light is independent of position (and thus has no speed at all); only the
+	//update wave carries it along.
+	private static final float Z_STEP = 0.18f,MAX_Z = 20,
+														 T_STEP=PERIOD/1000f, // this makes t 'real'
+														 LIGHT_SPEED=Z_STEP*Z_SCALE/T_STEP;
+	private static final int VECTORS = (int) (MAX_Z/Z_STEP)+1;
+
+	//This is used to protect data; the Animation protects execute() itself.  No
+	//VRML calls should take place while synchronized on this lock!
+	private final Object lock=new Object();
+
+	private final Polarization applet;
+	private final EAI eai;
+	private final SourcePanel panel;
+	private final ControlPanel controlPanel;
+	private final FilterPanel filterPanel;
+	private final EventManager eManager;
+
+	private final WSLPlayer wslPlayer;
+
+	//Don't call setCoords() on the h?ILSes!  They share coordinates with
+	//unnamed PointSets, so we use h?Coord.
+	private final AbstractIS /*xyILS,xILS,yILS,*/h1ILS,h2ILS;
+	private final FloatMatrixNode h1Coord,h2Coord;
+	private final VectorLine xyVL,xVL,yVL;
+
+// 	private final EventInMFVec3f set_XYPoint;
+// 	private final EventInMFInt32 set_XYCoord;
+// 	private final EventInMFVec3f set_XPoint;
+// 	private final EventInMFInt32 set_XCoord;
+// 	private final EventInMFVec3f set_YPoint;
+// 	private final EventInMFInt32 set_YCoord;
+// 	private final EventInMFVec3f set_H1Point;
+// 	private final EventInMFVec3f set_H2Point;
+// 	private final EventInMFInt32 set_H1Coord;
+// 	private final EventInMFInt32 set_H2Coord;
+	private final EventInSFInt32 set_H1Choice,set_H2Choice,set_XYChoice,set_XChoice,set_YChoice;
+	private final NodeEI addChildren,removeChildren;
+	private final EventInSFInt32 set_WidgetsChoice;
+
+	private final EventInSFFloat set_wavelength,set_xAMP,set_yAMP,set_phase;
+
+	private final EventInSFBool set_wavelengthEnabled,set_phaseEnabled,set_exEnabled,set_eyEnabled;
+
+	private final EventInSFBool set_wavelengthHighlighted,set_phaseHighlighted,set_exHighlighted,set_eyHighlighted;
+
+	private final float[][] pxy,px,py;
+
+	private final FilterList filters=new FilterList();
+
+	// Variables used for the simulation
+	private float wavelength,			// nm
+								K,							// nm^-1
+								W;							// omega, Hz
+
+	//The principal electric field data.  E2 is E without the filters applied.
+	//However, E is not just the electric field; it also stores phase
+	//information for polarized light (see EVector).  In fact, for polarized
+	//light an E vector is simply the reference vector in effect when it was
+	//written.  Moreover, E is a circular buffer; headE indicates the current
+	//location for filling the buffer.  Values get overwritten just as they fall
+	//off the other end of the axis anyway, and they are written in reverse
+	//order (from the end of the array back to the beginning, repeatedly) so
+	//that vectors later in time come earlier in space.
+	private final EVector[] E,E2;
+	private int headE;
+
+	private volatile float[][] beginHist,endHist;
+	private volatile int totalH = 150,showH = 125;
+	private volatile int historyMode1 = 0,historyMode2 = 0;
+	private volatile boolean startingHistory=true;
+
+	private final EVector E0;
+	private volatile float t=-1;
+
+	private Animation anim;
+
+	//These are used as array indices, so modify with care and keep them
+	//contiguous.  MAX_MODE is the highest defined value.
+	public static final int NONE=0,X_ONLY=1,Y_ONLY=2,X_AND_Y=3,COMPOSITE=4,
+													ALL=5,MAX_MODE=5;
+	private volatile int fieldMode = COMPOSITE;
+	//Lookup tables for what to render based on the fieldMode
+	private static final boolean[] useXY={false,false,false,false,true,true},
+																 useX={false,true,false,true,false,true},
+																 useY={false,false,true,true,false,true};
+
+	private volatile boolean isPolarized = true,widgetsVisible = true;
+
+	//The number of frequencies used to simulate unpolarized light
+	private static final int UNPOL_FREQUENCIES = 100;
+
+	private final float[] phix,phiy,f_unpol;
+
+	private boolean initialized = false,massChange;
+
+	private int polarizerCount = 0,wavePlateCount = 0;
+
+	public Engine(Polarization polarization) {
+		massChange = true;
+
+		applet = polarization;
+		eai = applet.getEAI();
+		panel = applet.getSourcePanel();
+		controlPanel = applet.getControlPanel();
+		filterPanel = applet.getFilterPanel();
+		eManager = applet.getEventManager();
+
+		wslPlayer = applet.getWSLPlayer();
+		wslPlayer.addListener(this);
+
+// 		set_XYCoord = (EventInMFInt32) eai.getEI("XYLineSet","set_coordIndex");
+// 		set_XYPoint = (EventInMFVec3f) eai.getEI("XYLSCoord","set_point");
+// 		set_XCoord = (EventInMFInt32) eai.getEI("XLineSet","set_coordIndex");
+// 		set_XPoint = (EventInMFVec3f) eai.getEI("XLSCoord","set_point");
+// 		set_YCoord = (EventInMFInt32) eai.getEI("YLineSet","set_coordIndex");
+// 		set_YPoint = (EventInMFVec3f) eai.getEI("YLSCoord","set_point");
+// 		set_H1Point = (EventInMFVec3f) eai.getEI("H1Coord","set_point");
+// 		set_H2Point = (EventInMFVec3f) eai.getEI("H2Coord","set_point");
+// 		set_H1Coord = (EventInMFInt32) eai.getEI("H1ILS","set_coordIndex");
+// 		set_H2Coord = (EventInMFInt32) eai.getEI("H2ILS","set_coordIndex");
+
+// 		xyILS=new IndexedSet(eai,eai.getNode("XYLineSet"));
+// 		xILS=new IndexedSet(eai,eai.getNode("XLineSet"));
+// 		yILS=new IndexedSet(eai,eai.getNode("YLineSet"));
+		h1ILS=new IndexedSet(eai,eai.getNode("H1ILS"));
+		h2ILS=new IndexedSet(eai,eai.getNode("H2ILS"));
+		h1Coord=new FloatMatrixNode(eai,eai.getNode("H1Coord"),FloatMatrixNode.SET_POINT);
+		h2Coord=new FloatMatrixNode(eai,eai.getNode("H2Coord"),FloatMatrixNode.SET_POINT);
+		xyVL=new VectorLine(new IndexedSet(eai,eai.getNode("XYLineSet")),MAX_Z,VECTORS);
+		xVL=new VectorLine(new IndexedSet(eai,eai.getNode("XLineSet")),MAX_Z,VECTORS);
+		yVL=new VectorLine(new IndexedSet(eai,eai.getNode("YLineSet")),MAX_Z,VECTORS);
+
+		set_H1Choice = (EventInSFInt32) eai.getEI("History1","whichChoice");
+		set_H2Choice = (EventInSFInt32) eai.getEI("History2","whichChoice");
+		set_XYChoice = (EventInSFInt32) eai.getEI("XYComposite","set_whichChoice");
+		set_XChoice = (EventInSFInt32) eai.getEI("XComponent","set_whichChoice");
+		set_YChoice = (EventInSFInt32) eai.getEI("YComponent","set_whichChoice");
+		addChildren = new NodeEI(eai.getEI("Filters","addChildren"));
+		removeChildren = new NodeEI(eai.getEI("Filters","removeChildren"));
+		set_WidgetsChoice = (EventInSFInt32) eai.getEI("PolarizedControls","whichChoice");
+
+		set_wavelength = (EventInSFFloat) eai.getEI("WavelengthWidget","set_value");
+		set_xAMP = (EventInSFFloat) eai.getEI("XAMPDragger","set_position");
+		set_yAMP = (EventInSFFloat) eai.getEI("YAMPDragger","set_position");
+		set_phase = (EventInSFFloat) eai.getEI("PhaseDragger","set_phaseDifference");
+
+		set_wavelengthEnabled = (EventInSFBool) eai.getEI("WavelengthWidget","set_enabled");
+		set_exEnabled = (EventInSFBool) eai.getEI("XAMPDragger","set_enabled");
+		set_eyEnabled = (EventInSFBool) eai.getEI("YAMPDragger","set_enabled");
+		set_phaseEnabled = (EventInSFBool) eai.getEI("PhaseDragger","set_enabled");
+
+		set_wavelengthHighlighted = (EventInSFBool) eai.getEI("WavelengthWidget","set_isActive");
+		set_exHighlighted = (EventInSFBool) eai.getEI("XAMPDragger","set_isActive");
+		set_eyHighlighted = (EventInSFBool) eai.getEI("YAMPDragger","set_isActive");
+		set_phaseHighlighted = (EventInSFBool) eai.getEI("PhaseDragger","set_isActive");
+
+		E0 = new EVector();
+		E0.x=DEF_XAMP;
+		E0.y=DEF_YAMP;
+		E0.yphase=DEF_EPSILON;
+
+		updatePanelIntensity();
+
+		setWavelength(DEF_WAVELENGTH);
+
+		pxy = new float[VECTORS*2][2];
+		px = new float[VECTORS*2][2];
+		py = new float[VECTORS*2][2];
+
+		E = new EVector[VECTORS];
+		E2 = new EVector[VECTORS];
+		for(int i=0;i<VECTORS;++i) {
+			E[i]=new EVector();
+			E2[i]=new EVector();
+// 			//Set z-components of point vectors here, as they're constant
+// 			pxy[2*i][2]=px[2*i][2]=py[2*i][2]=
+// 				pxy[2*i+1][2]=px[2*i+1][2]=py[2*i+1][2]=i*Z_STEP;
+		}
+		headE = 0;
+
+		setPolarized(true);
+
+		phix = new float[UNPOL_FREQUENCIES];
+		phiy = new float[UNPOL_FREQUENCIES];
+		f_unpol = new float[UNPOL_FREQUENCIES];
+		for(int i=0; i<UNPOL_FREQUENCIES; i++) {
+			phix[i] = (float) Math.random() * TWO_PI;
+			phiy[i] = (float) Math.random() * TWO_PI;
+			// Unpolarized light travels at LIGHT_SPEED, not at LIGHT_SPEED/Z_SCALE,
+			// because the update wave (instead of Kx-Wt) is its propogator, and
+			// that travels in VRML coordinates which lack the Z_SCALE.
+			f_unpol[i] = LIGHT_SPEED/DEF_WAVELENGTH *
+				(1 + .14f * (float)WTMath.random.nextGaussian());
+		}
+
+		massChange = false;
+
+		render();										// Blaxxun workaround
+
+// 		final int[] indices = new int[VECTORS*3];
+// 		for(int i=0, p=0; i<VECTORS*2; i+=2, p+=3) {
+// 			indices[p] = i;
+// 			indices[p+1] = i+1;
+// 			indices[p+2] = -1;
+// 		}
+// 		xyILS.setCoordIndices(indices);
+// 		xILS.setCoordIndices(indices);
+// 		yILS.setCoordIndices(indices);
+
+		initialized = true;
+	}
+
+	public void reset(boolean play) {
+		massChange = true;
+
+		setWavelength(DEF_WAVELENGTH);
+		setEx(DEF_XAMP);
+		setEy(DEF_YAMP);
+		setEpsilon(DEF_EPSILON);
+		showWidgets();
+		setHistoryMode(BEGIN_HIST, HIST_DOTS);
+		setHistoryMode(END_HIST, HIST_DOTS);
+		setFieldMode(COMPOSITE);
+
+		setPolarized(true);					// this also resets time
+
+		for(Filter p=filters.first(); p!=null; p = p.next)
+			removeChildren.set(p.getNodes());
+		filters.removeAll();
+		polarizerCount = wavePlateCount = 0;
+
+		massChange = false;
+
+		if(play) setPlaying(true);
+	}
+
+	public void setWavelength(float l) {
+		synchronized(lock) {
+			wavelength = l;
+			K = (float) (TWO_PI / wavelength);
+			W = K * LIGHT_SPEED;
+			resetHistories();						// everything changes
+		}
+	}
+	public float getWavelength() {return wavelength;}
+
+	public void setEx(float Ex) {
+		synchronized(lock) {E0.x = Ex;}
+		updatePanelIntensity();
+	}
+	public float getEx() {return E0.x;}
+
+	public void setEy(float Ey) {
+		synchronized(lock) {E0.y = Ey;}
+		updatePanelIntensity();
+	}
+	public float getEy() {return E0.y;}
+
+	public void setEpsilon(float epsilon) {
+		synchronized(lock) {E0.yphase = epsilon;}
+	}
+	public float getEpsilon() {return E0.yphase;}
+
+	private void setHistorySize(int size) {
+		totalH = size;
+
+		final int[] indices = new int[totalH];
+		for(int i=0; i<totalH-1; ++i) indices[i] = i;
+		indices[totalH-1] = -1;
+		h1ILS.setCoordIndices(indices);
+		h2ILS.setCoordIndices(indices);
+
+		resetHistories();
+	}
+
+	private void resetHistories() {
+		beginHist = new float[totalH][3];
+		endHist = new float[totalH][3];
+		startingHistory=true;
+	}
+
+	public void setPolarized(boolean p) {
+		synchronized(lock) {
+			isPolarized = p;
+			if(p) {
+				setHistorySize(150);
+				if(widgetsVisible) set_WidgetsChoice.setValue(0);
+				panel.setInitialIntensity(E0.x*E0.x + E0.y*E0.y);
+				controlPanel.setPolarized(true);
+			} else {
+				setHistorySize(600);
+				set_WidgetsChoice.setValue(-1);
+				panel.setInitialIntensity(1);
+				controlPanel.setPolarized(false);
+			}
+			// Apparently phases don't matter here.
+			for(int i=0; i<VECTORS; i++) {
+				E[i].x=E[i].y=0;
+				E2[i].x=E2[i].y=0;
+			}
+			t=-1;
+		}
+	}
+
+	public boolean getPolarized() {return isPolarized;}
+
+	public void setEnabled(boolean enabled) {
+		set_wavelengthEnabled.setValue(enabled);
+		set_phaseEnabled.setValue(enabled);
+		set_exEnabled.setValue(enabled);
+		set_eyEnabled.setValue(enabled);
+
+		filters.setEnabled(enabled);
+	}
+
+
+	public Polarizer addPolarizer(String id, float z, float angle) {
+		final Polarizer p = new Polarizer(z, angle);
+		p.setID(id);
+		setupFilter(p);
+		++polarizerCount;
+		return p;
+	}
+
+	public Polarizer addPolarizer() {
+		return addPolarizer("polarizer"+polarizerCount,nextFilterPosition(),0);
+	}
+
+	public WavePlate addWavePlate(String id, float z, float angle,
+																float thickness) {
+		final WavePlate wp = new WavePlate(z, angle, thickness);
+		wp.setID(id);
+		setupFilter(wp);
+		++wavePlateCount;
+		return wp;
+	}
+
+	public WavePlate addWavePlate() {
+		return addWavePlate("waveplate"+wavePlateCount,nextFilterPosition(),0,
+												DEF_THICKNESS);
+	}
+
+	private void setupFilter(Filter f) {
+		synchronized(lock) {
+			filters.add(f);
+			f.createVRMLNode(eai,eManager);
+			addChildren.set(f.getNodes());
+			filters.hideWidgets();
+			f.setActive(true);
+			filterPanel.showFilter(f);
+			eManager.setActiveFilter(f);
+
+			// With a new filter, we need to update E
+			transform();
+		}
+	}
+
+	private float nextFilterPosition() {
+		if(filters.last()!=null)
+			return Math.min(filters.last().getZ()+FILTER_SPACING,MAX_Z);
+		return FILTER_SPACING;
+	}
+
+	//Removes all wave plates from the module
+	public void removeWavePlates() {
+		for(Filter p=filters.first(),q=p; p!=null;) {
+			if(p instanceof WavePlate) {
+				removeFilter(p);
+				if(p==q) p=filters.first(); else p=q.next;
+			} else {
+				q=p;
+				p=p.next;
+			}
+		}
+	}
+
+	public void setActiveFilter(Filter f) {
+		if(!filters.contains(f)) return;
+
+		filters.hideWidgets();
+		f.setActive(true);
+		filterPanel.showFilter(f);
+		eManager.setActiveFilter(f);
+	}
+
+	public void moveFilter(Filter p, float z, boolean setVRML) {
+		synchronized(lock) {
+			filters.move(p, z, setVRML);
+			transform();
+		}
+	}
+
+	public void setFilterAngle(Filter p, float angle, boolean setVRML) {
+		synchronized(lock) {
+			filters.setAngle(p, angle, setVRML);
+			transform();
+		}
+	}
+
+	public void setWavePlateThickness(WavePlate p, float thickness, boolean setVRML) {
+		synchronized(lock) {
+			p.setThickness(thickness, setVRML);
+			transform();
+		}
+	}
+
+	public void removeFilter(Filter p) {
+		synchronized(lock) {
+			if(!filters.contains(p)) return;
+			removeChildren.set(p.getNodes());
+			filters.remove(p);
+			transform();
+		}
+	}
+
+	public void hideWidgets() {
+		filters.hideWidgets();
+		set_WidgetsChoice.setValue(-1);
+		widgetsVisible = false;
+	}
+
+	public void showWidgets() {
+		if(isPolarized)
+			set_WidgetsChoice.setValue(0);
+		widgetsVisible = true;
+	}
+
+	public void setFieldMode(int mode) {
+		if(mode<0 || mode>MAX_MODE)
+			throw new IllegalArgumentException("bad field mode: "+mode);
+		synchronized(lock) {fieldMode = mode;}
+		//Don't synchronize around EAI calls!
+		render();
+		EAI.setDraw(set_XYChoice,useXY[mode]);
+		EAI.setDraw(set_XChoice,useX[mode]);
+		EAI.setDraw(set_YChoice,useY[mode]);
+	}
+
+	public void setHistoryMode(int which, int mode) {
+		switch(mode) {
+		case HIST_OFF:
+		case HIST_DOTS:
+		case HIST_LINES:
+			break;
+		default:
+			throw new IllegalArgumentException("bad mode value");
+		}
+		switch(which) {
+		case BEGIN_HIST:
+			synchronized(lock) {historyMode1 = mode;}
+			set_H1Choice.setValue(mode-1);
+			break;
+		case END_HIST:
+			synchronized(lock) {historyMode2 = mode;}
+			set_H2Choice.setValue(mode-1);
+			break;
+		default:
+			throw new IllegalArgumentException("bad history selection");
+		}
+	}
+
+	//Provided here until the net of data flow is reworked
+	public void update() {anim.update();}
+	public void setPlaying(boolean b) {anim.setPlaying(b);}
+	public void setPaused(boolean b) {anim.setPaused(b);}
+	public boolean isPlaying() {return anim.isPlaying();}
+
+	public void init(Animation a) {anim=a;}
+
+	private boolean advance;
+	public boolean timeElapsed(float periods) {
+		advance=periods!=0;
+		//For this module, exact T_STEPs are required:
+		if(advance) {
+			if(t<0) t=0; else t+=T_STEP;
+			//Small t values make for better wavelength adjustment.
+			if(isPolarized) t%=TWO_PI/W;
+		}
+		return true;
+	}
+
+	//For now, I'm trying to avoid using d at all. [Davis]
+	public void execute(Animation.Data d) {
+		if(advance) advance();
+		render();
+	}
+
+	private void render() {
+		final boolean usingXY=useXY[fieldMode],
+									usingX=useX[fieldMode],
+									usingY=useY[fieldMode];
+
+		synchronized(lock) {
+			for(int i=0;i<VECTORS;++i) {
+				final EVector peV=E[(headE+i)%VECTORS];
+				float vx,vy;
+				if(isPolarized) {
+					final float z=i*Z_STEP*Z_SCALE;	// VRML units -> nm
+					vx = peV.x * (float)Math.cos(K * z - W * t + peV.xphase);
+					vy = peV.y * (float)Math.cos(K * z - W * t + peV.yphase);
+				} else {
+					vx = peV.x;
+					vy = peV.y;
+				}
+				vx *= X_SCALE;
+				vy *= Y_SCALE;
+
+				final int pi=2*i+1;				// index into point-position vector arrays
+
+				// Two values are used for the history and are thus always needed
+				if(usingXY || i==0 || i==VECTORS-1) {pxy[pi][0] = vx; pxy[pi][1] = vy;}
+				if(usingX) px[pi][0] = vx;
+				if(usingY) py[pi][1] = vy;
+			}
+
+			//For history values, we want odd-numbered elements of pxy, as those are
+			//the off-axis ends of the vectors
+
+			if(startingHistory) {
+				for(int i=0; i<totalH-1; i++) {	// the last element will be set later
+					beginHist[i][0] = pxy[1][0];
+					beginHist[i][1] = pxy[1][1];
+				}
+				startingHistory=false;
+			}
+		}
+
+		//eai.world.beginUpdate();
+
+		try {
+			if(usingXY) xyVL.setValues(pxy);
+			if(usingX) xVL.setValues(px);
+			if(usingY) yVL.setValues(py);
+			if(historyMode1!=HIST_OFF) h1Coord.set(beginHist);
+			if(historyMode2!=HIST_OFF) h2Coord.set(endHist);
+		} catch(OutOfMemoryError fake) {}
+		catch(ClassCastException fake) {}
+
+		//eai.world.endUpdate();
+	}
+	// Perhaps inline this into execute()?  It should only be called there...
+	private void advance() {
+		synchronized(lock) {
+			headE = (headE+VECTORS-1) % VECTORS;
+
+			final EVector headV=E[headE];
+
+			if(isPolarized) headV.assign(E0);
+			else {
+				headV.x=headV.y=0;
+				float temp;
+				for(int i=0; i<UNPOL_FREQUENCIES; i++) {
+					temp = TWO_PI * f_unpol[i] * t;
+					headV.x += Math.cos(temp + phix[i]);
+					headV.y += Math.cos(temp + phiy[i]);
+				}
+				headV.x*=X_SCALE / UNPOL_FREQUENCIES;
+				headV.y*=Y_SCALE / UNPOL_FREQUENCIES;
+				headV.xphase=headV.yphase=0;
+			}
+			E2[headE].assign(headV);
+
+			final Filter activeFilter = filterPanel.getActiveFilter();
+
+			// for unpolarized light
+			float intensity = 1;
+			boolean firstPolarizer = true;
+			float previousAngle = 0;
+
+			for(Filter filter=filters.first(); filter!=null; filter=filters.next()) {
+				float z = filter.getZ();
+
+				int pe = (headE + ((int) (z/Z_STEP)) + 1) % VECTORS;
+
+				filter.transform(E[pe], isPolarized);
+
+				if(filter instanceof Polarizer && !isPolarized) {
+					if(firstPolarizer) {
+						intensity = 0.5f;
+						firstPolarizer = false;
+					} else {
+						double temp = Math.cos(filter.getAngle() - previousAngle);
+						intensity *= temp * temp;
+					}
+					previousAngle = filter.getAngle();
+				}
+
+				// Update intensity value in Java console
+				// only if current filter is a Polarizer
+				// and it is the active filter
+				if(filter instanceof Polarizer && filter==activeFilter) {
+					// Check if we are in polarized mode
+					if(isPolarized)	{
+						filterPanel.setIntensity(E[pe].intensity());
+					} else {
+						// Check if filter is the first Polarizer
+						//DebugPrinter.println("Intensity = " + intensity);
+						filterPanel.setIntensity(intensity);
+					}
+				}
+			}
+
+			final float[][] hist1=beginHist,hist2=endHist; // for efficiency
+
+			// Rotate history elements
+			for(int i=0; i<totalH-1; i++) {
+				hist1[i][0] = hist1[i+1][0];
+				hist1[i][1] = hist1[i+1][1];
+				hist2[i][0] = hist2[i+1][0];
+				hist2[i][1] = hist2[i+1][1];
+			}
+			hist1[totalH-1][0] = pxy[1][0];
+			hist1[totalH-1][1] = pxy[1][1];
+			hist2[totalH-1][0] = pxy[VECTORS*2-1][0];
+			hist2[totalH-1][1] = pxy[VECTORS*2-1][1];
+		}
+	}
+
+	//All calls to this should be synchronized on lock
+
+	//There's some slight error here (or else in the rendering code) when
+	//dragging a filter's position across a Z_STEP boundary, I think. [Davis]
+	private void transform() {
+		if(!initialized) return;
+
+		for(int i=0; i<VECTORS; i++) E[i].assign(E2[i]);
+
+		for(Filter p=filters.first();p!=null;p=filters.next()) {
+			float z = p.getZ();
+			int pe = (headE + (int) Math.ceil(z/Z_STEP)) % VECTORS;
+			for(; z<=MAX_Z; z+=Z_STEP) {
+				p.transform(E[pe], isPolarized);
+				pe = (pe+1) % VECTORS;
+			}
+		}
+	}
+
+	private void updatePanelIntensity() {
+		panel.setInitialIntensity(E0.intensity());
+	}
+
+	// -------------------------------------------------------------------------------
+	// WSL callbacks
+	// -------------------------------------------------------------------------------
+
+	//This is invoked by the Polarization instance (which implements WSLNode by calling this).
+	public WSLNode toWSLNode() {
+		WSLNode polarization = new WSLNode("polarization");
+		final WSLAttributeList atts=polarization.getAttributes();
+
+		atts.add("history1", HIST_VALUES[historyMode1]);
+		atts.add("history2", HIST_VALUES[historyMode2]);
+		atts.add("animation", isPlaying() ? "play" : "stop");
+		atts.add("widgets", widgetsVisible ? "visible" : "hidden");
+		String fmode;
+		if(fieldMode==NONE) fmode = "none";
+		else if(fieldMode==X_ONLY) fmode = "x_only";
+		else if(fieldMode==Y_ONLY) fmode = "y_only";
+		else if(fieldMode==X_AND_Y) fmode = "x_and_y";
+		else if(fieldMode==ALL) fmode = "all";
+		else fmode = "composite";
+
+		atts.add("fieldMode", fmode);
+
+		WSLNode source = new WSLNode("source");
+		final WSLAttributeList sourceAtts=source.getAttributes();
+		if(isPolarized) {
+			sourceAtts.add("sourceType", "polarized");
+			sourceAtts.add("wavelength", String.valueOf(wavelength));
+			sourceAtts.add("amplitudex", String.valueOf(E0.x));
+			sourceAtts.add("amplitudey", String.valueOf(E0.y));
+			sourceAtts.add("phaseDifference", String.valueOf(E0.yphase));
+		} else {
+			sourceAtts.add("sourceType", "unpolarized");
+		}
+		polarization.addChild(source);
+
+		WSLNode filtersNode = new WSLNode("filters");
+		for(int i=0; i<filters.getSize(); i++) {
+			filtersNode.addChild(filters.getFilter(i).toWSLNode());
+		}
+		polarization.addChild(filtersNode);
+
+		return polarization;
+	}
+
+	private void setParameter(String target, String param, String value) {
+		if(WTString.isNull(target)) {
+			if("wavelength".equals(param)) {
+				float v = new Float(value).floatValue();
+				setWavelength(v);
+				panel.setWavelength(v);
+				set_wavelength.setValue(v);
+			} else if("sourceType".equals(param)) {
+				if("polarized".equals(value)) {
+					setPolarized(true);
+					panel.setPolarized(true);
+				} else {
+					setPolarized(false);
+					panel.setPolarized(false);
+				}
+			} else if("amplitudex".equals(param)) {
+				float v = new Float(value).floatValue();
+				setEx(v);
+				panel.setEx(v);
+				set_xAMP.setValue(v);
+			} else if("amplitudey".equals(param)) {
+				float v = new Float(value).floatValue();
+				setEy(v);
+				panel.setEy(v);
+				set_yAMP.setValue(v);
+			} else if("phaseDifference".equals(param)) {
+				float v = new Float(value).floatValue();
+				setEpsilon(v);
+				panel.setEpsilon(v);
+				set_phase.setValue(v);
+			} else if("history1".equals(param)) {
+				for(int i=0;i<=MAX_HIST;++i)
+					if(HIST_VALUES[i].equals(value)) {
+						setHistoryMode(BEGIN_HIST,i);
+						controlPanel.setHistoryMode(BEGIN_HIST,i);
+					}
+			} else if("history2".equals(param)) {
+				for(int i=0;i<=MAX_HIST;++i)
+					if(HIST_VALUES[i].equals(value)) {
+						setHistoryMode(END_HIST,i);
+						controlPanel.setHistoryMode(END_HIST,i);
+					}
+			} else if("widgets".equals(param)) {
+				if("visible".equals(value)) {
+					showWidgets();
+					controlPanel.setWidgetsVisible(true);
+				} else {
+					hideWidgets();
+					controlPanel.setWidgetsVisible(false);
+				}
+			} else if("fieldMode".equals(param)) {
+				if("none".equals(value)) {
+					setFieldMode(NONE);
+					controlPanel.setFieldMode(NONE);
+				} else if("x_only".equals(value)) {
+					setFieldMode(X_ONLY);
+					controlPanel.setFieldMode(X_ONLY);
+				} else if("y_only".equals(value)) {
+					setFieldMode(Y_ONLY);
+					controlPanel.setFieldMode(Y_ONLY);
+				} else if("x_and_y".equals(value)) {
+					setFieldMode(X_AND_Y);
+					controlPanel.setFieldMode(X_AND_Y);
+				} else if("composite".equals(value)) {
+					setFieldMode(COMPOSITE);
+					controlPanel.setFieldMode(COMPOSITE);
+				} else if("all".equals(value)) {
+					setFieldMode(ALL);
+					controlPanel.setFieldMode(ALL);
+				}
+			} else if("reset".equals(param)) {
+				reset(true);
+			} else if("animation".equals(param)) {
+				if("stop".equals(value)) {
+					setPlaying(false);
+					controlPanel.setPlaying(false);
+				} else {
+					setPlaying(true);
+					controlPanel.setPlaying(true);
+				}
+				return;
+			}
+		} else {
+			for(int i=0; i<filters.getSize(); i++) {
+				Filter f = filters.getFilter(i);
+				float v = new Float(value).floatValue();
+				if(f.getID().equals(target)) {
+					if("z".equals(param)) {
+						moveFilter(f, v, true);
+						filterPanel.setZ(v);
+					} else if("angle".equals(param)) {
+						setFilterAngle(f, v, true);
+						filterPanel.setAngle(v);
+					} else if("thickness".equals(param) && f instanceof WavePlate) {
+						setWavePlateThickness((WavePlate) f, v, true);
+						filterPanel.setThickness(v);
+					}
+				}
+			}
+		}
+		update();
+	}
+
+	public void scriptActionFired(WSLScriptEvent event) {
+		final String target=event.getTarget(),
+								 param=event.getParameter(),
+								 value=event.getValue();
+		final WSLNode node=event.getNode();
+		final Filter filter=filters.getFilter(target); // may be null
+
+		switch(event.getID()) {
+		case WSLScriptEvent.ACTION_PERFORMED:
+			//System.out.print("ap: ");
+		case WSLScriptEvent.MOUSE_DRAGGED:
+			//System.out.println("sAF("+WTString.quote(target)+','+WTString.quote(param)+','+WTString.quote(value)+')');
+			setParameter(target, param, value);
+			break;
+		case WSLScriptEvent.MOUSE_ENTERED:
+			if(filter!=null) setActiveFilter(filter);
+			break;
+		case WSLScriptEvent.MOUSE_PRESSED:
+			if(WTString.isNull(target)) {
+				if("wavelength".equals(param)) set_wavelengthHighlighted.setValue(true);
+				else if("phaseDifference".equals(param)) set_phaseHighlighted.setValue(true);
+				else if("amplitudex".equals(param)) set_exHighlighted.setValue(true);
+				else if("amplitudey".equals(param)) set_eyHighlighted.setValue(true);
+			} else if(filter!=null) {
+				if("angle".equals(param)) filter.setAngleHighlighted(true);
+				else if("z".equals(param)) filter.setZHighlighted(true);
+				else if("thickness".equals(param) && filter instanceof WavePlate)
+					((WavePlate)filter).setThicknessHighlighted(true);
+			}
+
+			setPaused(true);
+			break;
+		case WSLScriptEvent.MOUSE_RELEASED:
+			if(WTString.isNull(target)) {
+				if("wavelength".equals(param)) set_wavelengthHighlighted.setValue(false);
+				else if("phaseDifference".equals(param)) set_phaseHighlighted.setValue(false);
+				else if("amplitudex".equals(param)) set_exHighlighted.setValue(false);
+				else if("amplitudey".equals(param)) set_eyHighlighted.setValue(false);
+			} else if(filter!=null) {
+				if("angle".equals(param)) filter.setAngleHighlighted(false);
+				else if("z".equals(param)) filter.setZHighlighted(false);
+				else if("thickness".equals(param) && filter instanceof WavePlate)
+					((WavePlate)filter).setThicknessHighlighted(false);
+			}
+
+			setPaused(false);
+			break;
+		case WSLScriptEvent.OBJECT_ADDED:
+			final WSLNode newFilter = node.getChild(0);
+			final WSLAttributeList filterAtts=newFilter.getAttributes();
+			if(newFilter.getName().equals("polarizer")) {
+				addPolarizer(filterAtts.getValue("id"),
+										 filterAtts.getFloatValue("z",nextFilterPosition()),
+										 filterAtts.getFloatValue("angle",DEF_ANGLE));
+			} else if(newFilter.getName().equals("waveplate")) {
+				addWavePlate(filterAtts.getValue("id"),
+										 filterAtts.getFloatValue("z",nextFilterPosition()),
+										 filterAtts.getFloatValue("angle",DEF_ANGLE),
+										 filterAtts.getFloatValue("thickness",DEF_THICKNESS));
+			}
+			break;
+		case WSLScriptEvent.OBJECT_REMOVED:
+			removeFilter(filters.getFilter(target));
+			break;
+		}
+	}
+
+	private float getFloatAt(String value, int pos) {
+		byte c[] = value.getBytes();
+		int start=0;
+		int end=0;
+
+		// Skip spaces in front
+		for(int i=0; i<pos; i++) {
+			while(start<c.length && c[start]==' ') start++;
+			if(start>=c.length) return 0;
+			while(start<c.length && c[start]!=' ' ) start++;
+			if(start>=c.length) return 0;
+		}
+
+		// Find start of value
+		while(start<c.length && c[start]==' ') start++;
+		if(start>=c.length) return 0;
+
+		// Find end of value
+		end = start;
+		while(end<c.length && c[end]!=' ') end++;
+
+		return new Float(new String(c, start, end-start)).floatValue();
+	}
+
+	public void initialize(WSLScriptEvent event) {
+		final WSLNode node = event.getNode();
+		final WSLAttributeList list = node.getAttributes();
+
+		reset(false);
+		massChange=true;					// still initializing
+
+		for(int i=0; i<list.getLength(); i++)
+			setParameter(null, list.getName(i), list.getValue(i));
+
+		// Why is there a source node?  Why?? [Davis]
+		final WSLNode source = node.getNode("source");
+		if(source!=null) {
+			final WSLAttributeList srcAtts=source.getAttributes();
+			for(int i=0; i<srcAtts.getLength(); i++)
+				setParameter(null, srcAtts.getName(i), srcAtts.getValue(i));
+		}
+
+		final WSLNode filters = node.getNode("filters");
+		for(int i=0; i<filters.getChildCount(); i++) {
+			String id,z,angle,thickness;
+			final WSLNode filter = filters.getChild(i);
+			final WSLAttributeList filterAtts=filter.getAttributes();
+			if(filter.getName().equals("polarizer")) {
+				id = filterAtts.getValue("id");
+				z = filterAtts.getValue("z");
+				angle = filterAtts.getValue("angle");
+				addPolarizer(id, new Float(z).floatValue(), new Float(angle).floatValue());
+			} else if(filter.getName().equals("waveplate")) {
+				id = filterAtts.getValue("id");
+				z = filterAtts.getValue("z");
+				angle = filterAtts.getValue("angle");
+				thickness = filterAtts.getValue("thickness");
+				addWavePlate(id, new Float(z).floatValue(), new Float(angle).floatValue(),
+										 new Float(thickness).floatValue());
+			}
+		}
+		massChange = false;
+	}
+
+	public void playerStateChanged(WSLPlayerEvent event) {
+		boolean enabled;
+		switch(event.getID()) {
+		case WSLPlayerEvent.PLAYER_STARTED: enabled=false; break;
+		case WSLPlayerEvent.PLAYER_STOPPED: enabled=true; break;
+		default: return;
+		}
+
+		set_wavelengthEnabled.setValue(enabled);
+		set_phaseEnabled.setValue(enabled);
+		set_exEnabled.setValue(enabled);
+		set_eyEnabled.setValue(enabled);
+
+		filters.setEnabled(enabled);
+	}
+}

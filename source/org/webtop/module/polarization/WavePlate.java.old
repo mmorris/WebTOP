@@ -1,0 +1,666 @@
+package webtop.polarization;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+import webtop.vrml.*;
+
+import webtop.wsl.client.*;
+import webtop.wsl.script.WSLAttributeList;
+import webtop.wsl.event.*;
+
+public class WavePlate extends Filter {
+	private float thickness;
+
+	private EventInSFFloat ThicknessEIn;
+	private EventInSFBool	 ThicknessHighlightedEIn;
+
+	public WavePlate(float z_, float angle_, float thickness_) {
+		super(z_, angle_);
+		thickness = thickness_;
+		updateMatrix();
+	}
+
+	public WavePlate(float z_, float angle_, float thickness_, Filter prev_, Filter next_) {
+		super(z_, angle_, prev_, next_);
+		thickness = thickness_;
+		updateMatrix();
+	}
+
+	public void updateMatrix() {
+		double delta2;
+		double A, B, C, D, E;
+		double cd, sd;
+		double cp, sp;
+
+		delta2 = Math.PI * thickness;
+		cd = Math.cos(delta2);
+		sd = Math.sin(delta2);
+		cp = Math.cos(2.0 * -angle);
+		sp = Math.sin(2.0 * -angle);
+
+		A = Math.sqrt(cd*cd + sd*cp*sd*cp);
+		B = Math.atan2(-sd*cp, cd);
+		C = Math.atan2(sd*cp, cd);
+		D = -sd*sp;
+		E = (D>=0) ? -Math.PI/2.0 : Math.PI/2.0;
+		D = Math.abs(D);
+
+		Ma[0] = (float) A;
+		Mp[0] = (float) B;
+		Ma[1] = Ma[2] = (float) D;
+		Mp[1] = Mp[2] = (float) E;
+		Ma[3] = (float) A;
+		Mp[3] = (float) C;
+	}
+
+	public void setThickness(float t, boolean setVRML) {
+		thickness = t;
+		updateMatrix();
+		if(setVRML) {
+			ThicknessEIn.setValue(t);
+		}
+	}
+
+	public void setAngle(float angle_, boolean setVRML) {
+		super.setAngle(angle_, setVRML);
+		updateMatrix();
+	}
+
+	public float getThickness() {return thickness;}
+
+	public void setThicknessHighlighted(boolean highlighted) {
+		ThicknessHighlightedEIn.setValue(highlighted);
+	}
+
+	public String getType() {return "Wave Plate";}
+
+	public void createVRMLNode(EAI eai, EventOutObserver obs) {
+		final String vrml = VRML + "WavePlate { z " + z + " angle " + angle + " state 0  thickness " + thickness + " }";
+		nodes=NamedNode.namedArray(eai.world.createVrmlFromString(vrml),"<wave plate>");
+		eai.getEO(getNode(),"angle_changed",obs,new VRMLEvent("ANGLE_CHANGED",this));
+		eai.getEO(getNode(),"z_changed",obs, new VRMLEvent("Z_CHANGED", this));
+		eai.getEO(getNode(),"thickness_changed",obs, new VRMLEvent("THICKNESS_CHANGED", this));
+		eai.getEO(getNode(),"angle_isActive",obs, new VRMLEvent("ANGLE_ACTIVE", this));
+		eai.getEO(getNode(),"z_isActive",obs, new VRMLEvent("Z_ACTIVE", this));
+		eai.getEO(getNode(),"thickness_isActive",obs, new VRMLEvent("THICKNESS_ACTIVE", this));
+		eai.getEO(getNode(),"isOver",obs, new VRMLEvent("MOUSE_OVER", this));
+		eai.getEO(getNode(),"z_isOver",obs, new VRMLEvent("Z_ISOVER", this));
+		eai.getEO(getNode(),"angle_isOver",obs, new VRMLEvent("ANGLE_ISOVER", this));
+		eai.getEO(getNode(),"thickness_isOver",obs, new VRMLEvent("THICKNESS_ISOVER", this));
+		StateEIn = (EventInSFInt32) eai.getEI(getNode(),"set_state");
+		AngleEIn = (EventInSFFloat) eai.getEI(getNode(),"set_angle");
+		ZEIn = (EventInSFFloat) eai.getEI(getNode(),"set_z");
+		ThicknessEIn = (EventInSFFloat) eai.getEI(getNode(),"set_thickness");
+
+		EnabledEIn = (EventInSFBool) eai.getEI(getNode(),"set_enabled");
+		AngleHighlightedEIn = (EventInSFBool) eai.getEI(getNode(),"set_angleHighlighted");
+		ZHighlightedEIn = (EventInSFBool) eai.getEI(getNode(),"set_zHighlighted");
+		ThicknessHighlightedEIn = (EventInSFBool) eai.getEI(getNode(),"set_thicknessHighlighted");
+	}
+
+	public WSLAttributeList getAttributes() {
+		WSLAttributeList atts = super.getAttributes();
+
+		atts.add("thickness", String.valueOf(thickness));
+
+		return atts;
+	}
+
+	private static String VRML =
+		"PROTO	haxis []{Shape { geometry Cylinder { radius 0.01 height 16 } appearance Appearance { material Material {diffuseColor 0 0 0 emissiveColor 0 0 0 } } } Transform	{ rotation 0 0 1 1.5707963267949  children [ DEF myshape Shape	{geometry Cylinder	{ radius 0.01 height	16 }appearance Appearance	{material Material	{diffuseColor 0 0 0 emissiveColor	0 0 0}}}]}}\n PROTO RotationWidget [\n" +
+		"  field        SFFloat     minAngle            0\n" +
+		"  eventIn      SFFloat     set_minAngle\n" +
+		"  eventOut     SFFloat     minAngle_changed\n" +
+		"  field        SFFloat     maxAngle            -1\n" +
+		"  eventIn      SFFloat     set_maxAngle\n" +
+		"  eventOut     SFFloat     maxAngle_changed\n" +
+		"  field        SFFloat     offset              0\n" +
+		"  eventIn      SFFloat     set_offset\n" +
+		"  eventOut     SFFloat     offset_changed\n" +
+		"  exposedField SFBool      enabled             TRUE\n" +
+		"  eventOut     SFBool      isActive\n" +
+		"  eventOut     SFBool      isOver\n" +
+		"  eventIn      SFBool      set_isOver\n" +
+		"  eventIn      SFBool      set_isActive\n" +
+		"  eventOut     SFRotation  rotation_changed\n" +
+		"  eventOut     SFVec3f     trackPoint_changed\n" +
+		"  field        MFNode      normalGeometry      []\n" +
+		"  field        MFNode      overGeometry        []\n" +
+		"  field        MFNode      clickedGeometry     []\n" +
+		"]\n" +
+		"{\n" +
+		"  Group {\n" +
+		"    children [\n" +
+		"      DEF Touch-SENSOR TouchSensor {\n" +
+		"        enabled IS enabled\n" +
+		"        isOver IS isOver\n" +
+		"      }\n" +
+		"      DEF Rotational-SENSOR PlaneSensor {\n" +
+		"        isActive IS isActive\n" +
+		"        enabled IS enabled\n" +
+		"        maxPosition 1000 1000\n" +
+		"        minPosition -1000 -1000\n" +
+		"        offset 1000 0 0\n" +
+		"      }\n" +
+		"      DEF Rotational-TRANSFORM Transform {\n" +
+		"        children DEF Rotational-SWITCH Switch {\n" +
+		"          whichChoice 0\n" +
+		"          choice [\n" +
+		"            Group { children IS normalGeometry }\n" +
+		"            Group { children IS overGeometry }\n" +
+		"            Group { children IS clickedGeometry }\n" +
+		"          ]\n" +
+		"        }\n" +
+		"      }\n" +
+		"    ]\n" +
+		"  }\n" +
+		"  DEF Rotational-SCRIPT Script {\n" +
+		"    field    SFFloat minAngle IS minAngle\n" +
+		"    eventIn  SFFloat set_minAngle IS set_minAngle\n" +
+		"    eventOut SFFloat minAngle_changed IS minAngle_changed\n" +
+		"    field    SFFloat maxAngle IS maxAngle\n" +
+		"    eventIn  SFFloat set_maxAngle IS set_maxAngle\n" +
+		"    eventOut SFFloat maxAngle_changed IS maxAngle_changed\n" +
+		"    field    SFFloat trackOffset 0\n" +
+		"    field    SFFloat offset IS offset\n" +
+		"    eventIn  SFFloat set_offset IS set_offset\n" +
+		"    eventOut SFFloat offset_changed IS offset_changed\n" +
+		"    eventIn  SFVec3f set_translation\n" +
+		"    eventIn  SFVec3f set_hitPoint\n" +
+		"    eventIn  SFBool  set_touchSensorIsActive\n" +
+		"    eventIn  SFBool  set_touchSensorIsOver\n" +
+		"    eventIn  SFBool  set_planeSensorIsActive\n" +
+		"    eventIn  SFBool  set_isActive IS set_isActive\n" +
+		"    eventIn  SFBool  set_isOver IS set_isOver\n" +
+		"    eventOut SFRotation rotation_changed IS rotation_changed\n" +
+		"    eventOut SFVec3f    trackPoint_changed IS trackPoint_changed\n" +
+		"    eventOut SFVec3f    internalOffset_changed\n" +
+		"    eventOut SFInt32    whichChoice_changed\n" +
+		"    field    SFBool  setOffset FALSE\n" +
+		"    field    SFFloat lastOffset 0\n" +
+		"    field    SFFloat lastAngle  0\n" +
+		"    field    SFBool  isActive FALSE\n" +
+		"    field    SFBool  isOver   FALSE\n" +
+		"    field    MFNode  normalGeometry IS normalGeometry\n" +
+		"    field    MFNode  overGeometry IS overGeometry\n" +
+		"    field    MFNode  clickedGeometry IS clickedGeometry\n" +
+		"    field    SFNode  Rotational-SWITCH USE Rotational-SWITCH\n" +
+		"    field    SFNode  Touch-SENSOR USE Touch-SENSOR\n" +
+		"    url \"javascript:\n" +
+		"      function initialize() {\n" +
+		"        rotation_changed = new SFRotation(0, 0, 1, offset);\n" +
+		"        internalOffset_changed = new SFVec3f(1000, 0, 0);\n" +
+		"        trackOffset = offset;\n" +
+		"        lastOffset = offset;\n" +
+		"        lastAngle = offset;\n" +
+		"        whichChoice_changed = 0;\n" +
+		"      }\n" +
+		"      function set_translation(value, time) {\n" +
+		"        length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);\n" +
+		"        angle = Math.atan2(value[1], value[0]);\n" +
+		"        if(angle<0) angle = 2*Math.PI + angle;\n" +
+		"        if(angle>=0 && angle<Math.PI/2.0 && lastAngle>=Math.PI*3.0/2.0)\n" +
+		"          trackOffset += angle + Math.PI*2.0 - lastAngle;\n" +
+		"        else if(angle>=Math.PI*3.0/2.0 && lastAngle>=0 && lastAngle<Math.PI/2.0)\n" +
+		"          trackOffset += angle - lastAngle - Math.PI*2.0;\n" +
+		"        else\n" +
+		"          trackOffset += angle - lastAngle;\n" +
+		"        offset = trackOffset;\n" +
+		"        if(minAngle<maxAngle) {\n" +
+		"          if(offset<minAngle) offset = minAngle;\n" +
+		"          if(trackOffset<minAngle-Math.PI*2.0) trackOffset += Math.PI*2.0;\n" +
+		"        }\n" +
+		"        if(maxAngle>minAngle) {\n" +
+		"          if(offset>maxAngle) offset = maxAngle;\n" +
+		"          if(trackOffset>maxAngle+Math.PI*2.0) trackOffset -= Math.PI*2.0;\n" +
+		"        }\n" +
+		"        lastOffset = offset;\n" +
+		"        lastAngle = angle;\n" +
+		"        rotation_changed[3] = offset;\n" +
+		"        offset_changed = offset;\n" +
+		"      }\n" +
+		"      function set_hitPoint(value, time) {\n" +
+		"        if(setOffset) {\n" +
+		"          setOffset = FALSE;\n" +
+		"          internalOffset_changed[0] = value[0];\n" +
+		"          internalOffset_changed[1] = value[1];\n" +
+		"          length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);\n" +
+		"          lastAngle = Math.atan2(value[1], value[0]);\n" +
+		"          if(lastAngle<0) lastAngle = Math.PI*2.0 + lastAngle;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_offset(value, time) {\n" +
+		"        offset = value;\n" +
+		"        trackOffset = offset;\n" +
+		"        rotation_changed[3] = offset;\n" +
+		"        internalOffset_changed[0] = 1000 * Math.cos(offset);\n" +
+		"        internalOffset_changed[1] = 1000 * Math.sin(offset);\n" +
+		"      }\n" +
+		"      function set_touchSensorIsActive(value, time) {\n" +
+		"        isActive = value;\n" +
+		"        if(value) setOffset = TRUE;\n" +
+		"      }\n" +
+		"      function set_touchSensorIsOver(value, time) {\n" +
+		"        isOver = value;\n" +
+		"        if(value && !isActive && overGeometry.length > 0) {\n" +
+		"          whichChoice_changed = 1;\n" +
+		"        }\n" +
+		"        else if(!value && !isActive) {\n" +
+		"          whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_planeSensorIsActive(value, time) {\n" +
+		"        if(!value) {\n" +
+		"          trackOffset = offset;\n" +
+		"          lastOffset = offset;\n" +
+		"          whichChoice_changed = 0;\n" +
+		"       }\n" +
+		"        else {\n" +
+		"          if(clickedGeometry.length >0) {\n" +
+		"            whichChoice_changed = 2;\n" +
+		"          }\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_isActive(value, time) {\n" +
+		"        isActive = value;\n" +
+		"        if(value && clickedGeometry.length > 0) whichChoice_changed = 2;\n" +
+		"        else if(!value) {\n" +
+		"          if(isOver && overGeometry.length > 0) whichChocie_changed = 1;\n" +
+		"          else whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_isOver(value, time) {\n" +
+		"        isOver = value;\n" +
+		"        if(value && !isActive && overGeometry.length > 0) whichChoice_changed = 1;\n" +
+		"        else if(!value) {\n" +
+		"          if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;\n" +
+		"          else whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"    \"\n" +
+		"  }\n" +
+		"  ROUTE Touch-SENSOR.hitPoint_changed TO Rotational-SCRIPT.set_hitPoint\n" +
+		"  ROUTE Touch-SENSOR.isActive TO Rotational-SCRIPT.set_touchSensorIsActive\n" +
+		"  ROUTE Touch-SENSOR.isOver TO Rotational-SCRIPT.set_touchSensorIsOver\n" +
+		"  ROUTE Rotational-SENSOR.translation_changed TO Rotational-SCRIPT.set_translation\n" +
+		"  ROUTE Rotational-SENSOR.isActive TO Rotational-SCRIPT.set_planeSensorIsActive\n" +
+		"  ROUTE Rotational-SCRIPT.rotation_changed TO Rotational-TRANSFORM.set_rotation\n" +
+		"  ROUTE Rotational-SCRIPT.internalOffset_changed TO Rotational-SENSOR.set_offset\n" +
+		"  ROUTE Rotational-SCRIPT.whichChoice_changed TO Rotational-SWITCH.set_whichChoice\n" +
+		"}\n" +
+		"PROTO WavePlate [ \n" +
+		"  field        SFFloat z          0\n" +
+		"  field        SFFloat angle      0\n" +
+		"  field        SFFloat thickness  0.5\n" +
+		"  exposedField SFInt32 state      0\n" +
+		"  exposedField SFBool  enabled    TRUE\n" +
+		"  eventIn      SFFloat set_z\n" +
+		"  eventIn      SFFloat set_angle\n" +
+		"  eventIn      SFFloat set_thickness\n" +
+		"  eventIn      SFBool  set_zHighlighted\n" +
+		"  eventIn      SFBool  set_angleHighlighted\n" +
+		"  eventIn      SFBool  set_thicknessHighlighted\n" +
+		"  eventOut     SFBool  isOver\n" +
+		"  eventOut     SFFloat z_changed\n" +
+		"  eventOut     SFFloat angle_changed\n" +
+		"  eventOut     SFFloat thickness_changed\n" +
+		"  eventOut     SFBool  z_isOver\n" +
+		"  eventOut     SFBool  z_isActive\n" +
+		"  eventOut     SFBool  angle_isOver\n" +
+		"  eventOut     SFBool  angle_isActive\n" +
+		"  eventOut     SFBool  thickness_isOver\n" +
+		"  eventOut     SFBool  thickness_isActive ]\n" +
+		"{\n" +
+		"  DEF WavePlate-SWITCH Switch {\n" +
+		"    whichChoice IS state\n" +
+		"    choice [\n" +
+		"      # Wave Plate when not selected\n" +
+		"      Transform {\n" +
+		"        rotation 1 0 0 1.57\n" +
+		"        children [\n" +
+		"          DEF WavePlate_NORMAL-TRANSFORM Transform {\n" +
+		"            children Transform {\n" +
+		"              rotation 1 0 0 -1.57\n" +
+		"              children [\n" +
+		"                DEF Thickness_NORMAL-TRANSFORM Transform {\n" +
+		"                  scale 1 1 0.5\n" +
+		"                  children DEF Box-SHAPE Shape {\n" +
+		"                    appearance DEF Box-APPEARANCE Appearance {\n" +
+		"                      material Material {\n" +
+		"                        diffuseColor 0.2 0.5 0.9\n" +
+		"                        transparency 0.5\n" +
+		"                      }\n" +
+		"                    }\n" +
+		"                    geometry Box {\n" +
+		"                      size 11 11 1\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                }\n" +
+		"                DEF Axes_NORMAL-TRANSFORM Transform {\n" +
+		"                  children [\n" +
+		"                    DEF Axes_NORMAL-SHAPE Shape {\n" +
+		"                      appearance Appearance {\n" +
+		"                        material Material {\n" +
+		"                          diffuseColor 0 0 0\n" +
+		"                          emissiveColor 0 0 0\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"									geometry Cylinder { radius .01 height 16 } \n"+
+		//"                      geometry IndexedLineSet {\n" +
+		//"                        coord Coordinate {\n" +
+		//"                          point [ -8 0 0, 8 0 0, 0 8 0, 0 -8 0]\n" +
+		//"                        }\n" +
+		//"                        coordIndex [ 0 1 -1 2 3 -1 ]\n" +
+		//"                      }\n" +
+		"                    }\n" +
+		"                    DEF Label-TRANSFORM Transform {\n" +
+		"                      translation 9 0 0\n" +
+		"                      children Shape {\n" +
+		"                        appearance Appearance {\n" +
+		"                          material Material {\n" +
+		"                            diffuseColor 1 1 1\n" +
+		"                            emissiveColor 1 1 1\n" +
+		"                          }\n" +
+		"                        }\n" +
+		"                        geometry Text {\n" +
+		"                          string \"FAST\"\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"                    }\n" +
+		"                  ]\n" +
+		"                }\n" +
+		"              ]\n" +
+		"            }\n" +
+		"          }\n" +
+		"          DEF WavePlate-TOUCHSENSOR TouchSensor {\n" +
+		"            enabled IS enabled\n" +
+		"            isOver IS isOver\n" +
+		"          }\n" +
+		"        ]\n" +
+		"      }\n" +
+		"      # Wave Plate when selected\n" +
+		"      Transform {\n" +
+		"        rotation 1 0 0 1.57\n" +
+		"        children [\n" +
+		"          DEF WavePlate_SELECTED-TRANSFORM Transform {\n" +
+		"            children Transform {\n" +
+		"              rotation 1 0 0 -1.57\n" +
+		"              children [\n" +
+		"                USE Thickness_NORMAL-TRANSFORM\n" +
+		"                DEF Angle-WIDGET RotationWidget {\n" +
+		"                  minAngle 0\n" +
+		"                  maxAngle 6.2831853\n" +
+		"                  enabled IS enabled\n" +
+		"                  offset IS angle\n" +
+		"                  offset_changed IS angle_changed\n" +
+		"                  set_offset IS set_angle\n" +
+		"                  isOver IS angle_isOver\n" +
+		"                  isActive IS angle_isActive\n" +
+		"                  set_isActive IS set_angleHighlighted\n" +
+		"                  normalGeometry [\n" +
+		"                    haxis{}#USE Axes_NORMAL-SHAPE\n" +
+		"                    USE Label-TRANSFORM\n" +
+		"                    Transform {\n" +
+		"                      translation 8 0 0\n" +
+		"                      rotation 1 0 0 1.57\n" +
+		"                      children DEF Angle_NORMAL-SHAPE Shape {\n" +
+		"                        appearance DEF Normal-APPEARANCE Appearance {\n" +
+		"                          material Material {\n" +
+		"                            diffuseColor 0.8 0.8 1.0\n" +
+		"                          }\n" +
+		"                        }\n" +
+		"                        geometry Cylinder {\n" +
+		"                          height 0.8\n" +
+		"                          radius 0.2\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"                    }\n" +
+		"                    Transform {\n" +
+		"                      translation -8 0 0\n" +
+		"                      rotation 1 0 0 1.57\n" +
+		"                      children USE Angle_NORMAL-SHAPE\n" +
+		"                    }\n" +
+		"                  ]\n" +
+		"                  clickedGeometry [\n" +
+		"                    USE Axes_NORMAL-SHAPE\n" +
+		"                    USE Label-TRANSFORM\n" +
+		"                    Transform {\n" +
+		"                      translation 8 0 0\n" +
+		"                      rotation 1 0 0 1.57\n" +
+		"                      children DEF Angle_HIGHLIGHTED-SHAPE Shape {\n" +
+		"                        appearance DEF Highlighted-APPEARANCE Appearance {\n" +
+		"                          material Material {\n" +
+		"                            diffuseColor 1.0 1.0 0.4\n" +
+		"                          }\n" +
+		"                        }\n" +
+		"                        geometry Cylinder {\n" +
+		"                          height 0.8\n" +
+		"                          radius 0.2\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"                    }\n" +
+		"                    Transform {\n" +
+		"                      translation -8 0 0\n" +
+		"                      rotation 1 0 0 1.57\n" +
+		"                      children USE Angle_HIGHLIGHTED-SHAPE\n" +
+		"                    }\n" +
+		"                  ]\n" +
+		"                }\n" +
+		"              ]\n" +
+		"            }\n" +
+		"          }\n" +
+		"          Transform {\n" +
+		//added by Davis (April 24 2002)
+		"                rotation 0 1 0 -1.5707963\n" +
+		"                children [\n" +
+		"                  TouchSensor {\n" +
+		"                    enabled IS enabled\n" +
+		"                    isOver IS z_isOver\n" +
+		"                  }\n" +
+		"                  DEF Z-PLANESENSOR PlaneSensor {\n" +
+		"                    minPosition 0 0\n" +
+		"                    maxPosition 0 20\n" +
+		"                    enabled IS enabled\n" +
+		"                    isActive IS z_isActive\n" +
+		"                  }\n" +
+		"                  DEF Z-TRANSFORM Transform {\n" +
+		"                    children DEF Z-SWITCH Switch {\n" +
+		"                      whichChoice 0\n" +
+		"                      choice [\n" +
+		"                        Group { children [\n" +
+		"                          Transform {\n" +
+//		"                            translation 0 0.4 -5.5\n" +
+		"                            translation -5.5 0.4 0\n" +
+		"                            children DEF Z-SHAPE Shape {\n" +
+		"                              appearance USE Normal-APPEARANCE\n" +
+		"                              geometry Cone {\n" +
+		"                                bottomRadius 0.2\n" +
+		"                                height 0.8\n" +
+		"                              }\n" +
+		"                            }\n" +
+		"                          }\n" +
+		"                          Transform {\n" +
+		"                            rotation 1 0 0 3.141592653\n" +
+//		"                            translation 0 -0.4 -5.5\n" +
+		"                            translation -5.5 -0.4 0\n" +
+		"                            children USE Z-SHAPE\n" +
+		"                          }\n" +
+		"                        ] }\n" +
+		"                        Group { children [\n" +
+		"                          Transform {\n" +
+//		"                            translation 0 0.4 -5.5\n" +
+		"                            translation -5.5 0.4 0\n" +
+		"                            children DEF Z_HIGHLIGHTED-SHAPE Shape {\n" +
+		"                              appearance USE Highlighted-APPEARANCE\n" +
+		"                              geometry Cone {\n" +
+		"                                bottomRadius 0.2\n" +
+		"                                height 0.8\n" +
+		"                              }\n" +
+		"                            }\n" +
+		"                          }\n" +
+		"                          Transform {\n" +
+		"                            rotation 1 0 0 3.141592653\n" +
+//		"                            translation 0 -0.4 -5.5\n" +
+		"                            translation -5.5 -0.4 0\n" +
+		"                          children USE Z_HIGHLIGHTED-SHAPE\n" +
+		"                        }\n" +
+		"                      ]\n" +
+		"                    }\n" +
+		"                  ]\n" +
+		"                }\n" +
+		"              }\n" +
+		"            ]\n" +
+		"          }\n" +
+		"          DEF Thickness-TRANSFORM Transform {\n" +
+		"            children [\n" +
+		"              Group {\n" +
+		"                children [\n" +
+		"                  TouchSensor {\n" +
+		"                    enabled IS enabled\n" +
+		"                    isOver IS thickness_isOver\n" +
+		"                  }\n" +
+		"                  DEF Thickness-PLANESENSOR1 PlaneSensor {\n" +
+		"                    enabled IS enabled\n" +
+		"                    isActive IS thickness_isActive\n" +
+		"                    minPosition 5.5 0.05\n" +
+		"                    maxPosition 5.5 0.25\n" +
+		"                    offset 5.5 0.5 -5.5\n" +
+		"                  }\n" +
+		"                  DEF Thickness_WIDGET1-TRANSFORM Transform {\n" +
+		"                    translation 5.5 0.25 -5.5\n" +
+		"                    children Transform {\n" +
+		"                      translation 0 0.125 0\n" +
+		"                      children DEF Thickness_WIDGET-SWITCH Switch {\n" +
+		"                        whichChoice 0\n" +
+		"                        choice [\n" +
+		"                          Shape {\n" +
+		"                            appearance USE Normal-APPEARANCE\n" +
+		"                            geometry Box { size 0.25 0.25 0.25 }\n" +
+		"                          }\n" +
+		"                          Shape {\n" +
+		"                            appearance USE Highlighted-APPEARANCE\n" +
+		"                            geometry Box { size 0.25 0.25 0.25 }\n" +
+		"                          }\n" +
+		"                        ]\n" +
+		"                      }\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                ]\n" +
+		"              }\n" +
+		"              Group {\n" +
+		"                children [\n" +
+		"                  DEF Thickness-PLANESENSOR2 PlaneSensor {\n" +
+		"                    enabled IS enabled\n" +
+		"                    isActive IS thickness_isActive\n" +
+		"                    minPosition 5.5 -0.25\n" +
+		"                    maxPosition 5.5 -0.05\n" +
+		"                    offset 5.5 -0.5 -5.5\n" +
+		"                  }\n" +
+		"                  DEF Thickness_WIDGET2-TRANSFORM Transform {\n" +
+		"                    translation 5.5 -0.25 -5.5\n" +
+		"                    children Transform {\n" +
+		"                      translation 0 -0.125 0\n" +
+		"                      children USE Thickness_WIDGET-SWITCH\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                ]\n" +
+		"              }\n" +
+		"            ]\n" +
+		"          }\n" +
+		"        ]\n" +
+		"      }\n" +
+		"    ]\n" +
+		"  }\n" +
+		"  DEF WavePlate-SCRIPT Script {\n" +
+		"    field    SFFloat    z IS z\n" +
+		"    field    SFFloat    angle IS angle\n" +
+		"    field    SFFloat    thickness IS thickness\n" +
+		"    eventIn  SFBool     isOver\n" +
+		"    eventIn  SFFloat    set_z IS set_z\n" +
+		"    eventIn  SFVec3f    set_zTranslation\n" +
+		"    eventIn  SFBool     set_zIsActive IS set_zHighlighted\n" +
+		"    eventIn  SFFloat    set_thickness IS set_thickness\n" +
+		"    eventIn  SFVec3f    set_thicknessTranslation1\n" +
+		"    eventIn  SFVec3f    set_thicknessTranslation2\n" +
+		"    eventIn  SFBool     set_thicknessIsActive IS set_thicknessHighlighted\n" +
+		"    eventOut SFInt32    state_changed\n" +
+		"    eventOut SFInt32    zWhichChoice_changed\n" +
+		"    eventOut SFVec3f    zTranslation_changed\n" +
+		"    eventOut SFFloat    z_changed IS z_changed\n" +
+		"    eventOut SFRotation rotation_changed \n" +
+		"    eventOut SFVec3f    thicknessTranslation1_changed\n" +
+		"    eventOut SFVec3f    thicknessTranslation2_changed\n" +
+		"    eventOut SFVec3f    thicknessScale_changed\n" +
+		"    eventOut SFFloat    thickness_changed IS thickness_changed\n" +
+		"    eventOut SFInt32    thicknessWhichChoice_changed\n" +
+		"    url \"javascript:\n" +
+		"      function initialize() {\n" +
+		"        zTranslation_changed = new SFVec3f(0, z, 0);\n" +
+		"        rotation_changed = new SFRotation(0, 0, 1, angle);\n" +
+		"        thicknessTranslation1_changed = new SFVec3f(5.5, thickness/2.0, -5.5);\n" +
+		"        thicknessTranslation2_changed = new SFVec3f(5.5, -thickness/2.0, -5.5);\n" +
+		"        thicknessScale_changed = new SFVec3f(1, 1, thickness);\n" +
+		"      }\n" +
+		"      function isOver(value, time) {\n" +
+		"        if(value) state_changed = 1;\n" +
+		"      }\n" +
+		"      function set_z(value, time) {\n" +
+		"        zTranslation_changed[1] = value;\n" +
+		"      }\n" +
+		"      function set_zTranslation(value, time) {\n" +
+		"        z_changed = value[1];\n" +
+		"      }\n" +
+		"      function set_zIsActive(value, time) {\n" +
+		"        zWhichChoice_changed = value ? 1 : 0;\n" +
+		"      }\n" +
+		"      function set_thickness(value, time) {\n" +
+		"        thicknessTranslation1_changed[1] = value / 2.0;\n" +
+		"        thicknessTranslation2_changed[1] = -value / 2.0;\n" +
+		"        thicknessScale_changed[2] = value;\n" +
+		"      }\n" +
+		"      function set_thicknessTranslation1(value, time) {\n" +
+		"        thicknessTranslation2_changed[1] = -value[1];\n" +
+		"        thickness_changed = value[1] * 2.0;\n" +
+		"        thicknessScale_changed[2] = value[1] * 2.0;\n" +
+		"      }\n" +
+		"      function set_thicknessTranslation2(value, time) {\n" +
+		"        thicknessTranslation1_changed[1] = -value[1];\n" +
+		"        thickness_changed = value[1] * -2.0;\n" +
+		"        thicknessScale_changed[2] = value[1] * -2.0;\n" +
+		"      }\n" +
+		"      function set_thicknessIsActive(value, time) {\n" +
+		"        thicknessWhichChoice_changed = value ? 1 : 0;\n" +
+		"      }\n" +
+		"    \"\n" +
+		"  }\n" +
+		//"  ROUTE WavePlate-TOUCHSENSOR.isOver TO WavePlate-SCRIPT.isOver\n" +
+		"  ROUTE Z-PLANESENSOR.isActive TO WavePlate-SCRIPT.set_zIsActive\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Z-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate_NORMAL-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Thickness-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate-SCRIPT.set_zTranslation\n" +
+		//"  ROUTE WavePlate-SCRIPT.state_changed TO WavePlate-SWITCH.whichChoice\n" +
+		"  ROUTE WavePlate-SCRIPT.zWhichChoice_changed TO Z-SWITCH.whichChoice\n" +
+		"  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Z-PLANESENSOR.set_offset\n" +
+		"  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Z-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.zTranslation_changed TO WavePlate_NORMAL-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.zTranslation_changed TO WavePlate_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Thickness-TRANSFORM.set_translation\n" +
+		"  ROUTE Angle-WIDGET.rotation_changed TO Axes_NORMAL-TRANSFORM.set_rotation\n" +
+		"  ROUTE WavePlate-SCRIPT.rotation_changed TO Axes_NORMAL-TRANSFORM.set_rotation\n" +
+		"  ROUTE Thickness-PLANESENSOR1.isActive TO WavePlate-SCRIPT.set_thicknessIsActive\n" +
+		"  ROUTE Thickness-PLANESENSOR2.isActive TO WavePlate-SCRIPT.set_thicknessIsActive\n" +
+		"  ROUTE Thickness-PLANESENSOR1.translation_changed TO WavePlate-SCRIPT.set_thicknessTranslation1\n" +
+		"  ROUTE Thickness-PLANESENSOR2.translation_changed TO WavePlate-SCRIPT.set_thicknessTranslation2\n" +
+		"  ROUTE Thickness-PLANESENSOR1.translation_changed TO Thickness_WIDGET1-TRANSFORM.set_translation\n" +
+		"  ROUTE Thickness-PLANESENSOR2.translation_changed TO Thickness_WIDGET2-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessWhichChoice_changed TO Thickness_WIDGET-SWITCH.whichChoice\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessTranslation1_changed TO Thickness_WIDGET1-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessTranslation2_changed TO Thickness_WIDGET2-TRANSFORM.set_translation\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessTranslation1_changed TO Thickness-PLANESENSOR1.set_offset\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessTranslation2_changed TO Thickness-PLANESENSOR2.set_offset\n" +
+		"  ROUTE WavePlate-SCRIPT.thicknessScale_changed TO Thickness_NORMAL-TRANSFORM.set_scale\n" +
+		"}\n";
+}

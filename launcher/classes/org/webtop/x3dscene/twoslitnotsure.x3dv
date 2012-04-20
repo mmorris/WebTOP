@@ -1,0 +1,708 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+EXTERNPROTO RedConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#Red2ConeXDragger"
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+PROTO DSD_XDragWidget [ inputOutput SFVec3f translation 0 0 0		#Of geometry
+	inputOutput SFRotation rotation 0 0 1 0	#Of whole widget
+
+	initializeOnly SFFloat position 0
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	outputOnly SFFloat inversePosition_out
+
+	initializeOnly SFFloat minPosition 0
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition 1
+	inputOnly SFFloat set_maxPosition
+
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled TRUE
+
+	inputOutput MFNode geometry Group {}
+	inputOutput MFNode activeGeometry Group {} ]
+{
+	Transform {
+		rotation IS rotation
+		children [
+			TouchSensor {
+				isOver IS isOver_out
+				enabled IS enabled
+			}
+			DEF PS PlaneSensor {
+				isActive IS isActive_out
+				enabled IS enabled
+			}
+			Transform {
+				translation IS translation
+				children DEF GEOM_XFORM Transform {
+					children [
+						DEF GEOM_SWITCH Switch {
+							whichChoice 0
+							choice [ Group { children IS geometry }
+								Group { children IS activeGeometry } ]
+						}
+					]
+				}
+			}
+		]
+	}
+	DEF XDRAG_SCRIPT Script {
+		initializeOnly 	SFFloat startPos IS position
+		inputOnly SFFloat pos_in   IS set_position
+		outputOnly SFFloat pos_out IS position_changed
+		outputOnly SFFloat inv_out IS inversePosition_out
+
+		inputOnly SFVec3f ps_trans_in
+
+		initializeOnly 	SFFloat maxPos IS maxPosition
+		initializeOnly 	SFFloat minPos IS minPosition
+		inputOnly SFFloat set_maxPosition IS set_maxPosition
+		inputOnly SFFloat set_minPosition IS set_minPosition
+
+		inputOnly SFBool active_in IS set_isActive
+
+		outputOnly SFInt32 whichChoice_out
+
+		outputOnly SFVec3f offset_out
+		outputOnly SFVec2f maxPos_out
+		outputOnly SFVec2f minPos_out
+		outputOnly SFVec3f ps_offset_in
+
+		outputOnly SFVec3f geom_trans_out
+
+		url "ecmascript:
+		function initialize() {
+			set_maxPosition(maxPos,null);
+			set_minPosition(minPos,null);
+
+			pos_in(startPos,null);
+		}
+
+		function pos_in(value, time)
+		{ set_trans_internal(value);
+			offset_out[0] = value - whichChoice_out*(ps_trans_in[0]-ps_offset_in[0]);}
+
+		function ps_trans_in(value, time)
+		{ set_trans_internal(value[0]);}
+
+		function set_trans_internal(value)
+		{ geom_trans_out[0] = value;
+			inv_out = -(pos_out=value);}
+
+		function active_in(value,time) { whichChoice_out=value?1:0; }
+
+		// setting the second values to 0 clamps the translation in the
+		// y direction, so motion occurs only in x.
+		function set_maxPosition(value,time) { maxPos_out = new SFVec2f(value,0); }
+		function set_minPosition(value,time) { minPos_out = new SFVec2f(value,0); }"
+	}
+	ROUTE PS.translation_changed TO XDRAG_SCRIPT.ps_trans_in
+	ROUTE	PS.offset_changed TO XDRAG_SCRIPT.ps_offset_in
+	ROUTE PS.isActive TO XDRAG_SCRIPT.active_in
+	ROUTE XDRAG_SCRIPT.whichChoice_out TO GEOM_SWITCH.whichChoice
+	ROUTE XDRAG_SCRIPT.geom_trans_out TO GEOM_XFORM.set_translation
+	ROUTE XDRAG_SCRIPT.offset_out	TO PS.set_offset
+	ROUTE XDRAG_SCRIPT.maxPos_out TO PS.maxPosition
+	ROUTE XDRAG_SCRIPT.minPos_out TO PS.minPosition
+}
+
+PROTO DSD_NegYColorCone [ inputOutput SFNode coneMaterial Material {}
+	inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	Transform {
+		scale IS coneScale
+		children Transform {
+			translation 0 6 0
+			rotation 1 0 0  3.141592654
+			children Shape {
+				appearance Appearance {
+					material IS coneMaterial
+				}
+				geometry Cone { bottomRadius 0.5 }
+			}
+		}
+	}
+}
+PROTO DSD_BlueNYCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	DSD_NegYColorCone {
+		coneMaterial Material { diffuseColor 0 0 .5 }
+		coneScale IS coneScale
+	}
+}
+PROTO DSD_ActiveBlueNYCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	DSD_NegYColorCone {
+		coneMaterial Material { diffuseColor 0 0 1 }
+		coneScale IS coneScale
+	}
+}
+
+NavLight { navigationType "NONE" }
+NavigationInfo { type "NONE" } #disables x3d navigation controls
+
+DEF NavPanel NavigationPanel {
+	translation_speed 100
+	center 0 0 -500
+	views [ 	-0.4 0.0 0.0 0.0 -2.069 -9.642,
+					0.0 0.0 0.0 0.0 -1.2 0.896,
+			   -0.3 -0.4 0.0 0.0 -2.0 -12.0, ]
+	children [
+		##########################################################
+		# Warning text
+		##########################################################
+#		DEF warningTextSwitch Switch {
+#			whichChoice 0
+#			choice [
+#				Billboard {
+#					axisOfRotation 0 0 0
+#					children [
+#						Transform {
+#							translation -200 350 0
+#							children [
+#								Shape {
+#									appearance Appearance {
+#										material Material {
+#											diffuseColor 0 0 0    # black
+#											specularColor 0 0 0   # black
+#											ambientIntensity 0.0  # black
+#											shininess 0.0         # none
+#											emissiveColor 1 0 0
+#										}
+#									}
+#									geometry Text {
+#										string "Loading... Please wait."
+#										fontStyle FontStyle {
+#											size 120
+#										}
+#									}
+#								}
+#							]
+#						}
+#					]
+#				}
+#			]
+#		}
+		##########################################################
+
+		Group {
+			children [
+#				Inline {
+#					url	"../vrmllib/BoundingBox.wrl"
+#					bboxSize	1000 300 1000
+#					bboxCenter	0 0 -500
+#				},
+
+#				DEF nslitDraggerSwitch Switch {
+#					whichChoice 0
+#					choice
+#					DEF nslitDragger NSlitDragger {}
+#				}
+
+				Shape {
+					appearance Appearance {
+						material Material {
+							emissiveColor 0 0.7 0.7
+						}
+					}
+					geometry IndexedLineSet {
+						coord Coordinate {
+							point [ -500 -150 0,
+								500 -150 0,
+								500 150 0,
+								500 150 -999,
+								500 -150 -999,
+								500 -150 0,
+								500 150 0,
+								-500 150 0,
+								-500 -150 0,
+								-500 -150 -999,
+								-500 150 -999,
+								-500 150 0,
+								-500 -150 -999,
+								500 -150 -999,
+								-500 150 -999,
+								500 150 -999 ]
+						}
+						coordIndex [ 0, 1, 2, 3, 4, 5, -1, 6,
+							7, 8, 9, 10, 11, -1, 12, 13,
+							-1, 14, 15, -1 ]
+					}
+				}
+
+				DEF widthDraggerSwitch Switch {
+					whichChoice 0
+					choice [
+						Group	{
+							children [
+								DEF widthDragger RedConeXDragger {
+									#coneScale 25 25 25
+									coneScale 0 0 0
+									minPosition 0
+									maxPosition 499
+									position 200
+								}
+								#The mirror dragger is actually the same object [cheat cheat]
+								Transform {
+									rotation 0 1 0 3.141593
+									children USE widthDragger
+								}
+							]
+						}
+					] # end choice
+				}
+
+				DEF dd_SWITCH Switch {
+					whichChoice 0
+					choice [
+						Group {
+							children [
+								#This is the one on the right.
+								DEF distanceDragger DSD_XDragWidget {
+									minPosition 0
+									maxPosition 500
+									position 125
+									#position IS	dd_position
+									#set_position IS set_dd_position
+									#position_changed IS dd_position_changed
+									#isOver_out IS dd_isOver_changed
+									#isActive_out IS dd_isActive_changed
+									#geometry DSD_BlueNYCone { coneScale 25 25 25 }
+									#activeGeometry DSD_ActiveBlueNYCone { coneScale 25 25 25 }
+								}
+
+								#Cheating again
+								Transform {
+									rotation 0 1 0 3.14159265
+									children USE distanceDragger
+								}
+							]
+						}
+					]
+				}
+
+				#Here are the actual slits.  Again, they're the same object.
+#				DEF slit1 Transform {
+#					translation -325 0 0
+#					scale 350 1 1
+#					children [
+#						DEF slit Shape {
+#							appearance Appearance {
+#								material Material {
+#									ambientIntensity 0.2
+#									diffuseColor     0.3 0.6 0.9
+#									specularColor    0 0 0
+#									transparency     0.8
+#								}
+#							}
+#							geometry Box { size 1 300 2 }
+#						}
+#					]
+#				}
+#				DEF slit2 Transform {
+#					translation 325 0 0
+#					scale 350 1 1
+#					children USE slit
+#				}
+
+#				DEF	slit3 Transform {
+#					scale 350 1 1
+#					children [
+#						DEF	middleSlit Shape {
+#							appearance Appearance {
+#								material Material {
+#									ambientIntensity 0.2
+#									diffuseColor     0.3 0.6 0.9
+#									specularColor    0 0 0
+#									transparency     0.8
+#								}
+#							}
+#							geometry Box { size	.5 300 2 }
+#						}
+#					]
+#				}
+
+				DEF wavelengthWidgetSwitch Switch {
+					whichChoice 0
+					choice Transform {
+							#translation 0 -30 220
+							translation -500 250 -100
+							rotation 1 1 0 3.14159
+							#scale 75 75 75
+							scale 90 90 90
+							children [
+								DEF WavelengthWidget WheelWidget	{
+											minValue 400
+											maxValue 800
+											value 550
+											maxRotations 3
+										}
+									]
+						}
+				}
+
+				#The wavy line for the incoming wave
+#				Transform {
+#					translation 0 50 300
+#					rotation 0 1 0  1.5707963
+#					children Inline { url "../vrmllib/Wave.wrl" }
+#				}
+
+# Old way
+#				DEF screenMover Transform {
+#					translation	0 0 -1000
+#					children [
+#						Shape {
+#							geometry PointSet {
+#								coord DEF ImagePoints Coordinate {}
+#								color DEF ImageColors Color	{}
+#							}
+#							appearance Appearance {
+# 								material Material {
+# 									emissiveColor 1 1 1
+#									diffuseColor 1 1 1
+#									shininess 1
+#									transparency 0
+# 								}
+#							}
+#						}
+#						Shape {
+#							geometry PointSet {
+#								coord USE ImagePoints
+#								color DEF WhitePoints Color	{}
+#							}
+#							appearance Appearance {
+# 								material DEF WhiteMaterial Material {
+# 									emissiveColor 1 1 1
+#									diffuseColor 1 1 1
+# 								}
+#							}
+#						}
+#					]
+#				}
+
+
+				Group {
+					children [
+						DEF IFSImage Transform {
+							translation -7 -7 20
+							rotation 1 0 0 1.5707963267949
+							children Shape {
+								appearance Appearance { material Material {
+								
+									emissiveColor 1 1 1
+								
+								}}
+								geometry DEF IFS IndexedFaceSet {
+									#						colorPerVertex FALSE
+                                    coord Coordinate {}
+								}
+							}
+						}
+						DEF IFSMover Script {
+							inputOnly SFFloat translation_in_x
+							inputOnly SFFloat translation_in_y
+							inputOnly SFFloat translation_in_z
+							outputOnly SFVec3f translation
+							url "ecmascript:
+
+							function translation_in_x(value, time){
+								translation[0]=value;
+							}
+							function translation_in_y(value, time){
+								translation[1]=value;
+							}
+							function translation_in_z(value, time){
+								translation[2]=value;
+							}
+							"
+						}
+					]
+					ROUTE IFSMover.translation TO IFSImage.translation
+				}
+				
+
+
+				#This is the observation screen
+				Transform {
+					translation	0 -150 0
+					children [
+						DEF meshMover Transform {
+							children [
+#								Group {
+#									children [
+#										DEF MeshTS TouchSensor {}
+#										Shape {
+#											appearance Appearance {
+#												material Material {
+#													emissiveColor	0 0.0394919 0.0513394
+#												}
+#											}
+#											geometry DEF ifsNode IndexedFaceSet {
+#												coord DEF coordinateNode Coordinate {
+#													point []
+#												}
+#												#normal
+#												color DEF colorNode Color {
+#													color []
+#												}
+#												solid FALSE
+#												creaseAngle	3.14159
+#												coordIndex	[]
+#												colorIndex	[]
+#												normalIndex	[]
+#											}
+#										}
+#									]
+#								}
+								#Shape { geometry Box { size 50 50 50 } }
+								Transform {
+									translation 0 300 -1000
+									children [
+										Shape {
+											appearance Appearance {
+												material DEF graphMaterial Material {
+													#emissiveColor       0.6 0 0
+													emissiveColor       0.7 0.7 0.7
+												}
+											}
+											geometry DEF ilsNode IndexedLineSet {
+												coord DEF plotCoordinateNode Coordinate {
+													point []
+												}
+												coordIndex  []
+											}
+										}
+									]
+								}
+								##########################################################################
+								# The aperture geometry
+								##########################################################################
+								Transform {
+									translation	0 150 0
+									children [
+										Shape {
+											appearance Appearance {
+												material Material {
+													diffuseColor 0.5 0.6 0.7
+													transparency 0.6
+												}
+											}
+											geometry DEF slitIFSNode IndexedFaceSet {
+												coord DEF slitCoordinateNode Coordinate {
+													point []
+												}
+												# normal DEF slitNormalNode Normal { vector [] }
+												#solid       FALSE
+												#normalPerVertex FALSE
+												coordIndex  []
+												normalIndex []
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+				DEF	TRANS_WORKER Script {
+					inputOnly	SFFloat	transparency_in
+					outputOnly SFFloat transparency_out
+
+					url	"ecmascript:
+					function transparency_in(value, time) {
+						transparency_out = transparency_in;
+
+					}"
+				}
+			]
+		}
+	]
+}
+DEF CHANGE_SLIT_WIDTH Script {
+	inputOnly  SFFloat translation_in
+	outputOnly SFVec3f translation1_out
+	outputOnly SFVec3f translation2_out
+	outputOnly SFVec3f scale_out
+	outputOnly SFVec3f middle_scale_out
+	outputOnly SFFloat width_out
+	outputOnly SFFloat min_distance_out
+
+	url "ecmascript:
+	function initialize () {
+		translation1_out = new SFVec3f(350, 0, 0);
+		translation2_out = new SFVec3f(-350, 0, 0);
+		scale_out = new SFVec3f(300, 1, 1);
+		middle_scale_out = new SFVec3f(300, 1, 1);
+	}
+
+	function translation_in(value, time) {
+		if(value < 0) value = -1 * value;
+		translation1_out[0] = (500 - value) / 2 + value;
+		translation2_out[0] = -translation1_out[0];
+		scale_out[0] = 500 - value;
+		middle_scale_out[0] = 500 - value*2 - 2*translation1_out[0];
+		width_out = value * 2 / 1000;
+		min_distance_out = width_out/2;
+	}"
+}
+DEF CHANGE_SLIT_DISTANCE Script {
+	inputOnly  SFFloat translation_in
+	outputOnly SFVec3f translation1_out
+	outputOnly SFVec3f translation2_out
+	outputOnly SFVec3f scale_out
+	outputOnly SFVec3f middle_scale_out
+	outputOnly SFFloat width_out
+
+	url "ecmascript:
+	function initialize () {
+		translation1_out = new SFVec3f(350, 0, 0);
+		translation2_out = new SFVec3f(-350, 0, 0);
+		scale_out = new SFVec3f(300, 1, 1);
+		middle_scale_out = new SFVec3f(300, 1, 1);
+	}
+
+	function translation_in(value, time) {
+		if(value < 0) value = -1 * value;
+		translation1_out[0] = (500 - value) / 2 + value;
+		translation2_out[0] = -translation1_out[0];
+		scale_out[0] = 500 - value;
+		middle_scale_out[0] = 500 - value*2 - 2*translation1_out[0];
+		width_out = value * 2 / 1000;
+	}"
+}
+DEF AXIS_SWITCHER Script {
+	inputOnly SFFloat t_in
+	outputOnly SFVec3f t_out
+
+	#screenDragger reports in 0 to 100 for Java's sake; we need 0 to 1000
+	url "ecmascript: function t_in(value,time) {t_out[2]=-value*10;}"
+}
+
+#ROUTE screenDragger.position_changed TO AXIS_SWITCHER.t_in
+#ROUTE AXIS_SWITCHER.t_out TO screenMover.set_translation
+#ROUTE AXIS_SWITCHER.t_out TO meshMover.set_translation
+
+#ROUTE widthDragger.position_changed TO CHANGE_SLIT_WIDTH.translation_in
+#ROUTE CHANGE_SLIT_WIDTH.translation1_out TO slit1.set_translation
+#ROUTE CHANGE_SLIT_WIDTH.translation2_out TO slit2.set_translation
+#ROUTE CHANGE_SLIT_WIDTH.scale_out TO slit1.set_scale
+#ROUTE CHANGE_SLIT_WIDTH.scale_out TO slit2.set_scale
+#ROUTE CHANGE_SLIT_WIDTH.middle_scale_out TO slit3.set_scale
+#ROUTE CHANGE_SLIT_WIDTH.min_distance_out TO distanceDragger.set_minPosition
+
+#ROUTE distanceDragger.position_changed TO CHANGE_SLIT_DISTANCE.translation_in
+#ROUTE CHANGE_SLIT_DISTANCE.translation1_out TO slit1.set_translation
+#ROUTE CHANGE_SLIT_DISTANCE.translation2_out TO slit2.set_translation
+#ROUTE CHANGE_SLIT_DISTANCE.scale_out TO slit1.set_scale
+#ROUTE CHANGE_SLIT_DISTANCE.scale_out TO slit2.set_scale
+#ROUTE CHANGE_SLIT_DISTANCE.middle_scale_out TO slit3.set_scale
+

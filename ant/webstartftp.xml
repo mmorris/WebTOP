@@ -1,0 +1,76 @@
+<project name="webstartftp" default="build">
+
+  <target name="localize_jnlp_testsite" depends="webstart" description="Localize jnlp files">
+
+		<copy todir="${basedir}/webstart" overwrite="true">
+      <fileset dir="${basedir}/source/jnlp/" includes="*.jnlp" />
+    </copy>
+
+		<replace dir="${basedir}/webstart" value="http://thomasb.powweb.com/test">
+  		<include name="*.jnlp"/>
+  	<replacetoken><![CDATA[WEBSITE_ADDRESS]]></replacetoken>
+		</replace>
+	
+	</target>
+
+	<target name="localize_jnlp_webtoporg" depends="webstart" description="Localize jnlp files">
+
+		<copy todir="${basedir}/webstart" overwrite="true">
+      <fileset dir="${basedir}/source/jnlp/" includes="*.jnlp" />
+    </copy>
+
+		<replace dir="${basedir}/webstart" value="http://www.webtop.org/webstart">
+  		<include name="*.jnlp"/>
+  	<replacetoken><![CDATA[WEBSITE_ADDRESS]]></replacetoken>
+		</replace>
+	
+	</target>
+
+	<target name="localize_jnlp" depends="webstart" description="Localize jnlp files">
+
+		<copy todir="${basedir}/webstart" overwrite="true">
+      <fileset dir="${basedir}/source/jnlp/" includes="*.jnlp" />
+    </copy>
+
+		<replace dir="${basedir}/webstart" value="http://thomasb.powweb.com/webstart">
+  		<include name="*.jnlp"/>
+  	<replacetoken><![CDATA[WEBSITE_ADDRESS]]></replacetoken>
+		</replace>
+	
+	</target>
+
+
+  <target name="ftp_webstart_testsite" depends="localize_jnlp_testsite" description="Jar all modules.">
+		
+		<property name="ftpserver"   value="ftp.powweb.com"/>
+		<property name="ftpuserid"   value="REDACTED"/>
+		<property name="ftppassword" value="REDACTED"/>
+
+		<ftp server="${ftpserver}" userid="${ftpuserid}" password="${ftppassword}" passive="yes" retriesAllowed="3" verbose="yes">
+			<fileset dir="${basedir}/webstart/"/>
+		</ftp>
+  </target>
+
+	<target name="ftp_webstart_webtoporg" depends="localize_jnlp_webtoporg" description="Jar all modules.">
+		<property name="ftpserver"   value="webtop.org"/>
+		<property name="ftpuserid"   value="REDACTED"/>
+		<property name="ftppassword" value="REDACTED"/>
+
+		<ftp server="${ftpserver}" userid="${ftpuserid}" password="${ftppassword}" passive="yes" retriesAllowed="3" verbose="yes" remotedir="webstart">
+			<fileset dir="${basedir}/webstart/"/>
+		</ftp>
+  </target>
+
+	<target name="ftp_webstart" depends="localize_jnlp" description="Jar all modules.">
+		
+		<property name="ftpserver"   value="ftp.powweb.com"/>
+		<property name="ftpuserid"   value="REDACTED"/>
+		<property name="ftppassword" value="REDACTED"/>
+
+		<ftp server="${ftpserver}" userid="${ftpuserid}" password="${ftppassword}" passive="yes" retriesAllowed="3" verbose="yes">
+			<fileset dir="${basedir}/webstart/"/>
+		</ftp>
+  </target>
+
+
+</project>

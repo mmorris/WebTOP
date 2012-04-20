@@ -1,0 +1,18 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+DEF IFSQuad1 Shape {
+    appearance Appearance { 
+	   material Material {
+	   emissiveColor 1 1 1
+	   }
+	}
+	geometry DEF IFS IndexedFaceSet{
+        color Color	{}
+        coord Coordinate {}
+        coordIndex []
+        colorPerVertex FALSE
+        solid FALSE
+    }
+}

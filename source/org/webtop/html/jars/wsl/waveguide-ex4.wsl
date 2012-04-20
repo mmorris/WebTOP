@@ -1,0 +1,11 @@
+<wsl>
+  <waveguide grid="visible" wavelength="0.87" amplitude="0.5" d="2.0" n1="1.6" n2="1.4" m="0" resolution="200" gouraud="true" widgets="visible" animation="stop">
+    <view value="-0.518437 -0.47966546 0.0 0.12994286 0.19456029 -3.697309"  />
+  </waveguide>
+  <script>
+    <actionPerformed param="m" value="1" timeStamp="3000" />
+    <actionPerformed param="m" value="2" timeStamp="3000" />
+    <actionPerformed param="m" value="3" timeStamp="3000" />
+    <scriptEnded timeStamp="3000" />
+  </script>
+</wsl>

@@ -1,0 +1,60 @@
+#VRML V2.0 utf8
+
+# This file was authored with Blender (http://www.blender.org/)
+# Blender version 242
+# Blender file untitled.blend
+# Exported using VRML97 exporter v1.55 (2006/01/17)
+
+
+NavigationInfo {
+	headlight FALSE
+	visibilityLimit 100.0
+	type ["EXAMINE", "ANY"]
+	avatarSize [0.25, 1.75, 0.75]
+} 
+ 
+Background {
+	groundColor 0.057 0.221 0.4
+	skyColor 0.057 0.221 0.4
+}
+
+DEF OB_Circle Transform {
+	translation 0.0 0.0 0.0
+	rotation 0.577 0.577 -0.577 2.094
+	scale 1.0 1.0 1.0
+	children [
+		DEF ME_Circle Group {
+			children [
+				Shape {
+					appearance Appearance {
+					}
+					geometry IndexedFaceSet {
+						solid TRUE
+						coord DEF coord_Circle Coordinate {
+							point [
+0.707106769085 0.0 -0.707106769085
+ 0.933580458164 2.5143341631e-008 -0.358367860317
+ 0.998629510403 4.59391635843e-008 0.0523360595107
+ 0.891006469727 5.87916879624e-008 0.453990608454
+ 0.629320263863 6.14785946595e-008 0.777146041393
+ 0.258818924427 5.35352953079e-008 0.965925872326
+ -0.156434610486 3.63352512522e-008 0.987688302994
+ -0.54463917017 1.28525172727e-008 0.838670492172
+ -0.838670790195 -1.28525510235e-008 0.544638693333
+ -0.987688422203 -3.63352832267e-008 0.156434044242
+ -0.965925693512 -5.35353095188e-008 -0.258819460869
+ -0.777145683765 -6.1478601765e-008 -0.6293207407
+ -0.453990101814 -5.87916773043e-008 -0.891006708145
+ -0.052335485816 -4.5939142268e-008 -0.998629570007
+ 0.358368396759 -2.51433096565e-008 -0.93358027935
+ 							]
+						}
+						
+						coordIndex [
+						]
+					}
+				}
+			]
+		}
+	]
+}

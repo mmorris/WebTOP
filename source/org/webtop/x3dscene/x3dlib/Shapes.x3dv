@@ -1,0 +1,533 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+#Shapes.x3dv
+#File containing PROTOs for useful shapes
+#Davis Herring
+#Created January 30 2002
+#Updated June 27 2006
+#Version 0.4
+
+#Shapes in this file:
+#ObjectArrow
+#HiResSphere
+#Torus
+#PartialTorus
+#ConvexLens
+#ConcaveLens
+#Octant
+
+#A solid of revolution of a block arrow
+PROTO ObjectArrow [ inputOutput SFVec3f translation 0 0 0
+										inputOutput SFVec3f center 0 0 0
+										inputOutput SFRotation rotation 0 0 1 0
+										inputOutput SFVec3f scale 1 1 1
+										inputOutput SFNode material Material { emissiveColor 1 1 0 }
+										initializeOnly SFInt32 resolution 16
+										inputOnly SFInt32 set_resolution ]
+{
+	Transform {
+		translation IS translation
+		center IS center
+		rotation IS rotation
+		scale IS scale
+		children
+			Shape {
+				appearance Appearance {
+					material IS material
+				}
+				geometry DEF TheArrow Extrusion {
+					spine [ 0 0 0, 0 .667 0, 0 .667 0, 0 1 0 ]
+					scale [ .1 .1, .1 .1, .22 .22, 0 0 ]
+					endCap FALSE
+					solid FALSE
+				}
+			}
+	}
+	DEF Worker Script {
+		initializeOnly SFInt32 res IS resolution
+		inputOnly SFInt32 nuRes IS set_resolution
+		outputOnly MFVec2f theCrossSection
+		url "ecmascript:
+					function initialize() {nuRes(res,null);}
+					function nuRes(value,time) {
+						if(value<3) return;
+						theCrossSection=new MFVec2f();
+						for(i=0;i<=value;i++) {
+							angle=i/value*2*Math.PI;
+							theCrossSection[i]=new SFVec2f(Math.cos(angle),Math.sin(angle));
+						}
+					}"
+	}
+
+	ROUTE Worker.theCrossSection TO TheArrow.set_crossSection
+}
+
+#Just like Sphere {}, but with more longitude/latitude lines
+PROTO HiResSphere [ initializeOnly SFFloat radius 1
+										inputOnly SFFloat set_radius
+										initializeOnly SFInt32 resolution 20
+										inputOnly SFInt32 set_resolution ]
+{
+	DEF TheSphere Extrusion {
+		solid FALSE
+		beginCap FALSE
+		endCap FALSE
+	}
+	DEF Worker Script {
+		initializeOnly SFFloat r IS radius
+		initializeOnly SFInt32 res IS resolution
+		inputOnly SFInt32 nuRes IS set_resolution
+		inputOnly SFFloat nuRad IS set_radius
+		outputOnly MFVec2f theCrossSection
+		outputOnly MFVec3f theSpine
+		outputOnly MFVec2f theScale
+		url "ecmascript:
+					function initialize() {
+						if(res<2) {
+							print('HiResSphere: initial resolution too small');
+							return;
+						}
+						if(r<0) print('HiResSphere: negative initial radius');
+						else render();
+					}
+					function nuRes(value,time) {//print('Running HRS.nuRes()... r is '+r+'; res is '+res);
+						if(value<2) {print('HiResSphere::set_resolution: argument too small'); return;}
+						res=value;
+						render();
+					}
+					function nuRad(value,time) {
+						if(value<0) {print('HiResSphere::set_radius: argument negative'); return;}
+						r=value;
+						render();
+					}
+					function render() {
+						theCrossSection=new MFVec2f();
+						theSpine=new MFVec3f();
+						theScale=new MFVec2f();
+						for(i=0;i<=res;i++) {
+							angle=i/res*Math.PI;
+							theCrossSection[i]=new SFVec2f(Math.cos(angle)*r,Math.sin(angle)*r);
+							theCrossSection[i+res]=theCrossSection[i].multiply(-1);
+							theSpine[i].x=Math.cos(angle)*r;
+							theScale[i]=new SFVec2f(Math.sin(angle),Math.sin(angle));
+						}
+					}"
+	}
+	ROUTE Worker.theCrossSection TO TheSphere.set_crossSection
+	ROUTE Worker.theSpine TO TheSphere.set_spine
+	ROUTE Worker.theScale TO TheSphere.set_scale
+}
+
+#A donut!  (Strictly geometry.)
+PROTO Torus [ initializeOnly SFFloat radius 2
+							inputOnly SFFloat set_radius
+							initializeOnly SFFloat crossSectionRadius 1
+							inputOnly SFFloat set_crossSectionRadius
+
+							initializeOnly SFInt32 resolution 16
+							inputOnly SFInt32 set_resolution
+							initializeOnly SFInt32 crossSectionResolution 10
+							inputOnly SFInt32 set_crossSectionResolution ]
+{
+	DEF Donut Extrusion {
+		beginCap FALSE
+		endCap FALSE
+		ccw TRUE
+		convex TRUE
+		crossSection []
+		solid FALSE
+		spine []
+	}
+	DEF Shipley Script {
+		initializeOnly SFFloat r IS radius
+		initializeOnly SFFloat CS_r IS crossSectionRadius
+		initializeOnly SFInt32 res IS resolution
+		initializeOnly SFInt32 CS_res IS crossSectionResolution
+
+		inputOnly SFFloat set_r IS set_radius
+		inputOnly SFFloat set_csR IS set_crossSectionRadius
+		inputOnly SFInt32 set_res IS set_resolution
+		inputOnly SFInt32 set_csRes IS set_crossSectionResolution
+
+		outputOnly MFVec2f crossSection_out
+		outputOnly MFVec3f spine_out
+
+		url "ecmascript:
+			function initialize() {
+				if(res<3||CS_res<3) return;
+				if(r>0) doSpine();
+				if(CS_r>0) doCS();
+			}
+			function set_r(val,time) {if(val>0) {r=val; doSpine();}}
+			function set_csR(val,time) {if(val>0) {CS_r=val; doCS();}}
+			function set_res(val,time) {if(val>2) {res=val; doSpine();}}
+			function set_csRes(val,time) {if(val>2) {CS_res=val; doCS();}}
+			function doSpine() {
+				nuSpine=new MFVec3f();
+				nuSpine[res]=new SFVec3f(r,0,0);
+				for(a=i=0;i<res;i++,a=2*Math.PI*i/res)
+					nuSpine[i]=new SFVec3f(r*Math.cos(a),r*Math.sin(a),0);
+				spine_out=nuSpine;
+			}
+			function doCS() {
+				nuCS=new MFVec2f();
+				nuCS[CS_res]=new SFVec2f(CS_r,0);
+				for(a=i=0;i<CS_res;i++,a=2*Math.PI*i/CS_res)
+					nuCS[i]=new SFVec2f(CS_r*Math.cos(a),CS_r*Math.sin(a));
+				crossSection_out=nuCS;
+			}"
+	}
+	ROUTE Shipley.spine_out TO Donut.set_spine
+	ROUTE Shipley.crossSection_out TO Donut.set_crossSection
+}
+
+#PartialTorus is a geometry for the section of a torus'
+#outer surface enclosed by a cylinder (of radius rho).
+PROTO PartialTorus [ initializeOnly	SFFloat	radius 2
+										 inputOnly	SFFloat set_radius
+										 initializeOnly	SFFloat	crossSectionRadius 1
+										 inputOnly	SFFloat set_crossSectionRadius
+
+										 initializeOnly	SFInt32	thetaResolution 15
+										 inputOnly	SFInt32 set_thetaResolution
+										 initializeOnly	SFInt32	phiResolution 10
+										 inputOnly	SFInt32 set_phiResolution
+
+										 initializeOnly SFFloat rho .5
+										 inputOnly SFFloat set_rho ]
+{
+	DEF Donut IndexedFaceSet {
+		solid FALSE
+		coord DEF DonutCoord Coordinate { }
+	}
+	DEF Shipley Script {
+		initializeOnly SFFloat r IS radius
+		initializeOnly SFFloat CS_r IS crossSectionRadius
+		initializeOnly SFInt32 tRes IS thetaResolution
+		initializeOnly SFInt32 pRes IS phiResolution
+		initializeOnly SFFloat rho IS rho
+
+		inputOnly SFFloat set_r IS set_radius
+		inputOnly SFFloat set_csR IS set_crossSectionRadius
+		inputOnly SFInt32 set_tRes IS set_thetaResolution
+		inputOnly SFInt32 set_pRes IS set_phiResolution
+		inputOnly SFFloat set_rho IS set_rho
+
+		outputOnly MFVec3f coord_out
+		outputOnly MFInt32 coordI_out
+
+		url "ecmascript:
+			function initialize() {
+				if(tRes<2||pRes<2||r<0||CS_r<0||rho<0||rho>=CS_r) {
+					print('Invalid initial data for PartialTorus');
+					return;
+				}
+				render();
+			}
+			function set_r(val,time) {if(val>0) {r=val; render();}}
+			function set_csR(val,time) {if(val>0) {CS_r=val; render();}}
+			function set_tRes(val,time) {if(val>2) {tRes=val; render();}}
+			function set_pRes(val,time) {if(val>2) {pRes=val; render();}}
+			function render() {
+				coord_out=new MFVec3f();
+				coordI_out=new MFInt32();
+
+				//i indicates how many points have been calculated.
+				i=0;
+				phimax=Math.asin(rho/CS_r);
+				phidelta=phimax/pRes;
+				//print('phidelta: '+phidelta);
+				for(phiI=1;phiI<=pRes;phiI++) {
+					phi=Math.min(phiI*phidelta,phimax*.99999);
+					//print('phiI: '+phiI+'\t\tphi: '+phi);
+					thetamax=Math.asin(Math.sqrt(rho*rho-CS_r*CS_r*Math.sin(phi)*Math.sin(phi))/(r+CS_r*Math.cos(phi)));
+					thetadelta=thetamax/tRes;
+					//print('thetadelta: '+thetadelta);
+					for(thetaI=1;thetaI<=tRes;thetaI++,i++) {
+						theta=Math.min(thetaI*thetadelta,thetamax*.99999);
+						x=Math.cos(theta)*(r+CS_r*Math.cos(phi));
+						y=Math.sin(theta)*(r+CS_r*Math.cos(phi));
+						z=CS_r*Math.sin(phi);
+						//print('thetaI:'+thetaI+'\ttheta: '+theta+'\n	i: '+i+'\tx:'+x+' y:'+y+' z:'+z);
+						//Plot points on all four sides of the x-axis
+						coord_out[i++]=new SFVec3f(x,y,z);
+						coord_out[i++]=new SFVec3f(x,y,-z);
+						coord_out[i++]=new SFVec3f(x,-y,z);
+						coord_out[i]=new SFVec3f(x,-y,-z);
+						//4th i++ is in loop increment -- we need 'old' i in following loop
+						//Now insert values into coordI array
+						for(bits=0;bits<16;bits++) {
+							phiC=thetaC=0;
+							if(bits&8) thetaC+=thetaI; else thetaC-=thetaI;
+							if(bits&4) phiC+=phiI; else phiC-=phiI;
+							if(bits&2) thetaC+=!(bits&8); else thetaC-=!!(bits&8);
+							if(bits&1) phiC+=!(bits&4); else phiC-=!!(bits&4);
+							//print('bits: '+bits+'\t\tP: '+phiC+'\tT: '+thetaC);
+							//Make sure our exploration hasn't taken us outside the section
+							if(Math.abs(phiC)>=pRes||Math.abs(thetaC)>=tRes) continue;
+							i1=phiC+pRes-1;i2=thetaC+tRes-1;i3=(bits&3)?((bits&3)+1)%3:3;val=i-((bits&12)>>2);
+							coordI_out[5*(2*tRes-1)*(i1)+5*(i2)+i3]=val;
+							//Yes, I know how wasteful this is.
+							coordI_out[5*(2*tRes-1)*(i1)+5*(i2)+4]=-1;
+							//print('coordI['+i1+']['+i2+']['+i3+']:='+val);
+						}
+					}
+				}
+//				print(coord_out);
+//				print(coordI_out);
+			}"
+	}
+	ROUTE Shipley.coord_out TO DonutCoord.set_point
+	ROUTE Shipley.coordI_out TO Donut.set_coordIndex
+}
+
+PROTO ConvexLens [
+	initializeOnly SFFloat radius 1
+	initializeOnly SFFloat radiusOfCurvature 5
+	initializeOnly SFInt32 resolution 24
+	initializeOnly SFInt32 depthResolution 6
+
+	inputOnly SFFloat set_radius
+	inputOnly SFFloat set_radiusOfCurvature
+	inputOnly SFInt32 set_resolution
+	inputOnly SFInt32 set_depthResolution
+]
+{
+	DEF Target Extrusion {
+		beginCap FALSE
+		endCap FALSE
+		solid FALSE
+		ccw FALSE
+	}
+	DEF Worker Script {
+		outputOnly MFVec2f cross_out
+		outputOnly MFVec3f spine_out
+		outputOnly MFVec2f scale_out
+		initializeOnly SFFloat r IS radius
+		initializeOnly SFFloat roc IS radiusOfCurvature
+		initializeOnly SFInt32 res IS resolution
+		initializeOnly SFInt32 dres IS depthResolution
+		inputOnly SFFloat r_in IS set_radius
+		inputOnly SFFloat roc_in IS set_radiusOfCurvature
+		inputOnly SFInt32 res_in IS set_resolution
+		inputOnly SFInt32 dres_in IS set_depthResolution
+		url "ecmascript:
+		function initialize() {
+			doCS();
+			doSpine();
+		}
+		function r_in(value,time) {
+			r=value;
+			doCS();
+			doSpine();
+		}
+		function roc_in(value,time) {
+			roc=value;
+			doSpine();
+		}
+		function res_in(value,time) {
+			res=value;
+			doCS();
+		}
+		function dres_in(value,time) {
+			dres=value;
+			doSpine();
+		}
+		function doSpine() {
+			phi_max=Math.asin(r/roc);
+			x=roc*Math.cos(phi_max);	//the amount of r*cos(phi) used up getting to the lens
+			for(i=0;i<dres;i++) {
+				phi=i/dres*phi_max;
+				spine_out[2*dres-i].z=-(spine_out[i].z=roc*Math.cos(phi)-x);
+				scale_out[2*dres-i]=scale_out[i]=new SFVec2f(Math.sin(phi)/Math.sin(phi_max),Math.sin(phi)/Math.sin(phi_max));
+			}
+			spine_out[dres]=new SFVec3f(0,0,0);
+			scale_out[dres]=new SFVec2f(1,1);
+		}
+		function doCS() {
+			for(i=0;i<res;i++) {
+				theta=i/res*2*Math.PI;
+				cross_out[i]=new SFVec2f(r*Math.cos(theta),r*Math.sin(theta));
+			}
+			cross_out[res]=new SFVec2f(r,0);
+		}"
+	}
+	ROUTE Worker.spine_out TO Target.set_spine
+	ROUTE Worker.scale_out TO Target.set_scale
+	ROUTE Worker.cross_out TO Target.set_crossSection
+}
+
+#This ideally would pick a thickness (that looked right) for you
+
+PROTO ConcaveLens [ initializeOnly SFFloat radius 1
+	initializeOnly SFFloat radiusOfCurvature 3
+	initializeOnly SFFloat thickness .2			#minimum thickness
+	initializeOnly SFInt32 resolution 24
+	initializeOnly SFInt32 depthResolution 6
+
+	inputOnly SFFloat set_radius
+	inputOnly SFFloat set_radiusOfCurvature
+	inputOnly SFFloat set_thickness
+	inputOnly SFInt32 set_resolution
+	inputOnly SFInt32 set_depthResolution
+]
+{
+	DEF Target Extrusion {
+		beginCap FALSE
+		endCap FALSE
+		solid FALSE
+		ccw FALSE
+	}
+	DEF Worker Script {
+		outputOnly MFVec2f cross_out
+		outputOnly MFVec3f spine_out
+		outputOnly MFVec2f scale_out
+		outputOnly MFRotation orient_out
+		initializeOnly SFFloat r IS radius
+		initializeOnly SFFloat roc IS radiusOfCurvature
+		initializeOnly SFFloat thick IS thickness
+		initializeOnly SFInt32 res IS resolution
+		initializeOnly SFInt32 dres IS depthResolution
+		inputOnly SFFloat r_in IS set_radius
+		inputOnly SFFloat roc_in IS set_radiusOfCurvature
+		inputOnly SFFloat thick_in IS set_thickness
+		inputOnly SFInt32 res_in IS set_resolution
+		inputOnly SFInt32 dres_in IS set_depthResolution
+		url "ecmascript:
+		function initialize() {
+			doCS();
+			doSpine();
+		}
+		function r_in(value,time) {
+			r=value;
+			doCS();
+			doSpine();
+		}
+		function roc_in(value,time) {
+			roc=value;
+			doSpine();
+		}
+		function thick_in(value,time) {
+			thick=value;
+			doSpine();
+		}
+		function res_in(value,time) {
+			res=value;
+			doCS();
+		}
+		function dres_in(value,time) {
+			dres=value;
+			doSpine();
+		}
+		function doCS() {
+			for(i=0;i<res;i++) {
+				theta=i/res*2*Math.PI;
+				cross_out[i]=new SFVec2f(r*Math.cos(theta),r*Math.sin(theta));
+			}
+			cross_out[res]=new SFVec2f(r,0);
+		}
+		function doSpine() {
+			phi_max=Math.asin(r/roc);
+			for(i=0;i<=dres;i++) {
+				phi=i/dres*phi_max;
+				spine_out[2*dres+1-i].z=-(spine_out[i].z=thick/2+roc*(1-Math.cos(phi)));
+				scale_out[2*dres+1-i]=scale_out[i]=new SFVec2f(Math.sin(phi)/Math.sin(phi_max),Math.sin(phi)/Math.sin(phi_max));
+				orient_out[dres+1+i]=new SFRotation(0,0,1,0);
+			}
+			orient_out[dres+1]=orient_out[dres]=new SFRotation(0,0,1,Math.PI);
+		}"
+	}
+	ROUTE Worker.spine_out TO Target.set_spine
+	ROUTE Worker.scale_out TO Target.set_scale
+	ROUTE Worker.cross_out TO Target.set_crossSection
+	ROUTE Worker.orient_out TO Target.set_orientation
+}
+
+PROTO Octant [ initializeOnly SFFloat radius 1
+							 inputOnly SFFloat set_radius
+							 outputOnly SFFloat radius_changed
+
+							 initializeOnly SFInt32 thetaResolution 12
+							 inputOnly SFInt32 set_thetaResolution
+
+							 initializeOnly SFInt32 phiResolution 12
+							 inputOnly SFInt32 set_phiResolution
+
+							 initializeOnly SFBool solid FALSE
+
+							 inputOutput SFNode color NULL
+							 initializeOnly MFInt32 colorIndex []
+							 inputOnly MFInt32 set_colorIndex ]
+{
+	DEF IFS IndexedFaceSet {
+		coord DEF C Coordinate {}
+		solid IS solid
+		color IS color
+		colorIndex IS colorIndex
+		set_colorIndex IS set_colorIndex
+	}
+	DEF Worker Script {
+		initializeOnly SFFloat radius IS radius
+		inputOnly SFFloat radius_in IS set_radius
+		outputOnly SFFloat radius_out IS radius_changed
+
+		initializeOnly SFInt32 thetaRes IS thetaResolution
+		inputOnly SFInt32 thetaRes_in IS set_thetaResolution
+
+		initializeOnly SFInt32 phiRes IS phiResolution
+		inputOnly SFInt32 phiRes_in IS set_phiResolution
+
+		outputOnly MFVec3f point_out
+		outputOnly MFInt32 cindex_out
+
+		url "ecmascript:
+		function initialize() {render();}
+		function radius_in(value, time) {
+			if(value<0) print('Octant::radius_in: invalid negative value '+value);
+			radius=value;
+			radius_out=value;
+			render();
+		}
+		function thetaRes_in(value, time) {
+			if(value<3) print('Octant::thetaRes_in: resolution '+value+' too small (must be >=3)');
+			thetaRes=value;
+			render();
+		}
+		function phiRes_in (value, time) {
+			if(value<3) print('Octant::phiRes_in: resolution '+value+' too small (must be >=3)');
+			phiRes=value;
+			render();
+		}
+
+		function render() {
+			coord_out=new MFVec3f();
+			coordI_out=new MFInt32();
+
+			for(var i=0;i<thetaRes;++i) {
+				var theta=Math.PI/2/(thetaRes-1)*i;
+				for(var j=0;j<phiRes;++j) {
+					var phi=Math.PI/2/(phiRes-1)*j;
+					coord_out[i*phiRes+j]=new SFVec3f(radius*Math.sin(theta)*Math.cos(phi),
+																						radius*Math.sin(theta)*Math.sin(phi),
+																						radius*Math.cos(theta));
+				}
+			}
+
+			for(var i=0;i<thetaRes-1;++i)
+				for(var j=0;j<phiRes-1;++j) {
+					var index=5*(i*(phiRes-1)+j);
+					coordI_out[index]=i*phiRes+j;
+					coordI_out[index+1]=(i+1)*phiRes+j;
+					coordI_out[index+2]=(i+1)*phiRes+(j+1);
+					coordI_out[index+3]=i*phiRes+(j+1);
+					coordI_out[index+4]=-1;
+				}
+
+			point_out=coord_out;
+			cindex_out=coordI_out;
+		}
+		"
+	}
+	ROUTE Worker.point_out TO C.set_point
+	ROUTE Worker.cindex_out TO IFS.set_coordIndex
+}

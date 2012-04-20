@@ -1,0 +1,171 @@
+<!-- WebTOP Script Language Document Type Definition -->
+<!-- Author: Yong Tze Chi                            -->
+<!-- Date  : July 26, 2001                           -->
+
+<!-- WSL DTD under revision by Davis Herring         -->
+<!-- Attempt at generalization to all WebTOP modules -->
+<!-- Revision begun June 21 2002                     -->
+<!-- Updated August 19 2003                          -->
+
+<!--
+
+  This DTD defines the WebTOP Scripting Language that is used by
+  WebTOP modules for recording user interactions.  Scripting-capable
+  WebTOP modules record user actions and write a file in the WSL
+  format.  These modules can later load the WSL file back and play
+  back the user actions.
+
+-->
+
+<!ELEMENT wsl (init, script?)>
+<!ATTLIST wsl
+	module	CDATA	#REQUIRED> <!-- name of the module -->
+
+<!ELEMENT init (param*, vrmlobject*, viewpoint?)>
+
+<!ELEMENT param EMPTY>
+<!ATTLIST param
+	name	CDATA	#REQUIRED
+	value	CDATA	#REQUIRED>
+
+<!ELEMENT vrmlobject (param*)>
+<!ATTLIST vrmlobject
+	type	CDATA	#REQUIRED
+	id	CDATA	#IMPLIED>
+
+
+<!-- viewpoint tag -->
+<!ELEMENT viewpoint EMPTY>
+<!ATTLIST viewpoint
+	value	CDATA	#REQUIRED>
+
+<!-- script tag -->
+<!ELEMENT script ((actionPerformed | parameterSet |
+                   mouseEntered | mouseExited |
+                   mousePressed | mouseReleased | mouseDragged
+                   objectAdded | objectRemoved | viewpointChanged
+                   viewpointSelected)*, scriptEnded?)>
+<!-- should scriptEnded be optional? [Davis] -->
+
+<!--
+
+  The old (read: current) actionPerformed has a dual nature: simple
+  functions like "Reset" that have no parameters or values, and setting
+  parameters (usually other than with the mouse).  I believe it makes sense
+  to allow actionPerformed to keep its "target" attribute, because one
+  could in theory reset only a certain source, or in some other way 'do'
+  something to it.
+
+-->
+
+<!-- actionPerformed tag -->
+<!ELEMENT actionPerformed EMPTY>
+<!ATTLIST actionPerformed
+	target	CDATA	#IMPLIED
+	action	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!-- parameterSet tag -->
+<!ELEMENT parameterSet EMPTY>
+<!ATTLIST parameterSet
+	target	CDATA	#IMPLIED
+	param	CDATA	#REQUIRED
+	value	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!--  mouseEntered tag -->
+<!ELEMENT mouseEntered EMPTY>
+<!ATTLIST mouseEntered
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	timeStamp	CDATA	"0">
+
+<!-- mouseExited tag -->
+<!ELEMENT mouseExited EMPTY>
+<!ATTLIST mouseExited
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	timeStamp	CDATA	"0">
+
+<!-- mousePressed tag -->
+<!ELEMENT mousePressed EMPTY>
+<!ATTLIST mousePressed
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	timeStamp	CDATA	"0">
+
+<!-- mouseReleased tag -->
+<!ELEMENT mouseReleased EMPTY>
+<!ATTLIST mouseReleased
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	timeStamp	CDATA	"0">
+
+<!--
+
+  It is questionable that mouseDragged should have a value; in some modules,
+  it is always accompanied by an actionPerformed (or parameterSet) anyway.
+  However, as it stands it is useful to distinguish between a widget
+  interaction and a console interaction, and it is convenient to carry that
+  distinction even in the individual events (as opposed to relying on
+  mousepressed and mousereleased events), so it can probably stay.  Ideally, a
+  mouse interaction (a down, maybe drags, and an up) would be a mouse tag:
+
+<!ELEMENT mouse (drag*)>
+<!ATTLIST mouse
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	downStamp	CDATA	"0"
+	upStamp	CDATA	"0">
+
+<!ELEMENT drag EMPTY>
+<!ATTLIST drag
+	value	CDATA	#IMPLIED
+	timeStamp	CDATA	"0">
+
+  This, however, incurs the cost of destroying the linear concept of a script.
+  An alternative would be to specify in the script sub-element list that such
+  events came in (mousePressed, mouseDragged*, mouseReleased) packets.
+
+  Mouse entered and exited events should not be so atomic as they can be
+  freely intermixed with keyboard (console) interactions.
+
+-->
+
+<!-- mouseDragged tag -->
+<!ELEMENT mouseDragged EMPTY>
+<!ATTLIST mouseDragged
+	target	CDATA	#IMPLIED
+	param	CDATA	#IMPLIED
+	value	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!-- objectAdded tag -->
+<!ELEMENT objectAdded (vrmlobject)>
+<!ATTLIST objectAdded
+	timeStamp	CDATA	"0">
+
+<!-- objectRemoved tag -->
+<!ELEMENT objectRemoved EMPTY>
+<!ATTLIST objectRemoved
+	target	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!-- viewpointChanged tag -->
+<!ELEMENT viewpointChanged EMPTY>
+<!ATTLIST viewpointChanged
+	value	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!-- viewpointSelected tag -->
+<!ELEMENT viewpointSelected EMPTY>
+<!ATTLIST viewpointSelected
+	value	CDATA	#REQUIRED
+	timeStamp	CDATA	"0">
+
+<!-- end-of-script tag -->
+<!ELEMENT scriptEnded EMPTY>
+<!ATTLIST scriptEnded
+	timeStamp	CDATA	"0">
+
+<!-- End of wsl.dtd -->

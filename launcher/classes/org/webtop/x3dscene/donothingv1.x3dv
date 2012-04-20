@@ -1,0 +1,68 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+#The preceeding header is required for all .x3dv file.  The Immersive Profile uses the immersive specification(full spec). 
+
+#Include the wheel widget native to WebTOP
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+
+
+
+DEF HelloTransform Transform {
+			#Box#
+			scale 1 1 1 
+			translation 0 0 0
+			children [
+				Shape {
+					appearance Appearance {
+						material DEF boxColor Material {
+							diffuseColor 1 0 0
+						}
+					}
+					geometry DEF HelloSphere Sphere {
+				}
+			
+				}#End Shape
+			]
+}
+
+Transform {
+	translation -2 -2 0
+	children[
+		DEF TestWidget WheelWidget{
+			minValue 0
+			maxValue 1
+		}
+	]
+}
+
+DEF HelloInterpolation PositionInterpolator{
+	key [ 0 1 ]
+	keyValue [
+		1 1 1
+		2 2 2
+	]
+}
+
+ROUTE TestWidget.value_changed TO HelloInterpolation.set_fraction
+ROUTE HelloInterpolation.value_changed TO HelloTransform.scale

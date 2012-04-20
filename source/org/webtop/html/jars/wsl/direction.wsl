@@ -1,0 +1,40 @@
+<wsl>
+  <singleslit wavelength="550.0" slitWidth="0.332" z="25.0" widgets="visible" action="reset">
+    <view value="0.122636795 0.70232344 -0.15 0.0 -1.0 -8.0" />
+  </singleslit>
+  <script>
+    <viewpointChanged value="0.12263584 0.70232344 0.0 0.0 -2.0 -12.114326" timeStamp="3265" />
+    <viewpointChanged value="0.12263584 0.67176616 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.12263727 0.67176616 0.0 0.0 -2.0 -12.114326" timeStamp="90" />
+    <viewpointChanged value="0.12263727 0.64120865 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.12263775 0.64120865 0.0 0.0 -2.0 -12.114326" timeStamp="70" />
+    <viewpointChanged value="0.12263775 0.5800922 0.0 0.0 -2.0 -12.114326" timeStamp="10" />
+    <viewpointChanged value="0.15321732 0.5800922 0.0 0.0 -2.0 -12.114326" timeStamp="70" />
+    <viewpointChanged value="0.15321732 0.51897717 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.15321541 0.51897717 0.0 0.0 -2.0 -12.114326" timeStamp="90" />
+    <viewpointChanged value="0.15321541 0.39674616 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.1837964 0.39674616 0.0 0.0 -2.0 -12.114326" timeStamp="80" />
+    <viewpointChanged value="0.1837964 0.335631 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 0.335631 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 0.30507374 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 0.30507374 0.0 0.0 -2.0 -12.114326" timeStamp="90" />
+    <viewpointChanged value="0.18379545 0.24395895 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 0.24395895 0.0 0.0 -2.0 -12.114326" timeStamp="80" />
+    <viewpointChanged value="0.18379545 0.21340173 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379593 0.21340173 0.0 0.0 -2.0 -12.114326" timeStamp="90" />
+    <viewpointChanged value="0.18379593 0.1522851 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.1837945 0.1522851 0.0 0.0 -2.0 -12.114326" timeStamp="91" />
+    <viewpointChanged value="0.1837945 0.121727824 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 0.121727824 0.0 0.0 -2.0 -12.114326" timeStamp="80" />
+    <viewpointChanged value="0.18379545 0.030055463 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379593 0.030055463 0.0 0.0 -2.0 -12.114326" timeStamp="90" />
+    <viewpointChanged value="0.18379593 -5.0348043E-4 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 -5.0348043E-4 0.0 0.0 -2.0 -12.114326" timeStamp="110" />
+    <viewpointChanged value="0.18379545 -5.0354004E-4 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 -5.0354004E-4 0.0 0.0 -2.0 -12.114326" timeStamp="120" />
+    <viewpointChanged value="0.18379545 -5.0354004E-4 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <viewpointChanged value="0.18379545 -5.0354004E-4 0.0 0.0 -2.0 -12.114326" timeStamp="120" />
+    <viewpointChanged value="0.18379545 -5.0354004E-4 0.0 0.0 -2.0 -12.114326" timeStamp="0" />
+    <scriptEnded timeStamp="1823" />
+  </script>
+</wsl>

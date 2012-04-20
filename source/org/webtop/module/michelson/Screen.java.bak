@@ -1,0 +1,144 @@
+package webtop.michelson;
+
+import java.awt.*;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+
+public class Screen
+{
+	public static final float SIZE=30;			//Length of one side of the screen
+
+	int x_cells=6;	// number of cells across
+	int y_cells=6;	// number of cells up/down
+
+	private Engine myEngine;
+
+	int cell_number;
+	float rgb[]=new float[3];
+	float color[][];
+	int []coordIndices;
+	float point[][];
+
+	EventInMFVec3f m_set_point;
+	EventInMFColor m_set_color;
+	EventInMFInt32 m_set_coordIndex;
+
+	//EventOutSFVec3f screen_translation_out;
+
+	public Screen(Engine E) {
+		this(E,"ifsNode","ifs_coordinateNode","ifs_colorNode"/*,"screenDragger"*/);
+	}
+
+	public Screen(Engine E,String ifs_node,String coordinate_node,
+								String color_node/*,String dragger_node*/) {
+		myEngine=E;
+		webtop.vrml.EAI eai=myEngine.getWorld();
+
+		m_set_point = (EventInMFVec3f) eai.getEI(coordinate_node,"set_point");
+		m_set_coordIndex = (EventInMFInt32) eai.getEI(ifs_node,"set_coordIndex");
+		m_set_color = (EventInMFColor) eai.getEI(color_node,"set_color");
+	}
+
+	/*****************************************/
+	/** Evaluate														**/
+	/*****************************************/
+	//We only actually calculate anything for the top half of the screen; the VRML file
+	//replicates it for the bottom.	 We assume that y_cells is an odd number(!).
+	public void evaluate(int x,int y) {
+		boolean resChange=(x_cells!=x)||(y_cells!=y);
+		x_cells=x;
+		y_cells=y;
+
+		if(resChange) {
+			cell_number=(x_cells)*(y_cells/2+1);
+			color=new float[cell_number][3];
+			coordIndices = new int[(x_cells-1)*(y_cells/2)*5];
+			point=new float[cell_number][3];
+
+			//This line clears the field so Blaxxun has no issues.
+			//We could use beginUpdate()/endUpdate(), but that's Blaxxun-specific.
+			//It also won't be needed if we revert to having two screens
+			//(and do point/coordinate buffering to boot).
+			m_set_color.setValue(color);
+			evaluatePoints();
+			evaluateCoords();
+		}
+		evaluateColors();
+	}
+
+	private void evaluateCoords() {
+		// setup the screen
+		int index0,index1,index2,index3;
+		int coords_index=0;
+
+		// Cycle through each point on the screen
+		for(int x=0;x<x_cells-1;x++) {
+			for(int y=0;y<y_cells/2;y++) {
+				index0=(x)+(y)*(x_cells);
+				index1=(x+1)+(y)*(x_cells);
+				index2=(x+1)+(y+1)*(x_cells);
+				index3=(x)+(y+1)*(x_cells);
+
+				// create the coord indices for a quad with index0 at top left corner
+				coordIndices[coords_index++]=index0;
+				coordIndices[coords_index++]=index1;
+				coordIndices[coords_index++]=index2;
+				coordIndices[coords_index++]=index3;
+				coordIndices[coords_index++]=-1;
+			}
+		}
+
+		//*********************************
+		// Pass the Information to the vrml world
+		//*********************************
+		m_set_coordIndex.setValue(coordIndices);
+	}
+
+	private void evaluatePoints() {
+		// setup the screen
+		double dx=SIZE/(x_cells-1);
+		double dy=SIZE/(y_cells-1);
+		double startX=-SIZE/2;
+		double stopX=SIZE/2;
+		double startY=0;
+		double stopY=SIZE/2;
+
+		int index0,index1,index2,index3;
+		int coords_index=0;
+
+		//**********************************
+		// Define points
+		//**********************************
+		for(int x=0;x<x_cells;x++) {
+			for(int y=0;y<=y_cells/2;y++) {
+				index0=(x)+(y)*(x_cells);
+
+				point[index0][0]=(float) (startX+x*dx);
+				point[index0][1]=(float) (startY+y*dy);
+				point[index0][2]=0.0f;
+			}
+		}
+
+		//*********************************
+		// Pass the Information to the vrml world
+		//*********************************
+		m_set_point.setValue(point);
+	}
+
+	private void evaluateColors() {
+		// setup the screen
+		double dx=SIZE/(x_cells-1);
+		double dy=SIZE/(y_cells-1);
+
+		//*********************************
+		// Define intensities
+		//*********************************
+		for(int x=0;x<x_cells;x++)
+			for(int y=0;y<=y_cells/2;y++)
+				color[x+y*x_cells]=myEngine.getRGB(myEngine.intensity(-SIZE/2+x*dx,y*dy));
+
+		m_set_color.setValue(color);
+	}
+}

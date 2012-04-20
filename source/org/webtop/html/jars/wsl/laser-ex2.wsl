@@ -1,0 +1,18 @@
+<wsl>
+  <laser length="1000.0" screenDist="1400.0" radius1="520.0" radius2="520.0" wavelength="550.0" intensity="231" aperture="Gaussian Beam -- TEM 00">
+    <view value="-0.242 0.536 0.0 -2.798 -0.768 -3.041" />
+  </laser>
+  <script>
+    <actionPerformed param="wavelength" value="550.0" timeStamp="3000" />
+    <actionPerformed param="radius1" value="1000.0" timeStamp="0" />
+    <actionPerformed param="radius2" value="1000.0" timeStamp="0" />
+    <actionPerformed param="length" value="1000.0" timeStamp="10" />
+    <actionPerformed param="screenDist" value="1400.0" timeStamp="0" />
+    <actionPerformed param="wavelength" value="550.0" timeStamp="3000" />
+    <actionPerformed param="radius1" value="10000.0" timeStamp="0" />
+    <actionPerformed param="radius2" value="10000.0" timeStamp="0" />
+    <actionPerformed param="length" value="1000.0" timeStamp="0" />
+    <actionPerformed param="screenDist" value="1400.0" timeStamp="0" />
+    <scriptEnded timeStamp="20" />
+  </script>
+</wsl>

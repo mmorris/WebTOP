@@ -1,0 +1,23 @@
+<wsl>
+  <rrwaves play="Play" waveQuality="Very Smooth" amplitude="4.0" wavelength="16.0" angle="45.0" n1="1.0" n2="1.5">
+    <view value="-0.77 0.0 0.0 0.0 0.2 -7.0" />
+  </rrwaves>
+  <script>
+    <actionPerformed param="reset" timeStamp="10" />
+    <actionPerformed param="grid" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <actionPerformed param="widgets" timeStamp="10" />
+    <actionPerformed param="angle" value="0.0" timeStamp="10" />
+    <actionPerformed param="n1" value="1.5" timeStamp="10" />
+    <actionPerformed param="n2" value="1.0" timeStamp="10" />
+    <actionPerformed param="play" value="Stop" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="n2" value="3.0" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="play" value="Play" timeStamp="8000" />
+    <scriptEnded timeStamp="10" />
+  </script>
+</wsl>

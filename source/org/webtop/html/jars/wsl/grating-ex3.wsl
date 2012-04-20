@@ -1,0 +1,94 @@
+<wsl>
+  <grating slits="50" userSlits="50" width="0.1" userWidth="0.1" distance="1.5" userDistance="2.0" intensity="1" userIntensity="1" lampChoice="Helium" wavelength="400.0" mode="User Defined" lambda1="450.0" lambda2="500.0">
+    <view value="-0.45 0.0 0.0 0.0 0.0 1.3" />
+  </grating>
+  <script>
+    <viewpointChanged value="-0.45 0.0656 0.0 0.0 0.0 1.3" timeStamp="80" />
+    <viewpointChanged value="-0.45 0.0984 0.0 0.0 0.0 1.3" timeStamp="78" />
+    <viewpointChanged value="-0.45 0.131 0.0 0.0 0.0 1.3" timeStamp="125" />
+    <viewpointChanged value="-0.45 0.164 0.0 0.0 0.0 1.3" timeStamp="47" />
+    <viewpointChanged value="-0.417 0.164 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.417 0.197 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.417 0.23 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.417 0.263 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.417 0.295 0.0 0.0 0.0 1.3" timeStamp="78" />
+    <viewpointChanged value="-0.417 0.328 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.417 0.361 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.417 0.427 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.417 0.459 0.0 0.0 0.0 1.3" timeStamp="47" />
+    <viewpointChanged value="-0.417 0.492 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.417 0.525 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.417 0.558 0.0 0.0 0.0 1.3" timeStamp="140" />
+    <viewpointChanged value="-0.417 0.591 0.0 0.0 0.0 1.3" timeStamp="32" />
+    <viewpointChanged value="-0.417 0.624 0.0 0.0 0.0 1.3" timeStamp="109" />
+    <viewpointChanged value="-0.417 0.656 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.417 0.722 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.417 0.755 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.417 0.788 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.417 0.82 0.0 0.0 0.0 1.3" timeStamp="78" />
+    <viewpointChanged value="-0.417 0.853 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.417 0.886 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.417 0.919 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.417 0.952 0.0 0.0 0.0 1.3" timeStamp="110" />
+    <viewpointChanged value="-0.384 0.984 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.384 1.017 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.384 1.05 0.0 0.0 0.0 1.3" timeStamp="109" />
+    <viewpointChanged value="-0.384 1.083 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.352 1.083 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.352 1.116 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.319 1.116 0.0 0.0 0.0 1.3" timeStamp="47" />
+    <viewpointChanged value="-0.319 1.149 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.319 1.181 0.0 0.0 0.0 1.3" timeStamp="125" />
+    <viewpointChanged value="-0.286 1.214 0.0 0.0 0.0 1.3" timeStamp="47" />
+    <viewpointChanged value="-0.286 1.247 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.286 1.28 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.286 1.313 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.286 1.345 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.286 1.378 0.0 0.0 0.0 1.3" timeStamp="47" />
+    <viewpointChanged value="-0.286 1.411 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.286 1.444 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.286 1.477 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.286 1.51 0.0 0.0 0.0 1.3" timeStamp="141" />
+    <viewpointChanged value="-0.286 1.542 0.0 0.0 0.0 1.3" timeStamp="125" />
+    <viewpointChanged value="-0.286 1.575 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.286 1.608 0.0 0.0 0.0 1.3" timeStamp="79" />
+    <viewpointChanged value="-0.286 1.641 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.253 1.674 0.0 0.0 0.0 1.3" timeStamp="141" />
+    <viewpointChanged value="-0.253 1.706 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.253 1.739 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.253 1.772 0.0 0.0 0.0 1.3" timeStamp="78" />
+    <viewpointChanged value="-0.253 1.805 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.253 1.838 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.253 1.871 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.22 1.903 0.0 0.0 0.0 1.3" timeStamp="110" />
+    <viewpointChanged value="-0.22 1.936 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.187 1.969 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.187 2.002 0.0 0.0 0.0 1.3" timeStamp="78" />
+    <viewpointChanged value="-0.187 2.035 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.155 2.035 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.155 2.067 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.155 2.1 0.0 0.0 0.0 1.3" timeStamp="110" />
+    <viewpointChanged value="-0.122 2.133 0.0 0.0 0.0 1.3" timeStamp="31" />
+    <viewpointChanged value="-0.122 2.166 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.122 2.199 0.0 0.0 0.0 1.3" timeStamp="62" />
+    <viewpointChanged value="-0.122 2.231 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.089 2.231 0.0 0.0 0.0 1.3" timeStamp="109" />
+    <viewpointChanged value="-0.089 2.264 0.0 0.0 0.0 1.3" timeStamp="63" />
+    <viewpointChanged value="-0.089 2.297 0.0 0.0 0.0 1.3" timeStamp="109" />
+    <viewpointChanged value="-0.089 2.33 0.0 0.0 0.0 1.3" timeStamp="125" />
+    <viewpointChanged value="-0.0562 2.363 0.0 0.0 0.0 1.3" timeStamp="203" />
+    <viewpointChanged value="-0.0562 2.396 0.0 0.0 0.0 1.3" timeStamp="94" />
+    <viewpointChanged value="-0.0562 2.428 0.0 0.0 0.0 1.3" timeStamp="109" />
+    <viewpointChanged value="-0.0562 2.461 0.0 0.0 0.0 1.3" timeStamp="125" />
+    <viewpointChanged value="-0.0234 2.494 0.0 0.0 0.0 1.3" timeStamp="110" />
+    <viewpointChanged value="-0.0234 2.527 0.0 0.0 0.0 1.3" timeStamp="156" />
+    <viewpointChanged value="-0.0234 2.56 0.0 0.0 0.0 1.3" timeStamp="469" />
+    <actionPerformed param="userWidth" value="0.2" timeStamp="3000" />
+    <actionPerformed param="userWidth" value="0.3" timeStamp="3000" />
+    <actionPerformed param="userWidth" value="0.4" timeStamp="3000" />
+    <actionPerformed param="userWidth" value="0.3" timeStamp="3000" />
+    <actionPerformed param="userWidth" value="0.2" timeStamp="3000" />
+    <actionPerformed param="userWidth" value="0.1" timeStamp="3000" />
+    <scriptEnded timeStamp="20" />
+  </script>
+</wsl>

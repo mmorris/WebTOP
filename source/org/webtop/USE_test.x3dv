@@ -1,0 +1,87 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+#PROTO Cube [
+#    initializeOnly SFVec3f cubeSize 1 1 1
+#    initializeOnly SFColor color 0 1 0
+#]
+#{
+#    Shape {
+#        appearance Appearance {
+#            material Material {diffuseColor IS color}
+#        }
+#        geometry Box {
+#            size IS cubeSize
+#        }
+#    }
+#}
+
+EXTERNPROTO Cube [
+    initializeOnly SFVec3f cubeSize
+    initializeOnly SFColor color
+]
+"bluecube.x3dv"
+
+
+Viewpoint {
+    position 0 0 1000
+}
+
+### USEing regular geometry works.
+#########################
+#### Centering Sphere ###
+#########################
+#
+DEF Ball Shape { #working!
+    appearance Appearance {
+        material Material {diffuseColor 1 1 1}
+    }
+    geometry Sphere {
+        radius 25
+    }
+}
+
+#############################
+#### Right-shifted Sphere ###
+#############################
+#
+#Transform {
+#    translation 75 0 0
+#    children USE Ball 
+#}
+
+
+
+### Works.  So simple PROTOed nodes ok.
+#Transform {
+#    translation 75 0 0
+#    children
+#        DEF BlueCube Cube {
+#            cubeSize 25 25 25
+#            color 0 0 1
+#        }
+#}
+#
+#Transform {
+#    translation -60 0 0
+#    children USE BlueCube
+#}
+
+
+### Does not work.  I draw the conclusion that EXTERNPROTOed nodes do not work with USE
+### Note that the below section of code is just like that of above,
+###    except the colors of the Cubes are green, and the Cube definition is external.
+Transform {
+    translation 75 0 0
+    children
+        DEF GreenCube Cube {
+            cubeSize 25 25 25
+            color 0 1 0
+        }
+}
+
+Transform {
+    translation -60 0 0
+    children USE GreenCube
+}

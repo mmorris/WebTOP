@@ -1,0 +1,555 @@
+//FresnelCircular.java
+//Applet file for the Fresnel Circular Module
+//Kiril Vidimce (reworked by Davis Herring)
+//Updated October 26 2002
+//Version 2.0
+
+package webtop.circular;
+
+import java.applet.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import vrml.external.field.*;
+
+import sdl.math.FPRound;
+import sdl.gui.numberbox.*;
+
+import webtop.component.*;
+import webtop.util.*;
+import webtop.vrml.*;
+import webtop.vrml.widget.*;
+import webtop.util.script.NavigationPanelScripter;
+
+import webtop.wsl.client.*;
+import webtop.wsl.event.*;
+import webtop.wsl.script.*;
+
+public class FresnelCircular extends Applet
+	implements EventOutObserver,EAI.InvalidEventListener,WSLModule,WSLScriptListener
+{
+	public static final float DEF_WAVELENGTH=500,
+		DEF_DIAMETER=(float)Math.sqrt(2)/2,
+		DEF_Z=50;
+
+	public static final Object
+		CIRCULAR_DRAGGER_TRANSLATION = new Object(),
+		CIRCULAR_DRAGGER_IS_ACTIVE	 = new Object(),
+		CIRCULAR_DRAGGER_IS_OVER	 = new Object(),
+		SCREEN_DRAGGER_TRANSLATION	 = new Object(),
+		SCREEN_DRAGGER_IS_ACTIVE	 = new Object(),
+		SCREEN_DRAGGER_IS_OVER		 = new Object(),
+		WAVELENGTH_WHEEL_ROTATION		 = new Object(),
+		WAVELENGTH_WHEEL_IS_ACTIVE		 = new Object(),
+		WAVELENGTH_WHEEL_IS_OVER		 = new Object(),
+		SCREEN_READOUT							 = new Object();
+
+	public String
+		DIAMETER_DRAGGER_HELP,SCREEN_DRAGGER_HELP,WAVELENGTH_WHEEL_HELP, DIAMETER_DRAGGER_ERROR,
+		SCREEN_DRAGGER_ERROR,WAVELENGTH_WHEEL_ERROR;
+
+	public final static Color BACKGROUND = Color.darkGray;
+	public final static Color FOREGROUND = Color.white;
+
+	private Screen engine;
+	private ApertureEngine apertureEngine;
+
+	private EAI eai;
+
+	LanguageManager languageManager;
+
+	//EAI references
+	private EventInSFInt32 warningChoice;
+	private EventInSFFloat circularDragger_position_in;
+	private EventInSFFloat screenDragger_position_in;
+	private EventInSFFloat wavelengthWidget_value_in;
+	private EventOutSFFloat circularDragger_position_out;
+	private EventOutSFFloat screenDragger_position_out;
+	private EventOutSFFloat wavelengthWidget_value_out;
+	private EventOutSFBool circularDragger_isOver_out;
+	private EventOutSFBool circularDragger_isActive_out;
+	private EventOutSFBool screenDragger_isOver_out;
+	private EventOutSFBool screenDragger_isActive_out;
+	private EventOutSFBool wavelengthWidget_isOver_out;
+	private EventOutSFBool wavelengthWidget_isActive_out;
+	private EventInSFInt32 resolutionChoice;
+	private EventOutSFVec3f screen_hitPoint_out;
+
+	boolean draggingWidget = false;
+
+	public static final int APERTURE_MODE=0,OBSTACLE_MODE=1;
+	private int mode=APERTURE_MODE;
+
+	//Sorta-kinda temporary [Davis]
+	public static final float OBSTACLE_SCALE=3;
+
+	//private ConsolePanel consolePanel;
+	private InfoPanel infoPanel;
+	private ButtonPanel buttonPanel;
+	private StatusBar statusBar;
+
+	private WSLPlayer wslPlayer;
+	//Remove once WAppletized:
+	private NavigationPanelScripter nps;
+	private WSLPanel wslPanel;
+
+	public String traducir(String llave) { return languageManager.getString(llave); }
+
+	public void init() {
+		
+		languageManager = new LanguageManager(this,"circular","english");
+
+		DIAMETER_DRAGGER_HELP = traducir("diameter_dragger_hlp");
+		SCREEN_DRAGGER_HELP=traducir("screen_dragger_hlp");
+		WAVELENGTH_WHEEL_HELP=traducir("wavelength_wheel_help");
+		DIAMETER_DRAGGER_ERROR=traducir("diameter_dragger_err");
+		SCREEN_DRAGGER_ERROR=traducir("screen_dragger_err");
+		WAVELENGTH_WHEEL_ERROR=traducir("wavelength_wheel_err");
+		System.out.print(WApplet.INTRODUCTION);
+
+		//WSL stuff must be created first to be available for use by
+		//other GUI classes; it must be added last to be at the bottom.
+		wslPlayer = new WSLPlayer(this);
+		wslPlayer.addListener(this);
+		wslPanel = new WSLPanel(wslPlayer);
+
+		setLayout(new VerticalLayout());
+
+		setFont(new Font ("Helvetica", Font.PLAIN, 11));
+		setBackground(BACKGROUND);
+		setForeground(FOREGROUND);
+
+		infoPanel = new InfoPanel(this);
+		add(infoPanel);
+
+		add(new Separator(getSize().width,4));
+
+		buttonPanel = new ButtonPanel(this);
+		add(buttonPanel);
+		buttonPanel.setInfoPanel(infoPanel);
+
+		add(new Separator(getSize().width, 4));
+
+		statusBar = new StatusBar(traducir("welcome_msg"));
+		statusBar.setPreferredSize(new Dimension(getSize().width+7, 20));
+		statusBar.setForeground(Color.yellow);
+		add(statusBar);
+
+		add(wslPanel);
+	}
+
+	public void start() {
+		eai=new EAI(this,this);
+		if(eai.world==null) invalidEvent(null,null);
+		NavigationPanel navPanel=new NavigationPanel(eai,eai.getNode("NavPanel"),(short)0,"Changes viewpoints.");
+		new RecursiveListener(this,new ViewpointReader(navPanel,KeyEvent.VK_F12,KeyEvent.SHIFT_MASK)).setup();
+		new RecursiveListener(this,new ViewpointReset(navPanel,KeyEvent.VK_F12,0)).setup();
+		nps=new NavigationPanelScripter(navPanel,wslPlayer);
+
+		//engine = new Screen(eai);
+		engine = new Screen(this);
+		apertureEngine = new ApertureEngine(eai);
+
+		buttonPanel.setEngines(engine, apertureEngine);
+		buttonPanel.setEAI(eai);
+
+		screenDragger_position_in = (EventInSFFloat)eai.getEI("ScreenDragger", "set_position");
+		screenDragger_position_out = (EventOutSFFloat)eai.getEO("ScreenDragger", "position_changed", this, SCREEN_DRAGGER_TRANSLATION);
+		screenDragger_isActive_out = (EventOutSFBool)eai.getEO("ScreenDragger", "isActive_out", this, SCREEN_DRAGGER_IS_ACTIVE);
+		screenDragger_isOver_out = (EventOutSFBool)eai.getEO("ScreenDragger", "isOver_out", this, SCREEN_DRAGGER_IS_OVER);
+
+		circularDragger_position_in = (EventInSFFloat)eai.getEI("DiameterDragger", "set_position");
+		circularDragger_position_out = (EventOutSFFloat)eai.getEO("DiameterDragger", "position_changed", this, CIRCULAR_DRAGGER_TRANSLATION);
+		circularDragger_isActive_out = (EventOutSFBool)eai.getEO("DiameterDragger", "isActive_out", this, CIRCULAR_DRAGGER_IS_ACTIVE);
+		circularDragger_isOver_out = (EventOutSFBool)eai.getEO("DiameterDragger", "isOver_out", this, CIRCULAR_DRAGGER_IS_OVER);
+
+		wavelengthWidget_value_in = (EventInSFFloat)eai.getEI("WavelengthWidget", "set_value");
+		wavelengthWidget_value_out = (EventOutSFFloat)eai.getEO("WavelengthWidget", "value_changed", this, WAVELENGTH_WHEEL_ROTATION);
+		wavelengthWidget_isActive_out = (EventOutSFBool)eai.getEO("WavelengthWidget", "isActive_out", this, WAVELENGTH_WHEEL_IS_ACTIVE);
+		wavelengthWidget_isOver_out = (EventOutSFBool)eai.getEO("WavelengthWidget", "isOver_out", this, WAVELENGTH_WHEEL_IS_OVER);
+
+		resolutionChoice = (EventInSFInt32)eai.getEI("ResolutionSwitch", "set_whichChoice");
+		warningChoice = (EventInSFInt32)eai.getEI("WarningSwitch", "set_whichChoice");
+
+		screen_hitPoint_out = (EventOutSFVec3f)eai.getEO("ScreenTouch", "hitPoint_changed", this, SCREEN_READOUT);
+
+		apertureEngine.evaluate(getMode());
+
+		infoPanel.setNF(engine.evaluate(getMode()));
+		infoPanel.setWavelength(DEF_WAVELENGTH);
+		infoPanel.setDiameter(DEF_DIAMETER);
+		infoPanel.setZ(DEF_Z);
+
+		// turn off the warning
+		EAI.disableDraw(warningChoice);
+
+		wslPlayer.loadParameter(this);
+	}
+
+	public void invalidEvent(String node,String event) {setEnabled(false);}
+
+	public void callback(EventOut who, double when, Object which) {
+		if(which==SCREEN_DRAGGER_IS_ACTIVE) {
+			boolean on=screenDragger_isActive_out.getValue();
+			setDragging(on);
+			if(on) wslPlayer.recordMousePressed("z");
+			else wslPlayer.recordMouseReleased("z");
+		} else if(which==WAVELENGTH_WHEEL_IS_ACTIVE) {
+			boolean on=wavelengthWidget_isActive_out.getValue();
+			setDragging(on);
+			if(on) wslPlayer.recordMousePressed("wavelength");
+			else wslPlayer.recordMouseReleased("wavelength");
+		} else if(which==CIRCULAR_DRAGGER_IS_ACTIVE) {
+			boolean on=circularDragger_isActive_out.getValue();
+			setDragging(on);
+			if(on) wslPlayer.recordMousePressed("diameter");
+			else wslPlayer.recordMouseReleased("diameter");
+		} else if(which==CIRCULAR_DRAGGER_IS_OVER && !draggingWidget) {
+			if(circularDragger_isOver_out.getValue()) statusBar.setText(DIAMETER_DRAGGER_HELP);
+			else statusBar.reset();
+		} else if(which==SCREEN_DRAGGER_IS_OVER && !draggingWidget) {
+			if(circularDragger_isOver_out.getValue()) statusBar.setText(SCREEN_DRAGGER_HELP);
+			else statusBar.reset();
+		} else if(which==WAVELENGTH_WHEEL_IS_OVER && !draggingWidget) {
+			if(circularDragger_isOver_out.getValue()) statusBar.setText(WAVELENGTH_WHEEL_HELP);
+			else statusBar.reset();
+		} else if(which==SCREEN_READOUT) {
+			float[] value=screen_hitPoint_out.getValue();
+			float x=value[0],y=value[1],r=(float)Math.sqrt(x*x+y*y);
+			//VRML units for the screen are in micrometers (for whatever reason); canonical units are mm.
+			//Also note the getMode() nonsense a few columns to the right.
+			statusBar.setText(traducir("p")+"="+FPRound.toSigVal(r/1000f,4)+
+												traducir("intensity")+
+												FPRound.toSigVal(engine.getIntensity(r)/
+																				 (getMode()==OBSTACLE_MODE?
+																					OBSTACLE_SCALE:1),4));
+		} else if(!draggingWidget);	//all things below are widget-drags; prevent feedback
+		else if(which==SCREEN_DRAGGER_TRANSLATION) {
+			engine.screenZ=screenDragger_position_out.getValue();
+			infoPanel.setZ(engine.screenZ);
+			infoPanel.setNF(engine.evaluate(getMode()));
+			wslPlayer.recordMouseDragged("z",String.valueOf(engine.screenZ));
+		} else if(which==WAVELENGTH_WHEEL_ROTATION) {
+			engine.wavelength=wavelengthWidget_value_out.getValue();
+			infoPanel.setWavelength(engine.wavelength);
+			infoPanel.setNF(engine.evaluate(getMode()));
+			wslPlayer.recordMouseDragged("wavelength",String.valueOf(engine.wavelength));
+		} else if(which==CIRCULAR_DRAGGER_TRANSLATION) {
+			//System.out.println("circular dragger translation");
+			engine.radius=circularDragger_position_out.getValue()/2;
+			infoPanel.setDiameter(engine.radius*2);
+			infoPanel.setNF(engine.evaluate(getMode()));
+			apertureEngine.radius=engine.radius;
+			apertureEngine.evaluate(getMode());
+			wslPlayer.recordMouseDragged("diameter",String.valueOf(engine.radius*2));
+		}
+	}
+
+	void setWavelength(float wavelength) {
+		engine.wavelength = wavelength;
+		wavelengthWidget_value_in.setValue(wavelength);
+		infoPanel.setNF(engine.evaluate(getMode()));
+	}
+
+	void setDiameter(float diameter) {
+		//System.out.println("setting diameter");
+		engine.radius = diameter / 2;
+		infoPanel.setNF(engine.evaluate(getMode()));
+		circularDragger_position_in.setValue(diameter);
+		apertureEngine.radius=diameter/2;
+		apertureEngine.evaluate(getMode());
+	}
+
+	void setZ(float z) {
+		engine.screenZ = z;
+		infoPanel.setNF(engine.evaluate(getMode()));
+		screenDragger_position_in.setValue(z);
+	}
+
+	public boolean draggingWidget() {return draggingWidget;}
+
+	private void setDragging(boolean drag) {
+		engine.isActive=draggingWidget=drag;
+		engine.evaluate(getMode());
+		resolutionChoice.setValue(drag?1:0);
+	}
+
+	public WSLPlayer getWSLPlayer() {
+		return wslPlayer;
+	}
+
+	public StatusBar getStatusBar() {return statusBar;}
+
+	public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int m) {
+		mode = m;
+		apertureEngine.evaluate(m);
+		engine.evaluate(getMode());
+	}
+
+	public EAI getEAI() {return eai;}
+
+	// -----------------------------------------------------------------------------------
+	// WSL Routines
+	// -----------------------------------------------------------------------------------
+
+	public WSLNode toWSLNode() {
+		final WSLAttributeList atts = new WSLAttributeList();
+
+		atts.add("wavelength", String.valueOf(engine.wavelength));
+		atts.add("z", String.valueOf(engine.screenZ));
+		atts.add("diameter", String.valueOf(engine.radius * 2));
+		atts.add("widgets", buttonPanel.hidingWidgets() ? "hidden" : "visible");
+		atts.add("mode", getMode()==APERTURE_MODE ? "aperture" : "obstacle");
+
+		final WSLNode node=new WSLNode(getWSLModuleName(),atts);
+		nps.addTo(node);
+		return node;
+	}
+
+	public String getWSLModuleName() {
+		return "circular";
+	}
+
+	public void initialize(WSLScriptEvent event) {
+		WSLAttributeList atts = event.getNode().getAttributes();
+		for(int i = 0; i < atts.getLength(); i++)
+			if(!atts.getName(i).equals("action") || !atts.getValue(i).equals("reset"))
+				setParameter(null, atts.getName(i), atts.getValue(i));
+	}
+
+	private void setParameter(String target, String param, String value) {
+		DebugPrinter.println("FresnelCircular: setParameter("+WTString.quote(target)+","+WTString.quote(param)+","+WTString.quote(value)+")");
+		float val;
+		try{val=Float.valueOf(value).floatValue();}
+		catch(NumberFormatException e) {val=Float.NaN;}
+
+		if("widgets".equals(param))
+			if("visible".equals(value)) buttonPanel.showWidgets();
+			else buttonPanel.hideWidgets();
+		else if("mode".equals(param))
+			if("aperture".equals(value)) buttonPanel.setMode(APERTURE_MODE);
+			else buttonPanel.setMode(OBSTACLE_MODE);
+		else if("action".equals(param)) {
+			if("reset".equals(value)) buttonPanel.reset();
+		} else if("wavelength".equals(param)) {
+			setWavelength(val);
+			infoPanel.setWavelength(val);
+		} else if("z".equals(param)) {
+			setZ(val);
+			infoPanel.setZ(val);
+		} else if("diameter".equals(param)) {
+			setDiameter(val);
+			infoPanel.setDiameter(val);
+		} else System.err.println("FresnelCircular: Unexpected setParameter(" + WTString.quote(target) + "," + WTString.quote(param) + "," + WTString.quote(value) + ")");
+	}
+
+	public void scriptActionFired(WSLScriptEvent event) {
+		String target = event.getTarget();
+		String param = event.getParameter();
+		String value = event.getValue();
+
+		switch(event.getID()) {
+		case WSLScriptEvent.ACTION_PERFORMED:
+		case WSLScriptEvent.MOUSE_DRAGGED:
+			setParameter(target, param, value);
+			break;
+		case WSLScriptEvent.MOUSE_PRESSED:
+			setDragging(true);
+			break;
+		case WSLScriptEvent.MOUSE_RELEASED:
+			setDragging(false);
+			break;
+		}
+	}
+}
+
+class InfoPanel extends Panel implements NumberBox.Listener
+{
+	Label lbNFValue;
+
+	FloatBox fbWavelength,fbZ,fbDiameter;
+
+	FresnelCircular m_main;
+	private WSLPlayer wslPlayer;
+
+	private String traducir(String llave) { return m_main.traducir(llave); }
+
+	public InfoPanel(FresnelCircular main) {
+		m_main = main;
+		wslPlayer = main.getWSLPlayer();
+
+		setBackground(FresnelCircular.BACKGROUND);
+		setForeground(FresnelCircular.FOREGROUND);
+
+		add(new Label(traducir("wavelength_label"),Label.RIGHT));
+		add(fbWavelength=new FloatBox(400,700,FresnelCircular.DEF_WAVELENGTH,5));
+		fbWavelength.addNumberListener(this);
+		add(new Label(traducir("nm_label")));
+
+		add(new Label(traducir("diameter_label"),Label.RIGHT));
+		add(fbDiameter=new FloatBox(0,1,FresnelCircular.DEF_DIAMETER,5));
+		fbDiameter.addNumberListener(this);
+		add(new Label(traducir("mm_label")));
+
+		add(new Label(traducir("z_label"),Label.RIGHT));
+		add(fbZ=new FloatBox(20,200,FresnelCircular.DEF_Z,5));
+		fbZ.addNumberListener(this);
+		add(new Label(traducir("mm_label")));
+
+		add(new Label(traducir("fresnelNumber_label"),Label.RIGHT));
+		add(lbNFValue = new Label("000"));
+	}
+
+	public void update(Graphics g) { paint(g); }
+
+	public void setWavelength(float wavelength) {fbWavelength.setFixValue(wavelength,1);}
+
+	public void setDiameter(float diameter) {fbDiameter.setSigValue(diameter,5);}
+
+	public void setZ(float z) {
+		DebugPrinter.println("InfoPanel: setting z = " + z);
+		fbZ.setFixValue(z, 2);
+	}
+
+	public void setNF(float fn) {lbNFValue.setText(Float.toString(FPRound.toSigVal(fn,3)));}
+
+	public void numChanged(NumberBox src, Number newVal) {
+		if(m_main.draggingWidget()) return;
+		m_main.getStatusBar().clearWarning();
+
+		float val=newVal.floatValue();
+		String str=String.valueOf(val);
+		if(src == fbWavelength) {
+			m_main.setWavelength(val);
+			wslPlayer.recordActionPerformed("wavelength",str);
+		} else if(src == fbZ) {
+			m_main.setZ(val);
+			wslPlayer.recordActionPerformed("z",str);
+		} else if(src == fbDiameter) {
+			m_main.setDiameter(val);
+			wslPlayer.recordActionPerformed("diameter",str);
+		} else System.err.println("InfoPanel: unexpected numChanged from " + src);
+	}
+
+	public void invalidEntry(NumberBox src,Number badVal) {
+		src.ping();		//countermand bad script instructions (from old scripts)
+		if(src==fbZ) m_main.getStatusBar().setWarningText(m_main.SCREEN_DRAGGER_ERROR);
+		else if(src==fbWavelength) m_main.getStatusBar().setWarningText(m_main.WAVELENGTH_WHEEL_ERROR);
+		else if(src==fbDiameter) m_main.getStatusBar().setWarningText(m_main.DIAMETER_DRAGGER_ERROR);
+		else System.err.println("InfoPanel: unexpected invalidEntry from " + src);
+	}
+
+	public void boundsForcedChange(NumberBox src,Number oldVal) {}	//never happens
+}
+
+class ButtonPanel extends Panel implements ActionListener {
+
+	private StateButton modeButton;
+	private Button resetButton;
+	private StateButton hideButton;
+
+	private StatusBar statusBar;
+
+	private FresnelCircular main;
+	private Screen engine;
+	private ApertureEngine apertureEngine;
+	private InfoPanel infoPanel;
+
+	private WSLPlayer wslPlayer;
+
+	private EventInSFInt32 widgetsPicker;
+
+	private boolean isHiding;
+
+	private String traducir(String llave) { return main.traducir(llave); }
+
+	public ButtonPanel(FresnelCircular main_) {
+		main = main_;
+
+		modeButton=new StateButton(traducir("obstacle_label"),traducir("aperture_label"),false);
+		resetButton=new Button(traducir("reset_label"));
+		hideButton=new StateButton(traducir("widgets_label"),new String[] {traducir("hide_label"),traducir("show_label")},new String[] {"",""});
+
+		wslPlayer = main.getWSLPlayer();
+
+		setBackground(FresnelCircular.BACKGROUND);
+		setForeground(FresnelCircular.FOREGROUND);
+
+		add(modeButton);
+		modeButton.addActionListener(this);
+		add(resetButton);
+		resetButton.addActionListener(this);
+		add(hideButton);
+		hideButton.addActionListener(this);
+	}
+
+		public void setEAI(EAI eai) {
+				widgetsPicker = (EventInSFInt32)eai.getEI("WidgetsSwitch", "set_whichChoice");
+		}
+
+	public void setEngines(Screen engine_, ApertureEngine apertureEngine_) {
+		engine = engine_;
+		apertureEngine = apertureEngine_;
+	}
+
+	public void setStatusBar(StatusBar statusBar_) {
+		statusBar = statusBar_;
+	}
+
+	public void setInfoPanel(InfoPanel infoPanel_) {
+		infoPanel = infoPanel_;
+	}
+
+	public void actionPerformed(ActionEvent actionevent) {
+		if(actionevent.getSource() == modeButton) {
+			setMode(modeButton.getState());
+		} else if(actionevent.getSource() == resetButton) {
+			reset();
+			wslPlayer.recordActionPerformed("action", "reset");
+		} else if(actionevent.getSource() == hideButton) {
+			if(isHiding) showWidgets();
+			else hideWidgets();
+			wslPlayer.recordActionPerformed("widgets", isHiding ? "hidden" : "visible");
+		} else System.err.println("ButtonPanel: unexpected " + actionevent);
+	}
+
+	public void update(Graphics g) { paint(g); }
+
+	public void reset() {
+		engine.setDefaults();
+		apertureEngine.setDefaults();
+
+		main.setWavelength(engine.wavelength);
+		main.setDiameter(engine.radius*2);
+		main.setZ(engine.screenZ);
+		setMode(0);
+
+		infoPanel.setNF(engine.evaluate(main.getMode()));
+		infoPanel.setWavelength(engine.wavelength);
+		infoPanel.setDiameter(engine.radius*2);
+		infoPanel.setZ(engine.screenZ);
+	}
+
+	public void setMode(int mode) {
+		main.setMode(mode);
+		modeButton.setState(mode);
+		wslPlayer.recordActionPerformed("mode", mode==FresnelCircular.APERTURE_MODE?"aperture":"obstacle");
+	}
+
+	public void hideWidgets() {
+		isHiding = true;
+		EAI.disableDraw(widgetsPicker);
+	}
+	public void showWidgets() {
+		isHiding = false;
+		EAI.enableDraw(widgetsPicker);
+	}
+
+	public boolean hidingWidgets() {
+		return isHiding;
+	}
+}

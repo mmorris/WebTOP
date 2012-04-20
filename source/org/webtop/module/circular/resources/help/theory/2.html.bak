@@ -1,0 +1,152 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<head>
+	<title>Fresnel Diffraction, Circular Aperture-On-Axis Intensity; Fresnel Number</title>
+	<link rel="stylesheet" type="text/css" href="../../webtopstyles/webtopmain.css">
+	<link rel="stylesheet" type="text/css" href="../../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+document.write(stdMenu(1,'Fresnel Circular',2,true));
+document.write(moduleList(2,true));
+</script>
+
+<div class=module id=vrml></div><p>&nbsp;
+<center>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tablemain" id="tablemain">
+<p><big><font color="#800000"><big><b>Fresnel Diffraction, Circular Aperture: Theory</b> </big></font></big><br>
+<big><font color="#008040"><b>On-Axis Intensity; Fresnel Number</b></font></big></p>
+
+<p>It follows from Eq. (<a href="1.html#1.2">1.2</a>) that when <i>P</i> is
+on the optical axis (i.e., <em><font FACE="Symbol">r</font></em> =0), the electric field
+there is given by the formula</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory10.gif" WIDTH="261" HEIGHT="74"></td>
+    <td width="20%"><p align="right">(<a name="2.1">2.1</a>)</td>
+  </tr>
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>where <i>N</i> is the <font color="#0000FF"><b>Fresnel number</b></font> for the
+observation point and aperture in question,</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><i>N = R<sup>2</sup>/<font FACE="Symbol">l </font>z</i></td>
+    <td width="20%"><p align="right">(<a name="2.2">2.2</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>It follows from Eq. (2.1) that the intensity at the point <i>P</i> is given by the
+expression </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory11.gif" WIDTH="194" HEIGHT="53"></td>
+    <td width="20%"><p align="right">(<a name="2.3">2.3</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>where <i>c </i>is the speed of light in vaccuo, <font FACE="Symbol">e</font> <sub><i>o</i></sub>
+is the permittivity of free space, and <i>I<sub>i </sub></i>is the intensity of the
+incident light,</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory12.gif" WIDTH="90" HEIGHT="25"></td>
+    <td width="20%"><p align="right">(<a name="2.4">2.4</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>Formula (2.3) is an <font color="#0000FF"><b>amazing</b></font> result. It says that
+the on-axis intensity oscillates as a function of N, and that:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%" bgcolor="#BCDEDE">
+  <tr>
+    <td width="5%" valign=top class="tableblue" id="tableblue">(a)</td>
+    <td width="95%" class="tableblue" id="tableblue">the intensity is <font color="#0000FF"><b>zero</b></font> at those on-axis
+    observation points for which the Fresnel number is even</td>
+  </tr>
+  <tr>
+    <td valign=top width="5%" class="tableblue" id="tableblue">(b)</td>
+    <td width="95%" class="tableblue" id="tableblue">the intensity is <font color="#0000FF"><b>four times as large</b></font>
+    as the incident intensity at those on-axis observation points for which the Fresnel number
+    is odd.</td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+<div align="center"><center>
+
+<table border="1" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td rowspan="2" class="tablemain" id="tablemain"><font color="#FF0000"><strong>Navigate:</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="1.html">Basic Equations</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#008040">On-Axis Intensity;
+    Fresnel Number</font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="3.html">Fresnel Zones</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="4.html">Off-axis
+    Intensity</a></td>
+  </tr>
+  <tr>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Previous</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Next</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain">&nbsp;</td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

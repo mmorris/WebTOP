@@ -1,0 +1,698 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+# -------------------------------------------------------------------
+# PROTOs that are part of Chi's NavigationPanel [v3.01]
+# -------------------------------------------------------------------
+
+PROTO NavigationPanel [
+  inputOutput SFBool enabled             TRUE
+
+  initializeOnly      SFBool visible               TRUE
+  inputOnly   SFBool set_visible
+  outputOnly  SFBool visible_changed
+
+  inputOutput MFNode children          []
+
+  inputOutput SFVec3f center              0 0 0
+
+  initializeOnly     MFFloat    views              [0 0 0 0 0 0]
+  initializeOnly     SFInt32    activeView         0
+
+  initializeOnly     SFFloat    rotation_speed     1
+  initializeOnly     SFFloat    translation_speed  20
+
+  #External (EAI) control of the view
+  inputOnly  SFVec2f    set_angles
+  inputOnly  SFVec2f    set_pan
+  inputOnly  SFFloat    set_zoom
+  inputOnly  MFFloat    set_view
+  inputOnly  SFInt32    set_activeView
+
+  #External (EAI) information on the view
+  outputOnly SFBool     isActive_out
+  outputOnly SFBool     isOver_out
+  outputOnly SFBool     rotation_isOver_out
+  outputOnly SFBool     rotation_isActive_out
+  outputOnly SFBool     pan_isOver_out
+  outputOnly SFBool     pan_isActive_out
+  outputOnly SFBool     zoom_isOver_out
+  outputOnly SFBool     zoom_isActive_out
+  outputOnly SFBool     switch_isOver_out
+  outputOnly SFBool     switch_isActive_out
+  outputOnly SFVec2f    angles_changed
+  outputOnly SFVec2f    pan_changed
+  outputOnly SFFloat    zoom_changed
+
+  #activeView_changed events are always sent before the corresponding
+  #view_changed events to allow a client to determine the reason for a
+  #viewpoint change.
+  outputOnly MFFloat    view_changed
+  outputOnly SFInt32    activeView_changed ]
+{
+ PROTO NavigationPanelViewPoint [ inputOutput SFBool enabled TRUE
+   initializeOnly SFInt32 num 0
+   outputOnly SFInt32 selected
+   outputOnly SFBool isOver_out
+   outputOnly SFBool isActive_out ]
+ {
+   DEF T Transform {
+     scale 0.1 0.1 0.1
+     children [
+       DEF TS TouchSensor {
+         enabled IS enabled
+         isActive IS isActive_out
+         isOver IS isOver_out
+       }
+       Transform {
+         rotation 0 1 0 0.4
+         children Transform {
+           rotation 1 0 0 0.6
+           children Transform {
+             translation 0 0 0.5
+             children [
+               Shape {
+                 appearance Appearance { material Material { diffuseColor 0 0 1 } }
+                 geometry Sphere { radius 0.1 }
+               }
+               Transform {
+                 rotation -0.7071 0.7071 0 -0.5236
+                 children DEF Rod Transform {
+                   translation 0 0 -0.5
+                   rotation 1 0 0 -1.5707963
+                   children Shape {
+                     appearance Appearance { material Material { diffuseColor 0.6 0.6 0.6 } }
+                     geometry Cylinder { radius 0.025 height 1 }
+                   }
+                 }
+               }
+               Transform {
+                 rotation -0.7071 0.7071 0 0.5236
+                 children USE Rod }
+               Transform {
+                 rotation 0.7071 0.7071 0 -0.5236
+                 children USE Rod }
+               Transform {
+                 rotation 0.7071 0.7071 0 0.5236
+                 children USE Rod }
+               Shape {
+                 appearance Appearance {
+                   material Material {
+                     diffuseColor 1 1 0.2
+                     transparency 0.5
+                   }
+                 }
+                 geometry IndexedFaceSet {
+                   coord Coordinate {
+                     point [ 0 0 0, 0.3536 0.3536 -0.866, -0.3536 0.3536 -0.866, -0.3536 -0.3536 -0.866, 0.3536 -0.3536 -0.866 ]
+                   }
+                   coordIndex [ 0 1 2 -1, 0 2 3 -1, 0 3 4 -1, 0 4 1 -1 ]
+                 }
+               }
+             ]
+           }
+         }
+       }
+     ]
+   }
+   DEF Worker Script {
+     initializeOnly SFInt32 n IS num
+     inputOnly SFBool active
+     outputOnly SFInt32 selected IS selected
+     outputOnly SFVec3f trans_out
+     url "ecmascript:
+     function initialize() {
+       trans_out=new SFVec3f(-.7+n*.1,-0.75,-2);
+     }
+     function active(value,time) {if(!value)selected=n;}"
+   }
+   ROUTE TS.isActive TO Worker.active
+   ROUTE Worker.trans_out TO T.set_translation
+ }
+  PROTO RotateIcon [
+    initializeOnly   SFVec2f  angles 0 0
+    initializeOnly   SFFloat  speed  1
+    inputOnly SFVec2f set_angles ]
+  {
+    DEF PitchTransform Transform {
+      children DEF YawTransform Transform {
+        children Shape {
+          appearance Appearance {
+            #texture ImageTexture { url [ "images/checker.jpg" "checker.jpg" ] }
+            #TODO: temporary fix for xj3d url handling :: sigh ::
+            #texture ImageTexture { url ["//checker.jpg" "checker.jpg"] }
+            material Material { diffuseColor 0.5 0.5 0.5 }
+          }
+          geometry Sphere { radius 0.5 }
+        }
+      }
+    }
+
+    DEF Worker Script {
+      initializeOnly SFVec2f angles IS angles
+      initializeOnly SFFloat speed IS speed
+
+      inputOnly SFVec2f set_angles IS set_angles
+
+      outputOnly SFRotation yawRotation_changed
+      outputOnly SFRotation pitchRotation_changed
+
+      url "ecmascript:
+      function initialize() {
+        yawRotation_changed = new SFRotation(0, 1, 0, angles[1]*speed);
+        pitchRotation_changed = new SFRotation(1, 0, 0, -angles[0]*speed);}
+
+      function set_angles(value, time) {
+        yawRotation_changed[3] = value[1] * speed;
+        pitchRotation_changed[3] = -value[0] * speed;}
+      "
+    }
+
+    ROUTE Worker.yawRotation_changed TO YawTransform.set_rotation
+    ROUTE Worker.pitchRotation_changed TO PitchTransform.set_rotation
+  }
+
+  PROTO ZoomIcon [ ]
+  {
+    Transform {
+      scale 1 0.5 1
+      rotation 1 0 0 -1.0
+      children Shape {
+        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+        geometry IndexedFaceSet {
+          coord Coordinate {
+            point [
+              0 1 0.1,   0.4 0.25 0.1,    0.175 0.25 0.1,    0.35 -0.5 0.1,  0.5 -0.5 0.1,
+              0 -1 0.1,  -0.5 -0.5 0.1,  -0.35 -0.5 0.1,  -0.175 0.25 0.1,  -0.4 0.25 0.1,
+              0 1 -0.1,  0.4 0.25 -0.1,   0.175 0.25 -0.1,   0.35 -0.5 -0.1, 0.5 -0.5 -0.1,
+              0 -1 -0.1, -0.5 -0.5 -0.1, -0.35 -0.5 -0.1, -0.175 0.25 -0.1, -0.4 0.25 -0.1 ]
+          }
+          coordIndex [
+            0 9 1 -1, 8 7 3 2 -1, 4 6 5 -1,
+            10 11 19 -1, 18 12 13 17 -1, 16 14 15 -1,
+            10 0 1 11 -1, 11 1 2 12 -1, 12 2 3 13 -1, 13 3 4 14 -1, 14 4 5 15 -1,
+            0 10 19 9 -1, 9 19 18 8 -1, 8 18 17 7 -1, 7 17 16 6 -1, 6 16 15 5 -1 ]
+        }
+      }
+    }
+  }
+
+  PROTO PanIcon [ ]
+  {
+    Transform {
+      scale 0.5 0.5 1
+      children Shape {
+        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+        geometry IndexedFaceSet {
+          coord Coordinate {
+            point [
+              0 1 0.1,  0.5 0.6 0.1,   0.3 0.6 0.1,   0.3 0.3 0.1,    0.6 0.3 0.1,   0.6 0.5 0.1,
+              1 0 0.1,  0.6 -0.5 0.1,  0.6 -0.3 0.1, 0.3 -0.3 0.1,   0.3 -0.6 0.1,  0.5 -0.6 0.1,
+              0 -1 0.1, -0.5 -0.6 0.1, -0.3 -0.6 0.1,  -0.3 -0.3, 0.1, -0.6 -0.3 0.1, -0.6 -0.5 0.1,
+              -1 0 0.1, -0.6 0.5 0.1,  -0.6 0.3 0.1,  -0.3 0.3 0.1,   -0.3 0.6 0.1,  -0.5 0.6 0.1,
+
+              0 1 -0.1,  0.5 0.6 -0.1,   0.3 0.6 -0.1,   0.3 0.3 -0.1,    0.6 0.3 -0.1,   0.6 0.5 -0.1,
+              1 0 -0.1,  0.6 -0.5 -0.1,  0.6, -0.3 -0.1, 0.3 -0.3 -0.1,   0.3 -0.6 -0.1,  0.5 -0.6 -0.1,
+              0 -1 -0.1, -0.5 -0.6 -0.1, -0.3 -0.6 -0.1,  -0.3 -0.3, -0.1, -0.6 -0.3 -0.1, -0.6 -0.5 -0.1,
+              -1 0 -0.1, -0.6 0.5 -0.1,  -0.6 0.3 -0.1,  -0.3 0.3 -0.1,   -0.3 0.6 -0.1,  -0.5 0.6 -0.1 ]
+          }
+          coordIndex [
+            0 23 1 -1, 2 22 14 10 -1, 6 5 7 -1, 4 3 9 8 -1, 11 13 12 -1, 19 18 17 -1, 21 20 16 15 -1,
+            24 25 47 -1, 46 26 34 38 -1, 29 30 31 -1, 27 28 32 33 -1, 35 36 37 -1, 39 33 34 38 -1, 41 42 43 -1, 44 45 39 40 -1,
+
+            24 0 1 25 -1, 25 1 2 26 -1, 26 2 3 27 -1, 27 3 4 28 -1, 28 4 5 29 -1, 29 5 6 30 -1,
+            30 6 7 31 -1, 31 7 8 32 -1, 32 8 9 33 -1, 33 9 10 34 -1, 34 10 11 35 -1, 35 11 12 36 -1,
+            36 12 13 37 -1, 37 13 14 38 -1, 38 14 15 39 -1, 39 15 16 40 -1, 40 16 17 41 -1, 41 17 18 42 -1,
+            42 18 19 43 -1, 43 19 20 44 -1, 44 20 21 45 -1, 45 21 22 46 -1, 46 22 23 47 -1, 47 23 0 24 -1 ]
+        }
+      }
+    }
+  }
+
+  PROTO SwitchIcon [ initializeOnly SFBool on TRUE
+                     inputOnly SFBool set_on ]
+  {
+    DEF OnOff Switch {
+      whichChoice 0
+      choice [
+        Transform {
+          rotation 1 0 0 1.5707963
+          children [
+            Shape {
+              appearance DEF OnAppearance Appearance {
+                material Material { diffuseColor 0.8 0.2 0.2 }
+              }
+              geometry DEF C1 Cylinder { radius 0.15 height 0.3 }
+            }
+            Shape {
+              appearance USE OnAppearance
+              geometry DEF C2 Cylinder { radius 0.25 height 0.2 }
+            }
+          ]
+        }
+        Transform {
+          rotation 1 0 0 1.5707963
+          children [
+            Shape {
+              appearance DEF OffAppearance Appearance {
+                material Material { diffuseColor 0.4 0.0 0.0 }
+              }
+              geometry USE C1
+            }
+            Shape {
+              appearance USE OffAppearance
+              geometry USE C2
+            }
+          ]
+        }
+      ]
+    }
+    DEF Worker Script {
+      initializeOnly SFBool on IS on
+      inputOnly SFBool set_on IS set_on
+      outputOnly SFInt32 whichChoice_changed
+      url "ecmascript:
+      function initialize() {if(!on) whichChoice_changed = 1;}
+      function set_on(value, time) {whichChoice_changed = value ? 0 : 1;}"
+    }
+    ROUTE Worker.whichChoice_changed TO OnOff.whichChoice
+  }
+  
+  ########### This proto is unused, it's just added to test proto loading -MH
+  PROTO ColoredSphere [
+    initializeOnly SFColor color 0 1 0
+] {
+    Shape {
+        appearance Appearance {
+            material Material {
+                diffuseColor IS color
+            }
+        }
+        geometry Sphere {}
+    }
+}
+  #END OF INTERIOR PROTOs
+
+  Group {
+    children [
+      DEF TranslationTransform Transform {
+        children DEF VerticalTransform Transform {
+          children DEF HorizontalTransform Transform {
+            center IS center
+            children IS children #This is where the scene goes
+          }
+        }
+      }
+
+      DEF PanelTransform Transform {
+        children [
+          DEF PanelSwitch Switch {
+            whichChoice 0
+            choice DEF PanelGroup Group {
+              children [
+
+                #Here shall be inserted (at initialize time) the viewpoint-selection icons.
+
+                Transform {
+                  scale 0.1 0.1 0.1
+                  translation 0.15 -0.75 -2
+                  children [
+                    DEF RotationTS TouchSensor {
+                      enabled IS enabled
+                      isOver  IS rotation_isOver_out
+                    }
+                    DEF RotationPS PlaneSensor {
+                      enabled  IS enabled
+                      isActive IS rotation_isActive_out
+                    }
+                    DEF RotationIcon RotateIcon { speed IS rotation_speed }
+                  ]
+                }
+
+                Transform {
+                  scale 0.1 0.1 0.1
+                  translation 0.0 -0.75 -2
+                  children [
+                    DEF PanTS TouchSensor {
+                      enabled IS enabled
+                      isOver  IS pan_isOver_out
+                    }
+                    DEF PanPS PlaneSensor {
+                      enabled  IS enabled
+                      isActive IS pan_isActive_out
+                    }
+                    PanIcon { }
+                  ]
+                }
+
+                Transform {
+                  scale 0.1 0.1 0.1
+                  translation -0.15 -0.75 -2
+                  children [
+                    DEF ZoomTS TouchSensor {
+                      enabled IS enabled
+                      isOver  IS zoom_isOver_out
+                    }
+                    DEF ZoomPS PlaneSensor {
+                      enabled  IS enabled
+                      isActive IS zoom_isActive_out
+                    }
+                    ZoomIcon { }
+                  ]
+                }
+              ]
+            }
+          }
+
+          Transform {
+            scale 0.1 0.1 0.1
+            translation 0.85 -0.75 -2
+            children [
+              DEF SwitchTS TouchSensor {
+                enabled IS enabled
+                isOver IS switch_isOver_out
+                isActive IS switch_isActive_out
+              }
+              DEF SwitchIcon SwitchIcon {
+                on IS visible
+                set_on IS set_visible
+              }
+            ]
+          }
+        ]
+      }
+
+      DEF ProxSensor ProximitySensor {
+        size 1000 1000 1000
+        ROUTE ProxSensor.orientation_changed TO PanelTransform.set_rotation
+        ROUTE ProxSensor.position_changed TO PanelTransform.set_translation
+      }
+
+      DEF NPViewpoint Viewpoint { position 0 0 0}
+    ]
+  }
+
+  # --------------------------------------------------------------- #
+  # Script node that processes and transforms all internal/         #
+  # external events.                                                #
+  # --------------------------------------------------------------- #
+  DEF Worker Script {
+    #views is never changed and holds the pre-defined viewpoints.
+    initializeOnly      MFFloat  views IS views
+    initializeOnly      SFInt32  nViews 1         # count of predefined views
+    #activeView holds the current view, or -1 if the viewpoint has been
+    #modified since last predefined-view selection.
+    initializeOnly      SFInt32  activeView IS activeView
+    initializeOnly      MFFloat  currentView [ 0 0 0 0 0 0 ]
+
+    initializeOnly      SFFloat  rotation_speed IS rotation_speed
+    initializeOnly      SFFloat  translation_speed IS translation_speed
+
+    initializeOnly      SFBool visible IS visible
+    inputOnly   SFBool set_visible IS set_visible
+    outputOnly  SFBool visible_out IS visible_changed
+
+    inputOnly   SFVec2f  set_angles IS set_angles
+    inputOnly   SFVec2f  set_pan    IS set_pan
+    inputOnly   SFFloat  set_zoom   IS set_zoom
+    inputOnly   MFFloat  set_view   IS set_view
+    inputOnly   SFInt32  set_activeView IS set_activeView
+
+    outputOnly  SFBool   isOver_out     IS isOver_out
+    outputOnly  SFBool   isActive_out   IS isActive_out
+
+    outputOnly  SFVec2f  angles_out IS angles_changed
+    outputOnly  SFVec2f  pan_out    IS pan_changed
+    outputOnly  SFFloat  zoom_out   IS zoom_changed
+    outputOnly  MFFloat  view_out   IS view_changed
+
+    outputOnly  SFInt32  activeView_out IS activeView_changed
+
+    #The other parts of NavigationPanel use these events:
+    inputOnly   SFBool   isOver_in
+    inputOnly   SFBool   isActive_in
+
+    inputOnly   SFInt32  vpActive_in
+    inputOnly   SFBool   switchActive_in
+
+    inputOnly   SFVec3f    rotationTrans_in
+    inputOnly   SFVec3f    panTrans_in
+    inputOnly   SFVec3f    zoomTrans_in
+
+    outputOnly  SFRotation horizontalRotation_int
+    outputOnly  SFRotation verticalRotation_int
+    outputOnly  SFVec3f    translation_int
+
+    outputOnly  SFVec2f rotationAngles_int
+    outputOnly  SFVec3f rotationOffset_int
+    outputOnly  SFVec3f panOffset_int
+    outputOnly  SFVec3f zoomOffset_int
+
+    #This will be routed to the switch holding the motion controls
+    outputOnly  SFInt32 whichChoice_int
+
+    #This is used to add the viewpoint objects
+    outputOnly  MFNode addChildren_int
+    initializeOnly      SFNode enabledSource USE RotationTS
+    
+    
+    url ["ecmascript:
+    function initialize() {
+      var i,VPstr,VPnodes, VPscene;
+      nViews = views.length / 6;
+      if(nViews==0) {
+        views = new MFFloat(0,0,0,0,0,0);
+        nViews = 1;
+      }
+      if(nViews > 5) nViews=5;
+      if(activeView >= nViews) activeView = nViews - 1;
+      if(activeView < 0) activeView = 0;
+
+      //Initialize data: set_all_internal assumes
+      //zoomOffset_int has been initialized, so:
+      zoomOffset_int = new SFVec3f(0, 0, 0);
+      set_all_internal(views,activeView*6);
+
+      set_visible(visible,0);
+      
+      scene = Browser.currentScene;
+      //Create the viewpoint icons
+      instance = new MFNode();
+  
+      for(i = 0; i < nViews; i++)
+      {
+        myProto = scene.createProto('NavigationPanelViewPoint');
+        myProto.num = i;
+        instance[i] = myProto;
+      }
+ 
+      //Add them to the scene            
+      addChildren_int = instance;
+      
+      //Add routes to cause the viewpoint to change when clicked on
+      for(i=0;i<nViews;i++) {
+        scene.addRoute(instance[i],'selected',this,'vpActive_in');
+        scene.addRoute(instance[i],'isOver_out',this,'isOver_in');
+        scene.addRoute(instance[i],'isActive_out',this,'isActive_in');
+        scene.addRoute(enabledSource,'enabled_changed',instance[i],'enabled');
+      }
+
+    }
+
+    function set_visible(value, time) { whichChoice_int = value ? 0 : -1; }
+
+    function set_angles(value, time) {
+      rotationOffset_int = new SFVec3f(value[1],value[0]);
+      horizontalRotation_int[3] = value[1];
+      verticalRotation_int[3] = -value[0];
+
+      currentView[0] = value[0];
+      currentView[1] = value[1];
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function set_pan(value, time) {
+      panOffset_int[0] = value[0];
+      panOffset_int[1] = value[1];
+      translation_int[0] = value[0];
+      translation_int[1] = value[1];
+
+      currentView[3] = value[0];
+      currentView[4] = value[1];
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function set_zoom(value, time) {
+      zoomOffset_int[1] = value;
+      translation_int[2] = value;
+
+      currentView[5] = value;
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function set_view(value,time) {
+      activeView_out=activeView=-1;
+      set_all_internal(value,0);
+    }
+
+    function set_activeView(value,time) {
+      if(value>=nViews || value<0) print('NavigationPanel::set_activeView: invalid view');
+      else set_all_internal(views,(activeView=value)*6);
+    }
+
+    function vpActive_in(value,time) {
+      //Only need to bother if changing
+      if(activeView!=value) {
+	  Browser.println('Viewpoint ' + value + 'selected.');
+        activeView_out=activeView=value;
+        set_all_internal(views,value*6);
+      }
+    }
+
+    function set_all_internal(value,offset,setviewchanged) {
+      var i;
+
+      rotationAngles_int=new SFVec2f(value[offset],value[offset+1]);
+      rotationOffset_int=new SFVec3f(value[offset+1],value[offset]);
+      horizontalRotation_int=new SFRotation(0,1,0,value[offset+1] * rotation_speed);
+      verticalRotation_int=new SFRotation(1,0,0,-value[offset] * rotation_speed);
+
+      panOffset_int=new SFVec3f(value[offset+3],value[offset+4]);
+      zoomOffset_int[1] = value[offset+5];
+
+      translation_int=panOffset_int.multiply(translation_speed);
+      translation_int[2] = value[offset+5] * translation_speed;
+
+      for(i=0; i<6; i++) currentView[i] = value[offset+i];
+
+      angles_out=new SFVec2f(value[offset],value[offset+1]);
+      pan_out=new SFVec2f(value[offset+3],value[offset+4]);
+      zoom_out=value[offset+5];
+      view_out=currentView;
+    }
+
+    function rotationTrans_in(value, time) {
+      value=new SFVec2f(value[1],value[0]); // swap components/reduce to 2D
+      angles_out = value;
+      currentView[0] = value[0];
+      currentView[1] = value[1];
+
+      rotationAngles_int=value;
+
+      horizontalRotation_int[3] = value[1] * rotation_speed;
+      verticalRotation_int[3] = -value[0] * rotation_speed;
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function panTrans_in(value, time) {
+      value=new SFVec2f(value[0],value[1]);   // reduce to 2D
+      pan_out=value;
+      currentView[3] = value[0];
+      currentView[4] = value[1];
+
+      translation_int[0] = value[0] * translation_speed;
+      translation_int[1] = value[1] * translation_speed;
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function zoomTrans_in(value, time) {
+      value=value[1];                       // reduce to scalar
+      zoom_out = value;
+      currentView[5] = value;
+
+      translation_int[2] = value * translation_speed;
+
+      activeView_out=activeView=-1;
+      view_out=currentView;
+    }
+
+    function isOver_in(value, time) { isOver_out = value; }
+    function isActive_in(value, time) { isActive_out = value; }
+
+    function switchActive_in(value, time) {
+      if(!value) {
+        visible = !visible;
+        visible_out = visible;
+        whichChoice_int = visible ? 0 : -1;
+      }
+    }"]
+  }
+
+  ROUTE RotationTS.isOver TO Worker.isOver_in
+  ROUTE RotationPS.isActive TO Worker.isActive_in
+  ROUTE PanTS.isOver TO Worker.isOver_in
+  ROUTE PanPS.isActive TO Worker.isActive_in
+  ROUTE ZoomTS.isOver TO Worker.isOver_in
+  ROUTE ZoomPS.isActive TO Worker.isActive_in
+
+  ROUTE RotationPS.translation_changed TO Worker.rotationTrans_in
+  ROUTE PanPS.translation_changed TO Worker.panTrans_in
+  ROUTE ZoomPS.translation_changed TO Worker.zoomTrans_in
+
+  ROUTE Worker.rotationOffset_int TO RotationPS.set_offset
+  ROUTE Worker.panOffset_int TO PanPS.set_offset
+  ROUTE Worker.zoomOffset_int TO ZoomPS.set_offset
+
+  ROUTE Worker.horizontalRotation_int TO HorizontalTransform.set_rotation
+  ROUTE Worker.verticalRotation_int TO VerticalTransform.set_rotation
+  ROUTE Worker.translation_int TO TranslationTransform.set_translation
+
+  ROUTE Worker.rotationAngles_int TO RotationIcon.set_angles
+
+  ROUTE Worker.addChildren_int TO PanelGroup.addChildren
+
+  ROUTE Worker.whichChoice_int TO PanelSwitch.whichChoice
+  ROUTE Worker.visible_out TO SwitchIcon.set_on
+
+  ROUTE SwitchTS.isActive TO Worker.switchActive_in
+}
+# -------------------------------------------------------------------
+# End of NavigationPanel
+# -------------------------------------------------------------------
+
+#Proto for augmentation/replacement for headlight/navinfo:
+PROTO NavLight [ inputOutput SFFloat ambientIntensity 0.1
+                 inputOutput SFFloat intensity 1
+                 inputOutput SFColor color 1 1 1
+                 inputOutput SFVec3f attenuation 1 0 0
+                 inputOutput SFBool headlight FALSE
+                 inputOutput MFFloat avatarSize [ .25 1.6 .75 ]
+                 inputOutput SFFloat navigationSpeed 1
+                 inputOutput MFString navigationType ["WALK" "ANY"]
+                 inputOutput SFFloat visibilityLimit 0 ]
+{
+  DEF Fixture Transform {
+    children [
+      PointLight {
+        ambientIntensity IS ambientIntensity
+        intensity IS intensity
+        color IS color
+        attenuation IS attenuation
+        radius 1e10
+        location 0 0 0
+      }
+      NavigationInfo {
+        avatarSize IS avatarSize
+        type IS navigationType
+        speed IS navigationSpeed
+        visibilityLimit IS visibilityLimit
+        headlight IS headlight
+      }
+    ]
+  }
+  DEF PS ProximitySensor { size 1000 1000 1000 }
+  ROUTE PS.position_changed TO Fixture.set_translation
+  ROUTE PS.orientation_changed TO Fixture.set_rotation
+}
+

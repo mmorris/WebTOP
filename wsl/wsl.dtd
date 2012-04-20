@@ -1,0 +1,242 @@
+
+<!-- WebTOP Script Language Document Type Definition -->
+<!-- Author: Yong Tze Chi                            -->
+<!-- Date  : July 26, 2001                           -->
+
+<!--
+
+  This DTD defines WebTOP Script Language that is used
+  in WebTOP modules for scripting. WSL is part of a
+  project under WebTOP to provide scripting capability
+  to all existing WebTOP modules. Scriptable WebTOP
+  modules records user actions and output to a file
+  in WSL. These modules can later load a WSL file back
+  and play back the user actions. WSL is used as a means
+  of storing recorded user actions on file.
+
+-->
+
+<!ELEMENT wsl (circular | fabryperot | michelson | nslit
+                 | polarization | rayleigh | reflection
+                 | singleslit | wavesimulation,
+               script?)>
+
+
+<!-- Initialization tag for Fresnel Circular module -->
+
+<!ELEMENT circular (viewpoint?)>
+<!ATTLIST circular
+  wavelength CDATA "450.0"
+  z          CDATA "100.0"
+  diameter   CDATA "0.75">
+
+
+<!-- Initialization tag for Fabry-Perot module -->
+
+<!ELEMENT fabryperot (viewpoint?)>
+<!ATTLIST fabryperot
+  d                 CDATA              "1.0
+  indexOfReflection CDATA              "1.5"
+  reflectivity      CDATA              "0.5"
+  wavelength        CDATA              "550.0"
+  widgets           (visible | hidden) "visible"
+  axis              (visible | hidden) "visible">
+
+
+<!-- Initialization tag for Michelson Interferometer module -->
+
+<!ELEMENT michelson (viewpoint?)>
+<!ATTLIST michelson
+  wavelength     CDATA              "400.0"
+  pathDifference CDATA              "0.02"
+  tiltAngle      CDATA              "0.0"
+  widgets        (visible | hidden) "visible"
+  axes           (visible | hidden) "visible">
+  
+
+<!-- Initialization tag for Fraunhofer N-Slit module -->
+
+<!ELEMENT nslit (viewpoint?)>
+<!ATTLIST nslit
+  wavelength     CDATA              "650.0"
+  z              CDATA              "900.0"
+  slitWidth      CDATA              "0.04"
+  slitDistance   CDATA              "0.22"
+  numberOfSlits  CDATA              "3"
+  widgets        (visible | hidden) "visible">
+
+
+<!-- Initialization tag for Polarization module -->
+
+<!ELEMENT polarization (source, filters?, viewpoint?)>
+<!ATTLIST polarization
+  animation      (play | stop)      "play"
+  history1       (on | off)         "off"
+  history2       (on | off)         "off"
+  widgets        (visible | hidden) "visible"
+  fieldMode      (composite | all | none | x_only | y_only | x_and_y) "composite">
+
+<!ELEMENT source EMPTY>
+<!ATTLIST source
+  sourceType      (polarized | unpolarized) "polarized"
+  wavelength      CDATA                     "540.0"
+  amplitudex      CDATA                     "1.0"
+  amplitudey      CDATA                     "1.0"
+  phaseDifference CDATA                     "90.0">
+
+<!ELEMENT filters (polarizer*, wavePlate*)>
+
+<!ELEMENT polarizer EMPTY>
+<!ATTLIST polarizer
+  id    ID    #REQUIRED
+  z     CDATA #REQUIRED
+  angle CDATA #REQUIRED>
+
+<!ELEMENT wavePlate EMPTY>
+<!ATTLIST wavePlate
+  id        ID    #REQUIRED
+  z         CDATA #REQUIRED
+  angle     CDATA #REQUIRED
+  thickness CDATA "0.5">
+
+
+<!-- Initialization tag for Fraunhofer Rayleigh Resolution module -->
+
+<!ELEMENT rayleigh (viewpoint?)>
+<!ATTLIST rayleigh
+  wavelength CDATA "547.45"
+  diameter   CDATA "3.75"
+  angle      CDATA "8.221E-5"
+  z          CDATA "500.0">
+
+
+<!-- Initialization tag for Fresnel Single Slit module -->
+
+<!ELEMENT singleslit (viewpoint?)>
+<!ATTLIST singleslit
+  wavelength CDATA "540.0"
+  slitWidth  CDATA "0.4"
+  z          CDATA "50.0">
+
+
+<!-- Initialization tag for Wave Simulation module -->
+
+<!ELEMENT waveSimulation (sources?, viewpoint?)>
+<!ATTLIST waveSimulation
+  linearLayout (1 | 2 | 3 | 4)             "1"
+  resolution   (1 | 2 | 3 | 4 | 5 | CDATA) "3"
+  animation    (play | stop)               "stop">
+
+<!ELEMENT sources (pointsource*, linesource*)>
+
+<!ELEMENT pointsource EMPTY>
+<!ATTLIST pointsource
+  id         ID         #REQUIRED
+  amplitude  CDATA      #REQUIRED
+  wavelength CDATA      #REQUIRED
+  phase      CDATA      #REQUIRED
+  position   CDATA      #REQUIRED
+  selected   (yes | no) #IMPLIED>
+  
+<!ELEMENT linesource EMPTY>
+<!ATTLIST linesource
+  id         ID         #REQUIRED
+  amplitude  CDATA      #REQUIRED
+  wavelength CDATA      #REQUIRED
+  phase      CDATA      #REQUIRED
+  selected   (yes | no) #IMPLIED>
+
+
+<!-- viewpoint tag -->
+<!ELEMENT viewpoint EMPTY>
+<!ATTLIST viewpoint
+  value CDATA #REQUIRED>
+
+
+
+<!-- script tag -->
+<!ELEMENT script (actionPerformed*, mouseEntered*, mouseExited*,
+                  mousePressed*, mouseReleased*, mouseDragged*,
+                  objectAdded*, objectRemoved*, viewpointChanged*,
+                  viewpointSelected*)
+
+
+<!-- actionPerformed tag -->
+<!ELEMENT actionPerformed EMPTY>
+<!ATTLIST actionPerformed
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  value  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!--  mouseEntered tag -->
+<!ELEMENT mouseEntered EMPTY>
+<!ATTLIST mouseEntered
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- mouseExited tag -->
+<!ELEMENT mouseExited EMPTY>
+<!ATTLIST mouseExited
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- mousePressed tag -->
+<!ELEMENT mousePressed EMPTY>
+<!ATTLIST mousePressed
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- mouseReleased tag -->
+<!ELEMENT mouseReleased EMPTY>
+<!ATTLIST mouseReleased
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- mouseDragged tag -->
+<!ELEMENT mouseDragged EMPTY>
+<!ATTLIST mouseDragged
+  target CDATA #IMPLIED
+  param  CDATA #IMPLIED
+  value  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- objectAdded tag -->
+<!ELEMENT objectAdded (polarizer | wavePlate | pointsource | linesource)
+<!ATTLIST objectAdded
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- objectRemoved tag -->
+<!ELEMENT objectRemoved EMPTY>
+<!ATTLIST objectRemoved
+  target CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- viewpointChanged tag -->
+<!ELEMENT viewpointChanged EMPTY>
+<!ATTLIST viewpointChanged
+  value  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+<!-- viewpointSelected tag -->
+<!ELEMENT viewpointSelected EMPTY>
+<!ATTLIST viewpointSelected
+  value  CDATA #IMPLIED
+  timeStamp CDDATA #REQUIRED>
+
+
+
+<!-- End of wsl.dtd -->

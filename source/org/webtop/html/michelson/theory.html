@@ -1,0 +1,143 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head><title>Interference - Michelson Interferometer: Theory</title>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+
+
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Interference - Michelson Interferometer: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>This module simulates a monochromatic point source illuminating a
+Michelson interferometer. The resulting intensity pattern is displayed on an
+observation screen, and a plot of the intensity across the middle of the
+pattern is displayed, see Fig. 1 below.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=402 height=407 src="images/image002.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 1 The Michelson interferometer module.</small></center></td>
+  </tr>
+</table></center></div>
+
+<p><big><font color="#008040"><b>Basic Ideas</b></font></big></p>
+<p>Consider the schematic of the interferometer given in Fig. 2.</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=249 height=408 src="images/image004.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 2 Schematic of a Michelson interferometer. S is a
+monochromatic point source. BS is a beam splitter, C is a compensator plate, M<sub>1
+    </sub>is the translation mirror, M<sub>2 </sub>is the tilt mirror, and <font face=symbol>S</font> is
+an observation screen. SB<sub>1</sub> is defined in the text below.</small></center></td>
+  </tr>
+</table></center></div>
+<p>The interferometer works in the following way. The light from the
+point source S first strikes the beam splitter, which divides the beam into two
+equal amplitude beams: a reflected one, which we will call Beam 1, and a
+transmitted one, which we will call Beam 2.&nbsp;We assume that the back surface of the beam splitter is the coated surface.</p>
+<p>Beam 1 travels to the "translation" mirror M<sub>1</sub> of the
+interferometer. This mirror can translate back and forth in order to provide a
+desired path length difference d between the paths traveled by Beams
+1 and 2. &nbsp;Beam 1 then reflects off of
+the translation mirror and travels back to the beam splitter.&nbsp; At the beam splitter it splits into two equal
+amplitude beams.&nbsp; The beam of interest
+is the one that transmits through the beam splitter and travels to the
+observation screen. In Fig. 2, SB<sub>1</sub> is the virtual image of S
+produced by Beam 1.</p>
+
+<p>Let us now discuss Beam 2.&nbsp;
+Beam 2 is the transmitted beam created when the light from the point
+source is incident upon the beam splitter.&nbsp; It
+travels from the beam splitter through the compensator plate to the "tilt"
+mirror M<sub>2</sub>.&nbsp; In this
+interferometer the tilt mirror can only be rotated about its vertical axis; we
+will call this angle of rotation <font face=symbol>f</font>
+(see Fig 2).&nbsp; (In most Michelson
+interferometers M<sub>2</sub>&nbsp;can be
+tilted with respect to two orthogonal axes.)&nbsp;&nbsp;
+The beam then reflects from the tilt mirror and travels back through the
+compensator plate to the beam splitter.&nbsp;
+At the beam splitter, beam 2 is divided into equal amplitude reflected
+and transmitter beams.&nbsp; We are interested in the reflected beam that travels to the observation
+screen.  There, it interferes with the beam that has traveled in the other
+arm of the interferometer.&nbsp; This module depicts the resulting intensity pattern
+on the observation screen, and displays a plot of the intensity as a function of
+position across the center of the pattern.</p>
+
+<p><big><font color="#008040"><b>Intensity on the Observation Screen</b></font></big></p>
+
+<p><font color="#800000">(a) Mirror M<sub>2</sub> not&nbsp; Tilted (<font face=symbol>f</font>= 0)</font></p>
+<p>Let P be a point on the observation screen, and let <font face=symbol>q</font> be
+its angular position (see Fig.2).&nbsp; The
+intensity at P is given by the following formula</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center>I(P)=4I<sub>1</sub>(P) sin<sup>2</sup>(kd cos<font face=symbol>q</font>)</center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p>Here k=2<font face=symbol>p</font>/<font face=symbol>l</font> is the angular wave number of the light and I<sub>1</sub>(P)&nbsp;is the irradiance
+that would be observed at P if only one of the two beams were incident upon the
+observation screen. </p>
+
+<p><a href=examples.html#Ex1>Example 1 </a>depicts
+what happens when the path length difference d is varied. <a href=examples.html#Ex2>Example 2 </a>depicts what happens when the wavelength of
+the incident light is varied.</p>
+
+<p><font color="#800000">(b) Mirror M<sub>2</sub>Tilted (<font face=symbol>f¹</font> 0)</font></p>
+
+The expression for I(P)&nbsp;is quite complicated
+and we will not discuss its mathematical form here. <a href=examples.html#Ex3>Example 3 </a>depicts what happens when tilt of the tilt mirror is varied.
+
+
+
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

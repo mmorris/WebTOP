@@ -1,0 +1,11 @@
+<wsl>
+  <nslit wavelength="500.0" z="1000.0" slitWidth="0.0050" slitDistance="0.1" numberOfSlits="2">
+    <view value="-0.3 -0.4 0.0 0.0 -2.0 -12.0" />
+  </nslit>
+  <script>
+    <actionPerformed param="numberOfSlits" value="3" timeStamp="5000" />
+    <actionPerformed param="numberOfSlits" value="4" timeStamp="5000" />
+    <actionPerformed param="numberOfSlits" value="5" timeStamp="5000" />
+    <actionPerformed param="numberOfSlits" value="10" timeStamp="5000" />
+  </script>
+</wsl>

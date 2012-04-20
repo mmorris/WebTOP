@@ -1,0 +1,27 @@
+<wsl>
+  <wavesimulation mode="animation" grid="hidden" linearLayout="1" resolution="3" animation="play">
+    <sources>
+      <pointsource id="point1" amplitude="4.0" wavelength="8.0" phase="0.0" selected="true" position="-50.0,8.0" />
+      <pointsource id="point2" amplitude="4.0" wavelength="8.0" phase="0.0" position="-50.0,-8.0" />
+    </sources>
+    <view value="-0.87 0.0 0.0 0.0 0.0 -7.5" />
+  </wavesimulation>
+  <script>
+    <viewpointSelected value="1" timeStamp="10174" />
+    <actionPerformed param="animation" value="stop" timeStamp="13019" />
+    <actionPerformed target="point1" param="y" value="12.0" timeStamp="2754" />
+    <mouseEntered target="point2" timeStamp="3355" />
+    <actionPerformed target="point2" param="y" value="-12.0" timeStamp="11356" />
+    <actionPerformed param="widgets" value="hidden" timeStamp="3065" />
+    <actionPerformed param="animation" value="play" timeStamp="2223" />
+    <viewpointSelected value="0" timeStamp="10415" />
+    <viewpointSelected value="1" timeStamp="11697" />
+    <actionPerformed param="animation" value="stop" timeStamp="1722" />
+    <actionPerformed target="point2" param="y" value="-16.0" timeStamp="5358" />
+    <mouseEntered target="point1" timeStamp="5027" />
+    <actionPerformed target="point1" param="y" value="16.0" timeStamp="4827" />
+    <actionPerformed param="widgets" value="hidden" timeStamp="3605" />
+    <actionPerformed param="animation" value="play" timeStamp="2083" />
+    <viewpointSelected value="0" timeStamp="10756" />
+  </script>
+</wsl>

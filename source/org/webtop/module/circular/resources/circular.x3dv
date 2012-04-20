@@ -1,0 +1,384 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#Red2ConeXDragger"
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+##################################################
+#Main Viewpoint is the viewpoint that is initally# 
+#displayed on the screen                         #
+##################################################
+#DEF MainVP Viewpoint {
+#    description "Main View"
+#    position 0 1000 1900    #Changes viewpoint position (orig 0 500 2000)
+#    #orientation 1 0 0 -1.57 #Changes viewpoint orientation
+#}
+##End Main Viewpoint##
+
+NavLight { navigationType "NONE" }
+
+
+#NavigationInfo {
+#	speed 50
+#}
+
+DEF NavPanel NavigationPanel {
+	#views [-.50 0 999999 0 -19.5 -180
+       #  -.75 100 -150 0 -25 -230]
+
+	#views[ -.75 100 -150 0 -25 -230
+	#-.50 0 999999 0 -19.5 -180]
+	#views[ 
+	#-.50 0 999999 0 -19.5 -180
+	 #-.75 100 -150 0 -25 -230]
+	 views [
+  -0.189 -0.083 0, 0 -0.860 -20,
+  -0.25  -0.3   0, 0 -2.031 -18,
+  -0.125 -0.083 0, 0 -0.723 -20,
+   0      0     0, 0  0     -20 ]
+
+
+	translation_speed 10
+
+	children [
+		Group{
+		children [
+		##Bounding Box##
+		Transform {
+			scale 1000 1000 1000
+			translation 0 0 -500
+			children Inline {
+				url				 "x3dlib/BoundingBox.x3dv"
+				bboxSize				1000 1000 1000
+				bboxCenter				0 0 -500
+			}
+		}
+		##end Bounding Box##
+
+		DEF WidgetsSwitch Switch {
+			whichChoice 0
+			choice Group {
+				children [
+					## Transform for the wavelength widget
+					Transform {
+						scale 100 100 100
+						#translation 0 -30 220 keep in order to put the widget back in the center [JD]
+						translation -380 -350 100
+						children DEF WavelengthWidget WheelWidget {
+							value 500
+						}
+						#rotation 1 0 0 -1.5707963  keep in order to put the widget back in the center [JD]
+					}
+					##Transform for the zdistance widget
+					Transform {
+						translation 0 500 0
+						scale 5 5 5
+						rotation 0 0 1 1.5707963 #takes quirkiness out of z distance widget
+						children [
+							DEF ScreenDragger Red2ConeXDragger {
+								coneScale 5 5 5
+								minPosition 20
+								maxPosition 200
+								position 50
+								#positionAsValue TRUE
+								rotation 0 1 0 1.5707963
+							}
+						]
+					}
+					##Transform for the diameter widget
+					Transform {
+						scale 500 500 500
+						children [
+							DEF DiameterDragger Red2ConeXDragger {
+								coneScale 0.05 0.05 0.05
+								minPosition 0.0001
+								maxPosition 1
+								position 0.70710678
+							}
+						]
+					}
+				]
+			}
+		}
+#		Transform {
+#			#translation 0 50 300 keep in order to put the wave in the center [JD]
+#			translation -450 -280 220
+#			#rotation 0 1 0  1.57079632679 keep in order to put the wave in the center [JD]
+#			#The wave that is displayed above the wheel widget#
+#			children Inline { url "../../x3dlib/Wave.x3dv" } 
+#		}
+		DEF moveScreen Transform {
+			translation 0 0 -500 
+			children [
+				#The box that is the screen
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 1 1 0
+							emissiveColor 1 1 0
+						}
+					}
+					geometry IndexedFaceSet {
+						coord Coordinate {
+							point [
+								500 -500 -10,
+								-500 -500 -10,
+								-500 500 -10,
+								500 500 -10,
+								500 -500 0,
+								-500 -500 0,
+								-500 500 0,
+								500 500 0,
+							]
+						}
+						coordIndex [
+							0, 1, 2, 3, -1, # back
+							1, 5, 6, 2, -1, # left
+							0, 3, 7, 4, -1, # right
+							3, 2, 6, 7, -1, # top
+							0, 4, 5, 1, -1, # bottom
+						]
+					}
+				}
+
+				Transform {
+					rotation 1 0 0 1.5707963267949
+					children [
+						#To allow intensity readouts
+						DEF ScreenTouch TouchSensor {
+							enabled TRUE
+						}
+
+						DEF ResolutionSwitch Switch {
+							whichChoice 0
+							choice [
+								Group {
+									children [
+																				
+										DEF HiQuad Shape {
+											
+											geometry DEF ifsNode IndexedFaceSet {
+												coord DEF coordinateNode Coordinate {}
+												color DEF colorNode Color {}												
+												normalPerVertex FALSE
+																				
+											}
+										}
+									
+										##Rotating Quads##
+										Transform {
+											rotation 0 1 0 1.57079632679
+											children USE HiQuad
+										}
+										Transform {
+											rotation 0 1 0 -1.57079632679
+											children USE HiQuad
+										}
+										Transform {
+											rotation 0 1 0 3.14159265359
+											children USE HiQuad
+										}
+									]
+								}
+								Group {
+									children [
+									
+										DEF LoQuad Shape {
+											geometry
+											DEF ifsNodeLowRes IndexedFaceSet {
+												coord DEF coordinateNodeLowRes Coordinate {}
+												color DEF colorNodeLowRes Color {}
+												creaseAngle 3.14159
+												normalPerVertex FALSE
+											}
+										}
+										
+										##Rotating LoQuad##
+										Transform {
+											rotation 0 1 0 1.57079632679
+											children USE LoQuad
+										}
+										Transform {
+											rotation 0 1 0 -1.5707963267
+											children USE LoQuad
+										}
+										Transform {
+											rotation 0 1 0 3.14159265359
+											children USE LoQuad
+										}#end transform
+									]
+								}#end low quad group
+							   
+							]#end choice
+						}#end resolution switch
+					
+		
+		
+		Transform { 
+			translation 250 0 -530 #puts line on top of bounding box
+			rotation 1 0 0 -1.5707963267949 #orientates the line correctly
+			scale 1 70 1
+			children [
+												
+			DEF HiLine Shape {
+			geometry DEF ilsNode IndexedLineSet { 
+			coord Coordinate{} #added
+					}
+			appearance DEF LineAppearance Appearance {
+			material Material {
+			emissiveColor 1 1 1
+				}
+					}
+											
+						}
+			Transform {
+			rotation 0 1 0 3.14159265
+			translation -500 0 0
+			children USE HiLine
+					}
+				]
+			}#end Transform for ilsNode
+
+					]#end Group-children
+				}#end Group
+			]#end moveScreen children
+		}#end moveScreen
+
+		Transform {
+			scale 1000 1000 1000
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor		0.3 0.6 0.9
+							transparency		0.6
+						}
+					}
+					geometry DEF apertureIFSNode IndexedFaceSet {
+						coord DEF apertureCoordNode Coordinate {}
+						solid FALSE
+						creaseAngle 0.5
+					}
+				}
+			]
+		}
+
+		DEF SCALE_TRANSLATE_SENSOR Script {
+			inputOnly	 SFFloat translation_in
+			outputOnly SFVec3f screen_translation_out
+
+			url "ecmascript:function translation_in(value, time) {
+			     //Browser.println('widget sent: ' + value);
+			     screen_translation_out[2] = -value*5;
+			     }"
+		}
+	]
+	}
+	]
+}#end NavPanel
+
+ROUTE ScreenDragger.position_changed TO SCALE_TRANSLATE_SENSOR.translation_in
+ROUTE SCALE_TRANSLATE_SENSOR.screen_translation_out TO moveScreen.set_translation

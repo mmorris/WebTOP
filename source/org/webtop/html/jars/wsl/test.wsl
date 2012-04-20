@@ -1,0 +1,12 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="visible" fieldMode="composite">
+    <source sourceType="polarized" wavelength="700.0" amplitudex="0.707" amplitudey="0.707" phaseDifference="0.0" />
+    <filters>
+      <waveplate id="waveplate0" z="10.0" angle="0.0" thickness="0.25" />
+    </filters>
+    <view value="-0.41456234 -0.653624 0.0 1.0 3.0 -17.0" />
+  </polarization>
+  <script>
+    <scriptEnded timeStamp="1632" />
+  </script>
+</wsl>

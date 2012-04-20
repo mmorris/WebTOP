@@ -1,0 +1,25 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+<script language="JavaScript" src="../webtopscripts/module.js"></script>
+</head>
+<body bgcolor="#000000" text="#FFFFFF">
+<script language="JavaScript">
+self.name='module';
+document.write(stdMenu(0,'Fraunhofer N-Slit',0,false));
+document.write(moduleList(1,true));
+</script>
+<div class=module id=module>
+<script language="JavaScript">
+document.write(moduleHTML(770,380,990,540,1230,790,660,125,'FraunNSlit.wrl','webtop.nslit.FraunNSlit.class','wslscript','component.jar, util.jar, sdlmath.jar, numberbox.jar, wsl.jar, nslit.jar',getScriptName()));
+</script>
+</div>
+</body>
+</html>

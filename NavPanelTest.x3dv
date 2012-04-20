@@ -1,0 +1,103 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+	
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"source/org/webtop/x3dlib/NavPanel.x3dv#NavigationPanel"
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"source/org/webtop/x3dlib/NavPanel.x3dv#NavLight"
+
+NavLight { navigationType "NONE" }
+
+
+
+
+DEF NavPanel NavigationPanel {
+	views [-.45 0 0 0 0 -3]
+	translation_speed 1.5
+
+	children [
+    Group{
+      children [								 
+          Transform {
+              #rotate the shape towards the default VP
+              rotation 0 0 0 0
+              children  [
+                  Shape {
+                      appearance Appearance {
+                          material Material {
+                          #diffuseColor 0.4 0.6 0.3
+                          diffuseColor 0.1 0.1 1.0
+                          }
+                      }
+                      geometry DEF EGrid ElevationGrid {
+                          height [0 0 0 0 0
+                                  0 0 0 0 0
+                                  0 0 0 0 0
+                                  0 0 0 0 0
+                                  0 0 0 0 0	]
+                          solid TRUE
+                          xDimension 5
+                          xSpacing 10
+                          zDimension 5
+                          zSpacing 10
+                      }
+                  }
+              ]
+          }
+      ]
+    }
+  ]
+}

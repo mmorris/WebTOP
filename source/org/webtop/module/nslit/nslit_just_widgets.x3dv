@@ -1,0 +1,467 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+###############
+### Imports ###
+###############
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO BlueConeXDragger [ 
+    inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation 
+	inputOutput SFRotation rotation 
+
+	initializeOnly SFFloat position 
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition 
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition 
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value 
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue 
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue 
+
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized 
+]
+"../../x3dlib/Widgets.x3dv#BlueConeXDragger"
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#WheelWidget"
+
+EXTERNPROTO ScreenBackdrop [
+    #Positioning
+	inputOnly	SFFloat	set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat position
+	#Sizing/appearance
+	initializeOnly SFVec3f size
+	initializeOnly SFColor diffuseColor
+	initializeOnly SFFloat transparency
+	inputOnly	SFFloat	set_transparency
+]
+"../../x3dlib/Screens.x3dv#RectangularScreenBackdrop"
+
+EXTERNPROTO GreyNYCone [ 
+    inputOutput SFVec3f coneScale 
+]
+"../../x3dlib/Widgets.x3dv#GreyNYCone"
+
+#EXTERNPROTO XDragWidget [ inputOutput SFVec3f translation
+#										inputOutput SFRotation rotation
+#
+#										initializeOnly SFFloat position 
+#										inputOnly SFFloat set_position
+#										outputOnly SFFloat position_changed
+#
+#										initializeOnly SFFloat minPosition 				#If minPosition > maxPosition, all values allowed
+#										inputOnly SFFloat set_minPosition
+#										initializeOnly SFFloat maxPosition 
+#										inputOnly SFFloat set_maxPosition
+#
+#										initializeOnly SFFloat value 							#Only used if positionAsValue FALSE
+#										inputOnly SFFloat set_value
+#										outputOnly SFFloat value_changed
+#
+#										initializeOnly SFFloat minValue 
+#										inputOnly SFFloat set_minValue
+#										initializeOnly SFFloat maxValue 
+#										inputOnly SFFloat set_maxValue
+#
+#										#If this is TRUE (the default), the min/maxValue fields
+#										#are ignored and 'position' and 'value' are equivalent.
+#										#(This could probably have a better name.)
+#										initializeOnly SFBool positionAsValue
+#
+#										outputOnly SFBool isOver_out
+#										outputOnly SFBool isActive_out
+#										inputOnly SFBool set_isActive
+#
+#										inputOutput SFBool enabled
+#
+#										inputOutput MFNode geometry
+#										inputOutput MFNode activeGeometry
+#										initializeOnly SFString debugName
+#										outputOnly SFBool initialized 
+#]
+#"../../x3dlib/Widgets.x3dv#XDragWidget"
+#
+#EXTERNPROTO BlueNYCone [ inputOutput SFVec3f coneScale ]
+#"../../x3dlib/Widgets.x3dv#BlueNYCone"
+#
+#EXTERNPROTO ActiveBlueNYCone [ inputOutput SFVec3f coneScale ]
+#"../../x3dlib/Widgets.x3dv#ActiveBlueNYCone"
+#
+#PROTO BlueConeXDragger [ inputOutput SFVec3f coneScale 1 1 1
+#												 inputOutput SFVec3f translation 0 0 0
+#												 inputOutput SFRotation rotation 1 0 0 0
+#
+#												 initializeOnly SFFloat position 0
+#												 inputOnly SFFloat set_position
+#												 outputOnly SFFloat position_changed
+#												 initializeOnly SFFloat minPosition 0
+#												 inputOnly SFFloat set_minPosition
+#												 initializeOnly SFFloat maxPosition 1
+#												 inputOnly SFFloat set_maxPosition
+#												initializeOnly SFFloat value 0
+#												inputOnly SFFloat set_value
+#												outputOnly SFFloat value_changed
+#												initializeOnly SFFloat minValue 0
+#												inputOnly SFFloat set_minValue
+#												initializeOnly SFFloat maxValue 1
+#												inputOnly SFFloat set_maxValue
+#												initializeOnly SFBool positionAsValue TRUE
+#
+#												 outputOnly SFBool isOver_out
+#												 outputOnly SFBool isActive_out
+#												 inputOnly SFBool set_isActive
+#
+#												 inputOutput SFBool enabled TRUE
+#												 initializeOnly SFString debugName "<unnamed>"
+#												 outputOnly SFBool initialized ]
+#{
+#	XDragWidget {
+#		translation IS translation
+#		rotation IS rotation
+#		position IS position
+#		set_position IS set_position
+#		position_changed IS position_changed
+#		minPosition IS minPosition
+#		set_minPosition IS set_minPosition
+#		maxPosition IS maxPosition
+#		set_maxPosition IS set_maxPosition
+#		value IS value
+#		set_value IS set_value
+#		value_changed IS value_changed
+#		minValue IS minValue
+#		set_minValue IS set_minValue
+#		maxValue IS maxValue
+#		set_maxValue IS set_maxValue
+#		positionAsValue IS positionAsValue
+#		isOver_out IS isOver_out
+#		isActive_out IS isActive_out
+#		set_isActive IS set_isActive
+#		enabled IS enabled
+#		geometry BlueNYCone { coneScale IS coneScale }
+#		activeGeometry ActiveBlueNYCone { coneScale IS coneScale }
+#		#geometry RedXCone { coneScale IS coneScale }
+#		#activeGeometry ActiveRedXCone { coneScale IS coneScale }
+#		debugName IS debugName
+#		initialized IS initialized
+#	}
+#}
+
+
+
+##################### Main Scene #####################
+
+#########################
+### Primary Viewpoint ###
+#########################
+
+DEF MainVP Viewpoint {
+    position 0 300 2000
+    orientation 1 0 0 2.3561944901923449288469825374596
+} 
+
+NavigationInfo {
+    speed 100
+}
+
+########################
+### Centering Sphere ###
+########################
+
+Shape { #working!
+    appearance Appearance {
+        material Material {diffuseColor 1 1 1}
+    }
+    geometry Sphere {
+        radius 25
+    }
+}
+
+
+######################
+#### Bounding Box ####
+######################
+Transform { #working!
+    scale 1000 300 1000
+    children
+    Inline {
+        bboxCenter 0 0 0
+        bboxSize 1000 300 1000
+        url "../../x3dlib/BoundingBox.x3dv"
+    }
+}
+
+#######################
+#### Incoming Wave ####
+#######################
+Transform { #working!
+    translation 0 0 750
+    rotation 0 1 0 1.5707963267949
+    children
+    Inline {
+        url "../../x3dlib/Wave.x3dv"
+    }
+}
+
+#####################
+### Slit Draggers ###
+#####################
+
+### Width Draggers ###
+Transform {
+    translation 0 0 500
+    children [
+        DEF SlitWidthDragger Red2ConeXDragger {
+            enabled TRUE
+            debugName "WidthDragger"
+            coneScale 25 25 25
+            minPosition 0
+            maxPosition 500
+            position 240
+        }
+        
+        Transform {
+            #rotation 0 1 0 3.1415926535897932384626433832795
+            translation 0 -150 0
+            children USE SlitWidthDragger 
+        }
+        
+        DEF dd BlueConeXDragger {
+		    debugName "DistDragger"
+			enabled IS wd_enabled
+            coneScale 25 25 25
+			position IS	dd_position
+			set_position IS set_dd_position
+			position_changed IS dd_position_changed
+			isOver_out IS dd_isOver_changed
+            set_isActive IS dd_set_isActive
+			isActive_out IS dd_isActive_changed
+		}
+
+		#Cheating again
+		Transform {
+			rotation 0 1 0 3.1415926535897932384626433832795
+			children USE dd
+		}
+    ]
+}
+
+
+
+#######################
+### Aperture Screen ###
+#######################
+
+Transform { #works! (assumption)
+    translation 0 0 500
+    children 
+        Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 0.5 0.6 0.7
+					transparency 0.6
+				}
+			}
+			geometry DEF ApertureScreen IndexedFaceSet {
+				coord DEF slitCoordinateNode Coordinate {
+					point []
+				}
+				# normal DEF slitNormalNode Normal { vector [] }
+				#solid       FALSE
+				#normalPerVertex FALSE
+				coordIndex  []
+				normalIndex []
+			}
+		}
+}
+
+######################
+### Screen Dragger ###
+######################
+
+DEF ScreenDragger Red2ConeXDragger { #working(placement)!
+    translation 0 150 0
+    coneScale 25 25 25
+    #rotation -1 1 1 2.1		#a vector (X,Y,Z) without -> (-Y,Z,-X) with
+    rotation 0 1 0 1.5707963267948966192313216916398
+    minPosition 0
+    maxPosition 500
+    position 0
+}
+
+#######################
+### Screen Backdrop ###
+#######################
+
+DEF Backdrop ScreenBackdrop { #working(placement)!
+    size 1000 300 10
+    position 0
+}
+########################
+### Explanatory Info ###
+########################
+
+Group { #working(position)!
+    children [
+        ##############
+        #### Text ####
+        ##############
+        Transform {
+	        translation -730 180 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry Text {
+				        string "-10 mm"
+				        fontStyle FontStyle {
+				            justify "END"
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+
+
+        Transform {
+	        translation -570 680 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry DEF NSQUARE_TEXT Text {
+				        string "9"
+				        fontStyle FontStyle {
+					        justify "END"
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+
+        Transform {
+	        translation 520 180 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry Text {
+				        string "10 mm"
+				        fontStyle FontStyle {
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+        ##################
+        #### End Text ####
+        ##################
+
+
+        ##############
+        #### Pole ####
+        ##############
+        Transform {
+	        translation -500 400 0
+	        children [
+		        Shape {
+			        appearance Appearance { material Material { diffuseColor 0.4 0.4 0.4 } }
+			        geometry Cylinder {
+				        height 500
+				        radius 6
+			        }
+		        }
+		        Transform {
+			        translation 0 410 0
+			        rotation 0 0 1 3.14159
+			        children GreyNYCone { coneScale 25 25 25 }
+		        }
+
+		        Transform {
+			        translation 0 150 0
+			        rotation 0 0 1 1.5707963
+			        children [
+				        Shape {
+					        appearance Appearance { material Material { diffuseColor 0.4 0.4 0.4 } }
+					        geometry Cylinder {
+						        height 50
+						        radius 6
+					        }
+				        }
+			        ]
+		        }
+	        ]
+        }
+    ]
+}### End Explanatory Info ###
+
+
+
+

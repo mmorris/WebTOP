@@ -1,0 +1,22 @@
+<wsl>
+  <waveguide grid="visible" wavelength="0.8" amplitude="0.5" d="2.0" n1="1.6" n2="1.4" m="2" resolution="200" gouraud="true" widgets="visible" animation="stop">
+    <view value="-0.45475447 -0.22513205 0.0 0.12994286 0.12978482 -3.697309" />
+  </waveguide>
+  <script>
+    <mouseDragged param="wavelength" value="0.9" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="0.9" timeStamp="40" />
+    <mouseDragged param="wavelength" value="1.0" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.0" timeStamp="50" />
+    <mouseDragged param="wavelength" value="1.1" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.1" timeStamp="40" />
+    <mouseDragged param="wavelength" value="1.2" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.2" timeStamp="0" />
+    <mouseDragged param="wavelength" value="1.3" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.3" timeStamp="60" />
+    <mouseDragged param="wavelength" value="1.4" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.4" timeStamp="50" />
+    <mouseDragged param="wavelength" value="1.5" timeStamp="3000" />
+    <actionPerformed param="wavelength" value="1.5" timeStamp="50" />
+    <scriptEnded timeStamp="6529" />
+  </script>
+</wsl>

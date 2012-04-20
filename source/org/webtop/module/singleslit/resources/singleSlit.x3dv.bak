@@ -1,0 +1,475 @@
+#X3D V3.0 utf8
+PROFILE Immersive 
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../../x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../../x3dlib/Widgets.x3dv#WheelWidget"
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"../../../x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"../../../x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+######################
+#   MAIN VIEWPOINT   #
+######################
+NavLight { navigationType "NONE" }
+
+#DEF NavPanel NavigagtionPanel{
+#	views[ -.50 0 999999 0 -19.5 
+#	-180 -.75 100 -150 0 -25 -230]
+#	translation_speed 10
+
+#DEF MainVP Viewpoint {
+#	description "Main View"
+#	position -5.1879964 705.2546 1450.0354
+#	orientation  -0.9999636 -0.00802401 -0.0029008759 0.45269734
+#}
+#######CHANGES THE SPEED OF NAV MOVEMENT###
+#NavigationInfo {
+#	speed 50
+#}
+#######################
+# END MAIN VIEWPOINT#
+#####################
+
+
+#################################Group everything for the module together as Circular does so as well##############################
+Group {
+	children [
+#####################
+# BOUNDING BOX      #
+#####################
+Transform {
+	scale 1000 300 1000 
+	translation 0 0 0
+	children Inline {
+		url			"../../../x3dlib/BoundingBox.x3dv"
+		bboxSize 1000 300 1000
+		bboxCenter 0 0 -500
+	}
+}
+####################
+# END BOUNDING BOX #
+####################
+
+
+
+####################
+#     WIDGETS      #
+####################
+
+# The cone draggers for the aperture screen and the wavelength widget
+DEF WidgetsSwitch Switch {
+	whichChoice 0
+	choice Group {
+		children [
+			#Transform for the wavelength widget
+			Transform {
+				#translation 0 -30 600 #uncomment to move wavelength widget back to middle of box
+				#rotation 1 0 0 1.57  #umcomment to move wavelength widget back to middle of box
+				translation -450 -90 525 #comment to move wavelength widget back to middle of box
+				scale 75 75 75 
+				children DEF wavelengthWidget WheelWidget { value 500 }
+			}
+
+			#The right Red2ConeXDragger
+			Transform {
+				translation -40 0 500
+				children DEF rightWidthDragger Red2ConeXDragger {
+					coneScale 25 25 25
+					minPosition 40 
+					maxPosition 499
+					position 200
+				}
+			}
+
+#			#The left Red2ConeXDragger
+#			Transform {
+#				translation 40 0 500
+#				rotation 0 1 0 3.14
+#				children DEF leftWidthDragger Red2ConeXDragger {
+#					coneScale 25 25 25
+#					minPosition 40
+#					maxPosition 499 
+#					position 200
+#				}
+#			}
+
+			#The Screen Z axis dragger--As of now it moves across the whole screen. may need to change in the future. JD
+			
+			####NOTE:  Everything with my mods beside the comment indicate my modifications. As it is now both of the zdistance 
+			#widgets below work.  Still testing to see which one will work the best.  The original is uncommented and the 
+			#commented lines with my mods are the modifications that I made. JD
+			DEF translateScreenSwitch Switch {
+			whichChoice 0
+			choice Transform {
+				#translation 0 150 300 my mods
+				translation 0 150 510 #had to translate this much to center the z distance widget in the bounding box. JD
+	##### AS WITH CIRCULAR THE ROTATION OF THIS WIDGET CAN AFFECT THE DRAG ACTION OF THE WIDGET. GO BACK AND LOOK AT CIRCULAR.X3DV IF NECESSARY#####################
+				#rotation 0 1 0 1.57  my mods
+				rotation -1 1 1 2.1
+				#scale 5 5 5 my mods
+				scale 10 10 10
+				children [
+					DEF ScreenDragger Red2ConeXDragger {
+						#coneScale 5 5 5 my mods
+						coneScale 2.5 2.5 2.5
+						#minPosition -30 my mods
+						minPosition 2.5
+						#maxPosition 150 my mods
+						maxPosition 100 
+						position 50
+					}
+				]
+			}
+
+			}#end translateScreenSwitch 
+			
+		]
+	}
+}
+
+###################
+#   END WIDGETS   #
+###################
+
+###################
+# WAVY LINE TIME  #
+###################
+#Transform {
+#	translation 0 50 660
+#	rotation 0 1 0 1.5707963
+#	children Inline { url "../../../x3dlib/Wave.x3dv"}
+#}
+####################
+#  END WAVY LINE   #
+####################
+
+####################
+# APERTURE SCREENS #
+####################
+
+#The left side aperture screen
+DEF slit1 Transform {
+	#translation -325 0 500 
+	translation 0 0 0
+	scale 350 1 1
+	children [
+		DEF slit Shape {
+			appearance Appearance {
+				material Material {
+					ambientIntensity 0.2 
+					diffuseColor 0.3 0.6 0.9
+					specularColor 0 0 0 
+					transparency 0.6
+				}
+			}
+
+			geometry Box {#size 1 300 2
+						 size 1.1559 300 1 }
+		}
+	]
+}
+
+#The right side aperture screen
+DEF slit2 Transform {
+	translation 325 0 500
+	scale 350 1 1
+	children USE slit
+}
+
+##################
+#END APE SCREENS #
+##################
+
+##################
+# DISPLAY SCREENS#
+##################
+
+##look at the screenMover Transform in the singleSlit.vrml file and the moveScreen transform in the circular.x3dv file##
+
+DEF moveScreen Transform {
+	#translation 0 0 -500 
+	children [
+		#####The box that is the screen#####
+		Shape{
+			appearance Appearance {
+				material Material { 
+					diffuseColor 1 1 0 
+					emissiveColor 1 1 0
+				}
+			}
+			geometry IndexedFaceSet {
+				coord Coordinate {
+					point [
+						500 -150 -10,
+						-500 -150 -10,
+						-500  150 -10,
+						500  150 -10,
+						500 -150   0,
+						-500 -150   0,
+						-500  150   0,
+						500  150   0,
+					]
+				}
+
+				coordIndex [
+					0, 1, 2, 3, -1, # back
+					1, 5, 6, 2, -1, # left
+					0, 3, 7, 4, -1, # right
+					3, 2, 6, 7, -1, # top
+					0, 4, 5, 1, -1, # bottom
+				]
+			}#end IndexedFaceSet
+		}#end Shape
+
+##########The Observation Screen started here in Circular but it was completely independent in the singleSlit.vrml file##########
+##########May have to go back and change it once I start connecting to the world via the .java file##############################
+		
+		#Setup the observation screen
+		#NOTE: SingleSlit only used a hires screen, no lores, so I am going to attempt the same to see if lag still occurs
+		DEF meshMover Transform {
+			translation 0 -150 0 
+			children [
+				DEF ScreenTouch TouchSensor {
+					enabled TRUE
+				}
+
+				DEF ResolutionSwitch Switch {
+					whichChoice 0 
+					choice [
+						Group {
+							children [
+								DEF HiQuad Shape {
+									geometry DEF ifsNode IndexedFaceSet {
+										coord DEF coordinateNode Coordinate {}
+										color DEF colorNode Color {}
+										normalPerVertex FALSE
+										creaseAngle 3.14159
+									}
+								}
+
+								#Rotate quad once
+#								Transform {
+#									rotation 1 0 0 1.57079632679
+#									children USE HiQuad
+#								}
+							]#end children of Group
+						}#end Group
+					]#end choice
+				}#end ResolutionSwitch
+
+				####put intensity readout line code here ###
+
+				#intensity readout line
+				Transform {
+					translation 0 300 0 
+					#rotation 0 0 0 0 may not need
+					scale 1 70 1 #may not need 
+					children [
+						DEF HiLine Shape {
+							geometry DEF ilsNode IndexedLineSet {
+								coord Coordinate {}
+							}#end ilsNode
+							appearance DEF LineAppearance Appearance {
+								material Material {
+									emissiveColor 1 1 1
+								}
+							}
+						}#end HiLine
+					]#end intensity readout transform children
+				}#end intensity readout tansform
+			]#end children of Transform for display screen
+		} #End Transform for display screen
+	]#end children for moveScreen
+#end Transform for moveScreen
+}
+
+######################
+#       SCRIPTS      #
+######################
+
+DEF CHANGE_SLIT_WIDTH Script {
+	inputOnly SFFloat translation_in
+	outputOnly SFVec3f translation1_out
+	outputOnly SFVec3f translation2_out
+	outputOnly SFVec3f scale_out
+	outputOnly SFFloat width_out
+
+	url "ecmascript: 
+		function initialize() {
+			translation1_out = new SFVec3f(350, 0, 0);
+			translation2_out = new SFVec3f(-350, 0, 0);
+			scale_out = new SFVec3f(300, 1, 1);
+		}
+
+		function translation_in(value, time) {
+			if(value < 0)
+				value = -1*value;
+			
+			translation1_out[0] = (500 - value)/2 + value; 
+			translation2_out[0] = -translation1_out[0];
+			scale_out[0] = 500 - value;
+			width_out = value*2/1000;
+		} "
+
+}
+
+DEF AXIS_SWITCHER Script {
+	inputOnly SFFloat t_in
+	outputOnly SFVec3f t_out
+
+	#screen dragger reports in 0 to 100, we need 0 to 1000
+	url "ecmascript: 
+		function t_in(value, time){
+			t_out[2] = -value*10; //this gives the proper movement of the screen but it is still shifted back too far
+		} "
+}
+
+
+
+
+
+###TESTING THE OPPOSITE MOVEMENTS OF THE DRAGGER##
+#DEF OPP_DRAG Script {
+#	inputOnly SFFloat drag_in
+#	outputOnly SFVec3f drag_out
+#
+#	#try to make the left and right draggers move opposite of each other
+#	url "ecmascript: 
+#		function drag_in(value, time){
+#			drag_out[0] = -1*drag_in*10;
+#			//drag_out[0] = -1 *drag_in[0];
+#			//drag_out[1] = -1*drag_in[1];
+#			//drag_out[2] = -1*drag_in[2];
+#		}"
+#}
+
+################
+#  END SCRIPTS #
+################
+
+]#end overall Group children
+#end Overall Group
+}
+#End Nav Panel
+#}
+
+############################
+# SCRIPT ROUTE STATEMENTS  #
+############################
+
+ROUTE ScreenDragger.position_changed TO AXIS_SWITCHER.t_in
+ROUTE AXIS_SWITCHER.t_out TO moveScreen.set_translation
+ROUTE AXIS_SWITCHER.t_out TO meshMover.set_translation
+
+ROUTE rightWidthDragger.position_changed TO CHANGE_SLIT_WIDTH.translation_in
+##Need to route the movement on the right dragger to make the left dragger move opposite of it
+##Need to add a route for the left dragger to make the slits move
+##Need to route the movement of the left dragger to make the right dragger move opposite of it
+	#ROUTE  rightWidthDragger.position_changed TO OPP_DRAG.drag_in#
+	#ROUTE OPP_DRAG.drag_out TO leftWidthDragger.translation#
+ROUTE CHANGE_SLIT_WIDTH.translation1_out TO slit1.set_translation
+ROUTE CHANGE_SLIT_WIDTH.translation2_out TO slit2.set_translation
+ROUTE CHANGE_SLIT_WIDTH.scale_out TO slit1.set_scale
+ROUTE CHANGE_SLIT_WIDTH.scale_out TO slit2.set_scale
+

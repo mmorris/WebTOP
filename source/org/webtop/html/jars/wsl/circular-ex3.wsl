@@ -1,0 +1,11 @@
+<wsl>
+  <circular wavelength="500.0" z="50.0" diameter="1.00" mode="Obstacle" widgets="Hide Widgets">
+    <view value="0.0 0.0 0.0 0.0 0.0 -150.0" />
+  </circular>
+  <script>
+    <actionPerformed param="z" value="62.5" timeStamp="4000" />
+    <actionPerformed param="z" value="83.3" timeStamp="4000" />
+    <actionPerformed param="z" value="125" timeStamp="4000" />
+    <scriptEnded timeStamp="4000" />
+  </script>
+</wsl>

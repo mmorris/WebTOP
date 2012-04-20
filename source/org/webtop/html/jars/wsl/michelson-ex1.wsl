@@ -1,0 +1,71 @@
+<wsl>
+  <michelson wavelength="500.0" pathLengthDifference="0.0070" tiltAngle="0.0" widgets="Hide Widgets" axis="Hide Axis">
+    <view value="-0.131 7.395E-5 0.0 -1.788E-7 0.4 -7.137" />
+  </michelson>
+  <script>
+    <mouseDragged param="pathLengthDifference" value="0.007002" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007004" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007006" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007008" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007010" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007012" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007014" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007016" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007018" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007020" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007022" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007024" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007026" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007028" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007030" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007032" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007034" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007036" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007038" timeStamp="240" />    
+    <mouseDragged param="pathLengthDifference" value="0.007040" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007042" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007044" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007046" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007048" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007050" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007052" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007054" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007056" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007058" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007060" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007062" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007064" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007066" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007068" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007070" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007072" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007074" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007076" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007078" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007080" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007082" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007084" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007086" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007088" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007090" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007092" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007094" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007096" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007098" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007100" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007102" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007104" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007106" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007108" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007110" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007112" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007114" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007116" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007118" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007120" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007122" timeStamp="240" />
+    <mouseDragged param="pathLengthDifference" value="0.007124" timeStamp="240" />
+    <mouseReleased param="pathLengthDifference" timeStamp="521" />
+    <scriptEnded timeStamp="20" />
+  </script>
+</wsl>

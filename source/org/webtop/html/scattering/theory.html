@@ -1,0 +1,81 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head><title>Scattering: Theory</title>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Scattering: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>This module simulates the non-resonant scattering of light from an atom. The atom is located at the origin, and the incident light is traveling along the negative y-axis in the positive y-direction. The oscillating pink arrow depicts the induced dipole moment of the atom. The scattered electric field is depicted along three different axes: the positive x-axis, the positive z-axis, and movable axis whose angular position the user can vary (see Fig. 1 below). The spherical polar angles <span style='font-family:Symbol;'>q</span> and <span style='font-family:Symbol;'>f</span> are used to specify the position of the movable axis. The module has two options for the incident field: Polarized (Linearly) and Unpolarized.
+</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img src="images/image002.jpg" width="371" height="368"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 1 The Scattering module. The incident field is linearly polarized in the x-z plane, and the movable observation screen is located at <span style='font-family:Symbol;'>q</span> = 90 degrees and <span style='font-family:Symbol;'>f</span> = 180 degrees.</small></center></td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Linearly Polarized Incident Electric Field</b></font></big></p>
+<p>When the Polarized tab is selected, as it is in Fig. 1 above, the incident electric field is given by the expression </p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center>
+    <IMG src="images/image002.gif" width="396" height="35"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>
+    <P></P>
+    </center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>where  k = 2<span style='font-family:Symbol;'>p</span>/<span style='font-family:Symbol;'>l</span> is the angular wave number of the incident light, <span style='font-family:Symbol;'>l</span> is its wavelength,  <span style='font-family:Symbol;'>w</span> = kv 
+(v being the wave speed) is its angular frequency, E<sub>0x</sub> is the amplitude of the x-component of the
+incident electric field, and E<sub>0z</sub> is the amplitude its z-component. </p>
+<p>When the incident field is polarized, there are five parameters
+that the user can vary: E<sub>0x</sub>, E<sub>0z</sub>, <span style='font-family:Symbol;'>l</span>, <span style='font-family:Symbol;'>q</span>, and <span style='font-family:Symbol;'>f</span>.
+<span style='font-family:Symbol;'>q</span>, and <span style='font-family:Symbol;'>f</span> 
+are, respectively, the polar and azimuthal angles of the movable observation 
+screen. Each of these parameters can be varied either by using the appropriate keyboard
+entry box on the Console, or by using the appropriate widget in the scene. The domains of these parameters are: 0 <u>&lt;</u>
+E<sub>0x</sub> <u>&lt;</u> 1, 0 <u>&lt;</u> E<sub>0z</sub> <u>&lt;</u> 1, 400
+nm <u>&lt;</u>&nbsp; <span style='font-family:Symbol;'>l</span> <u>&lt;</u> 700 nm, 0 <u>&lt;</u>
+<span style='font-family:Symbol;'>q</span> <u>&lt;</u>
+180 degrees, and 0 <u>&lt;</u> <span style='font-family:Symbol;'>f</span>&lt; 360 degrees.</p>
+
+
+<a href=examples.html#Ex1>Example 1</a>
+investigates the polarization of the scattered light when the incident light is
+linearly polarized. <a href=examples.html#Ex3>Example 3</a> investigates the
+wavelength dependence of the amplitude of the scattered light when the incident
+light is linearly polarized. </p>
+
+<p><big><font color="#008040"><b>Unpolarized Incident Electric Field</b></font></big></p>
+<p>When the incident field is unpolarized, there
+are no incident field parameters for the user to vary. The variables <span style='font-family:Symbol;'>q</span> and 
+<span style='font-family:Symbol;'>f</span>
+may still be varied. <a href=examples.html#Ex2>Example 2</a> investigates the
+polarization of the scattered light when the incident light is unpolarized.</p>
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

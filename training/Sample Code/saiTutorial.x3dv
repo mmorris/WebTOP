@@ -1,0 +1,78 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+NavigationInfo 
+	{
+	speed 100
+	}
+
+#Box
+DEF myTrans Transform {
+	translation 1 0 0
+	children [
+	DEF myTouch TouchSensor {
+		enabled TRUE
+		}
+	DEF myPlane PlaneSensor {
+		enabled TRUE
+		minPosition 1 0
+		maxPosition 5 0
+		}
+	Shape {
+		appearance Appearance {
+			material DEF boxColor Material {
+				diffuseColor 1 0 0
+				}
+			}
+		geometry Box {
+			size 1 1 1
+			}
+		}#End Shape	
+	]
+}
+ 
+DEF myTrans2 Transform {
+	translation -1 0 0
+	children [
+	DEF myPlane2 PlaneSensor {
+		enabled TRUE
+		minPosition -5 0
+		maxPosition -1 0
+		}
+	DEF myTouch2 TouchSensor{
+		enabled TRUE
+		}
+	Shape {
+		appearance Appearance {
+			material DEF sphereColor Material {
+				diffuseColor 1 0 0
+				}
+			}
+		geometry Sphere {
+		radius 1
+		solid TRUE
+		}
+	}
+	]
+}
+
+#Big Sphere
+DEF mySphere Transform {
+	translation 0 -2 0
+	scale 1 1 1
+	children [
+	Shape {
+		appearance Appearance {
+			material Material {
+				diffuseColor 0 1 0
+				}
+			}
+		geometry Sphere {
+			radius 1
+			solid TRUE
+			}
+		}
+	]
+}
+
+

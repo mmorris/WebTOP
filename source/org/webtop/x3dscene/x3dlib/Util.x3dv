@@ -1,0 +1,191 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+#Util.x3dv
+#File containing PROTOs for common utilities in WebTOP
+#Compiled/Edited by Matthew Morris & Davis Herring
+#Converted to X3d by Peter Gilbert
+#Created January 30 2004
+#Updated June 27 2006
+#Version 0.0
+
+#Any of these functional PROTOs with more than one input needs to have an
+#'initial state' arrangement of fields such that it knows what to do when it
+#receives its first event (which can obviously specify only one input).
+
+#=============== CONVERTERS ===========================
+PROTO	Inverter [
+	inputOnly	SFBool in
+	outputOnly SFBool	out
+]
+{
+	Script {
+		inputOnly	SFBool input IS in
+		outputOnly SFBool	output IS out
+		url	"ecmascript:
+		function input(value,time){output=!value;}"
+	}
+}
+
+PROTO	BoolToChoice [
+	inputOnly		SFBool in
+	outputOnly	SFInt32	out
+]
+{
+	Script{
+		inputOnly	SFBool input IS	in
+		outputOnly SFInt32 output IS out
+		url	"ecmascript:
+		function input(value,time){output = value?0:-1;}"
+	}
+}
+
+PROTO	Dynamo [
+	initializeOnly	SFVec3f	axis 1 0 0
+	inputOnly	SFVec3f	axis_in
+	initializeOnly	SFFloat	angle 0
+	inputOnly	SFFloat	angle_in
+	outputOnly SFRotation out
+]
+{
+	Script{
+		initializeOnly	SFVec3f ax IS	axis
+		inputOnly	SFVec3f	ax_in IS axis_in
+		initializeOnly	SFFloat	ang IS angle
+		inputOnly	SFFloat	ang_in IS	angle_in
+		outputOnly SFRotation	output IS	out
+		url "ecmascript:
+		function initialize() {go();}
+		function ax_in(value,time) {ax=value; go();}
+		function ang_in(value,time) {ang=value; go();}
+		function go() {output = new SFRotation(ax,ang);}"
+	}
+}
+
+#=================== VECTOR VODOO ====================
+PROTO	Modify3 [
+	initializeOnly	SFVec3f	vec 0 0 0
+	inputOnly	SFVec3f	vec_in
+	initializeOnly	SFInt32	dim 0
+	initializeOnly	SFFloat	val 1
+	inputOnly	SFFloat	val_in
+	outputOnly SFVec3f out
+]
+{
+	Script {
+		initializeOnly	SFVec3f	vector IS	vec
+		inputOnly	SFVec3f	vector_in IS	vec_in
+		initializeOnly SFInt32	dimension IS dim
+		initializeOnly	SFFloat	value IS val
+		inputOnly	SFFloat	value_in IS val_in
+		outputOnly SFVec3f output IS out
+		url	"ecmascript:
+		function initialize() {go();}  //compute initial value
+		function vector_in(v,time) {vector=v; go();}
+		function value_in(x,time) {value=x; go();}
+		function go() {
+			if(dimension<0||dimension>2)
+				print('Modify3::vector: Dimension out of range');
+			vector[dimension]=value;
+			output=vector;
+		}"
+	}
+}
+
+PROTO	Modify2 [
+	initializeOnly	SFVec2f	vec 0 0
+	inputOnly	SFVec2f	vec_in
+	initializeOnly	SFInt32	dim 0
+	initializeOnly	SFFloat	val 1
+	inputOnly	SFFloat	val_in
+	outputOnly SFVec2f out
+]
+{
+	Script {
+		initializeOnly	SFVec2f	vector IS	vec
+		inputOnly	SFVec2f	vector_in IS	vec_in
+		initializeOnly SFInt32	dimension IS dim
+		initializeOnly	SFFloat	value IS val
+		inputOnly	SFFloat	value_in IS val_in
+		outputOnly SFVec2f output IS out
+		url	"ecmascript:
+		function initialize() {go();}  //compute initial value
+		function vector_in(v,time) {vector=v; go();}
+		function value_in(x,time) {value=x; go();}
+		function go() {
+			if(dimension<0||dimension>1)
+				print('Modify2::vector: Dimension out of range');
+			vector[dimension]=value;
+			output=vector;
+		}"
+	}
+}
+
+PROTO	Multiply3 [
+	initializeOnly	SFVec3f	vec 0 0 0
+	inputOnly	SFVec3f	vec_in
+	initializeOnly	SFFloat	val 1
+	inputOnly	SFFloat	val_in
+	outputOnly SFVec3f out
+]
+{
+	Script {
+		initializeOnly	SFVec3f	vector IS	vec
+		inputOnly	SFVec3f	vector_in IS	vec_in
+		initializeOnly	SFFloat	value IS val
+		inputOnly	SFFloat	value_in IS val_in
+		outputOnly SFVec3f output IS out
+		url	"ecmascript:
+		function initialize() {go();}  //compute initial value
+		function vector_in(v,time) {vector=v; go();}
+		function value_in(x,time) {value=x; go();}
+		function go() {output=vector.multiply(value);}"
+	}
+}
+
+PROTO	Multiply2 [
+	initializeOnly	SFVec2f	vec 0 0
+	inputOnly	SFVec2f	vec_in
+	initializeOnly	SFFloat	val 1
+	inputOnly	SFFloat	val_in
+	outputOnly SFVec2f out
+]
+{
+	Script {
+		initializeOnly	SFVec2f	vector IS	vec
+		inputOnly	SFVec2f	vector_in IS	vec_in
+		initializeOnly	SFFloat	value IS val
+		inputOnly	SFFloat	value_in IS val_in
+		outputOnly SFVec2f output IS out
+		url	"ecmascript:
+		function initialize() {go();}  //compute initial value
+		function vector_in(v,time) {vector=v; go();}
+		function value_in(x,time) {value=x; go();}
+		function go() {output=vector.multiply(value);}"
+	}
+}
+
+PROTO Widen [
+	inputOnly SFVec2f in
+	outputOnly SFVec3f out
+]
+{
+	Script {
+		inputOnly SFVec2f input IS in
+		outputOnly SFVec3f output IS out
+		url "ecmascript:
+		function input(value,time) {output=new SFVec3f(value.x,value.y,0);}"
+	}
+}
+
+PROTO Narrow [
+	inputOnly SFVec3f in
+	outputOnly SFVec2f out
+]
+{
+	Script {
+		inputOnly SFVec3f input IS in
+		outputOnly SFVec2f output IS out
+		url "ecmascript:
+		function input(value,time) {output=new SFVec2f(value.x,value.y);}"
+	}
+}

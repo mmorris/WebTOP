@@ -1,0 +1,509 @@
+package webtop.polarization;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+import webtop.vrml.*;
+
+public class Polarizer extends Filter {
+	public Polarizer(float z_, float angle_) {super(z_, angle_); clearMp();}
+
+	public Polarizer(float z_, float angle_, Filter prev_, Filter next_) {
+		super(z_, angle_, prev_, next_);
+		clearMp();
+	}
+
+	private void clearMp() {
+		Mp[0] = Mp[1] = Mp[2] = Mp[3] = 0;
+	}
+
+	public String getType() {return "Polarizer";}
+
+	public void setAngle(float angle_, boolean setVRML) {
+		super.setAngle(angle_, setVRML);
+		final double c=Math.cos(angle), s=Math.sin(angle);
+
+		Ma[0] = (float) (c * c);
+		Ma[1] = Ma[2] = (float) (s * c);
+		Ma[3] = (float) (s * s);
+	}
+
+	public void transform(final Engine.EVector E, boolean polarized) {
+		//If the light is polarized, the EVector has phase information to be
+		//considered; otherwise we can (for efficiency) just transform the
+		//electric field itself.
+		if(polarized) super.transform(E,polarized);
+		else {
+			final float oldEx=E.x;		// we'll need it after overwrite
+			E.x = Ma[0] * E.x + Ma[1] * E.y;
+			E.y = Ma[2] * oldEx + Ma[3] * E.y;
+		}
+	}
+
+	public void createVRMLNode(EAI eai, EventOutObserver obs) {
+		final String vrml = VRML + "Polarizer { z " + z + " angle " + angle + " state 0 }";
+		nodes=NamedNode.namedArray(eai.world.createVrmlFromString(vrml),"<polarizer>");
+		eai.getEO(getNode(),"angle_changed",obs,new VRMLEvent("ANGLE_CHANGED",this));
+		eai.getEO(getNode(),"z_changed",obs, new VRMLEvent("Z_CHANGED", this));
+		eai.getEO(getNode(),"angle_isActive",obs, new VRMLEvent("ANGLE_ACTIVE", this));
+		eai.getEO(getNode(),"z_isActive",obs, new VRMLEvent("Z_ACTIVE", this));
+		eai.getEO(getNode(),"isOver",obs, new VRMLEvent("MOUSE_OVER", this));
+		eai.getEO(getNode(),"z_isOver",obs, new VRMLEvent("Z_ISOVER", null));
+		eai.getEO(getNode(),"angle_isOver",obs, new VRMLEvent("ANGLE_ISOVER", null));
+		StateEIn = (EventInSFInt32) eai.getEI(getNode(),"set_state");
+		AngleEIn = (EventInSFFloat) eai.getEI(getNode(),"set_angle");
+		ZEIn = (EventInSFFloat) eai.getEI(getNode(),"set_z");
+		EnabledEIn = (EventInSFBool) eai.getEI(getNode(),"enabled");
+		AngleHighlightedEIn = (EventInSFBool) eai.getEI(getNode(),"set_angleHighlighted");
+		ZHighlightedEIn = (EventInSFBool) eai.getEI(getNode(),"set_zHighlighted");
+	}
+
+	private static String VRML =
+		"PROTO	haxis []{Transform	{ rotation 0 0 1 1.5707963267949  children [DEF myshape Shape	{geometry Cylinder	{ radius 0.01 height	16 }appearance Appearance	{material Material	{diffuseColor 0 0 0 emissiveColor	0 0 0}}}]}}\n"+
+		"PROTO RotationWidget [\n" +
+		"  field        SFFloat     minAngle            0\n" +
+		"  eventIn      SFFloat     set_minAngle\n" +
+		"  eventOut     SFFloat     minAngle_changed\n" +
+		"  field        SFFloat     maxAngle            -1\n" +
+		"  eventIn      SFFloat     set_maxAngle\n" +
+		"  eventOut     SFFloat     maxAngle_changed\n" +
+		"  field        SFFloat     offset              0\n" +
+		"  eventIn      SFFloat     set_offset\n" +
+		"  eventOut     SFFloat     offset_changed\n" +
+		"  exposedField SFBool      enabled             TRUE\n" +
+		"  eventOut     SFBool      isActive\n" +
+		"  eventOut     SFBool      isOver\n" +
+		"  eventIn      SFBool      set_isOver\n" +
+		"  eventIn      SFBool      set_isActive\n" +
+		"  eventOut     SFRotation  rotation_changed\n" +
+		"  eventOut     SFVec3f     trackPoint_changed\n" +
+		"  field        MFNode      normalGeometry      []\n" +
+		"  field        MFNode      overGeometry        []\n" +
+		"  field        MFNode      clickedGeometry     []\n" +
+		"]\n" +
+		"{\n" +
+		"  Group {\n" +
+		"    children [\n" +
+		"      DEF Touch-SENSOR TouchSensor {\n" +
+		"        enabled IS enabled\n" +
+		"        isOver IS isOver\n" +
+		"      }\n" +
+		"      DEF Rotational-SENSOR PlaneSensor {\n" +
+		"        isActive IS isActive\n" +
+		"        enabled IS enabled\n" +
+		"        maxPosition 1000 1000\n" +
+		"        minPosition -1000 -1000\n" +
+		"        offset 1000 0 0\n" +
+		"      }\n" +
+		"      DEF Rotational-TRANSFORM Transform {\n" +
+		"        children DEF Rotational-SWITCH Switch {\n" +
+		"          whichChoice 0\n" +
+		"          choice [\n" +
+		"            Group { children IS normalGeometry }\n" +
+		"            Group { children IS overGeometry }\n" +
+		"            Group { children IS clickedGeometry }\n" +
+		"          ]\n" +
+		"        }\n" +
+		"      }\n" +
+		"    ]\n" +
+		"  }\n" +
+		"  DEF Rotational-SCRIPT Script {\n" +
+		"    field    SFFloat minAngle IS minAngle\n" +
+		"    eventIn  SFFloat set_minAngle IS set_minAngle\n" +
+		"    eventOut SFFloat minAngle_changed IS minAngle_changed\n" +
+		"    field    SFFloat maxAngle IS maxAngle\n" +
+		"    eventIn  SFFloat set_maxAngle IS set_maxAngle\n" +
+		"    eventOut SFFloat maxAngle_changed IS maxAngle_changed\n" +
+		"    field    SFFloat trackOffset 0\n" +
+		"    field    SFFloat offset IS offset\n" +
+		"    eventIn  SFFloat set_offset IS set_offset\n" +
+		"    eventOut SFFloat offset_changed IS offset_changed\n" +
+		"    eventIn  SFVec3f set_translation\n" +
+		"    eventIn  SFVec3f set_hitPoint\n" +
+		"    eventIn  SFBool  set_touchSensorIsActive\n" +
+		"    eventIn  SFBool  set_touchSensorIsOver\n" +
+		"    eventIn  SFBool  set_planeSensorIsActive\n" +
+		"    eventIn  SFBool  set_isActive IS set_isActive\n" +
+		"    eventIn  SFBool  set_isOver IS set_isOver\n" +
+		"    eventOut SFRotation rotation_changed IS rotation_changed\n" +
+		"    eventOut SFVec3f    trackPoint_changed IS trackPoint_changed\n" +
+		"    eventOut SFVec3f    internalOffset_changed\n" +
+		"    eventOut SFInt32    whichChoice_changed\n" +
+		"    field    SFBool  setOffset FALSE\n" +
+		"    field    SFFloat lastOffset 0\n" +
+		"    field    SFFloat lastAngle  0\n" +
+		"    field    SFBool  isActive FALSE\n" +
+		"    field    SFBool  isOver   FALSE\n" +
+		"    field    MFNode  normalGeometry IS normalGeometry\n" +
+		"    field    MFNode  overGeometry IS overGeometry\n" +
+		"    field    MFNode  clickedGeometry IS clickedGeometry\n" +
+		"    field    SFNode  Rotational-SWITCH USE Rotational-SWITCH\n" +
+		"    url \"javascript:\n" +
+		"      function initialize() {\n" +
+		"        rotation_changed = new SFRotation(0, 0, 1, offset);\n" +
+		"        internalOffset_changed = new SFVec3f(1000, 0, 0);\n" +
+		"        trackOffset = offset;\n" +
+		"        lastOffset = offset;\n" +
+		"        lastAngle = offset;\n" +
+		"        whichChoice_changed = 0;\n" +
+		"      }\n" +
+		"      function set_translation(value, time) {\n" +
+		"        angle = Math.atan2(value[1], value[0]);\n" +
+		"        if(angle<0) angle = 2*Math.PI + angle;\n" +
+		"        if(angle>=0 && angle<Math.PI/2.0 && lastAngle>=Math.PI*3.0/2.0)\n" +
+		"          trackOffset += angle + Math.PI*2.0 - lastAngle;\n" +
+		"        else if(angle>=Math.PI*3.0/2.0 && lastAngle>=0 && lastAngle<Math.PI/2.0)\n" +
+		"          trackOffset += angle - lastAngle - Math.PI*2.0;\n" +
+		"        else\n" +
+		"          trackOffset += angle - lastAngle;\n" +
+		"        offset = trackOffset;\n" +
+		"        if(minAngle<maxAngle) {\n" +
+		"          if(offset<minAngle) offset = minAngle;\n" +
+		"          if(trackOffset<minAngle-Math.PI*2.0) trackOffset += Math.PI*2.0;\n" +
+		"        }\n" +
+		"        if(maxAngle>minAngle) {\n" +
+		"          if(offset>maxAngle) offset = maxAngle;\n" +
+		"          if(trackOffset>maxAngle+Math.PI*2.0) trackOffset -= Math.PI*2.0;\n" +
+		"        }\n" +
+		"        lastOffset = offset;\n" +
+		"        lastAngle = angle;\n" +
+		"        rotation_changed[3] = offset;\n" +
+		"        offset_changed = offset;\n" +
+		"      }\n" +
+		"      function set_hitPoint(value, time) {\n" +
+		"        if(setOffset) {\n" +
+		"          setOffset = FALSE;\n" +
+		"          internalOffset_changed[0] = value[0];\n" +
+		"          internalOffset_changed[1] = value[1];\n" +
+		"          length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);\n" +
+		"          lastAngle = Math.atan2(value[1], value[0]);\n" +
+		"          if(lastAngle<0) lastAngle = Math.PI*2.0 + lastAngle;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_offset(value, time) {\n" +
+		"        offset = value;\n" +
+		"        trackOffset = offset;\n" +
+		"        rotation_changed[3] = offset;\n" +
+		"        internalOffset_changed[0] = 1000 * Math.cos(offset);\n" +
+		"        internalOffset_changed[1] = 1000 * Math.sin(offset);\n" +
+		"      }\n" +
+		"      function set_touchSensorIsActive(value, time) {\n" +
+		"        isActive = value;\n" +
+		"        if(value) setOffset = TRUE;\n" +
+		"      }\n" +
+		"      function set_touchSensorIsOver(value, time) {\n" +
+		"        isOver = value;\n" +
+		"        if(value && !isActive && overGeometry.length > 0) {\n" +
+		"          whichChoice_changed = 1;\n" +
+		"        }\n" +
+		"        else if(!value && !isActive) {\n" +
+		"          whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_planeSensorIsActive(value, time) {\n" +
+		"        if(!value) {\n" +
+		"          trackOffset = offset;\n" +
+		"          lastOffset = offset;\n" +
+		"          whichChoice_changed = 0;\n" +
+		"       }\n" +
+		"        else {\n" +
+		"          if(clickedGeometry.length >0) {\n" +
+		"            whichChoice_changed = 2;\n" +
+		"          }\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_isActive(value, time) {\n" +
+		"        isActive = value;\n" +
+		"        if(value && clickedGeometry.length > 0) whichChoice_changed = 2;\n" +
+		"        else if(!value) {\n" +
+		"          if(isOver && overGeometry.length > 0) whichChocie_changed = 1;\n" +
+		"          else whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_isOver(value, time) {\n" +
+		"        isOver = value;\n" +
+		"        if(value && !isActive && overGeometry.length > 0) whichChoice_changed = 1;\n" +
+		"        else if(!value) {\n" +
+		"          if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;\n" +
+		"          else whichChoice_changed = 0;\n" +
+		"        }\n" +
+		"      }\n" +
+		"    \"\n" +
+		"  }\n" +
+		"  ROUTE Touch-SENSOR.hitPoint_changed TO Rotational-SCRIPT.set_hitPoint\n" +
+		"  ROUTE Touch-SENSOR.isActive TO Rotational-SCRIPT.set_touchSensorIsActive\n" +
+		"  ROUTE Touch-SENSOR.isOver TO Rotational-SCRIPT.set_touchSensorIsOver\n" +
+		"  ROUTE Rotational-SENSOR.translation_changed TO Rotational-SCRIPT.set_translation\n" +
+		"  ROUTE Rotational-SENSOR.isActive TO Rotational-SCRIPT.set_planeSensorIsActive\n" +
+		"  ROUTE Rotational-SCRIPT.rotation_changed TO Rotational-TRANSFORM.set_rotation\n" +
+		"  ROUTE Rotational-SCRIPT.internalOffset_changed TO Rotational-SENSOR.set_offset\n" +
+		"  ROUTE Rotational-SCRIPT.whichChoice_changed TO Rotational-SWITCH.set_whichChoice\n" +
+		"}\n" +
+		"PROTO Polarizer [ field        SFFloat z         0\n" +
+		"                  field        SFFloat angle     0\n" +
+		"                  exposedField SFInt32 state     0\n" +
+		"                  exposedField SFBool  enabled   TRUE\n" +
+		"                  eventIn      SFFloat set_z\n" +
+		"                  eventIn      SFFloat set_angle\n" +
+		"                  eventIn      SFBool  set_angleHighlighted\n" +
+		"                  eventIn      SFBool  set_zHighlighted\n" +
+		"                  eventOut     SFBool  isOver\n" +
+		"                  eventOut     SFFloat z_changed\n" +
+		"                  eventOut     SFFloat angle_changed\n" +
+		"                  eventOut     SFBool  z_isOver\n" +
+		"                  eventOut     SFBool  z_isActive\n" +
+		"                  eventOut     SFBool  angle_isOver\n" +
+		"                  eventOut     SFBool  angle_isActive       ]\n" +
+		"{\n" +
+		"  DEF Polarizer-SWITCH Switch {\n" +
+		"    whichChoice IS state\n" +
+		"    choice [\n" +
+		"      # Polarizer when not selected\n" +
+		"      Transform {\n" +
+		"        rotation 1 0 0 1.5707963\n" +
+		"        children DEF Box-TRANSFORM Transform {\n" +
+		"          children [\n" +
+		"            DEF Polarizer-TOUCHSENSOR TouchSensor {\n" +
+		"              isOver IS isOver\n" +
+		"              enabled IS enabled\n" +
+		"            }\n" +
+		"            Transform {\n" +
+		"              rotation 1 0 0 -1.5707963\n" +
+		"              children DEF Box-SHAPE Shape {\n" +
+		"                appearance Appearance {\n" +
+		"                  material Material {\n" +
+		"                    diffuseColor 0.2 0.5 0.9\n" +
+		"                    transparency 0.9\n" +
+		//"                    diffuseColor 0.45 0.45 0.8\n" +
+		//"                    transparency 0.7\n" +
+		"                  }\n" +
+		"                }\n" +
+		"                geometry Box { size 11 11 0.05 }\n" +
+		"              }\n" +
+		"            }\n" +
+		"            Transform {\n" +
+		"              rotation 1 0 0 -1.5707963\n" +
+		"              children DEF Line-TRANSFORM Transform {\n" +
+		"                children [\n" +
+		"                  DEF Line-SHAPE Shape {\n" +
+		"                    appearance Appearance { material Material { emissiveColor 0 0 0 } }\n" +
+		//"                    geometry IndexedLineSet {\n" +
+		//"                      coord Coordinate { point [ -8 0 0, 8 0 0 ] }\n" +
+		//"                      coordIndex [ 0 1 -1 ]\n" +
+		//"                    }\n" +
+		//"                  }\n" +
+	  "                   geometry Cylinder {\n"+
+   "										 radius 0.01  height 8 }}\n" +
+		
+"                  DEF TA-TRANSFORM Transform {\n" +
+		"                    translation 9 0 0\n" +
+    
+		"                    children DEF TA-SHAPE Shape {\n" +
+		"                      appearance Appearance {\n" +
+		"                        material Material { emissiveColor 0 0 0  diffuseColor 0 0 0}\n" +
+		"                      }\n" +
+		"                      geometry Text { string \"TA\" }\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                ]\n" +
+		"              }\n" +
+		"            }\n" +
+		"          ]\n" +
+		"        }\n" +
+		"      }\n" +
+		"      # Polarizer when selected\n" +
+		"      Group {\n" +
+		"        children [\n" +
+		"          # Angle Widget\n" +
+		"          Transform {\n" +
+		"            rotation 1 0 0 1.5707963\n" +
+		"            children DEF Angle_SELECTED-TRANSFORM Transform {\n" +
+		"              children Transform {\n" +
+		"                rotation 1 0 0 -1.5707963\n" +
+		"                children [\n" +
+		"                  DEF TA_HIGHLIGHTED-TRANSFORM Transform {\n" +
+		"                    children Transform {\n" +
+		"                      translation 9 0 0\n" +
+		"                      children USE TA-SHAPE\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                  DEF Angle-ROTATIONWIDGET RotationWidget {\n" +
+		"                    minAngle 0\n" +
+		"                    maxAngle 6.2831853\n" +
+		"                    enabled IS enabled\n" +
+		"                    isOver IS angle_isOver\n" +
+		"                    isActive IS angle_isActive\n" +
+		"                    offset IS angle\n" +
+		"                    offset_changed IS angle_changed\n" +
+		"                    set_isActive IS set_angleHighlighted\n" +
+		"                    set_offset IS set_angle\n" +
+		"                    normalGeometry [\n" +
+		"                      Transform {\n" +
+		"                        translation -8 0 0\n" +
+		"                        rotation 1 0 0 -1.5707963\n" +
+		"                        children DEF Angle_NORMAL-SHAPE Shape {\n" +
+		"                          appearance DEF Appearance-NORMAL Appearance {\n" +
+		"                            material Material { diffuseColor 0.8 0.8 1.0 }\n" +
+		"                          }\n" +
+		"                          geometry Cylinder { radius 0.2 height 0.8 }\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"                      Transform {\n" +
+		"                        translation 8 0 0\n" +
+		"                        rotation 1 0 0 -1.5707963\n" +
+		"                        children USE Angle_NORMAL-SHAPE\n" +
+		"                      }\n" +
+		"                      haxis{}#USE Line-SHAPE\n" +
+		"                    ]\n" +
+		"                    clickedGeometry [\n" +
+		"                      Transform {\n" +
+		"                        translation -8 0 0\n" +
+		"                        rotation 1 0 0 -1.5707963\n" +
+		"                        children DEF Angle_HIGHLIGHTED-SHAPE Shape {\n" +
+		"                          appearance DEF Appearance-HIGHLIGHTED Appearance {\n" +
+		"                            material Material { diffuseColor 1.0 1.0 0.4 }\n" +
+		"                          }\n" +
+		"                          geometry Cylinder { radius 0.2 height 0.8 }\n" +
+		"                        }\n" +
+		"                      }\n" +
+		"                      Transform {\n" +
+		"                        translation 8 0 0\n" +
+		"                        rotation 1 0 0 -1.5707963\n" +
+		"                        children USE Angle_HIGHLIGHTED-SHAPE\n" +
+		"                      }\n" +
+		"                      USE Line-SHAPE\n" +
+		"                    ]\n" +
+		"                  }\n" +
+		"                ]\n" +
+		"              }\n" +
+		"            }\n" +
+		"          }\n" +
+		"          # Z Widget\n" +
+		"          Transform {\n" +
+		"            rotation 1 0 0 1.5707963\n" +
+		"            children [\n" +
+		"              Transform {\n" +
+		//added by Davis (April 24 2002)
+		"                rotation 0 1 0 -1.5707963\n" +
+		"                children [\n" +
+		"                  TouchSensor {\n" +
+		"                    enabled IS enabled\n" +
+		"                    isOver IS z_isOver\n" +
+		"                  }\n" +
+		"                  DEF Z-PLANESENSOR PlaneSensor {\n" +
+		"                    minPosition 0 0\n" +
+		"                    maxPosition 0 20\n" +
+		"                    enabled IS enabled\n" +
+		"                    isActive IS z_isActive\n" +
+		"                  }\n" +
+		"                  DEF Z-TRANSFORM Transform {\n" +
+		"                    children DEF Z-SWITCH Switch {\n" +
+		"                      whichChoice 0\n" +
+		"                      choice [\n" +
+		"                        Group { children [\n" +
+		"                          Transform {\n" +
+//		"                            translation 0 0.4 -5.5\n" +
+		"                            translation -5.5 0.4 0\n" +
+		"                            children DEF Z-SHAPE Shape {\n" +
+		"                              appearance USE Appearance-NORMAL\n" +
+		"                              geometry Cone {\n" +
+		"                                bottomRadius 0.2\n" +
+		"                                height 0.8\n" +
+		"                              }\n" +
+		"                            }\n" +
+		"                          }\n" +
+		"                          Transform {\n" +
+		"                            rotation 1 0 0 3.141592653\n" +
+//		"                            translation 0 -0.4 -5.5\n" +
+		"                            translation -5.5 -0.4 0\n" +
+		"                            children USE Z-SHAPE\n" +
+		"                          }\n" +
+		"                        ] }\n" +
+		"                        Group { children [\n" +
+		"                          Transform {\n" +
+//		"                            translation 0 0.4 -5.5\n" +
+		"                            translation -5.5 0.4 0\n" +
+		"                            children DEF Z_HIGHLIGHTED-SHAPE Shape {\n" +
+		"                              appearance USE Appearance-HIGHLIGHTED\n" +
+		"                              geometry Cone {\n" +
+		"                                bottomRadius 0.2\n" +
+		"                                height 0.8\n" +
+		"                              }\n" +
+		"                            }\n" +
+		"                          }\n" +
+		"                          Transform {\n" +
+		"                            rotation 1 0 0 3.141592653\n" +
+//		"                            translation 0 -0.4 -5.5\n" +
+		"                            translation -5.5 -0.4 0\n" +
+		"                            children USE Z_HIGHLIGHTED-SHAPE\n" +
+		"                          }\n" +
+		"                        ] }\n" +
+		"                      ]\n" +
+		"                    }\n" +
+		"                  }\n" +
+		"                ]\n" +
+		"              }\n" +
+		"              DEF Box_SELECTED-TRANSFORM Transform {\n" +
+		"                children Transform {\n" +
+		"                  rotation 1 0 0 -1.5707963\n" +
+		"                  children USE Box-SHAPE\n" +
+		"                }\n" +
+		"              }\n" +
+		"            ]\n" +
+		"          }\n" +
+		"        ]\n" +
+		"      }\n" +
+		"    ]\n" +
+		"  }\n" +
+		"  DEF Polarizer-SCRIPT Script {\n" +
+		"    field     SFFloat z IS z\n" +
+		"    eventIn   SFBool  isOver\n" +
+		"    eventIn   SFFloat set_z IS set_z\n" +
+		"    eventIn   SFVec3f set_zTranslation\n" +
+		"    eventIn   SFBool  z_isActive\n" +
+		"    eventIn   SFBool  set_zHighlighted IS set_zHighlighted\n" +
+		"    eventOut  SFInt32 whichChoice_changed\n" +
+		"    eventOut  SFInt32 zWhichChoice_changed\n" +
+		"    eventOut  SFVec3f zOffset_changed\n" +
+		"    eventOut  SFFloat z_changed IS z_changed\n" +
+		"    url \"javascript:\n" +
+		"      function initialize() {\n" +
+		"        zOffset_changed = new SFVec3f(0, z, 0);\n" +
+		"      }\n" +
+		"      function isOver(value, time) {\n" +
+		"        if(value) {\n" +
+		"          whichChoice_changed = 1;\n" +
+		"        }\n" +
+		"      }\n" +
+		"      function set_z(value, time) {\n" +
+		"        zOffset_changed[1] = value;\n" +
+		"      }\n" +
+		"      function set_zTranslation(value, time) {\n" +
+		"        z_changed = value[1];\n" +
+		"      }\n" +
+		"      function z_isActive(value, time) {\n" +
+		"        zWhichChoice_changed = value ? 1 : 0;\n" +
+		"      }\n" +
+		"      function set_zHighlighted(value, time) {\n" +
+		"        zWhichChoice_changed = value ? 1 : 0;\n" +
+		"      }\n" +
+		"    \"\n" +
+		"  }\n" +
+		//"  ROUTE Polarizer-TOUCHSENSOR.isOver TO Polarizer-SCRIPT.isOver\n" +
+		//"  ROUTE Polarizer-SCRIPT.whichChoice_changed TO Polarizer-SWITCH.whichChoice\n" +
+		"  ROUTE Polarizer-SCRIPT.zWhichChoice_changed TO Z-SWITCH.whichChoice\n" +
+		"  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-PLANESENSOR.offset\n" +
+		"  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-TRANSFORM.set_translation\n" +
+		"  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box-TRANSFORM.set_translation\n" +
+		"  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE Polarizer-SCRIPT.zOffset_changed TO Angle_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO TA_HIGHLIGHTED-TRANSFORM.set_rotation\n" +
+		"  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO Line-TRANSFORM.set_rotation\n" +
+		"  ROUTE Z-PLANESENSOR.isActive TO Polarizer-SCRIPT.z_isActive\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Z-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Box_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Box-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Angle_SELECTED-TRANSFORM.set_translation\n" +
+		"  ROUTE Z-PLANESENSOR.translation_changed TO Polarizer-SCRIPT.set_zTranslation\n" +
+		"}\n";
+}

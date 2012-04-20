@@ -1,0 +1,13 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "geometrical", "geometrical.vjp", "{C6735553-EEA4-4034-A1C1-906E4D98B6F9}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {C6735553-EEA4-4034-A1C1-906E4D98B6F9}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {C6735553-EEA4-4034-A1C1-906E4D98B6F9}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

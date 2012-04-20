@@ -1,0 +1,47 @@
+<wsl>
+  <geometrical quality="100" source="3" selected="0">
+    <elements>
+      <converginglens id="1" diameter="5.0" focus="30.0" position="12.0" />
+      <observationscreen id="0" width="25.0" height="30.0" position="14.5" transparency="0.0" />
+    </elements>
+    <view value="-0.208 2.414 0.0 16.348 2.023 -76.98" />
+  </geometrical>
+  <script>
+    <actionPerformed target="ObservationScreen0" param="position" value="16.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="17.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="18.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="19.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="20.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="21.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="22.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="23.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="24.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="25.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="26.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="27.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="28.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="29.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="30.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="31.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="32.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="33.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="34.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="35.0" timeStamp="100" /> 
+    <actionPerformed target="ObservationScreen0" param="position" value="36.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="37.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="38.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="39.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="40.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="41.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="42.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="43.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="44.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="45.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="46.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="47.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="48.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="49.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="50.0" timeStamp="100" />
+    <scriptEnded timeStamp="25" />
+  </script>
+</wsl>

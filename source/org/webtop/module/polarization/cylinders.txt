@@ -1,0 +1,160 @@
+		Transform	{
+			translation	0 2 3.5
+			children
+			Shape	{
+				geometry Cylinder	{
+					height 4
+					radius 0.04
+				}
+				appearance Appearance	{
+					material Material	{
+						diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+					}
+				}
+			}
+		}
+		Transform	{
+			translation	0 2.5 3
+			children
+			Shape	{
+				geometry Cylinder {
+					height 5
+					radius .04
+				}
+				appearance Appearance	{
+					material Material	{
+						diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+					}
+				}
+			}
+		}
+		Transform	{
+			translation	0 2 2.5
+			children
+			Shape	{
+				geometry Cylinder {
+					height 4
+					radius .04
+				}
+				appearance Appearance	{
+					material Material	{
+						diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+					}
+				}
+			}
+		}
+		Transform	{
+			translation	0 1 2
+			children
+			Shape	{
+				geometry Cylinder {
+					height 2
+					radius .04
+				}
+				appearance Appearance	{
+					material Material	{
+						diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+					}
+				}
+			}
+		}
+		Transform	{
+			translation	0 1 4
+			children
+			Shape	{
+				geometry Cylinder {
+					height 2
+					radius .04
+				}
+				appearance Appearance	{
+					material Material	{
+						diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+					}
+				}
+			}
+		}
+
+		Transform	{
+			translation	0 0 8.7
+			children
+		Transform	{
+			rotation 1 0 0 3.14159265358979
+			children [
+				Transform	{
+					translation	0 2 3.5
+					children
+					Shape	{
+						geometry Cylinder	{
+							height 4
+							radius 0.04
+						}
+						appearance Appearance	{
+							material Material	{
+								diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+							}
+						}
+					}
+				}
+				Transform	{
+					translation	0 2.5 3
+					children
+					Shape	{
+						geometry Cylinder {
+							height 5
+							radius .04
+						}
+						appearance Appearance	{
+							material Material	{
+								diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+							}
+						}
+					}
+				}
+				Transform	{
+					translation	0 2 2.5
+					children
+					Shape	{
+						geometry Cylinder {
+							height 4
+							radius .04
+						}
+						appearance Appearance	{
+							material Material	{
+								diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+							}
+						}
+					}
+				}
+				Transform	{
+					translation	0 1 2
+					children
+					Shape	{
+						geometry Cylinder {
+							height 2
+							radius .04
+						}
+						appearance Appearance	{
+							material Material	{
+								diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+							}
+						}
+					}
+				}
+				Transform	{
+					translation	0 1 4
+					children
+					Shape	{
+						geometry Cylinder {
+							height 2
+							radius .04
+						}
+						appearance Appearance	{
+							material Material	{
+								diffuseColor .122 .129 .604 specularColor .1 .1 .1 emissiveColor .1 .1 .2
+							}
+						}
+					}
+				}
+			]
+		}
+	}

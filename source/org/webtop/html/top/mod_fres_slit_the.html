@@ -1,0 +1,63 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<TITLE>The Optics Project - Modules -  Theory - Fresnel Single Slit</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><BR>
+<FONT SIZE=5><U><B>Theory of Fresnel Diffraction<BR>(Single Slit)</B></U><BR>
+<BR>
+</FONT>
+</CENTER>
+<FONT SIZE=4> 
+<P><U><B>1. Description </B></U></P>
+
+<P>Consider a unit amplitude, monochromatic plane wave of wavelength
+<IMG SRC="figs/lambda.jpg" ALIGN=TOP width="17" height="16">
+ traveling in the positive z-direction.  Furthermore, suppose that this wave is normally incident upon an opaque screen that occupies the x-y plane (i.e., the plane <I><B>z</B></I>= 0) and has a slit in it which is centered about the origin.  The slit is long in the y-direction and of width <I><B>w</B></I> in the x-direction.  In this submodule, the irradiance, <B><I>I</I>(<I>x,z</I>)<I> </I></B>on an observation screen that occupies the plane <I><B>z</B></I> = constant &gt; 0 is calculated and displayed on the observation screen.      </P>
+
+<P>&nbsp;</P>
+<P><B><U>2. Calculations</B></U></P>
+
+<P>The intensity on the observation screen is given by the formula</P>
+<P ALIGN=CENTER><IMG SRC="figs/Image1.gif" WIDTH=381 HEIGHT=32></P>
+<P>where <I><B>C</B></I>(<I><B>u</B></I>) and <I><B>S</B></I>(<I><B>u</B></I>) are the well-known Fresnel integral functions,</P>
+<CENTER>
+<P><IMG SRC="figs/Image2.gif" WIDTH=189 HEIGHT=58 ALIGN=CENTER>,</P>
+<P><IMG SRC="figs/Image3.gif" WIDTH=185 HEIGHT=58 ALIGN=CENTER>,</P>
+<P>and </P>
+
+<P><IMG SRC="figs/Image4.gif" WIDTH=178 HEIGHT=58 ALIGN=CENTER>,</P>
+<P><IMG SRC="figs/Image5.gif" WIDTH=164 HEIGHT=58 ALIGN=CENTER>.</P>
+<P><IMG SRC="figs/Image6.gif" WIDTH=357 HEIGHT=28 ALIGN=CENTER></P>
+
+</CENTER>
+<P>Very accurate numerical routines exist for calculating the Fresnel integral functions.  However for our purposes speed of calculation is very important and we chose to evaluate them in the following way.  <I><B>C</B></I>(<I><B>u</B></I>) and <I><B>S</B></I>(<I><B>u</B></I>) can always be rewritten in terms of the Fresnel auxiliary functions, <I><B>f</B></I>(<I><B>u</B></I>) and <I><B>g</B></I>(<I><B>u</B></I>) as </P>
+<CENTER>
+<P><IMG SRC="figs/Image8.gif" WIDTH=385 HEIGHT=33 ALIGN=CENTER>,</P>
+<P><IMG SRC="figs/Image9.gif" WIDTH=384 HEIGHT=33 ALIGN=CENTER>.</P>
+</CENTER>
+<I><P>f</I>(<I>u</I>) and <I>g</I>(<I>u</I>) can be approximated by means of rational functions as</P>
+<CENTER>
+<P><IMG SRC="figs/Image10.gif" WIDTH=248 HEIGHT=53></P>
+</CENTER>
+<P>These approximations are each accurate to within <FONT FACE="Symbol">&#177;</FONT>
+0.002 and the last four formulas allow the Fresnel integral function to be calculated very rapidly.  We used these formulas to calculate the irradiance for all values of <I><B>x</B></I> and <I><B>z</B>.</P>
+</I></FONT><BR>
+<CENTER>
+<IMG SRC="figs/roygbiv.gif" WIDTH=450><BR><BR><BR>
+<FONT SIZE=2 FACE="helvetica, arial">
+<P>
+Created by Srihari" TARGET=EXTERNAL>Srihari Angaluri</A>
+and Kiril Vidimce<BR>
+Send comments to <A  HREF="mailto:webtop@webtop.org">comments@webtop.org</A>
+<BR>
+</P>
+</FONT>
+</CENTER>
+</BODY>
+</HTML>

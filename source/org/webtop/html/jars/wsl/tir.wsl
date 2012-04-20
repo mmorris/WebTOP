@@ -1,0 +1,11 @@
+<wsl>
+  <rrwaves mode="static" linearLayout="1" resolution="5" vectors="visible" visibleWaves="0" animation="stop">
+    <sources>
+      <linesource id="line1" amplitude="4.0" wavelength="16.0" selected="true" angle="42.00000116875648" n1="1.5" n2="1.0" />
+    </sources>
+    <view value="-0.86977684 -0.638373 0.0 -0.08353986 0.91935587 -8.282737" />
+  </rrwaves>
+  <script>
+    <scriptEnded timeStamp="10" />
+  </script>
+</wsl>

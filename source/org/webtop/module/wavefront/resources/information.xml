@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="windows-1250"?>
+
+<menu>
+  <button name="Directions">
+    <browserLoad name="browser" tab="Directions">
+  </button>
+  <button name="Exercises">
+    <browserLoad name="browser" tab="Exercises">
+  </button>
+  <button name="Theory">
+    <browserLoad name="browser" tab="Theory">
+  </button>
+  <button name="Images">
+    <browserLoad name="browser" tab="Images">
+  </button>
+</menu
+
+<browser name="browser">
+  <tab name="Directions">
+    <default = "directions.html">
+  </tab>
+  <tab name="Exercises">
+    <default = "exercises.html">
+  </tab>
+  <tab name="Theory">
+    <default = "theory.html">
+  </tab>
+  <tab name="Images">
+    <default = "images.html">
+  </tab>
+</browser>

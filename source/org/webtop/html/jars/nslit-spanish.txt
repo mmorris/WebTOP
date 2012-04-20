@@ -1,0 +1,22 @@
+distance_tooltip,Use estes conos rojos para ajustar la distancia de la pantalla a la abertura.
+wavelength_tooltip,La rueda modifica la longitud de onda de la luz  -- derecho amplia la longitud.
+width_tooltip,Use estes conos rojos para ajustar la anchura de los cortes.
+distance2_tooltip,Use estes conos azules para ajustar la distancia entre los cortes.
+calculating_msg,Calculando...Espere..
+welcome_msg,Bienvenidos a WebTOP - Fraunhofer Diffración (N Slit) Module
+slit_err,Hay que haber un numero positivo de cortes.
+wavelength_err,La longitud de onda tiene que ser entre 400 y 700 nanómetros (luz visible).
+slit_width_err,No corte puede ser más que .25 mm
+slit_extend_err,Los cortes no se pueden superponer fuera del borde del plano del la abertura.
+screen_err,La pantalla tiene que estar entre uno y dos metros de los cortes.
+slits_label,Cortes:
+wavelength_label,Longitud de onda:
+width_label,Anchura:
+distance_label,Distancia
+z_label,Z:
+arrangement_err,Ese disposición de cortes sería más grande de la abertura. Hay que cambiar un parámetro.
+reset_label,Reajustar
+hide_label,Esconder los Widgets
+show_label,Manifestar los Widgets
+position_label,Posición en patalla: 
+intensity_label, mm; intensidad = 

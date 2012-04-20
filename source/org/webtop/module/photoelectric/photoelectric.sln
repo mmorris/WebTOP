@@ -1,0 +1,13 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "photoelectric", "photoelectric.vjp", "{BE469CD5-95C4-458D-9C95-71C1879D2A07}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {BE469CD5-95C4-458D-9C95-71C1879D2A07}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {BE469CD5-95C4-458D-9C95-71C1879D2A07}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

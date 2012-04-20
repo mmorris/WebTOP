@@ -1,0 +1,25 @@
+index_label,Index of Refraction
+index_tooltip,The index of refraction of the etalon.
+d_label,d:
+cm_label,cm
+depth_label,The depth of thickness of the etalon.
+r_label,R:
+r_tooltip,The reflectivity of the etalon's surfaces.
+wavelength_label,Wavelength:
+nm_label,nm
+wavelength_label,Wavelength:
+wavelength_tooltip,The wavelength of the incident light.
+resetButton,Reset
+toggleAxisButton,Axis
+toggleWidgetsButton,Widgets
+resetButton_tooltip,Reset all parameters to their default values./u2343
+toggleAxisButton_tooltip,Show or hide the axis above the screen.
+toggleWidgetsButton_tooltip,Show or hide the widets in the scene.
+calculating,Calculating - please wait...
+index_warning,Index of refraction must be between 
+depth_warning,Depth of etalon must be between 
+reflectivity_warning,Reflectivity must be between 
+wavelength_warning,Wavelength must be between 
+and, and 
+nanometers, nanometers.
+intensity, intensity: 

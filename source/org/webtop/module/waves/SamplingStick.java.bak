@@ -1,0 +1,73 @@
+/**
+ * <p> SamplingStick.java -- This class defines the PoolWidget that reads the total height of 
+ * the waves at that point </p> 
+ * <p> Created by: Davis Herring December 31, 2002</p>
+ * <p> Updated: May 13 2004 </p> 
+ * @author Jeremy Davis, Updated: June 25, 2008
+ */
+
+package org.webtop.module.waves;
+
+import org.webtop.wsl.script.WSLNode;
+
+import javax.swing.JPanel;
+import org.web3d.x3d.sai.*;
+//import org.web3d.sai.*;
+import org.webtop.wsl.script.*;
+
+
+public class SamplingStick extends PoolWidget {
+	
+	private SFFloat set_ballHeight;
+	
+	public SamplingStick(Engine e, WidgetsPanel panel, float x, float y){
+		super(e, panel, x, y);
+		createX3DNode();
+	}
+	
+	public void readableFieldChanged(X3DFieldEvent arg0){
+		query(); //our only trick -- update value on interaction
+		super.readableFieldChanged(arg0);
+	}
+	
+	public void createX3DNode(){
+		create("SamplingStick{ x "+X + " y "+Y+" } ");
+		
+		set_position = (SFVec3f)engine.getSAI().getInputField(getNode(), "set_position");
+		set_ballHeight = (SFFloat) engine.getSAI().getInputField(getNode(), "set_ballHeight");
+		
+		engine.getSAI().getOutputField(getNode(), "position_changed", this, "position_changed");
+		engine.getSAI().getOutputField(getNode(), "mouseOverPosition", this, "mouseOverPosition");
+	}
+	
+	protected String getNodeName() { return "<SamplingStick>";}
+	
+	public void query(){
+		float h = engine.getHeight(getX(), getY());
+		set_ballHeight.setValue(h);
+		
+		if(widgetsPanel.getSelectedWidget() == this){
+			JPanel p = widgetsPanel.getSwitcher().getActivePanel();
+			if(p instanceof SamplePanel)
+				((SamplePanel)p).setValue(h);
+		}
+	}
+	
+	protected boolean passive() {
+		return true; //is a passive widget
+	}
+
+	public WSLNode toWSLNode() {
+		//This was located in the toWSLNode code from the old source [JD]
+		/*
+		WSLNode ret=new WSLNode("samplingstick");
+		final WSLAttributeList atts=ret.getAttributes();
+		atts.add("id", id);
+		atts.add("position", "" + X + ',' + Y);
+		if(widgetVisible) atts.add("selected", "true");
+		return ret;
+		 */
+		return null;
+	}
+
+}

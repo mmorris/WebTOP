@@ -1,0 +1,10 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="visible" fieldMode="composite">
+    <source sourceType="unpolarized" />
+    <filters />
+    <view value="-0.3078748 -0.6027078 0.0 3.6077077 2.834814 -17.0" />
+  </polarization>
+  <script>
+    <scriptEnded timeStamp="24445" />
+  </script>
+</wsl>

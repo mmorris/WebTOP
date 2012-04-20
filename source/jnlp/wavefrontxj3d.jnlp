@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- JNLP File for Xj3D Application -->
+
+<jnlp spec="1.5+" codebase="WEBSITE_ADDRESS" href="wavefront.jnlp"> 
+	<information>
+		<title>Wavefront Module</title>    
+		<vendor>WebTOP</vendor>    
+		<homepage href="http://webtop.dnsalias.org/wiki" />    
+		<description>WebTOP Webstart Distribution</description>    
+	    <offline-allowed/>     
+	    <!--
+		<association extensions="wrl" mime-type="model/vrml" />
+		<association extensions="x3dv" mime-type="model/x3d+vrml" />
+		<association extensions="x3d" mime-type="model/x3d+xml" />
+		<association extensions="x3db" mime-type="model/x3d+binary" />
+		-->
+	    <shortcut online="false">      
+	    	<desktop />      
+	    	<menu submenu="WebTOP" />    
+	    </shortcut>  
+   	</information>  
+   	<security>      
+   		<all-permissions />  
+   	</security>  
+   	<resources>    
+ 		<j2se version="1.5+" java-vm-args="-Xmx512M -XX:MaxDirectMemorySize=256M -Dsun.java2d.noddraw=true" href="http://java.sun.com/products/autodl/j2se" />
+   		<jar href="jars/xj3d_browser_2.0.0.jar" />
+   		<jar href="jars/aviatrix3d-all_2.0.0.jar" />  
+   		<jar href="jars/FastInfoset.jar" />  
+   		<jar href="jars/gnu-regexp-1.0.8.jar" />  
+   		<jar href="jars/httpclient.jar" />  
+   		<jar href="jars/j3d-org-java3d-all_0.9.0.jar" />   
+   		<jar href="jars/uri.jar" />  
+   		<jar href="jars/vecmath.jar" />  
+   		<jar href="jars/vlc_uri.jar" />  
+   		<jar href="jars/xj3d-common_2.0.0.jar" />  
+   		<jar href="jars/xj3d-config_2.0.0.jar" />  
+   		<jar href="jars/xj3d-core_2.0.0.jar" />  
+   		<jar href="jars/xj3d-images_2.0.0.jar" />  
+   		<jar href="jars/xj3d-jaxp_2.0.0.jar" />  
+   		<jar href="jars/xj3d-jsai_2.0.0.jar" />  
+   		<jar href="jars/xj3d-net_2.0.0.jar" />  
+   		<jar href="jars/xj3d-ogl_2.0.0.jar" />  
+   		<jar href="jars/xj3d-parser_2.0.0.jar" />  
+   		<jar href="jars/xj3d-render_2.0.0.jar" />  
+   		<jar href="jars/xj3d-runtime_2.0.0.jar" />  
+   		<jar href="jars/xj3d-sai_2.0.0.jar" />  
+   		<jar href="jars/xj3d-sav_2.0.0.jar" />  
+   		<jar href="jars/xj3d-script-base_2.0.0.jar" />  
+   		<jar href="jars/xj3d-xml-util_2.0.0.jar" />  
+   		<jar href="jars/xj3d-xml_2.0.0.jar" />  
+   	</resources>
+   	<resources os="Windows">
+		<extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		<extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+	</resources>	   	  
+   	<application-desc main-class="org.webtop.modules.Wavefront">
+   	</application-desc> 
+   		
+</jnlp> 

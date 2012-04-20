@@ -1,0 +1,23 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="hidden" fieldMode="composite">
+    <source sourceType="polarized" wavelength="700.0" amplitudex="1.0" amplitudey="1.0" phaseDifference="0.0" />
+    <filters>
+      <waveplate id="waveplate0" z="10.0" angle="0.0" thickness="0.25" />
+    </filters>
+    <view value="-0.22244132 -0.8079751 0.0 4.3012643 1.8715968 -17.0" />
+  </polarization>
+  <script>
+    <actionPerformed param="wavelength" value="700.0" timeStamp="18917" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="32286" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="3.1415927" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="32127" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="4.712389" timeStamp="0" />
+  </script>
+</wsl>

@@ -1,0 +1,45 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+Viewpoint {
+  description "Front"
+  position 0 0 6
+}
+
+Viewpoint {
+  description "Top-down"
+  orientation 1 0 0 -0.6
+  position 0 2 0
+}
+
+Transform {
+    #rotate the shape towards the default VP
+    rotation 0 0 0 0
+    children  [
+        Shape {
+            appearance Appearance {
+              material Material {
+                ambientIntensity 0.4
+                #diffuseColor     0.7 0.7 1.0
+                diffuseColor     0.2 0.2 0.24
+                specularColor    0.1 0.1 0.1
+                #emissiveColor    0.1 0.1 0.2
+                shininess        1.0
+                transparency     0
+              }
+            }
+            geometry DEF EGrid ElevationGrid {
+                height [		]
+                solid TRUE
+                xDimension 400
+                xSpacing 1
+                zDimension 400
+                zSpacing 1
+            }
+        }
+        DEF sensor TimeSensor {
+          loop  TRUE
+          }
+    ]
+}

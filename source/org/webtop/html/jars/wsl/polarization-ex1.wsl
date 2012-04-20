@@ -1,0 +1,66 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="visible" fieldMode="composite">
+    <source sourceType="polarized" wavelength="700.0" amplitudex="1.0" amplitudey="0.0" phaseDifference="0.0" />
+    <filters />
+    <view value="-0.3833853 -0.8351911 0.0 5.209114 2.2293882 -16.0445" />
+  </polarization>
+  <script>
+    <mousePressed param="amplitudey" timeStamp="9464" />
+    <mouseDragged param="amplitudey" value="0.017438984" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.043551542" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="0.114463426" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.21899423" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="0.2983079" timeStamp="71" />
+    <mouseDragged param="amplitudey" value="0.41022444" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.487475" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="0.52165157" timeStamp="0" />
+    <mouseDragged param="amplitudey" value="0.5792607" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.65382195" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.7025817" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="0.7349664" timeStamp="0" />
+    <mouseDragged param="amplitudey" value="0.791413" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.8715457" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.91140044" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="0.98556316" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="0.9939723" timeStamp="71" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="60" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="180" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="61" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseDragged param="amplitudey" value="1.0" timeStamp="70" />
+    <mouseReleased param="amplitudey" timeStamp="70" />
+    <mousePressed param="amplitudex" timeStamp="24165" />
+    <mouseDragged param="amplitudex" value="1.0" timeStamp="80" />
+    <mouseDragged param="amplitudex" value="0.9743271" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.8907402" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.8117027" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.76812667" timeStamp="60" />
+    <mouseDragged param="amplitudex" value="0.75087434" timeStamp="0" />
+    <mouseDragged param="amplitudex" value="0.7148199" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.6690857" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.6501547" timeStamp="60" />
+    <mouseDragged param="amplitudex" value="0.5861448" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.47811756" timeStamp="71" />
+    <mouseDragged param="amplitudex" value="0.41337585" timeStamp="60" />
+    <mouseDragged param="amplitudex" value="0.32041112" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.23720169" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.1911703" timeStamp="60" />
+    <mouseDragged param="amplitudex" value="0.09888573" timeStamp="70" />
+    <mouseDragged param="amplitudex" value="0.024598122" timeStamp="60" />
+    <mouseDragged param="amplitudex" value="0.0" timeStamp="470" />
+    <mouseReleased param="amplitudex" timeStamp="150" />
+    <actionPerformed param="phaseDifference" value="3.1415927" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="8943" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="100" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="100" />
+    <actionPerformed param="phaseDifference" value="3.1415927" timeStamp="0" />
+	    <scriptEnded timeStamp="1000" />
+	<!--shouldn't there be a scriptended tag here? [Davis]-->
+  </script>
+</wsl>

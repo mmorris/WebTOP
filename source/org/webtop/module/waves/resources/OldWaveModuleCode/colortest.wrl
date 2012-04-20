@@ -1,0 +1,13 @@
+#VRML V2.0 utf8
+
+Shape	{
+	geometry Box{}
+	appearance Appearance	{
+		material Material	{
+		  ambientIntensity .4
+		  diffuseColor     .122 .129 .604
+		  specularColor    .1 .1 .1
+		  emissiveColor    .1 .1 .2
+		}
+	}
+}

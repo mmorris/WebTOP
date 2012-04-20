@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?><installation version="1.0">
+<info>
+<appname>WebTop</appname>
+<appversion>1.0</appversion>
+<authors>
+<author name="John Foley" email="jtf1@msstate.edu" />
+</authors>
+<uninstaller write="yes" name="uninstaller.jar"/>
+<requiresjdk>no</requiresjdk>
+<writeinstallationinformation>yes</writeinstallationinformation>
+</info>
+<guiprefs width="640" height="480" resizable="no">
+<modifier key="useFlags" value="yes"/>
+<modifier key="langDisplayType" value="default" />
+<modifier key="useButtonIcons" value="no" />
+</guiprefs>
+<locale>
+<langpack iso3="eng"/>
+</locale>
+<resources>
+	<res id="shortcutSpec.xml" src="shortcutSpec.xml"/>
+	<res id="TargetPanel.dir.windows" src="default-dir.txt" />
+</resources>
+<panels>
+<panel classname="PacksPanel"/>
+<panel classname="TargetPanel"/>
+<panel classname="ShortcutPanel">
+	<os family="windows"/>
+</panel>
+<panel classname="InstallPanel"/>
+<panel classname="SimpleFinishPanel"/>
+</panels>
+<variables>
+<variable name="$DesktopShortcutCheckboxEnabled" value="true"/>
+</variables>
+<packs>
+<pack name="WebTop" required="yes" preselected="yes">
+ <description>The Core WebTop files</description>
+<fileset dir="../launcher" targetdir="$INSTALL_PATH/" override="update">
+	<include name="**/**"/>
+	<exclude name="Launcher.java"/>
+</fileset>
+</pack>
+ </packs>
+<native type="izpack" name="ShellLink.dll"/>
+</installation>

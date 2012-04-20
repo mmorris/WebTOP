@@ -1,0 +1,176 @@
+package webtop.polarization;
+
+import webtop.util.*;
+
+public class FilterList {
+	private Filter head=new Filter.Null(),tail,curr;
+
+	private int size = 0;
+
+	public void add(Filter p) {
+		if(head.next==null) {
+			head.next = tail = curr = p;
+			p.prev = head;
+			p.next = null;
+		} else {
+			Filter p2 = head;
+			float z = p.getZ();
+			while(p2.next!=null && p2.next.getZ()<=z) p2 = p2.next;
+			p.prev = p2;
+			p.next = p2.next;
+			if(p2.next!=null) p2.next.prev = p;
+			else tail = p;
+			p2.next = p;
+		}
+		size++;
+	}
+
+	public void remove(Filter p) {
+		if(head==null || head.next==null || !contains(p)) return;
+		if(p.next != null) p.next.prev = p.prev;
+		else tail = p.prev;
+		p.prev.next = p.next;
+		p.prev = null;
+		p.next = null;
+		size--;
+	}
+
+	public void removeAll() {
+		head.next = null;
+		tail = null;
+		curr = null;
+		size = 0;
+	}
+
+	public void insertAfter(Filter p, Filter p0) {
+		if(!contains(p0)) return;
+		p.prev = p0;
+		p.next = p0.next;
+		if(p0.next != null) p0.next.prev = p;
+		p0.next = p;
+		size++;
+	}
+
+	public int indexOf(Filter f) {
+		if(head.next==null) return -1;
+		Filter p = head.next;
+		for(int i=0; p!=null; i++, p=p.next) {
+			if(p==f) return i;
+		}
+		return -1;
+	}
+
+	public int indexOfPolarizer(Filter p) {
+		if(p instanceof Polarizer) {
+			int i = 0;
+			for(Filter f=head.next; f!=null; f = f.next) {
+				if(p == f) return i;
+				if(f instanceof Polarizer) i++;
+			}
+		}
+
+		return -1;
+	}
+
+	public boolean contains(Filter p) {
+		for(Filter f=head.next;f!=null;f=f.next) if(f==p) return true;
+		return false;
+	}
+
+	public void move(Filter p, float z_, boolean setVRML) {
+		if(!contains(p)) return;
+		if(z_<p.prev.getZ()) {
+			Filter p2 = p.prev;
+			while(p2!=head && p2.getZ()>z_) p2 = p2.prev;
+			if(p2.next!=p) {
+				remove(p);
+				insertAfter(p, p2);
+			}
+		} else if(p.next!=null && z_>p.next.getZ()) {
+			Filter p2 = p;
+			while(p2.next!=null && p2.next.getZ()<z_) p2 = p2.next;
+			if(p2.next!=p) {
+				remove(p);
+				insertAfter(p, p2);
+			}
+		}
+		p.setZ(z_, setVRML);
+	}
+
+	public void hideWidgets() {
+		for(Filter f=head.next;f!=null;f=f.next) f.setActive(false);
+	}
+
+	public void setEnabled(boolean on) {
+		for(Filter f=head.next;f!=null;f=f.next) f.setEnabled(on);
+	}
+
+	public void setAngle(Filter p, float angle_, boolean setVRML) {
+		if(!contains(p)) return;
+		p.setAngle(angle_, setVRML);
+	}
+
+	public Filter current() {
+		return curr;
+	}
+
+	public Filter prev() {
+		if(curr==null || curr.prev==null) return null;
+		curr = curr.prev;
+		return curr;
+	}
+
+	public Filter next() {
+		if(curr==null || curr.next==null) return null;
+		curr = curr.next;
+		return curr;
+	}
+
+	public Filter first() {
+		if(head!=null && head.next!=null) {
+			curr = head.next;
+			return head.next;
+		} else {
+			curr = null;
+			return null;
+		}
+	}
+
+	public Filter last() {
+		curr = tail;
+		return tail;
+	}
+
+	public int getSize() {return size;}
+
+	public Filter getFilter(int index) {
+		if(head==null || head.next==null) return null;
+
+		int i;
+		Filter f;
+		for(f=head.next, i=0; f!=null && i<index; f=f.next, i++);
+		return f;
+	}
+
+	public Filter getFilter(String id) {
+		if(id==null) return null;
+		for(Filter p=head; p!=null; p=p.next) if(id.equals(p.id)) return p;
+		return null;
+	}
+
+	public void printList() {
+		Filter p = head;
+		while(p!=null) {
+			DebugPrinter.println("Z: " + p.getZ() + ", Angle: " + p.getAngle());
+			p = p.next;
+		}
+	}
+
+	public void printReverseList() {
+		Filter p = tail;
+		while(p!=null) {
+			DebugPrinter.println("Z: " + p.getZ() + ", Angle: " + p.getAngle());
+			p = p.prev;
+		}
+	}
+}

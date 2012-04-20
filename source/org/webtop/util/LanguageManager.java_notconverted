@@ -1,0 +1,39 @@
+package webtop.util;
+
+import java.applet.*;
+import java.net.*;
+import java.io.*;
+import java.util.Hashtable;
+
+import webtop.component.WApplet;
+
+public class LanguageManager {
+	private final Hashtable t=new Hashtable(30);
+  
+	// Better to use XML -- for now format is "name, string"
+	public LanguageManager(Applet app, String moduleName, String lang){
+		try {
+			//BufferedReader reader=new BufferedReader(new InputStreamReader(new URL(app.getDocumentBase(),lang+".txt").openStream()));
+			BufferedReader reader=new BufferedReader(new InputStreamReader(new URL(app.getCodeBase(),moduleName+"-"+lang+".txt").openStream()));
+			while(reader.ready()) {
+				int commaPos;
+				String line = reader.readLine();
+				if(line.length()==0) continue; // ignore blank lines
+				commaPos = line.indexOf(",");
+				if(commaPos==-1) throw new IOException("missing comma in language file");
+				t.put(line.substring(0,commaPos),WTString.parseUnicode(line.substring(commaPos+1)));
+			}
+		} catch (MalformedURLException e) {
+			System.err.println("LanguageManager: can't load language file; encountered ");
+			e.printStackTrace();
+		} catch(IOException e) {
+			System.err.println("LanguageManager: error loading language file; encountered ");
+			e.printStackTrace();
+		}
+	}
+
+	public String getString(String key) {
+		String value=(String)t.get(key);
+		return value==null?key+"/missing":value;
+	}
+}

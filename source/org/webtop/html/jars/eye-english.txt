@@ -1,0 +1,32 @@
+eye_structure,Eye structure
+near_far_points,Near/far points
+new_near_far_points,New near/far points
+hide_widgets, Hide Widgets
+reset,      Reset      
+normal_vision,Normal Vision
+near_sighted,Near-Sighted (Myopic)
+far_sighted_hyperopic,Far-Sighted (Hyperopic)
+far_sighted_presbyopic,Far-Sighted (Presbyopic)
+set_all,     Set All     
+add,        Add        
+set,       Set >       
+contacts,   Contacts   
+eyeglasses,Eyeglasses
+recommended_power,Recommended power:
+25cm,25 cm
+infinite,infinite
+1.667cm,1.667 cm
+1.631cm,1.631 cm
+new_near_point,New near point:
+new_far_point,New far point:
+preliminary_image_distance,Preliminary image distance:
+min_focal_length,Min focal length:
+max_focal_length,Max focal length:
+unaccom_power_max_cur,Unaccom Power/Max Accom/Cur Accom
+weakest_power,The weakest power the eye's lens can have (when fully relaxed).
+max_power,The maximum amount of power the eye's lens can add through accommodation.
+strength_of_accom,The eye's current strength of accommodation.
+physicist,Physicist's
+optometrist,Optometrist's
+eye_length,Eye length:
+object_distance,Object distance:

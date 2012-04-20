@@ -1,0 +1,18 @@
+Rules:
+
+First element only (for Foley Hokeyness):
+
+When not dragging:	If solid angle decreases, prune (how?).
+When dragging:	If solid angle decreases, do nothing.
+When releasing a widget:	If solid angle has decreased, prune (how?).
+
+Always:
+If solid angle increases, incremental hooking.
+If source changes, recalculate.
+If user asks, recalculate.
+
+Solid angle can change upon
+dragging: radius/size/position change to first element (including reordering of elements)
+not dragging: any of the above, plus addition or removal of elements
+
+These rules are nice, but faulty for off axis points (solid angle can decrease and yet add new directions in which rays must be cast).

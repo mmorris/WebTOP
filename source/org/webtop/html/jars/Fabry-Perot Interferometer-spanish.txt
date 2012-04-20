@@ -1,0 +1,25 @@
+index_label,Índice de Refracción
+index_tooltip,El Índice de refracción del etalon.
+d_label,d:
+cm_label,cm
+depth_label,La profundidad de grosor del etalon.
+r_label,R:
+r_tooltip,La reflectividad de las superficies del etalon.
+wavelength_label,Longitud de ondaÑ
+nm_label,nm
+wavelength_label,Wavelength:
+wavelength_tooltip,La longitud de la luz incidente.
+resetButton,Reajustar
+toggleAxisButton,Eje
+toggleWidgetsButton,Widgets
+resetButton_tooltip,Reajustar todos los parámetros a los valores iniciales.
+toggleAxisButton_tooltip,Manifestar o esconder el eje encima de la pantalla.
+toggleWidgetsButton_tooltip,Manifestar o esconder los widgets en la escena.
+calculating,Calculando - espere...
+index_warning,Índice de refracción tiene que ser entre 
+depth_warning,Profundidad del etalon tiene que ser entre 
+reflectivity_warning,Reflectividad tiene que ser entre 
+wavelength_warning,Longitud de onda tiene que ser entre
+and, y 
+nanometers, nanómetros.
+intensity, intensidad: 

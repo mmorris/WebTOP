@@ -1,0 +1,88 @@
+<wsl>
+  <nslit wavelength="500.0" z="1000.0" slitWidth="0.1" slitDistance="0.22" numberOfSlits="1" widgets="visible">
+    <view value="-0.3 -0.4 0.0 0.0 -2.0 -12.0" />
+  </nslit>
+  <script>
+    <actionPerformed param="slitWidth" value="0.105" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.110" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.115" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.120" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.125" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.130" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.135" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.140" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.150" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.155" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.160" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.165" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.170" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.175" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.180" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.185" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.190" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.195" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.200" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.205" timeStamp="4000" />
+    <actionPerformed param="slitWidth" value="0.210" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.215" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.220" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.225" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.230" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.235" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.240" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.250" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.255" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.260" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.265" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.270" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.275" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.280" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.285" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.290" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.295" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.300" timeStamp="200" />
+    <actionPerformed param="wavelength" value="600.0" timeStamp="4000" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="4000" />
+    <actionPerformed param="slitWidth" value="0.295" timeStamp="4000" />
+    <actionPerformed param="slitWidth" value="0.290" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.285" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.280" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.275" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.270" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.265" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.260" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.255" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.250" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.245" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.240" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.235" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.230" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.225" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.220" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.215" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.210" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.205" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.200" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.195" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.190" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.185" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.180" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.175" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.170" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.165" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.160" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.155" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.150" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.145" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.140" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.135" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.130" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.125" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.120" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.115" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.110" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.105" timeStamp="200" />
+    <actionPerformed param="slitWidth" value="0.100" timeStamp="200" />
+    <scriptEnded timeStamp="2694" />
+  </script>
+</wsl>

@@ -1,0 +1,174 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<title>WebTOP Controls-Reflection/Refraction</title>
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<center><table width="95%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+  <h1 align="center"><font color="#800000"><a name="top"></a>Reflection and Refraction - Vectorial: Directions<br></font></h1>
+
+  <p>Under normal operation, your WebTOP window should look like the following:</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="50%">
+<tr><td width="100%" class=tablemain>
+<img border="0" src="images/controls1.jpg" width="520" height="386" alt="Image showing the module layout">
+</td></tr><tr>
+<td width="100%" class=tablemain><SMALL>Figure 1 Reflection/Refraction
+        module layout
+</SMALL></td></tr></table></center></div>
+  <p>The WebTOP window has four parts. The top portion is the active WebTOP scene. 
+  The second portion is the VRML Navigation controls.
+  The third portion, the console, contains a message line that provides help on the operation of the Widgets and keyboard entry boxes.
+  The fourth portion is the recording panel that allows you to record and replay WebTOP sessions. You may scroll down to read on, or 
+  select the appropriate link from the following items:</p>
+  <div align="center">
+    <table border="0" cellpadding="0" cellspacing="0" width="80%">
+      <tr>
+        <td align="center" class=tablemain><a href="#Module">How to Change
+          Parameters</a></td>
+        <td align="center" class=tablemain><a href="../dashboard/manipulate.html">How to Manipulate the Scene</a></td>
+        <td align="center" class=tablemain><A
+        href="../dashboard/record.html">How to Record Sessions</A></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <p><a name="Module"><font color="#800000"><strong><big>How To Change
+  Parameters</big></strong></font></a></p>
+  <p>During normal operation of the module, as shown in Figure 1, the module
+  displays both a WebTOP scene and a graph of the Amplitude coefficients. Figure
+  2 will focus on the WebTOP scene and the widgets used for this module:</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="50%">
+<tr><td width="100%" class=tablemain>
+<img border="0" src="images/controls4.jpg" width="485" height="383" alt="An images showing the widgets for the reflection refraction module"></td></tr><tr>
+<td width="100%" class=tablemain><SMALL>Figure 2 Manipulation of the Reflection/Refraction
+        module</SMALL></td></tr></table></center></div>
+
+  <p>In this module you can change the properties of the incident light and the
+  medium of the incident and refracted beams. The parameters that you can change are the <font color="#0000FF"> magnitudes</font> of the parallel
+and perpendicular components of the electric field
+  (<font color="#0000FF">E para</font> and <font color="#0000FF">E perp</font>), the <font color="#0000FF"> initial phase difference</font> between
+  E<SUB>para</SUB> and E<SUB>perp</SUB> and the <FONT color="#0000FF">incident
+  angle</FONT> of the beam. These parameters can 
+be changed by&nbsp; manipulating the <font color="#0000FF"> widgets</font> in the scene or by using the
+  <FONT color="#0000FF">WebTOP Console</FONT>. Changing the index of refraction of both mediums and changing the initial
+polarization of the light (choosing between polarized or unpolarized
+light) are done by using the Console.
+  You can also use the Console to control the look and the operation of the
+  module.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="50%">
+<tr><td width="100%" class=tablemain>
+<P align="center">
+<img border="0" src="images/controls3.jpg" alt="An images showing the amplitude coefficients for the reflection refraction module" width="261" height="359">
+</P>
+</td></tr><tr>
+<td width="100%" class=tablemain><center><SMALL>Figure 3 Amplitude Coefficients graph</SMALL></center></td></tr></table></center></center>
+
+  <p align="left">
+The module displays a graph of the amplitude coefficients. The graph can be
+  hidden/shown from a button at the WebTOP console. Description of the amplitude
+  coefficients is provided at the theory section.</p>
+
+  <p align="left">
+This module includes four types of widgets: a wheel, a slider, a ball, and
+phase difference.
+  The widgets are shown in the following Figures:</p>
+
+<center>
+  <div align="center">
+    <center>
+    <table border="1" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/controls6.jpg" width="95" height="88" alt="Wheel widget"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/controls7.jpg" width="100" height="100" alt="Slider widgets"></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><strong>Wheel Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Slider Widget</strong></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/controls5.jpg" width="33" height="33" alt="Incident angle  widget"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/controls8.jpg" alt="phase difference widget" width="120" height="100"></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><strong>Ball Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Phase Difference Widget</strong></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  </center>
+
+  <p align="left">To change a parameter, you need to position your cursor over the proper
+  widget. Once you have placed the cursor over the widget, the cursor changes shape.If you click on the left mouse button, a message explaining the operation
+of the widget appears at the help portion of the WebTOP console.</p>
+  <p align="left">Note that the wave becomes static when the widget is engaged. The animation is restored after you release the widget. Note also that
+  while changing a parameter with a widget, the corresponding value is updated in the corresponding input box.</p>
+  <p align="left"><strong>Changing a Parameter with the Wheel Widget:<br>
+  </strong>Once you select the wheel, drag and rotate the cursor to the left if you want to
+  decrease the wavelength or the right if you want to increase it. Note that the
+  color of the wave is not representative of the wavelength of the light used. You may need&nbsp; to repeat dragging in the same
+  direction until you obtain the desired wavelength.</p>
+  <p align="left"><strong>Changing a Parameter with the Slider Widget:<br>
+  </strong>The slider can be used to change E<SUB>para</SUB> or E<SUB>perp</SUB>. Select the desired
+  slider and move it along the axis until you obtain the desired value.</p>
+  <p align="left"><strong>Changing a Parameter with the Ball Widget:<br>
+  </strong>You select the ball widget by positioning the cursor over the ball. Moving the
+  ball allows you to rotate the angle of incidence.</p>
+  <p align="left"><strong>Changing a Parameter with the Phase-Difference Widget:<br>
+  </strong>This widget allows you to change the phase difference between the two
+  electric field components of the incident wave. Select the double-cone on the phase difference widget and move it
+  either forward or backward along the direction of the wave path.</p>
+  <p align="left"><strong>Changing Parameter With the WebTOP Console:<br>
+  </strong>The Controls and Parameters Panel provides two interfaces: one
+for polarized light and one for unpolarized light. You can switch between them by clicking on the appropriate Tab. In either interface, you may change the parameters by typing the values in the &quot;Keyboard
+  Entry Boxes&quot; then pressing the &quot;Enter&quot; key. A <font color="#0000FF">selection
+  box</font> allows you to select component of the wave you want to visualize. You may
+  hide all widgets and display them again by using the <font color="#0000FF">Hide
+  Widgets</font>/<font color="#0000FF">Show Widgets</font> button. The <font color="#0000FF">Stop</font>/<font color="#0000FF">Play</font>
+  button allows you stop and restart the simulation. <font color="#FF0000">It is
+  recommended that you Stop the simulation before exiting or moving to
+  another page</font>.</p>
+  <p align="left">The following figures show different setting of the Controls &amp;
+  Parameters Panel:</p>
+
+<center>
+  <div align="center">
+    <center>
+    <table border="0" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="100%" class=tablemain><img border="0" src="images/controls9.jpg" width="683" height="134" alt="WebTOP console for polarized light"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>Controls &amp; Parameters Panel: Polarized light is
+          selected.&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>
+          <p align="center"><img border="0" src="images/controls10.jpg" width="682" height="133" alt="WebTOP console for unpolarized light"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>Controls &amp; Parameters Panel: Unpolarized light is
+          selected. </td>
+      </tr>
+    </center>
+    </table>
+  </div>
+  <hr>
+  <p>&nbsp;</p>
+</td></tr></table>
+
+</body>
+
+</html>

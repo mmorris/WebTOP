@@ -1,0 +1,6 @@
+Issues to address:|
+------------------|
+
+1. Bounds for slit width/distance fields:  How to make a FloatBox's bounds change?
+2. Bounds for slit width based on position on screen (at edge, for instance)
+3. 

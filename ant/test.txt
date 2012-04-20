@@ -1,0 +1,291 @@
+Buildfile: build.xml
+   [delete] Deleting directory C:\home\thomas\webtop\temp
+   [delete] Deleting directory C:\home\thomas\webtop\classes
+
+init:
+     [echo] ant.java.version: 1.6
+    [mkdir] Created dir: C:\home\thomas\webtop\classes
+     [copy] Copying 25 files to C:\home\thomas\webtop\classes\org\webtop\x3dlib
+     [copy] Copying 31 files to C:\home\thomas\webtop\classes\org\webtop\wsl\client\images
+
+sign_lib:
+   [delete] Deleting directory C:\home\thomas\webtop\webstart\lib
+     [copy] Copying 55 files to C:\home\thomas\webtop\webstart\lib
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\FastInfoset.jar to C:\home\thomas\webtop\webstart\lib\FastInfoset.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\aviatrix3d-all_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\aviatrix3d-all_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\dis.jar to C:\home\thomas\webtop\webstart\lib\dis.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\disxml.jar to C:\home\thomas\webtop\webstart\lib\disxml.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\geoapi-nogenerics-2.1-M2.jar to C:\home\thomas\webtop\webstart\lib\geoapi-nogenerics-2.1-M2.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\gluegen-rt.jar to C:\home\thomas\webtop\webstart\lib\gluegen-rt.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\gnu-regexp-1.0.8.jar to C:\home\thomas\webtop\webstart\lib\gnu-regexp-1.0.8.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\gt2-main-2.3.1.jar to C:\home\thomas\webtop\webstart\lib\gt2-main-2.3.1.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\gt2-referencing-2.3.1.jar to C:\home\thomas\webtop\webstart\lib\gt2-referencing-2.3.1.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\httpclient.jar to C:\home\thomas\webtop\webstart\lib\httpclient.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\imageloader_1.1.0.jar to C:\home\thomas\webtop\webstart\lib\imageloader_1.1.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\j3d-org-all_0.9.0.jar to C:\home\thomas\webtop\webstart\lib\j3d-org-all_0.9.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\j3d-org-java3d-all_0.9.0.jar to C:\home\thomas\webtop\webstart\lib\j3d-org-java3d-all_0.9.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\jhall.jar to C:\home\thomas\webtop\webstart\lib\jhall.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\jinput.jar to C:\home\thomas\webtop\webstart\lib\jinput.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\joal.jar to C:\home\thomas\webtop\webstart\lib\joal.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\jogl.jar to C:\home\thomas\webtop\webstart\lib\jogl.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\js.jar to C:\home\thomas\webtop\webstart\lib\js.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\jsr108-0.01.jar to C:\home\thomas\webtop\webstart\lib\jsr108-0.01.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\jutils.jar to C:\home\thomas\webtop\webstart\lib\jutils.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\log4j.jar to C:\home\thomas\webtop\webstart\lib\log4j.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\odejava.jar to C:\home\thomas\webtop\webstart\lib\odejava.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\smack.jar to C:\home\thomas\webtop\webstart\lib\smack.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\smackx.jar to C:\home\thomas\webtop\webstart\lib\smackx.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\uri.jar to C:\home\thomas\webtop\webstart\lib\uri.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\vecmath.jar to C:\home\thomas\webtop\webstart\lib\vecmath.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\vlc_uri.jar to C:\home\thomas\webtop\webstart\lib\vlc_uri.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-all_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-all_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-common_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-common_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-config_.jar to C:\home\thomas\webtop\webstart\lib\xj3d-config_.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-config_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-config_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-core_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-core_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-device_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-device_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-eai_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-eai_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-ecmascript_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-ecmascript_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-external-sai-concrete_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-external-sai-concrete_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-external-sai_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-external-sai_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-images_.jar to C:\home\thomas\webtop\webstart\lib\xj3d-images_.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-images_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-images_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-java-sai-concrete_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-java-sai-concrete_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-java-sai_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-java-sai_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-jaxp_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-jaxp_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-jsai_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-jsai_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-net_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-net_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-norender_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-norender_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-ogl_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-ogl_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-parser_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-parser_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-render_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-render_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-runtime_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-runtime_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-sai-concrete_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-sai-concrete_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-sai_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-sai_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-sav_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-sav_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-script-base_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-script-base_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-xml-util_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-xml-util_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+  [signjar] Signing JAR: C:\home\thomas\webtop\webstart\lib\xj3d-xml_2.0.0.jar to C:\home\thomas\webtop\webstart\lib\xj3d-xml_2.0.0.jar as webtop
+  [signjar] 
+  [signjar] Warning: 
+  [signjar] The signer certificate will expire within six months.
+  [signjar] Enter Passphrase for keystore: 
+
+BUILD SUCCESSFUL
+Total time: 23 seconds

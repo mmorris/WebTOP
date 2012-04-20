@@ -1,0 +1,12 @@
+<wsl>
+  <reflection ni="1.5" nt="1.0" incidentAngle="30.000000834826057" animation="play" fieldMode="perpendicular" widgets="hidden" media="visible" coefficients="hidden" playSpeed="4.0">
+    <source sourceType="polarized" wavelength="550.0000" ePerp="2.6" ePara="2.6" phaseDifference="0.0" />
+    <view value="-0.77284753 0.032622576 0.0 0.103195824 -1.342257 -10.0" />
+  </reflection>
+  <script>
+    <actionPerformed param="incidentAngle" value="41.0" timeStamp="11887" />
+    <actionPerformed param="incidentAngle" value="42.0" timeStamp="12738" />
+    <actionPerformed param="incidentAngle" value="89.99" timeStamp="12328" />
+    <scriptEnded timeStamp="13930" />
+  </script>
+</wsl>

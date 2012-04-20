@@ -1,0 +1,1436 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+#Widgets.x3dv
+#File containing PROTOs for common widgets in WebTOP
+#Compiled/edited by Davis Herring
+#Converted to X3D by Peter Gilbert
+#Created January 30 2002
+#Updated June 27 2006
+#Version 0.8.2 (debug)
+
+#Widgets in this file:
+#XDragWidget
+#XYDragWidget
+#RotationWidget
+
+#Widget shapes in this file:
+#Cones:
+# XColorCone and TwoXColorCone, with color:
+#		[Active]Red2XCone
+# NegYColorCone, with colors:
+#		[Active]BlueNYCone
+#		GreyNYCone
+
+#Combinations in this file:
+#RedConeXDragger
+#BlueConeXDragger
+#CylinderXDragger
+#PhaseDiffWidget
+#WheelWidget
+
+#X3D ISSUES
+#PhaseDiffWidget does not work with Xj3D [June 27 2006]
+
+#Idea: have a Widget PROTO which handles just the `translation', initializeOnly and the
+#geometries -- it can't have any sensors 'cause they'd shadow those belonging
+#to the "real" widget.
+
+#Or could it?  If it had MFNode fields for the "real" widget to fill in...
+
+
+#========== GEOMETRY-INDEPENDENT WIDGETS ===================================
+
+#XDragWidget is least easily controlled from a vantage point within the XY plane.
+PROTO XDragWidget [ inputOutput SFVec3f translation 0 0 0
+										inputOutput SFRotation rotation 1 0 0 0
+
+										initializeOnly SFFloat position 0
+										inputOnly SFFloat set_position
+										outputOnly SFFloat position_changed
+
+										initializeOnly SFFloat minPosition 0				#If minPosition > maxPosition, all values allowed
+										inputOnly SFFloat set_minPosition
+										initializeOnly SFFloat maxPosition 1
+										inputOnly SFFloat set_maxPosition
+
+										initializeOnly SFFloat value 0							#Only used if positionAsValue FALSE
+										inputOnly SFFloat set_value
+										outputOnly SFFloat value_changed
+
+										initializeOnly SFFloat minValue 0
+										inputOnly SFFloat set_minValue
+										initializeOnly SFFloat maxValue 1
+										inputOnly SFFloat set_maxValue
+
+										#If this is TRUE (the default), the min/maxValue fields
+										#are ignored and 'position' and 'value' are equivalent.
+										#(This could probably have a better name.)
+										initializeOnly SFBool positionAsValue TRUE
+
+										outputOnly SFBool isOver_out
+										outputOnly SFBool isActive_out
+										inputOnly SFBool set_isActive
+
+										inputOutput SFBool enabled TRUE
+
+										inputOutput MFNode geometry []
+										inputOutput MFNode activeGeometry []
+										initializeOnly SFString debugName "<unnamed>"
+										outputOnly SFBool initialized ]
+{
+	Transform {
+		translation IS translation
+		rotation IS rotation
+		children [
+			DEF TS TouchSensor {
+				isActive IS isActive_out
+				isOver IS isOver_out
+				enabled IS enabled
+			}
+			DEF PS PlaneSensor {
+				enabled IS enabled
+			}
+			DEF GeometryTransform Transform {
+				children DEF GeometrySwitch Switch {
+					whichChoice 0
+					choice [ Group { children IS geometry }
+									 Group { children IS activeGeometry } ]
+				}
+			}
+		]
+	}
+	DEF Worker Script {
+		initializeOnly		SFFloat pos IS position
+		inputOnly SFFloat pos_in IS set_position
+		outputOnly SFFloat pos_out IS position_changed
+
+		initializeOnly		SFFloat minPos IS minPosition
+		initializeOnly		SFFloat maxPos IS maxPosition
+		inputOnly SFFloat set_minPosition IS set_minPosition
+		inputOnly SFFloat set_maxPosition IS set_maxPosition
+
+		initializeOnly SFFloat val IS value
+		inputOnly SFFloat val_in IS set_value
+		outputOnly SFFloat val_out IS value_changed
+
+		initializeOnly		SFFloat minVal IS minValue
+		initializeOnly		SFFloat maxVal IS maxValue
+		inputOnly SFFloat set_minValue IS set_minValue
+		inputOnly SFFloat set_maxValue IS set_maxValue
+
+		initializeOnly SFBool ignoreLogical IS positionAsValue
+
+		inputOnly SFVec3f ps_trans_in
+		inputOnly SFVec3f ps_offset_in
+		initializeOnly SFVec3f ps_offset 0 0 0
+
+		outputOnly SFVec3f offset_out
+		outputOnly SFVec2f maxPos_out
+		outputOnly SFVec2f minPos_out
+
+		outputOnly SFVec3f trans_out
+
+		inputOnly SFBool active_in IS set_isActive
+		outputOnly SFInt32 whichChoice_out
+		initializeOnly SFBool active FALSE
+
+		initializeOnly SFString name IS debugName
+
+		initializeOnly SFBool inited TRUE				#temp: for compatibility
+		outputOnly SFBool initialized IS initialized
+
+		url "ecmascript:
+		function initialize() {
+			name='XDragWidget('+name+')::';
+			//**/Browser.println(name+'initialize!');
+			if(ignoreLogical) pos_in(pos,0);
+			else val_in(val,0);
+
+			set_maxPosition(maxPos,0);
+			set_minPosition(minPos,0);
+
+			inited=true;
+			initialized=true;
+		}
+
+		function pos_in(value,time) {
+			//**/Browser.println(name+'pos_in('+value+')');
+			if(maxPos<minPos || value>=minPos && value<=maxPos) {
+				//If the user is dragging the widget, they will have imparted some
+				//'delta-pos' to it (equal to the PS's translation_out minus its
+				//offset, which is the translation it had at the start of the drag).
+				//We thus set the offset so that it plus the delta-pos gives the value
+				//parameter.  This has the effect of sliding the widget within the
+				//user's grasp without them letting go of it.
+				offset_out[0]=value-(active?pos-ps_offset[0]:0);
+				set_trans_internal(value);
+			} else Browser.println(/*'XDragWidget::'*/name+'pos_in: value '+value+' out of range ['+minPos+', '+maxPos+']');
+		}
+
+		function ps_trans_in(value,time) {set_trans_internal(value[0]);}
+		function ps_offset_in(value,time) {ps_offset=value;}
+
+		function set_trans_internal(value) {
+			pos=value;
+			trans_out[0]=pos;
+			if(inited) {
+				//**/Browser.println(name+'pos_out -> '+value);
+				pos_out=pos;
+				val_out=ignoreLogical?pos:xlate(minPos,maxPos,minVal,maxVal,pos);
+			}
+		}
+
+		function val_in(value,time) {
+			if(!ignoreLogical && (value<minVal && value<maxVal || value>minVal && value>maxVal))
+				Browser.println(/*'XDragWidget::'*/name+'val_in: value '+value+' out of range ['+minVal+', '+maxVal+']');
+			else pos_in(ignoreLogical?value:xlate(minVal,maxVal,minPos,maxPos,value),time);
+		}
+
+		function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+
+		function active_in(value,time) {whichChoice_out=(active=value)?1:0;
+		Browser.println('active: ' + value);
+		}
+
+		//Setting the second values to 0 clamps the translation in the y
+		//direction, so motion occurs only in x.  We also adjust the current
+		//value if it's outside the new bounds.
+		function set_minPosition(value,time) {
+			minPos=value; //GRANT --!!!
+			
+			//**/Browser.println(name+'set_min('+value+')');
+			var oldMin=minPos;
+			minPos_out=new SFVec2f(minPos=value,0);
+			if(ignoreLogical) {
+				if(maxPos>=minPos && pos<minPos) pos_in(minPos,time);
+			} else pos_in(xlate(oldMin,maxPos,minPos,maxPos,pos),time);
+		}
+		function set_maxPosition(value,time) {
+			maxPos=value; //GRANT --!!!
+			
+			//**/Browser.println(name+'set_max('+value+')');
+			var oldMax=maxPos;
+			maxPos_out=new SFVec2f(maxPos=value,0);
+			if(ignoreLogical) {
+				if(maxPos>=minPos && pos>maxPos) pos_in(maxPos,time);
+			} else pos_in(xlate(minPos,oldMax,minPos,maxPos,pos),time);
+		}
+		//There is no 'value' state, and as such these functions are very simple.
+		function set_minValue(value,time) {minVal=value;}
+		function set_maxValue(value,time) {maxVal=value;}"
+	}
+	ROUTE PS.translation_changed TO Worker.ps_trans_in
+	ROUTE PS.offset_changed TO Worker.ps_offset_in
+	ROUTE TS.isActive TO Worker.active_in
+	ROUTE Worker.whichChoice_out TO GeometrySwitch.whichChoice
+	ROUTE Worker.trans_out TO GeometryTransform.set_translation
+	ROUTE Worker.offset_out TO PS.set_offset
+	ROUTE Worker.maxPos_out TO PS.maxPosition
+	ROUTE Worker.minPos_out TO PS.minPosition
+}
+
+
+PROTO XYDragWidget [ inputOutput SFVec3f translation 0 0 0
+										 inputOutput SFRotation rotation 1 0 0 0
+
+										 initializeOnly SFVec2f position 0 0
+										 inputOnly SFVec2f set_position
+										 outputOnly SFVec2f position_changed
+										 outputOnly SFVec2f inversePosition_out
+
+										 #If(in a given dimension) minPosition > maxPosition,
+										 #the widget's motion is unrestricted in that dimension.
+										 initializeOnly SFVec2f minPosition 0 0
+										 inputOnly SFVec2f set_minPosition
+										 initializeOnly SFVec2f maxPosition 1 1
+										 inputOnly SFVec2f set_maxPosition
+
+										initializeOnly SFVec2f value 0 0						#Only used if positionAsValue FALSE
+
+										inputOnly SFVec2f set_value
+										outputOnly SFVec2f value_changed
+
+										initializeOnly SFVec2f minValue 0 0
+										inputOnly SFVec2f set_minValue
+										initializeOnly SFVec2f maxValue 1 1
+										inputOnly SFVec2f set_maxValue
+
+										#If this is TRUE (the default), the min/maxValue fields
+										#are ignored and 'position' and 'value' are equivalent.
+										#(This could probably have a better name.)
+										initializeOnly SFBool positionAsValue TRUE
+
+										 outputOnly SFBool isOver_out
+										 outputOnly SFBool isActive_out
+										 inputOnly SFBool set_isActive
+
+										 inputOutput SFBool enabled TRUE
+
+										 inputOutput MFNode geometry []
+										 inputOutput MFNode activeGeometry []
+										 initializeOnly SFString debugName "<unnamed>"
+										 outputOnly SFBool initialized ]
+{
+	Transform {
+		rotation IS rotation
+		translation IS translation
+		children [
+			DEF TS TouchSensor {
+				isOver IS isOver_out
+				isActive IS isActive_out
+				enabled IS enabled
+			}
+			DEF PS PlaneSensor {
+				enabled IS enabled
+			}
+			DEF GeometryTransform Transform {
+				children DEF GeometrySwitch Switch {
+					whichChoice 0
+					choice [ Group { children IS geometry }
+									 Group { children IS activeGeometry } ]
+				}
+			}
+		]
+	}
+	DEF Worker1 Script {
+		initializeOnly		SFVec2f pos IS position
+		inputOnly SFVec2f pos_in IS set_position
+		outputOnly SFVec2f pos_out IS position_changed
+
+		initializeOnly		SFVec2f minPos IS minPosition
+		initializeOnly		SFVec2f maxPos IS maxPosition
+		inputOnly SFVec2f set_minPosition IS set_minPosition
+		inputOnly SFVec2f set_maxPosition IS set_maxPosition
+
+		initializeOnly SFVec2f val IS value
+		inputOnly SFVec2f val_in IS set_value
+		outputOnly SFVec2f val_out IS value_changed
+
+		initializeOnly		SFVec2f minVal IS minValue
+		initializeOnly		SFVec2f maxVal IS maxValue
+		inputOnly SFVec2f set_minValue IS set_minValue
+		inputOnly SFVec2f set_maxValue IS set_maxValue
+
+		initializeOnly SFBool ignoreLogical IS positionAsValue
+
+		inputOnly SFVec3f ps_trans_in
+		inputOnly SFVec3f ps_offset_in
+		initializeOnly SFVec3f ps_offset 0 0 0
+
+		inputOnly SFBool active_in IS set_isActive
+		outputOnly SFInt32 whichChoice_out
+		initializeOnly SFBool active FALSE
+
+		outputOnly SFVec3f offset_out
+		outputOnly SFVec2f maxPos_out
+		outputOnly SFVec2f minPos_out
+
+		outputOnly SFVec3f trans_out
+
+		initializeOnly SFString name IS debugName
+
+		initializeOnly SFBool inited TRUE				#temp: for compatibility
+		outputOnly SFBool initialized IS initialized
+
+		url "ecmascript:
+		function initialize() {
+			name='XYDragWidget('+name+')::';
+			//**/Browser.println(name+'initialize!');
+			if(ignoreLogical) pos_in(pos,0);
+			else val_in(val,0);
+
+			set_maxPosition(maxPos,0);
+			set_minPosition(minPos,0);
+
+			inited=true;
+			initialized=true;
+		}
+
+		function vecString(vec2f) {return '<'+vec2f[0]+', '+vec2f[1]+'>';}
+
+		function pos_in(value,time) {
+			//testing
+			Browser.println('pos_in ' + value[0] + ' ' + value[1]);
+			//end testing
+			//**/Browser.println(name+'pos_in('+vecString(value)+')');
+			if((maxPos[0]<minPos[0] || value[0]>=minPos[0] && value[0]<=maxPos[0]) &&
+				 (maxPos[1]<minPos[1] || value[1]>=minPos[1] && value[1]<=maxPos[1])) {
+				//If the user is dragging the widget, they will have imparted some
+				//'delta-pos' to it (equal to the PS's translation_out minus its
+				//offset, which is the translation it had at the start of the drag).
+				//We thus set the offset so that it plus the delta-pos gives the value
+				//parameter.  This has the effect of sliding the widget within the
+				//user's grasp without them letting go of it.
+				//Vector-frobbing follows.
+				var offset=active?value.subtract(pos.subtract(new SFVec2f(ps_offset[0],ps_offset[1]))):value;
+				offset_out=new SFVec3f(offset[0],offset[1],0);
+				set_trans_internal(value);
+			} else Browser.println(/*'XYDragWidget::'*/name+'pos_in: value '+vecString(value)+' out of range ['+vecString(minPos)+', '+vecString(maxPos)+']');
+		}
+
+		function ps_trans_in(value,time) {set_trans_internal(new SFVec2f(value[0],value[1]));}
+		function ps_offset_in(value,time) {ps_offset=value;}
+
+		function set_trans_internal(value) {
+			pos=value;
+			//Better to avoid multiple assignments to outputOnlys
+			trans_out=new SFVec3f(pos[0],pos[1],0);
+			if(inited) {
+				//**/Browser.println(name+'pos_out -> '+vecString(value));
+				pos_out=pos;
+				val_out=ignoreLogical?pos:xlate2(minPos,maxPos,minVal,maxVal,pos);
+			}
+		}
+
+		function val_in(value,time) {
+			//testing
+			Browser.println('val_in ' + value[0] + ' ' + value[1]);
+			//end testing
+			var oob,i;
+			for(i=0;i<2;++i) if(value[i]<minVal[i] && value[i]<maxVal[i]) {oob=true; break;}
+			if(!ignoreLogical && oob)
+				Browser.println(/*'XYDragWidget::'*/name+'val_in: value '+vecString(value)+' out of range ['+vecString(minVal)+', '+vecString(maxVal)+']');
+			else pos_in(ignoreLogical?value:xlate2(minVal,maxVal,minPos,maxPos,value),time);
+		}
+
+		function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+		function xlate2(x1,x2,y1,y2,x) {
+			var ret=new SFVec2f(),i;
+			for(i=0;i<2;++i) ret[i]=xlate(x1[i],x2[i],y1[i],y2[i],x[i]);
+			return ret;
+		}
+
+		function active_in(value,time) {whichChoice_out=(active=value)?1:0;}
+
+		//We adjust the current value if it's outside the new bounds.
+		function set_minPosition(value,time) {
+			//**/Browser.println(name+'set_min('+vecString(value)+')');
+			var oldMin=minPos;
+			minPos_out=minPos=value;
+			var adjust=false,i;
+			for(i=0;i<2;++i)
+				if(ignoreLogical) {
+					if(maxPos[i]>=minPos[i] && pos[i]<minPos[i]) {
+						pos[i]=minPos[i];
+						adjust=true;
+					}
+				} else {
+					pos[i]=xlate(oldMin[i],maxPos[i],minPos[i],maxPos[i],pos[i]);
+					adjust=true;
+				}
+			if(adjust) pos_in(pos,time);
+		}
+		function set_maxPosition(value,time) {
+			//**/Browser.println(name+'set_max('+vecString(value)+')');
+			var oldMax=maxPos;
+			maxPos_out=maxPos=value;
+			var adjust=false,i;
+			for(i=0;i<2;++i)
+				if(ignoreLogical) {
+					if(maxPos[i]>=minPos[i] && pos[i]>maxPos[i]) {
+						pos[i]=maxPos[i];
+						adjust=true;
+					}
+				} else {
+					pos[i]=xlate(minPos[i],oldMax[i],minPos[i],maxPos[i],pos[i]);
+					adjust=true;
+				}
+			if(adjust) pos_in(pos,time);
+		}
+		//There is no 'value' state, and as such these functions are very simple.
+		function set_minValue(value,time) {minVal=value;}
+		function set_maxValue(value,time) {maxVal=value;}"
+	}
+	ROUTE PS.translation_changed TO Worker1.ps_trans_in
+	ROUTE PS.offset_changed TO Worker1.ps_offset_in
+	ROUTE TS.isActive TO Worker1.active_in
+	ROUTE Worker1.whichChoice_out TO GeometrySwitch.whichChoice
+	ROUTE Worker1.trans_out TO GeometryTransform.set_translation
+	ROUTE Worker1.offset_out TO PS.set_offset
+	ROUTE Worker1.maxPos_out TO PS.maxPosition
+	ROUTE Worker1.minPos_out TO PS.minPosition
+}
+
+
+#RotationWidget spins about the local Z axis.
+PROTO RotationWidget [
+	inputOutput SFVec3f translation 0 0 0
+	inputOutput SFRotation rotation 1 0 0 1.570796
+	inputOutput SFVec3f scale 1 1 1
+	initializeOnly SFFloat angle 0
+	inputOnly SFFloat set_angle
+	outputOnly SFFloat angle_changed
+	#rotation_changed is provided for convenience; will always be (0,0,1,angle_changed)
+	outputOnly SFRotation rotation_changed
+
+	initializeOnly SFFloat minAngle 0			#If minAngle > maxAngle (as here), all angles allowed
+	inputOnly SFFloat set_minAngle
+	initializeOnly SFFloat maxAngle -1
+	inputOnly SFFloat set_maxAngle
+
+	initializeOnly SFFloat value 0
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue 0
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 1
+	inputOnly SFFloat set_maxValue
+
+	#If this is TRUE (the default), the min/maxValue fields
+	#are ignored and 'angle' and 'value' are equivalent.
+	#(This could probably have a better name.)
+	initializeOnly SFBool angleAsValue TRUE
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	#Invoking the following set_ events affects which geometry is displayed.
+	inputOnly SFBool set_isActive
+	inputOnly SFBool set_isOver
+
+	inputOutput SFBool enabled TRUE
+
+	initializeOnly MFNode normalGeometry []
+	initializeOnly MFNode overGeometry []
+	initializeOnly MFNode activeGeometry []
+	outputOnly SFBool initialized
+]
+{
+	#Group {
+	Transform {
+		translation IS translation
+		rotation IS rotation
+		scale IS scale
+		children [
+			DEF TS2 TouchSensor {
+				enabled IS enabled
+				isOver IS isOver_out
+				isActive IS isActive_out
+			}
+			DEF PS2 PlaneSensor {
+				enabled IS enabled
+			}
+			DEF RotationalTransform Transform {
+				children DEF GeometrySwitch Switch {
+					whichChoice 0
+					choice [
+						Group { children IS normalGeometry }
+						Group { children IS overGeometry }
+						Group { children IS activeGeometry }
+					]
+				}
+			}
+		]
+	}
+
+	DEF Worker2 Script {
+		#Xj3D hack
+		inputOutput SFVec3f translation IS translation
+		inputOutput SFVec3f scale IS scale
+
+		initializeOnly SFFloat minAngle IS minAngle
+		inputOnly SFFloat set_minAngle IS set_minAngle
+
+		initializeOnly SFFloat maxAngle IS maxAngle
+		inputOnly SFFloat set_maxAngle IS set_maxAngle
+
+		initializeOnly SFFloat angle0 IS angle
+		inputOnly SFFloat set_angle IS set_angle
+		outputOnly SFFloat angle_changed IS angle_changed
+		initializeOnly SFRotation rotation 0 0 1 0
+		outputOnly SFRotation rotation_changed IS rotation_changed
+
+		initializeOnly SFFloat val0 IS value
+		inputOnly SFFloat val_in IS set_value
+		outputOnly SFFloat val_out IS value_changed
+
+		initializeOnly		SFFloat minVal IS minValue
+		initializeOnly		SFFloat maxVal IS maxValue
+		inputOnly SFFloat set_minValue IS set_minValue
+		inputOnly SFFloat set_maxValue IS set_maxValue
+
+		initializeOnly SFBool ignoreLogical IS angleAsValue
+
+		inputOnly SFVec3f ps_trans_in
+		inputOnly SFVec3f ts_hitPoint_in
+		inputOnly SFBool ts_active_in
+
+		outputOnly SFVec3f offset_out
+
+		inputOnly SFBool set_isActive IS set_isActive
+		inputOnly SFBool set_isOver IS set_isOver		#Also used by TS
+
+		initializeOnly SFBool firstHitPoint FALSE
+
+		#The current angle of the widget (between drags or individual mouse-moves) is
+		#represented as N*(2Pi)+theta; spins holds N and curTheta holds theta.
+		initializeOnly SFInt32 spins 0
+		initializeOnly SFFloat curTheta 0
+
+		#These keep up with the user's attempt to go past pegging the widget:
+		#inputTheta is unclamped, inputSpins is clamped to maximum useful spins + 1
+		initializeOnly SFFloat inputTheta 0
+		initializeOnly SFInt32 inputSpins 0
+		#This still isn't perfect for widgets with non-x-axis stop points... [?]
+
+		#The angle from the widget's x-axis at which the user grabbed it must be considered...
+		initializeOnly SFFloat grabDelta 0
+
+		initializeOnly SFFloat grabDeltaTemp 0
+		initializeOnly SFVec3f offset_outTemp 0 0 0
+
+		#Memory of mouse activity (for selecting which geometry to display)
+		initializeOnly SFBool isActive FALSE
+		initializeOnly SFBool isOver FALSE
+		outputOnly SFInt32 whichChoice_changed
+
+		initializeOnly MFNode overGeometry IS overGeometry
+		initializeOnly MFNode activeGeometry IS activeGeometry
+
+		initializeOnly SFBool inited TRUE				#temp: for compatibility
+		outputOnly SFBool initialized IS initialized
+
+		url "ecmascript:
+		function initialize() {
+			if(ignoreLogical) set_angle(angle0,0);
+			else val_in(val0,0);
+
+			inited=true;
+			initialized=true;
+		}
+
+		function ps_trans_in(value,time) {
+			//Xj3D hack
+			//value[0]=value[0]-translation[0]*scale[0];
+			//value[1]=value[1]-translation[1]*scale[1];
+
+			var theta = Math.atan2(value[1], value[0])-grabDelta;
+			while(theta<0) theta += 2*Math.PI;
+
+			//Xj3D hack
+			//Browser.println('value: ' + value[0] + ' ' + value[1]);
+			//Browser.println('theta: ' + theta);
+
+			//Discard extra spins when crossing the maxAngle/minAngle point
+			var angle=currentAngle0(theta,spins);
+			Browser.println('theta: '+theta+'\tangle: '+angle+'\ninputSpins0: '+inputSpins+'\tspins0: '+spins);
+
+			if(theta<Math.PI/2 && inputTheta>=Math.PI*3/2) {
+				if(inputSpins<=spins) inputSpins++;		//Extra extra spins are ignored
+			} else if(theta>=Math.PI*3/2 && inputTheta<Math.PI/2) {
+				if(inputSpins>=spins) inputSpins--;
+			} else if(minAngle<maxAngle && ((angle<minAngle && inputSpins<spins) ||
+																			(angle>maxAngle && inputSpins>spins))) {
+				//Browser.println('(a<min & i<s) | (a>max & i>s)');
+				inputSpins=spins;
+			}
+
+			inputTheta=theta;
+			angle=currentAngle0(theta,inputSpins);
+
+			//Browser.println('inputSpins\': '+inputSpins+'\tangle2: '+angle);
+			//Discard invalid values if min and max angles set
+			if(minAngle<=maxAngle && (angle<minAngle || angle>maxAngle)) {
+				//Browser.println('!denied!');
+				var lastAngle=currentAngle();
+				//When first crossing the line, peg the widget
+				if(lastAngle!=minAngle && lastAngle!=maxAngle)
+					set_angle((angle<minAngle)?minAngle:maxAngle,time);
+				return;
+			}
+
+			//Browser.println('accepted\n\n');
+			//Otherwise, update the widget
+			spins=inputSpins;
+			curTheta = theta;
+			send_events(angle);
+		}
+
+		//Davis: I'm not sure of the safety of calling this from
+		//the outside while a drag is going on.  So don't.
+		function set_angle(value,time) {
+			if(minAngle>=maxAngle || (value>=minAngle && value<=maxAngle)) {
+				send_events(value);
+				curTheta = value;
+				spins=0;
+				//Unfortunately, we now have to work curTheta into the [0,2*PI) interval.
+				while(curTheta>=2*Math.PI) {curTheta-=2*Math.PI; spins++;}
+				while(curTheta<0) {curTheta+=2*Math.PI; spins--;}
+				if(!isActive) {
+					inputTheta=curTheta;
+					inputSpins=spins;
+				}
+			} else
+			Browser.println('RotationWidget::set_angle: angle '+value+' out of range ['+minAngle+', '+maxAngle+']');
+		}
+
+		function send_events(angle) {
+			rotation[3] = angle;
+			if(inited) {
+				angle_changed = angle;
+				val_out = ignoreLogical?angle:xlate(minAngle,maxAngle,minVal,maxVal,angle);
+				rotation_changed=rotation;
+			}
+		}
+
+		function val_in(value,time) {
+			if(!ignoreLogical && (value<minVal && value<maxVal || value>minVal && value>maxVal))
+				Browser.println('RotationWidget::val_in: value '+value+' out of range ['+minVal+', '+maxVal+']');
+			else set_angle(ignoreLogical?value:xlate(minVal,maxVal,minAngle,maxAngle,value),time);
+		}
+
+		function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+
+		function set_minAngle(value,time) {
+			var oldMin=minAngle;
+			minAngle = value;
+			if(ignoreLogical) {
+				if(minAngle<=maxAngle && currentAngle()<minAngle)	//Need to clamp angle
+					set_angle(minAngle,time);
+			} else
+				set_angle(xlate(oldMin,maxAngle,minAngle,maxAngle,currentAngle()),time);
+		}
+		function set_maxAngle(value,time) {
+			var oldMax=maxAngle;
+			maxAngle = value;
+			if(ignoreLogical) {
+				if(minAngle<=maxAngle && currentAngle()>maxAngle)	//Need to clamp angle
+					set_angle(maxAngle,time);
+			} else
+				set_angle(xlate(minAngle,oldMax,minAngle,maxAngle,currentAngle()),time);
+		}
+
+		//There is no 'value' state, and as such these functions are very simple.
+		function set_minValue(value,time) {minVal=value;}
+		function set_maxValue(value,time) {maxVal=value;}
+
+		function currentAngle() {return currentAngle0(curTheta,spins);}
+		function currentAngle0(angle,s) {return angle+s*2*Math.PI;}
+
+		function ts_hitPoint_in(value,time) {			
+			/*if(firstHitPoint) {
+				firstHitPoint = false;
+				offset_out[0]=offset_outTemp[0];
+				offset_out[1]=offset_outTemp[1];
+				grabDelta = grabDeltaTemp;
+				Browser.println('grabDelta: ' + grabDelta);
+				Browser.println('offset_out: ' + offset_out[0] + ' ' + offset_out[1]);
+			}
+			else {
+				offset_outTemp[0] = value[0];
+				offset_outTemp[1] = value[1];
+				//Browser.println('offset_outTemp: ' + offset_outTemp[0] + ' ' + offset_outTemp[1]);
+				grabDeltaTemp = Math.atan2(value[1], value[0]) - curTheta;
+				if(grabDeltaTemp<0) grabDeltaTemp += Math.PI*2;	
+			}*/
+			if(firstHitPoint) {
+				firstHitPoint = false;
+				offset_out[0] = value[0];
+				offset_out[1] = value[1];
+				grabDelta = Math.atan2(value[1], value[0]) - curTheta;
+				if(grabDelta<0) grabDelta += Math.PI*2;
+			}
+			
+		}
+
+		function ts_active_in(value,time) {
+			if(value)
+				firstHitPoint = true;
+			else {
+				//Overwrite mouse-tracking data with real data
+				//inputSpins=spins;
+				//inputTheta=curTheta;
+				Browser.println('overwrite: spins: ' + inputSpins + ', theta: ' + inputTheta);
+			}
+			set_isActive(value,time);
+		}
+
+		function set_isActive(value,time) {
+			isActive = value;
+			if(value) {
+				if(activeGeometry.length > 0) whichChoice_changed = 2;
+			} else {
+				if(isOver && overGeometry.length > 0) whichChoice_changed = 1;
+				else whichChoice_changed = 0;
+			}
+		}
+
+		function set_isOver(value,time) {
+			isOver = value;
+			if(value) {
+				if(!isActive && overGeometry.length > 0) whichChoice_changed = 1;
+			} else {
+				if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;
+				else whichChoice_changed = 0;
+			}
+		}"
+	}
+
+	ROUTE TS2.hitPoint_changed TO Worker2.ts_hitPoint_in
+	ROUTE TS2.isActive TO Worker2.ts_active_in
+	ROUTE TS2.isOver TO Worker2.set_isOver
+	ROUTE PS2.translation_changed TO Worker2.ps_trans_in
+	ROUTE Worker2.rotation_changed TO RotationalTransform.set_rotation
+	ROUTE Worker2.offset_out TO PS2.set_offset
+	ROUTE Worker2.whichChoice_changed TO GeometrySwitch.whichChoice
+}
+
+#========== WIDGET GEOMETRIES ==============================================
+
+#Cone shapes:
+PROTO XColorCone [ inputOutput SFNode material Material {}
+									 inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	Transform {
+		rotation 0 0 1 -1.570796
+		scale IS coneScale
+		children Shape {
+				appearance Appearance {
+						material IS material
+					}
+				geometry Cone {
+						bottomRadius 0.5
+						height 2
+					}
+			}
+	}
+}
+
+PROTO TwoXColorCone [ inputOutput SFNode material Material {}
+											inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	Transform {
+		scale IS coneScale
+		children [
+			Transform {
+				translation 1 0 0
+				children XColorCone { material IS material }
+			}
+			Transform {
+				translation -1 0 0
+				rotation 0 1 0 3.141592654
+				children XColorCone { material IS material }
+			}
+		]
+	}
+}
+
+PROTO NegYColorCone [ inputOutput SFNode coneMaterial Material {}
+											inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	Transform {
+		scale IS coneScale
+		children Transform {
+			translation 0 6 0
+			rotation 1 0 0	3.141592654
+			children Shape {
+				appearance Appearance {
+					material IS coneMaterial
+				}
+				geometry Cone {
+						bottomRadius 0.5
+				}
+			}
+		}
+	}
+}
+
+#Colors of cones:
+
+PROTO Red2XCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	TwoXColorCone {
+		material Material { diffuseColor .4 0 0 emissiveColor .25 0 0 }
+		coneScale IS coneScale
+	}
+}
+PROTO ActiveRed2XCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	TwoXColorCone {
+		material Material { diffuseColor .75 0 0 emissiveColor .3 0 0 }
+		coneScale IS coneScale
+	}
+}
+PROTO RedXCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	XColorCone {
+		material Material { diffuseColor .4 0 0 emissiveColor .25 0 0 }
+		coneScale IS coneScale
+	}
+}
+PROTO ActiveRedXCone [ inputOutput	SFVec3f	coneScale 1 1 1 ]
+{
+	XColorCone {
+		material Material { diffuseColor .75 0 0 emissiveColor .3 0 0 }
+		coneScale IS coneScale
+	}
+}
+		
+
+PROTO BlueNYCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	NegYColorCone {
+		coneMaterial Material { diffuseColor 0 0 .5 emissiveColor 0 0 .25 }
+		coneScale IS coneScale
+	}
+}
+PROTO ActiveBlueNYCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	NegYColorCone {
+		coneMaterial Material { diffuseColor 0 0 1 emissiveColor 0 0 .5 }
+		coneScale IS coneScale
+	}
+}
+
+PROTO GreyNYCone [ inputOutput SFVec3f coneScale 1 1 1 ]
+{
+	NegYColorCone {
+		coneMaterial Material { diffuseColor .5 .5 .5 }
+		coneScale IS coneScale
+	}
+}
+
+PROTO WavelengthWheel [ inputOutput SFNode material NULL ]
+{
+	Group {
+		children [
+			Transform {
+				rotation 1 0 0 1.570796
+				children [
+					Shape {			#True-center fat cylinder
+						appearance DEF APPEARANCE Appearance {
+							material IS material
+						}
+						geometry Cylinder { radius 0.16 height 0.17 }
+					}
+					Transform {
+						translation 0 0.1 0
+						children DEF HubCyl_SHAPE Shape {
+							appearance USE APPEARANCE
+							geometry Cylinder { radius 0.2 height 0.075 }
+						}
+					}
+					Transform {
+						translation 0 -0.1 0
+						children USE HubCyl_SHAPE
+					}
+					Transform {
+						translation 0 0.1375 0
+						children DEF HubSphere_SHAPE Shape {
+							appearance USE APPEARANCE
+							geometry Sphere { radius 0.08 }
+						}
+					}
+					Transform {
+						translation 0 -0.1375 0
+						children USE HubSphere_SHAPE
+					}
+				]
+			}
+			DEF Rod_GROUP Group {
+				children [
+					Shape {
+						appearance USE APPEARANCE
+						geometry Cylinder { radius 0.075 height 1.0 }
+					}
+					Transform {
+						translation 0 0.5 0
+						children DEF RodSphere_SHAPE Shape	{
+							appearance USE APPEARANCE
+							geometry Sphere { radius 0.075 }
+						}
+					}
+					Transform {
+						translation 0 -0.5 0
+						children USE RodSphere_SHAPE
+					}
+				]
+			}
+			Transform {
+				rotation 0 0 1 1.04733
+				children USE Rod_GROUP
+			}
+			Transform {
+				rotation 0 0 1 -1.04733
+				children USE Rod_GROUP
+			}
+		]
+	}
+}
+
+#========== WIDGET/GEOMETRY COMBINATIONS ===================================
+PROTO Red2ConeXDragger [ inputOutput SFVec3f coneScale 1 1 1
+												inputOutput SFVec3f translation 0 0 0
+												inputOutput SFRotation rotation 1 0 0 0
+
+												initializeOnly SFFloat position 0
+												inputOnly SFFloat set_position
+												outputOnly SFFloat position_changed
+												initializeOnly SFFloat minPosition 0
+												inputOnly SFFloat set_minPosition
+												initializeOnly SFFloat maxPosition 1
+												inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value 0
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue 0
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue 1
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue TRUE
+
+												outputOnly SFBool isOver_out
+												outputOnly SFBool isActive_out
+												inputOnly SFBool set_isActive
+
+												inputOutput SFBool enabled TRUE
+												initializeOnly SFString debugName "<unnamed>"
+												outputOnly SFBool initialized ]
+{
+	XDragWidget {
+		translation IS translation
+		rotation IS rotation
+		position IS position
+		set_position IS set_position
+		position_changed IS position_changed
+		minPosition IS minPosition
+		set_minPosition IS set_minPosition
+		maxPosition IS maxPosition
+		set_maxPosition IS set_maxPosition
+		value IS value
+		set_value IS set_value
+		value_changed IS value_changed
+		minValue IS minValue
+		set_minValue IS set_minValue
+		maxValue IS maxValue
+		set_maxValue IS set_maxValue
+		positionAsValue IS positionAsValue
+		isOver_out IS isOver_out
+		isActive_out IS isActive_out
+		set_isActive IS set_isActive
+		enabled IS enabled
+		geometry Red2XCone { coneScale IS coneScale }
+		activeGeometry ActiveRed2XCone { coneScale IS coneScale }
+		debugName IS debugName
+		initialized IS initialized
+	}
+}
+
+
+
+#========== WIDGET/GEOMETRY COMBINATIONS ===================================
+PROTO RedConeXDragger [ inputOutput SFVec3f coneScale 1 1 1
+												inputOutput SFVec3f translation 0 0 0
+												inputOutput SFRotation rotation 1 0 0 0
+
+												initializeOnly SFFloat position 0
+												inputOnly SFFloat set_position
+												outputOnly SFFloat position_changed
+												initializeOnly SFFloat minPosition 0
+												inputOnly SFFloat set_minPosition
+												initializeOnly SFFloat maxPosition 1
+												inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value 0
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue 0
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue 1
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue TRUE
+
+												outputOnly SFBool isOver_out
+												outputOnly SFBool isActive_out
+												inputOnly SFBool set_isActive
+
+												inputOutput SFBool enabled TRUE
+												initializeOnly SFString debugName "<unnamed>"
+												outputOnly SFBool initialized ]
+{
+	XDragWidget {
+		translation IS translation
+		rotation IS rotation
+		position IS position
+		set_position IS set_position
+		position_changed IS position_changed
+		minPosition IS minPosition
+		set_minPosition IS set_minPosition
+		maxPosition IS maxPosition
+		set_maxPosition IS set_maxPosition
+		value IS value
+		set_value IS set_value
+		value_changed IS value_changed
+		minValue IS minValue
+		set_minValue IS set_minValue
+		maxValue IS maxValue
+		set_maxValue IS set_maxValue
+		positionAsValue IS positionAsValue
+		isOver_out IS isOver_out
+		isActive_out IS isActive_out
+		set_isActive IS set_isActive
+		enabled IS enabled
+		geometry RedXCone { coneScale IS coneScale }
+		activeGeometry ActiveRedXCone { coneScale IS coneScale }
+		debugName IS debugName
+		initialized IS initialized
+	}
+}
+
+PROTO BlueConeXDragger [ inputOutput SFVec3f coneScale 1 1 1
+												 inputOutput SFVec3f translation 0 0 0
+												 inputOutput SFRotation rotation 1 0 0 0
+
+												 initializeOnly SFFloat position 0
+												 inputOnly SFFloat set_position
+												 outputOnly SFFloat position_changed
+												 initializeOnly SFFloat minPosition 0
+												 inputOnly SFFloat set_minPosition
+												 initializeOnly SFFloat maxPosition 1
+												 inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value 0
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue 0
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue 1
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue TRUE
+
+												 outputOnly SFBool isOver_out
+												 outputOnly SFBool isActive_out
+												 inputOnly SFBool set_isActive
+
+												 inputOutput SFBool enabled TRUE
+												 initializeOnly SFString debugName "<unnamed>"
+												 outputOnly SFBool initialized ]
+{
+	XDragWidget {
+		translation IS translation
+		rotation IS rotation
+		position IS position
+		set_position IS set_position
+		position_changed IS position_changed
+		minPosition IS minPosition
+		set_minPosition IS set_minPosition
+		maxPosition IS maxPosition
+		set_maxPosition IS set_maxPosition
+		value IS value
+		set_value IS set_value
+		value_changed IS value_changed
+		minValue IS minValue
+		set_minValue IS set_minValue
+		maxValue IS maxValue
+		set_maxValue IS set_maxValue
+		positionAsValue IS positionAsValue
+		isOver_out IS isOver_out
+		isActive_out IS isActive_out
+		set_isActive IS set_isActive
+		enabled IS enabled
+		geometry BlueNYCone { coneScale IS coneScale }
+		activeGeometry ActiveBlueNYCone { coneScale IS coneScale }
+		#geometry RedXCone { coneScale IS coneScale }
+		#activeGeometry ActiveRedXCone { coneScale IS coneScale }
+		debugName IS debugName
+		initialized IS initialized
+	}
+}
+
+PROTO CylinderXDragger [ inputOutput SFVec3f cylScale 1 1 1			#Expressed in ambient coordinates
+												 inputOutput SFVec3f translation 0 0 0
+												 inputOutput SFRotation rotation 1 0 0 0
+
+												 initializeOnly SFFloat position 0
+												 inputOnly SFFloat set_position
+												 outputOnly SFFloat position_changed
+
+												 initializeOnly SFFloat minPosition 0
+												 inputOnly SFFloat set_minPosition
+												 initializeOnly SFFloat maxPosition 1
+												 inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value 0
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue 0
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue 1
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue TRUE
+
+												 outputOnly SFBool isOver_out
+												 outputOnly SFBool isActive_out
+												 inputOnly SFBool set_isActive
+
+												 inputOutput SFBool enabled TRUE
+												 initializeOnly SFString debugName "<unnamed>"
+												 outputOnly SFBool initialized ]
+{
+	XDragWidget {
+		translation IS translation
+		rotation IS rotation
+		position IS position
+		set_position IS set_position
+		position_changed IS position_changed
+		minPosition IS minPosition
+		set_minPosition IS set_minPosition
+		maxPosition IS maxPosition
+		set_maxPosition IS set_maxPosition
+		value IS value
+		set_value IS set_value
+		value_changed IS value_changed
+		minValue IS minValue
+		set_minValue IS set_minValue
+		maxValue IS maxValue
+		set_maxValue IS set_maxValue
+		positionAsValue IS positionAsValue
+		isOver_out IS isOver_out
+		isActive_out IS isActive_out
+		set_isActive IS set_isActive
+		enabled IS enabled
+		geometry Transform {
+			scale IS cylScale
+			children Transform {
+				rotation 0 0 1 -1.5707963
+				children Shape {
+					appearance Appearance { material Material { diffuseColor 0.8 0.8 1.0 } }
+					geometry DEF CylGeo Cylinder { radius 0.3 height 1.2 }
+				}
+			}
+		}
+		activeGeometry Transform {
+			scale IS cylScale
+			children Transform {
+				rotation 0 0 1 -1.5707963
+				children Shape {
+					appearance Appearance { material Material { diffuseColor 1.0 1.0 0.4 } }
+					geometry USE CylGeo
+				}
+			}
+		}
+		debugName IS debugName
+		initialized IS initialized
+	}
+}
+
+#PhaseDiffWidget by defaults extends in the X direction (more X = more phase)
+PROTO PhaseDiffWidget [ initializeOnly SFFloat phaseDifference 0
+												inputOnly SFFloat set_phaseDifference
+												outputOnly SFFloat phaseDifference_changed
+
+												initializeOnly SFFloat minPhaseDifference 0
+												initializeOnly SFFloat maxPhaseDifference 6.2831853	# 2*pi
+
+												initializeOnly SFFloat waveAmplitude 3
+												initializeOnly SFFloat waveLength 12.5663706
+												initializeOnly SFInt32 resolution 40
+
+												outputOnly SFBool isOver_out
+												outputOnly SFBool isActive_out
+												inputOnly SFBool set_isActive
+
+												inputOutput SFBool enabled TRUE
+												initializeOnly SFString debugName "<unnamed>"
+												outputOnly SFBool initialized ]
+{
+	Group {
+		children [
+			Shape {
+				appearance Appearance { material Material { emissiveColor .7 .7 .7 } }
+				geometry IndexedLineSet {
+					coord DEF AxisCoord Coordinate {}
+					#coordIndex [ 0 1 ]	 # this breaks the widget in Xj3D
+				}
+			}
+			DEF SineWave Group {
+				children [
+					Shape {
+						appearance Appearance { material Material { emissiveColor 1 1 1 } }
+						geometry DEF SineValue IndexedLineSet {
+							coord DEF SineCoord Coordinate {}
+						}
+					}
+					Shape {
+						appearance Appearance { material Material { emissiveColor 1 1 0 } }
+						geometry DEF SineSpokes IndexedLineSet {
+							coord USE SineCoord
+						}
+					}
+				]
+			}
+			XDragWidget {
+				minPosition IS minPhaseDifference
+				maxPosition IS maxPhaseDifference
+				position IS phaseDifference
+				set_position IS set_phaseDifference
+				position_changed IS phaseDifference_changed
+				isOver_out IS isOver_out
+				isActive_out IS isActive_out
+				set_isActive IS set_isActive
+				enabled IS enabled
+				geometry Group {
+					children [
+						DEF YWave Transform {
+							rotation 1 0 0 1.5707963
+							children USE SineWave
+						}
+						DEF ConeSpoke Shape {
+							appearance Appearance { material Material { emissiveColor 0 .75 1 } }
+							geometry IndexedLineSet {
+								coord DEF ConeSpokeCoord Coordinate {}
+								#coordIndex [ 0 1 ]	 # this breaks the widget in Xj3D
+							}
+						}
+						DEF ConeHolder Transform {
+							children Red2XCone {}
+						}
+					]
+				}
+				activeGeometry Group {
+					children [
+						USE YWave
+						USE ConeSpoke
+						DEF ActiveConeHolder Transform {
+							children ActiveRed2XCone {}
+						}
+					]
+				}
+				debugName IS debugName
+				initialized IS initialized
+			}
+		]
+	}
+	DEF Harmonic Script {
+		outputOnly MFVec3f axisCoord_out
+		outputOnly MFVec3f sineCoord_out
+		outputOnly MFInt32 sineValue_out
+		outputOnly MFInt32 sineSpokes_out
+		outputOnly SFVec3f coneTrans_out
+		outputOnly MFVec3f coneSpoke_out
+		initializeOnly SFFloat amp IS waveAmplitude
+		initializeOnly SFFloat len IS waveLength
+		initializeOnly SFInt32 res IS resolution
+		url "ecmascript:
+		function initialize() {
+			var i,theta;
+			coneTrans_out=new SFVec3f(Math.PI/2,1.3*amp,0);
+			coneSpoke_out=new MFVec3f(new SFVec3f(Math.PI/2,0,0),new SFVec3f(Math.PI/2,1.3*amp,0));
+			axisCoord_out=new MFVec3f(new SFVec3f(0,0,0),new SFVec3f(len,0,0));
+			for(i=0;i<res;i++) {
+				theta=i*len/(res-1);
+				sineCoord_out[i][0]=theta;
+				sineCoord_out[i][2]=-amp*Math.sin(theta);
+				sineCoord_out[i+res][0]=theta;
+				sineValue_out[i]=i;
+				sineSpokes_out[3*i]=i+res;
+				sineSpokes_out[3*i+1]=i;
+				sineSpokes_out[3*i+2]=-1;
+			}
+		}"
+	}
+	ROUTE Harmonic.axisCoord_out TO AxisCoord.set_point
+	ROUTE Harmonic.sineCoord_out TO SineCoord.set_point
+	ROUTE Harmonic.sineValue_out TO SineValue.set_coordIndex
+	ROUTE Harmonic.sineSpokes_out TO SineSpokes.set_coordIndex
+	ROUTE Harmonic.coneTrans_out TO ConeHolder.set_translation
+	ROUTE Harmonic.coneTrans_out TO ActiveConeHolder.set_translation
+	ROUTE Harmonic.coneSpoke_out TO ConeSpokeCoord.set_point
+}
+
+#WheelWidget spins about the local Y axis.
+PROTO WheelWidget [
+	inputOutput SFVec3f translation 0 0 0
+	inputOutput SFRotation rotation 1 0 0 1.570796
+	#inputOutput SFRotation rotation 1 0 0 0
+	inputOutput SFVec3f scale 1 1 1
+	initializeOnly SFFloat value 550
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue 400
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 700
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations 8
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue FALSE
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled TRUE
+
+	inputOutput SFNode	 material Material { diffuseColor 0 1 1 emissiveColor 0 0.1 0.1 }
+	inputOutput SFNode	 activeMaterial Material { diffuseColor 1 1 0 emissiveColor 0 0.1 0.1 }
+	initializeOnly SFString debugName "<unnamed>"
+	outputOnly SFBool initialized
+]
+{
+	Transform {
+		rotation 1 0 0 1.570796	 #(X,Y,Z) -> (X,Z,-Y)
+		children DEF RW RotationWidget {
+			translation IS translation
+			rotation IS rotation
+			scale IS scale
+			angle IS value		#Only one of these will be actually used
+			value IS value
+			set_value IS set_value
+			value_changed IS value_changed
+			minValue IS minValue
+			set_minValue IS set_minValue
+			maxValue IS maxValue
+			set_maxValue IS set_maxValue
+			angleAsValue IS angleAsValue
+			isActive_out IS isActive_out
+			isOver_out IS isOver_out
+			set_isActive IS set_isActive
+			enabled IS enabled
+			normalGeometry WavelengthWheel { material Material { diffuseColor 0 1 1 emissiveColor 0 0.1 0.1 } }
+			activeGeometry WavelengthWheel { material Material { diffuseColor 1 1 0 emissiveColor 0 0.1 0.1 } }
+		}
+	}
+	DEF Worker3 Script {
+		initializeOnly			SFFloat	 maxRotations IS maxRotations
+		inputOnly		SFFloat	 set_maxRotations IS set_maxRotations
+
+		outputOnly SFFloat maxAngle_out
+
+		initializeOnly SFString name IS debugName
+
+		outputOnly SFBool initialized IS initialized
+		inputOnly SFBool rw_init
+		initializeOnly SFBool inited TRUE				#temp: for compatibility
+		initializeOnly SFBool rw_inited FALSE
+
+		url "ecmascript:
+		function initialize() {
+			name='WheelWidget('+name+')::';
+			//Browser.println(name+'initialize!');
+			//Browser.println('mxR: '+maxRotations);
+
+			set_maxRotations(maxRotations);
+
+			inited=true;
+			maybe_init();
+		}
+		function rw_init(value,time) {rw_inited=true; maybe_init();}
+		//Wait for both scripts to come alive before declaring success:
+		function maybe_init() {if(inited && rw_inited) initialized=true;}
+
+		function set_maxRotations(value,time) {
+			maxAngle_out = maxRotations * 2 * Math.PI;
+		}"
+	}
+	ROUTE Worker3.maxAngle_out TO RW.set_maxAngle
+}
+
+
+#Red2ConeXDragger {}	  # works
+#RedConeXDragger	{}	  # works
+#BlueConeXDragger {}	  # works
+#CylinderXDragger {}	  # works
+#PhaseDiffWidget	{}	  # broken
+WheelWidget {}           # works

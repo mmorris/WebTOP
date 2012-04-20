@@ -1,0 +1,84 @@
+buzilla.xj3d.org Bug 257: PlaneSensor plane is not transformed
+Status: NEW (as of July 25, 2006)
+Xj3D version: 1.0
+Description:
+The invisible plane of the PlaneSensor is not affected by Transforms. As a
+result it is not possible to lay the sensor plane into the xz-plane to move
+objects on the ground. In the attached scene "PlaneSensorTestXZ.x3dv" one
+should be able to move the blue cone in the xz-plane (red plane) as with Flux
+or BS Contact. Indeed, with Xj3D the blue cone is also movable in the xz-plane,
+but the motion along the z-axis is wrong (when the mouse cursor is dragged
+upwards, the cone is moving towards the viewer). This is because the invisible
+plane of the sensor is still parallel to the xy-plane. The Transform doesn't
+rotate the invisible plane like the red plane. The green cone is just to verify
+in which direction the rotation took place.
+
+Please fix this asap, because it's really annoying. Thanks!
+
+
+
+buzilla.xj3d.org Bug 276: TouchSensor active area does not transform within a layer
+Status: NEW (as of July 25, 2006)
+Xj3D version: unspecified
+Description:
+Translation and scale do not seem to affect the active area of the touchsensor
+when the grouping of the touchsensor and the shape fall within a layer. This
+creates an odd situation where the active area does not report back correct
+hitpoint, isActive, and isOver data.
+
+
+buzilla.xj3d.org Bug 280: Color of IndexedFaceSet cannot be set dynamically more than once
+Status: NEW (as of July 25, 2006)
+Xj3D version: 1.0
+Description:
+Using Xj3D v.1.0 installed via the Windows full installer and JDK 1.5.0_07,
+IndexedFaceSet geometry cannot be recolored more than once by changing the
+"color" field of the X3DColor node associated with the geometry.  Using the
+MFColor.setValue(int, float[][]) method to set the colors works for the first
+color change, but subsequent changes are not reflected on the displayed
+geometry.  For instance, if the color of an object is changed dynamically from
+an initial color of red to green, and then again changed to blue, the user will
+see the IndexedFaceSet's color change from red to green, but not from green to
+blue.  Using MFColor.getValue(float[][]) to read the Color node's value shows
+that the values are being sent and received correctly, but the change is not
+reflected in the displayed geometry.
+
+
+
+buzilla.xj3d.org Bug 277: Unable to Dynamically Set Heights of an ElevationGrid
+Status: NEW (as of July 25, 2006)
+Xj3D version: 1.0
+Description:
+ElevationGrid nodes do not respond to new values being sent to the "set_height"
+field.  In effect, an Xj3D enabled application that loads an X3D file with an
+ElevationGrid whose heights are defined in the X3D cannot modify the heights of
+that ElevationGrid.
+
+
+
+buzilla.xj3d.org Bug 220: OGLExtrusion generates incorrect endcaps
+Status: NEW (as of July 25, 2006)
+Xj3D version: 1.0RC2
+Description:
+The summary says it all really, just feed it an extrusion and have a look. The
+sourcecode also contains comments that explains the current implementation is
+incomplete.
+
+
+
+buzilla.xj3d.org Bug 274: Unable to Dynamically Set Heights of an ElevationGrid
+Status: NEW (as of July 25, 2006)
+Xj3D version: 1.0
+Description:
+In addition to the texture memory leak reported in
+http://bugzilla.xj3d.org/show_bug.cgi?id=273 here comes a demo (MemLeak3.zip)
+which shows that there are also geometry leaks (at least the way I use the
+SAI).
+
+The reason why I'm reporting these issues is that my project is a little CVE
+thing and everytime the user changes the room it means a replaceWorld(). With
+the current situation the user can not visit too many rooms before the system
+starts swapping or an OutOfMemoryException is raised.
+[WebTOP Note:  This is likely the same error that we get, the reporter just
+encounters it through a different series of events.  Yumetech disagrees
+that this is a problem with their software. [PC] ]

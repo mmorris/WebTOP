@@ -1,0 +1,19 @@
+//LanguageChooser.java
+//Matthew Morris
+
+package webtop.util;
+
+import webtop.nslit.LanguageDialogue;
+
+public class LanguageChooser extends webtop.component.HotKey
+{
+  LanguageDialogue languageDialogue;
+	public LanguageChooser(LanguageDialogue ld, int key, int modifiers) { 
+		super(key,modifiers);
+		languageDialogue = ld;
+	}
+
+	protected void hotkey() {
+		languageDialogue.show();
+	}
+}

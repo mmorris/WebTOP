@@ -1,0 +1,302 @@
+#X3D V3.0 utf8
+			  
+PROFILE Immersive
+
+
+#RotationWidget spins about the local Z axis.
+EXTERNPROTO RotationWidget [
+	inputOutput SFVec3f translation 
+	inputOutput SFRotation rotation 
+	inputOutput SFVec3f scale 
+	initializeOnly SFFloat angle 
+	inputOnly SFFloat set_angle
+	outputOnly SFFloat angle_changed
+	#rotation_changed is provided for convenience; will always be (0,0,1,angle_changed)
+	outputOnly SFRotation rotation_changed
+
+	initializeOnly SFFloat minAngle 	
+	inputOnly SFFloat set_minAngle
+	initializeOnly SFFloat maxAngle
+	inputOnly SFFloat set_maxAngle
+
+	initializeOnly SFFloat value 
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue 
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 
+	inputOnly SFFloat set_maxValue
+
+	#If this is TRUE (the default), the min/maxValue fields
+	#are ignored and 'angle' and 'value' are equivalent.
+	#(This could probably have a better name.)
+	initializeOnly SFBool angleAsValue 
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	#Invoking the following set_ events affects which geometry is displayed.
+	inputOnly SFBool set_isActive
+	inputOnly SFBool set_isOver
+
+	inputOutput SFBool enabled 
+
+	initializeOnly MFNode normalGeometry 
+	initializeOnly MFNode overGeometry 
+	initializeOnly MFNode activeGeometry 
+	outputOnly SFBool initialized
+] "x3dlib/widgets.x3dv#RotationWidget"
+PROTO	haxis []{Transform	{ rotation 0 0 1 1.5707963267949  children [DEF myshape Shape	{geometry Cylinder	{ radius 0.01 height	16 }appearance Appearance	{material Material	{diffuseColor 0 0 0 emissiveColor	0 0 0}}}]}}
+
+PROTO Polarizer [ initializeOnly        SFFloat z         0
+                  initializeOnly        SFFloat angle     0
+                  inputOutput SFInt32 state     0
+                  inputOutput SFBool  enabled   TRUE
+                  inputOnly      SFFloat set_z
+                  inputOnly      SFFloat set_angle
+                  inputOnly      SFBool  set_angleHighlighted
+                  inputOnly      SFBool  set_zHighlighted
+                  outputOnly     SFBool  isOver
+                  outputOnly     SFFloat z_changed
+                  outputOnly     SFFloat angle_changed
+                  outputOnly     SFBool  z_isOver
+                  outputOnly     SFBool  z_isActive
+                  outputOnly     SFBool  angle_isOver
+                  outputOnly     SFBool  angle_isActive       ]
+{
+  DEF Polarizer-SWITCH Switch {
+    whichChoice IS state
+    choice [
+      # Polarizer when not selected
+      Transform {
+        rotation 1 0 0 1.5707963
+        children DEF Box-TRANSFORM Transform {
+          children [
+            DEF Polarizer-TOUCHSENSOR TouchSensor {
+              isOver IS isOver
+              enabled IS enabled
+            }
+            Transform {
+              rotation 1 0 0 -1.5707963
+              children DEF Box-SHAPE Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.2 0.5 0.9
+                    transparency 0.9
+                  }
+                }
+                geometry Box { size 11 11 0.05 }
+              }
+            }
+            Transform {
+              rotation 1 0 0 -1.5707963
+              children DEF Line-TRANSFORM Transform {
+                children [
+                  DEF Line-SHAPE Shape {
+                    appearance Appearance { material Material { emissiveColor 0 0 0 } }
+                   geometry Cylinder {
+										 radius 0.01  height 8 }}
+                  DEF TA-TRANSFORM Transform {
+                    translation 9 0 0
+                    children DEF TA-SHAPE Shape {
+                      appearance Appearance {
+                        material Material { emissiveColor 0 0 0  diffuseColor 0 0 0}
+                      }
+                      geometry Text { string "TA" }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+      # Polarizer when selected
+      Group {
+        children [
+          # Angle Widget
+          Transform {
+            rotation 1 0 0 1.5707963
+            children DEF Angle_SELECTED-TRANSFORM Transform {
+              children Transform {
+                rotation 1 0 0 -1.5707963
+                children [
+                  DEF TA_HIGHLIGHTED-TRANSFORM Transform {
+                    children Transform {
+                      translation 9 0 0
+                      children USE TA-SHAPE
+                    }
+                  }
+                  DEF Angle-ROTATIONWIDGET RotationWidget {
+                    minAngle 0
+                    maxAngle 6.2831853
+                    enabled IS enabled
+                    isOver IS angle_isOver
+                    isActive IS angle_isActive
+                    offset IS angle
+                    offset_changed IS angle_changed
+                    set_isActive IS set_angleHighlighted
+                    set_offset IS set_angle
+                    normalGeometry [
+                      Transform {
+                        translation -8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children DEF Angle_NORMAL-SHAPE Shape {
+                          appearance DEF Appearance-NORMAL Appearance {
+                            material Material { diffuseColor 0.8 0.8 1.0 }
+                          }
+                          geometry Cylinder { radius 0.2 height 0.8 }
+                        }
+                      }
+                      Transform {
+                        translation 8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children USE Angle_NORMAL-SHAPE
+                      }
+                      haxis{}#USE Line-SHAPE
+                    ]
+                    clickedGeometry [
+                      Transform {
+                        translation -8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children DEF Angle_HIGHLIGHTED-SHAPE Shape {
+                          appearance DEF Appearance-HIGHLIGHTED Appearance {
+                            material Material { diffuseColor 1.0 1.0 0.4 }
+                          }
+                          geometry Cylinder { radius 0.2 height 0.8 }
+                        }
+                      }
+                      Transform {
+                        translation 8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children USE Angle_HIGHLIGHTED-SHAPE
+                      }
+                      USE Line-SHAPE
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+          # Z Widget
+          Transform {
+            rotation 1 0 0 1.5707963
+            children [
+              Transform {
+                rotation 0 1 0 -1.5707963
+                children [
+                  TouchSensor {
+                    enabled IS enabled
+                    isOver IS z_isOver
+                  }
+                  DEF Z-PLANESENSOR PlaneSensor {
+                    minPosition 0 0
+                    maxPosition 0 20
+                    enabled IS enabled
+                    isActive IS z_isActive
+                  }
+                  DEF Z-TRANSFORM Transform {
+                    children DEF Z-SWITCH Switch {
+                      whichChoice 0
+                      choice [
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z-SHAPE Shape {
+                              appearance USE Appearance-NORMAL
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                            children USE Z-SHAPE
+                          }
+                        ] }
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z_HIGHLIGHTED-SHAPE Shape {
+                              appearance USE Appearance-HIGHLIGHTED
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                            children USE Z_HIGHLIGHTED-SHAPE
+                          }
+                        ] }
+                      ]
+                    }
+                  }
+                ]
+              }
+              DEF Box_SELECTED-TRANSFORM Transform {
+                children Transform {
+                  rotation 1 0 0 -1.5707963
+                  children USE Box-SHAPE
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  DEF Polarizer-SCRIPT Script {
+    initializeOnly     SFFloat z IS z
+    inputOnly   SFBool  isOver
+    inputOnly   SFFloat set_z IS set_z
+    inputOnly   SFVec3f set_zTranslation
+    inputOnly   SFBool  z_isActive
+    inputOnly   SFBool  set_zHighlighted IS set_zHighlighted
+    outputOnly  SFInt32 whichChoice_changed
+    outputOnly  SFInt32 zWhichChoice_changed
+    outputOnly  SFVec3f zOffset_changed
+    outputOnly  SFFloat z_changed IS z_changed
+    url "javascript:
+      function initialize() {
+        zOffset_changed = new SFVec3f(0, z, 0);
+      }
+      function isOver(value, time) {
+        if(value) {
+          whichChoice_changed = 1;
+        }
+      }
+      function set_z(value, time) {
+        zOffset_changed[1] = value;
+      }
+      function set_zTranslation(value, time) {
+        z_changed = value[1];
+      }
+      function z_isActive(value, time) {
+        zWhichChoice_changed = value ? 1 : 0;
+      }
+      function set_zHighlighted(value, time) {
+        zWhichChoice_changed = value ? 1 : 0;
+      }
+    "
+  }
+  ROUTE Polarizer-SCRIPT.zWhichChoice_changed TO Z-SWITCH.whichChoice
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-PLANESENSOR.offset
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box_SELECTED-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Angle_SELECTED-TRANSFORM.set_translation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO TA_HIGHLIGHTED-TRANSFORM.set_rotation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO Line-TRANSFORM.set_rotation
+  ROUTE Z-PLANESENSOR.isActive TO Polarizer-SCRIPT.z_isActive
+  ROUTE Z-PLANESENSOR.translation_changed TO Z-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Box_SELECTED-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Box-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Angle_SELECTED-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Polarizer-SCRIPT.set_zTranslation
+}
+

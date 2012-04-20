@@ -1,0 +1,170 @@
+
+		## Arrow stuff goes below this line ------------------------
+		# K-vector
+		Transform	{
+			translation	30 4 -30
+			children
+			Transform	{
+				rotation 0 -1 0 0.785398163397448
+				children
+				Transform	{
+					#translation	50 0 0
+					rotation 1 0 0 1.5707963267949
+					children [
+						Shape	{
+							geometry Cylinder { radius .5 height 25 }
+							appearance Appearance	{ material Material	{diffuseColor 0 0 0}}
+						}
+						Transform	{
+							scale	1.5 1.5 1.5
+							translation	0 -12.5 0
+							children
+							Transform	{
+								rotation 1 0 0 3.14159265358979
+								children Shape {
+									geometry Cone	{bottomRadius 1 height 2.5}
+									appearance Appearance	{material Material {diffuseColor 0 0 0}}
+								}
+							}
+						}
+					]
+				}
+			}
+		}
+
+		Transform	{
+			translation	65 0 0
+			children [
+				
+				#Shape	{
+				#	geometry Text {
+				#		fontStyle FontStyle {
+				#			justify "MIDDLE"
+				#			family "Times"
+				#			style	"italic"
+				#		}
+				#		string [ "F" ]
+				#	}
+				#}
+				Transform
+				{
+					rotation 0 0 1 -1.5707963267949
+					#translation 0 0 0.7
+					scale 3 3 3
+
+					children [
+						Shape
+						{
+							geometry DEF Cone-App Cone {
+								height	1.5
+								bottom TRUE
+								bottomRadius .4
+							}
+					
+							appearance DEF Arrow-APP Appearance	{
+								material Material	{
+									diffuseColor 0 0 0
+								}
+							}
+						}
+						#Transform	{
+						#	translation	0 -.75 0
+						#	children
+						#	Shape	{
+						#		geometry DEF Cone-sphere Sphere	{
+						#			radius .4
+						#		}
+						#		appearance Appearance	{ material Material	{diffuseColor	0 0 0}}
+						#	}
+						#}
+					]
+				}
+
+				Shape
+				{
+					geometry IndexedLineSet
+					{
+						coord Coordinate
+						{
+							point [0 0 0, -65 0 0]
+						}
+
+						coordIndex [0 1 -1]
+					}
+					appearance USE Arrow-APP
+				}
+			]
+		}
+
+		# Y-arrow
+		Transform	{
+			rotation 0 1 0 1.5707963267949
+			children
+			Transform	{
+				translation	75 0 0
+				children [
+					Transform	{
+						rotation 0 0 1 -1.5707963267949
+						scale	3 3 3
+						children Shape{
+							geometry USE Cone-App
+							appearance USE Arrow-APP
+						}
+					}
+					
+					Shape
+					{
+						geometry IndexedLineSet
+						{
+							coord Coordinate
+							{
+								point [0 0 0, -75 0 0]
+							}
+
+							coordIndex [0 1 -1]
+						}
+						appearance USE Arrow-APP
+					}
+				]
+			}
+		}
+
+		#Z-arrow
+		Transform	{
+			rotation 0 0 1 1.5707963267949
+			children
+			Transform	{
+				translation	40 0 0
+				children [
+					Transform	{
+						rotation 0 0 1 -1.5707963267949
+						scale	3.5 3.5 3.5
+						children Shape {
+							geometry Cone	{
+								height	1.5
+								bottom TRUE
+								bottomRadius .4
+							}
+							appearance USE Arrow-APP
+						}
+					}
+
+					Shape
+					{
+						geometry IndexedLineSet
+						{
+							coord Coordinate
+							{
+								point [0 0 0, -80 0 0]
+							}
+
+							coordIndex [0 1 -1]
+						}
+						appearance USE Arrow-APP
+					}
+				]
+			}
+		}
+
+		
+		## Arrow stuff goes above this line ------------------------

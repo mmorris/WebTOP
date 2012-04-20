@@ -1,0 +1,17 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="hidden" fieldMode="composite">
+    <source sourceType="unpolarized" />
+    <filters>
+      <polarizer id="polarizer0" z="10.0" angle="0.0" />
+    </filters>
+    <view value="-0.19542325 -0.9160941 0.0 5.2366247 1.1009812 -17.228672" />
+  </polarization>
+  <script>
+    <actionPerformed target="polarizer0" param="z" value="10.0" timeStamp="14731" />
+    <actionPerformed target="polarizer0" param="angle" value="0.7853982" timeStamp="0" />
+    <actionPerformed target="polarizer0" param="z" value="10.0" timeStamp="27830" />
+    <actionPerformed target="polarizer0" param="angle" value="1.5707964" timeStamp="0" />
+    <actionPerformed target="polarizer0" param="z" value="10.0" timeStamp="27620" />
+    <actionPerformed target="polarizer0" param="angle" value="2.3561945" timeStamp="0" />
+  </script>
+</wsl>

@@ -1,0 +1,544 @@
+#X3D V3.0 utf8
+#Rayleigh.x3dv
+
+PROFILE Immersive
+
+EXTERNPROTO ConvexLens [
+initializeOnly SFFloat radius
+initializeOnly SFFloat radiusOfCurvature
+initializeOnly SFInt32 resolution
+initializeOnly SFInt32 depthResolution
+inputOnly SFFloat set_radius
+inputOnly SFFloat set_radiusOfCurvature
+inputOnly SFInt32 set_resolution
+inputOnly SFInt32 set_depthResolution
+]
+"../../../x3dlib/Shapes.x3dv#ConvexLens"
+
+EXTERNPROTO RedConeXDragger [
+inputOutput SFVec3f coneScale
+inputOutput SFVec3f translation
+inputOutput SFRotation rotation
+initializeOnly SFFloat position
+inputOnly SFFloat set_position
+outputOnly SFFloat position_changed
+initializeOnly SFFloat minPosition
+inputOnly SFFloat set_minPosition
+initializeOnly SFFloat maxPosition
+inputOnly SFFloat set_maxPosition
+initializeOnly SFFloat value
+inputOnly SFFloat set_value
+outputOnly SFFloat value_changed
+initializeOnly SFFloat minValue
+inputOnly SFFloat set_minValue
+initializeOnly SFFloat maxValue
+inputOnly SFFloat set_maxValue
+initializeOnly SFBool positionAsValue
+outputOnly SFBool isOver_out
+outputOnly SFBool isActive_out
+inputOnly SFBool set_isActive
+inputOutput SFBool enabled
+initializeOnly SFString debugName
+outputOnly SFBool initialized
+]
+"../../../x3dlib/Widgets.x3dv#RedConeXDragger"
+
+EXTERNPROTO WheelWidget [
+initializeOnly SFFloat value
+inputOnly SFFloat set_value
+outputOnly SFFloat value_changed
+initializeOnly SFFloat minValue
+inputOnly SFFloat set_minValue
+initializeOnly SFFloat maxValue
+inputOnly SFFloat set_maxValue
+initializeOnly SFFloat maxRotations
+inputOnly SFFloat set_maxRotations
+outputOnly SFBool isActive_out
+outputOnly SFBool isOver_out
+inputOnly SFBool set_isActive
+inputOutput SFBool enabled
+inputOutput SFNode material
+inputOutput SFNode activeMaterial
+initializeOnly SFString debugName
+outputOnly SFBool initialized
+]
+"../../../x3dlib/Widgets.x3dv#WheelWidget"
+
+EXTERNPROTO RotationWidget [
+	initializeOnly SFFloat angle
+	inputOnly SFFloat set_angle
+	outputOnly SFFloat angle_changed
+	outputOnly SFRotation rotation_changed
+	initializeOnly SFFloat minAngle
+	inputOnly SFFloat set_minAngle
+	initializeOnly SFFloat maxAngle
+	inputOnly SFFloat set_maxAngle
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOnly SFBool set_isOver
+	inputOutput SFBool enabled
+	initializeOnly MFNode normalGeometry
+	initializeOnly MFNode overGeometry
+	initializeOnly MFNode activeGeometry
+	outputOnly SFBool initialized
+]
+"../../../x3dlib/Widgets.x3dv#RotationWidget"
+
+#DEF Fixture Transform {
+#	children [
+#		PointLight {
+#			ambientIntensity IS ambientIntensity
+#			intensity IS intensity
+#			color IS color
+#			attenuation IS attenuation
+#			radius 1e10
+#			location 0 0 0
+#		}
+#		NavigationInfo {
+#			avatarSize IS avatarSize
+#			type IS navigationType
+#			speed IS navigationSpeed
+#			visibilityLimit IS visibilityLimit
+#			headlight IS headlight
+#		}
+#	]
+#}
+
+
+DEF PS ProximitySensor { size 1e10 1e10 1e10 }
+#	ROUTE PS.position_changed TO Fixture.set_translation
+#	ROUTE PS.orientation_changed TO Fixture.set_rotation
+
+PROTO AngleWidget [
+initializeOnly        SFFloat  angle    0.785398  #PI/4
+inputOutput SFBool   enabled  TRUE
+inputOnly      SFFloat  set_angle
+inputOnly      SFFloat  set_screenDistance
+inputOnly      SFBool   set_isOver
+inputOnly      SFBool   set_isActive
+outputOnly     SFBool   isOver
+outputOnly     SFBool   isActive
+outputOnly     SFFloat   angle_changed
+]
+{
+	DEF RW RotationWidget {}
+#	Group {
+#		children [
+#			DEF TS TouchSensor {
+#			enabled IS enabled
+#			isOver IS isOver_out
+#			}
+#			DEF PS PlaneSensor {
+#			enabled IS enabled
+#			isActive IS isActive_out
+#			}
+#			DEF RotationalTransform Transform {
+#				children DEF GeometrySwitch Switch {
+#					whichChoice 0
+#					choice [
+#						Group { children IS normalGeometry }
+#						Group { children IS overGeometry }
+#						Group { children IS activeGeometry }
+#					]
+#				}
+#			}	
+#		]
+#	}
+}
+#This is the only known copy of this PROTO (it's not in Shapes.wrl).  So edit here, and don't delete.
+
+PROTO CylinderFrustum [
+initializeOnly SFFloat radius 1
+inputOnly SFFloat set_radius
+initializeOnly SFFloat tiltAngle .5
+inputOnly SFFloat set_tiltAngle
+initializeOnly SFBool doTilt FALSE
+initializeOnly SFFloat planeDistance 500
+inputOnly SFFloat set_planeDistance
+initializeOnly SFFloat extraLength 10
+inputOnly SFFloat set_extraLength
+initializeOnly SFInt32 resolution 32
+initializeOnly SFBool endCap TRUE
+initializeOnly SFBool solid TRUE
+]
+{
+	DEF IFS IndexedFaceSet {
+		coord DEF Coord Coordinate {}
+		solid IS solid
+		#ccw TRUE
+	}
+}
+
+Transform {
+	rotation 1 0 0 1.5707963
+	children [
+		DEF AngleWidget-ROTATIONWIDGET RotationWidget {
+			minAngle 0
+			#maxAngle 1.5707963
+			maxAngle 1.5508156	 #[Peter] This can fix problem of using the AngleWidget to drag the angle out of range
+			enabled IS enabled
+			isActive_out IS isActive
+			isOver_out IS isOver
+			set_isOver IS set_isOver
+			set_isActive IS set_isActive
+			normalGeometry [
+				Transform {
+					#translation 0 -250 0
+					rotation 1 0 0 -1.5707963268 #[Davis]
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+								diffuseColor 0.9 0.9 0.9
+								}
+							}
+							# geometry DEF LightPencilGeo Cylinder {
+							# radius 5
+							# height 1650
+							# }
+							geometry DEF LightPencilGeo CylinderFrustum {
+								radius 5
+								doTilt FALSE
+								#planeDistance 500   #Will be overwritten promptly
+								set_planeDistance IS set_screenDistance
+								extraLength 800
+							}
+						}
+					]
+				}
+			]
+			activeGeometry [
+				Transform {
+					#translation 0 -250 0
+					rotation 1 0 0 -1.5707963268
+					children Shape {
+					appearance Appearance {
+						material Material {
+						diffuseColor 1 1 0
+						}
+					}
+					geometry USE LightPencilGeo
+					}
+				}
+			]
+		}
+		Transform {
+			rotation 0 1 0 3.14159265
+			children USE AngleWidget-ROTATIONWIDGET
+		}
+	]
+}
+
+#DEF AngleWidget-SCRIPT Script {
+#	initializeOnly     SFFloat  angle IS angle
+#	inputOnly   SFFloat  set_offset
+#	inputOnly   SFFloat  set_angle IS set_angle
+#
+#	outputOnly  SFFloat  offset_changed
+#	outputOnly  SFFloat  angle_changed IS angle_changed
+#
+#	inputOnly SFFloat screen_dist IS set_screenDistance
+#	url "javascript:
+#	function initialize() {
+#	offset_changed = angle / 2.0;
+#	}
+#
+#	function set_offset(value, time) {
+#	angle_changed = value * 2.0;
+#	}
+#
+#	function set_angle(value, time) {
+#	offset_changed = value / 2.0;
+#	}"
+#}
+
+#ROUTE AngleWidget-ROTATIONWIDGET.angle_changed TO AngleWidget-SCRIPT.set_offset
+#ROUTE AngleWidget-SCRIPT.offset_changed TO AngleWidget-ROTATIONWIDGET.set_angle
+#ROUTE AngleWidget-ROTATIONWIDGET.angle_changed TO LightPencilGeo.set_tiltAngle
+#ROUTE AngleWidget-SCRIPT.offset_changed TO LightPencilGeo.set_tiltAngle
+
+
+#NavLight { navigationType "NONE" }
+
+DEF ObservationScreen Group {
+	#translation_speed 100
+	#center 0 0 -500
+	#views [ -0.5 -0.4 0 1 -2 -12, -0.4 0 0 0 -2 -12 ]
+	children [
+	##########################################################
+	# Warning text
+	##########################################################
+	DEF warningTextSwitch Switch {
+		whichChoice 0
+		choice [
+			Billboard {
+				axisOfRotation 0 0 0
+				children [
+					Transform {
+						translation -300 350 0
+						children [
+							Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 0 0 0		# black
+										specularColor 0 0 0		# black
+										ambientIntensity 0.0	# black
+										shininess 0.0					# none
+										emissiveColor 1 0 0
+									}
+								}
+								geometry Text {
+									string "Loading... Please wait."
+									fontStyle FontStyle {
+									size 120
+									}
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+	##########################################################
+	Inline {
+	url				 "../../../x3dlib/BoundingBox.x3dv"
+	bboxSize				1000 300 1000
+	bboxCenter				0 0 -500
+	}
+	################
+	## Aperture
+	Group {
+		children [
+			Shape {
+				geometry Box { size 1000 300 0.3 }
+				appearance Appearance {
+					material Material {
+					ambientIntensity	 0.2
+					diffuseColor	 .3 .6 .9
+					specularColor	 0 0 0
+					emissiveColor	 0 0 0
+					shininess			 0.2
+					transparency	 0.6
+					}
+				}
+			}
+		]
+	}
+	################
+	## Lens
+	## DirectionalLight {
+	## direction		0.5 0 -0.5
+	## }
+	DEF scaleLens Transform {
+		children [
+			DirectionalLight {
+			direction 0.2 0 -0.5
+			intensity				 0.8
+			}
+			Shape {
+				appearance Appearance {
+					material Material {
+					ambientIntensity		0.0650877
+					diffuseColor		0.0575819 0.0309427 0.29568
+					specularColor		 0.797872 0.797872 0.797872
+					emissiveColor		 0.239362 0.285461 0.319149
+					shininess		 0.755319
+					transparency		0.712766
+					}
+				}
+				geometry ConvexLens {
+					radius 1
+					radiusOfCurvature 6
+					resolution 24
+					depthResolution 8
+				}
+			}
+		]
+	}
+
+	#########################
+	### Lens Dragger
+	Transform {
+		scale 25 25 25
+			children [
+			DEF lensDraggerSwitch Switch {
+				whichChoice 0
+				choice [
+					DEF lensDragger RedConeXDragger {
+					minPosition 0.1
+					maxPosition 6
+					position 2.68390106163
+					}
+				]
+			}
+		]
+	}
+	#########################
+
+	################################################################
+	## Red box
+	##
+	## Transform {
+	##	scale 5 5 1000
+	##	children [
+	##		Shape {
+	##			appearance Appearance { material Material { diffuseColor 1 0 0 } }
+	##			geometry Box {}
+	##		}
+	##	]
+	## }
+
+	######################### end of lens
+
+	DEF rayWidgetSwitch Switch {
+		whichChoice 0
+		choice [
+			#this is only commented for testing -- it should be used for distribution
+			DEF rayWidget AngleWidget { }
+		]
+	}
+	DEF wavelengthWidgetSwitch Switch {
+		whichChoice 0
+		choice [
+			Transform {
+			translation 0 -30 220
+			scale 75 75 75
+			children DEF wavelengthWidget WheelWidget { maxRotations 4 }
+			}
+		]
+	}
+
+	Transform {
+		translation 0 150 0 # -500
+		scale 25 25 25
+		rotation -1 1 1 2.1		#a vector (X,Y,Z) without -> (-Y,Z,-X) with
+		children [
+			DEF translateScreenSwitch Switch {
+				whichChoice 0
+				choice [
+					DEF translateScreen RedConeXDragger {
+						minPosition 1
+						maxPosition 40
+						position 20
+					}
+				]
+			}
+		]
+	}
+		DEF ScreenTransform Transform {
+			translation 0 0 -500
+				children [
+				Shape {
+					appearance Appearance {
+						material Material {
+						diffuseColor 1 1 0
+						emissiveColor 1 1 0
+						}
+					}
+					geometry IndexedFaceSet {
+						coord Coordinate {
+							point [
+							500 -150 -10,
+							-500 -150 -10,
+							-500 150 -10,
+							500 150 -10,
+							500 -150 0,
+							-500 -150 0,
+							-500 150 0,
+							500 150 0,
+							]
+						}
+						coordIndex [
+						0, 1, 2, 3, -1, # back
+						1, 5, 6, 2, -1, # left
+						0, 3, 7, 4, -1, # right
+						3, 2, 6, 7, -1, # top
+						0, 4, 5, 1, -1, # bottom
+						]
+					}
+				}
+				DEF Screen-SWITCH Switch {
+				whichChoice 0
+					choice [
+						Group {
+							children [
+							#We only draw the top-left quadrant of the screen,
+							#and then replicate that object four times:
+								DEF HighScreen Shape {
+									geometry DEF ifsNode IndexedFaceSet {
+									coord DEF coordinateNode Coordinate { }
+									color DEF colorNode Color { }
+									solid FALSE
+									}
+								}
+								Transform {
+								rotation 0 1 0 3.14159265
+								children USE HighScreen
+								}
+								Transform {
+								rotation 0 0 1 3.14159265
+								children USE HighScreen
+								}
+								Transform {
+								rotation 1 0 0 3.14159265
+								children USE HighScreen
+								}
+								Transform {
+								translation 0 150 0
+									children [
+										Shape {
+											appearance DEF graphAppearance Appearance {
+												material Material {
+												emissiveColor				0.8 0.8 0.8
+												}
+											}
+											geometry DEF graphNode IndexedLineSet {
+											coord DEF graphCoordinate Coordinate { }
+											}
+										}
+									]
+								}
+							]
+						} # High resolution group
+						Group {
+							children [
+								DEF LowScreen Shape {
+									geometry DEF ifsNodeLowRes IndexedFaceSet {
+									coord DEF coordinateNodeLowRes Coordinate { }
+									color DEF colorNodeLowRes Color { }
+									solid FALSE
+									}
+								}
+								Transform {
+								rotation 0 1 0 3.14159265
+								children USE LowScreen
+								}
+								Transform {
+								rotation 0 0 1 3.14159265
+								children USE LowScreen
+								}
+								Transform {
+								rotation 1 0 0 3.14159265
+								children USE LowScreen
+								}
+								Transform {
+								translation 0 150 0
+									children [
+										Shape {
+										appearance USE graphAppearance
+										geometry DEF graphNodeLowRes IndexedLineSet {
+										coord DEF graphCoordinateLowRes Coordinate { }
+										}
+										}
+									]
+								}
+							]
+						} # Low resolution group
+					]
+				}
+			]
+		}
+	]
+}

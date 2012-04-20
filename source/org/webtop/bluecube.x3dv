@@ -1,0 +1,18 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+PROTO Cube [
+    initializeOnly SFVec3f cubeSize 1 1 1
+    initializeOnly SFColor color 0 1 0
+]
+{
+    Shape {
+        appearance Appearance {
+            material Material {diffuseColor IS color}
+        }
+        geometry Box {
+            size IS cubeSize
+        }
+    }
+}

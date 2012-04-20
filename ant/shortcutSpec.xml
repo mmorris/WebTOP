@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<shortcuts>
+<skipIfNotSupported/>
+<programGroup defaultName="WebTop" location="applications"/>
+<shortcut
+name="WebTop"
+programGroup="yes"
+desktop="yes"
+applications="no"
+workingDirectory="$INSTALL_PATH"
+startMenu="no"
+startup="no"
+target="$INSTALL_PATH/WebTop.jar"
+description=""
+initialState="normal" >
+</shortcut>
+  <shortcut
+name="Uninstall WebTop"
+programGroup="yes"
+desktop="no"
+applications="no"
+startMenu="no"
+startup="no"
+target="$INSTALL_PATH/Uninstaller/uninstaller.jar"
+description=""
+initialState="normal" >
+  </shortcut>
+</shortcuts>

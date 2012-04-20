@@ -1,0 +1,55 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<TITLE>The Optics Project - Modules - Wave Simulation - Theory</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><BR>
+<FONT SIZE=5><P ALIGN="CENTER"><U><B>Theory of Wave Simulation</P></U></B>
+</CENTER>
+</FONT>
+<OL>
+<FONT SIZE=4>
+<P><U><B>1. Description</B></U><BR></P>
+<P>This module simulates waves in a ripple tank.  The user can insert either point sources, which generate circular waves, or line sources, which generate waves whose wavefronts are straight lines.  The plane of the undisplaced water surface is the x-y plane.  Waves travel at speed <I>v</I> on the surface of the water. The index <I>j</I> = 1,2.. is used to label the waves coming from the different sources, and the total disturbance at the position (<I>x,y</I>) at time <I>t</I>, call it <I>u</I>(<I>x</I>,<I>y</I>,<I>t</I>), is the sum of all the individual waves:</P>
+<NOBR>
+<CENTER><IMG SRC="figs/wavesim/Image13.gif" WIDTH=209 HEIGHT=46 ALIGN=CENTER>
+</P></NOBR></CENTER>
+<B><U>2. Calculations</U></B><BR><BR>
+(a) Point Source<BR>
+<P>Consider a plunger with a small disk on its end.  The disk is touching the surface of the water, is centered about the position <IMG SRC="figs/wavesim/Image15.gif" WIDTH=64 HEIGHT=25 ALIGN=CENTER>, and is small enough to be considered a point source. The plunger is performing simple harmonic motion of frequency <I>f</I><SUB>j</SUB>and is exerting a simple harmonic force on the surface of the water.  This motion will generate a circular wave of wavelength <IMG SRC="figs/wavesim/Image16.gif" WIDTH=88 HEIGHT=30 ALIGN=CENTER> emanating from the source point.  The wave number for this wave is <IMG SRC="figs/wavesim/Image17.gif" WIDTH=97 HEIGHT=30 ALIGN=CENTER>and its angular frequency is <IMG SRC="figs/wavesim/Image18.gif" WIDTH=144 HEIGHT=30 ALIGN=CENTER></P>
+
+<P>Let P = (<I>x</I>,<I>y</I>) be a point on the surface.  The distance from the source point to P is</P>
+<P ALIGN="CENTER"><IMG SRC="figs/wavesim/Image19.gif" WIDTH=241 HEIGHT=38></P>
+<P>The disturbance very near the source is a bit complicated and we will not discuss its mathematical form here, other than to say that the module calculates it correctly.   The disturbance at P due to the j<SUP>th</SUP> point source is given to a good approximation, as long as <IMG SRC="figs/wavesim/Image20.gif" WIDTH=66 HEIGHT=30 ALIGN=CENTER>, by the formula</P>
+<P ALIGN="CENTER"><IMG SRC="figs/wavesim/Image21.gif" WIDTH=362 HEIGHT=65 ALIGN=CENTER></P>
+<P>where <IMG SRC="figs/wavesim/Image22.gif" WIDTH=24 HEIGHT=30 ALIGN=TOP> is the &quot;amplitude factor&quot; or &quot;source strength&quot; for the j<SUP>th</SUP> wave.</P>
+
+<P>(b) Line Source</P>
+
+<P>Consider a very long, thin board which is touching the surface of the water and performing simple harmonic motion of amplitude <IMG SRC="figs/wavesim/Image23.gif" WIDTH=24 HEIGHT=30 ALIGN=CENTER>, frequency <I>f</I><SUB>j</SUB>, and initial phase <IMG SRC="figs/wavesim/Image24.gif" WIDTH=22 HEIGHT=30 ALIGN=CENTER>.   Furthermore let the normal to the surface of the board make on angle <IMG SRC="figs/wavesim/Image25.gif" WIDTH=22 HEIGHT=30 ALIGN=CENTER> with the positive x-axis.  This will generate a wave amplitude of <IMG SRC="figs/wavesim/Image23.gif" WIDTH=24 HEIGHT=30 ALIGN=CENTER>, and wavelength <IMG SRC="figs/wavesim/Image16.gif" WIDTH=88 HEIGHT=30 ALIGN=CENTER>, which is traveling in the direction specified by the angle <IMG SRC="figs/wavesim/Image25.gif" WIDTH=22 HEIGHT=30 ALIGN=CENTER>.</P>
+<P>  </P>
+<P>Let P be a point on the surface whose coordinates are (<I>x</I>,<I>y</I>).  The displacement at P at time <I>t</I> due to this wave is given by the formula</P>
+<P ALIGN="CENTER"><IMG SRC="figs/wavesim/Image26.gif" WIDTH=432 HEIGHT=30 ALIGN=CENTER></P>
+<P>where, <IMG SRC="figs/wavesim/Image27.gif" WIDTH=97 HEIGHT=30 ALIGN=CENTER>is the propagation number of the wave, and <IMG SRC="figs/wavesim/Image28.gif" WIDTH=89 HEIGHT=30 ALIGN=CENTER> is its angular frequency.</P>
+</FONT><BR><BR>
+<CENTER>
+<IMG SRC="figs/roygbiv.gif" WIDTH=450><BR><BR><BR>
+<FONT SIZE=2 FACE="helvetica, arial">
+<P>
+Created by
+Srihari Angaluri
+and Kiril Vidimce
+<BR>
+Send comments to <A  HREF="mailto:webtop@webtop.org">comments@webtop.org</A>
+<BR>
+</P>
+</FONT>
+<!-- <!--#include virtual="/secure-ssi/counter.html"-->
+</CENTER>
+</BODY>
+</HTML>

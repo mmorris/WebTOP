@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><!--JBuilder QuickDoc-->
+<HEAD>
+<TITLE>Class org.webtop.component.WApplication</TITLE><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+</HEAD>
+<BODY>
+
+<H2>
+<FONT SIZE="-1">org.webtop.component</FONT>
+<BR>Class WApplication</H2>
+<DL>
+<DT>public abstract class <B>WApplication</B><DT>extends javax.swing.JFrame<DT>implements SAI.InvalidEventListener, Tooltip.Listener, Widget.Listener
+</DL>
+<DL><DD><p>Title: </p> <p>Description: </p> <p>Copyright: Copyright (c) 2006</p> <p>Company: </p><DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Version:</B><DD>1.0</DD>
+<DT><B>Author:</B><DD>Paul Cleveland</DD>
+</DL>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF"><TD COLSPAN=1><FONT SIZE="+2">
+<B>Field Detail</B>
+</FONT></TD></TR></TABLE>
+
+<A NAME="MIN_WAVELENGTH"></A>
+
+<H3>MIN_WAVELENGTH</H3>
+<PRE>
+public static final float <B>MIN_WAVELENGTH</B></PRE>
+<DL><DD>Minimum wavelength of light allowed (400). (Where is this used? [Paul])<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="MAX_WAVELENGTH"></A>
+
+<H3>MAX_WAVELENGTH</H3>
+<PRE>
+public static final float <B>MAX_WAVELENGTH</B></PRE>
+<DL><DD>Maximum wavelength of light allowed (700). (Where is this used? [Paul])<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="VIEW_KEY"></A>
+
+<H3>VIEW_KEY</H3>
+<PRE>
+public static final int <B>VIEW_KEY</B></PRE>
+<DL><DD>Key to print current viewpoint to Java console. Used in conjunction with <code>VIEW_READ_MODIFIERS</code> modifier key.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="RESET_KEY"></A>
+
+<H3>RESET_KEY</H3>
+<PRE>
+public static final int <B>RESET_KEY</B></PRE>
+<DL><DD>The key to reset to the default viewpoint<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="VIEW_READ_MODIFIERS"></A>
+
+<H3>VIEW_READ_MODIFIERS</H3>
+<PRE>
+public static final int <B>VIEW_READ_MODIFIERS</B></PRE>
+<DL><DD>Modifier key for <code>VIEW_KEY</code>. Shift+<code>VIEW_KEY</code> performs the print.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="VIEW_RESET_MODIFIERS"></A>
+
+<H3>VIEW_RESET_MODIFIERS</H3>
+<PRE>
+public static final int <B>VIEW_RESET_MODIFIERS</B></PRE>
+<DL><DD>Modifier key for <code>RESET_KEY</code>. Not currently used.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF"><TD COLSPAN=1><FONT SIZE="+2">
+<B>Method Detail</B>
+</FONT></TD></TR></TABLE>
+
+<A NAME="getModuleName()"></A>
+
+<H3>getModuleName</H3>
+<PRE>
+protected abstract java.lang.String <B>getModuleName</B>()</PRE>
+<DL><DD>Implemented by extending module to give its name.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>String holding the module's name</DD>
+</DL>
+<HR>
+
+<A NAME="getMajorVersion()"></A>
+
+<H3>getMajorVersion</H3>
+<PRE>
+protected abstract int <B>getMajorVersion</B>()</PRE>
+<DL><DD>Implemented by extending module to give its major version number.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>int of the Major Version</DD>
+</DL>
+<HR>
+
+<A NAME="getMinorVersion()"></A>
+
+<H3>getMinorVersion</H3>
+<PRE>
+protected abstract int <B>getMinorVersion</B>()</PRE>
+<DL><DD>Implemented by extending module to give its minor version number.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>int of the Minor Version</DD>
+</DL>
+<HR>
+
+<A NAME="getRevision()"></A>
+
+<H3>getRevision</H3>
+<PRE>
+protected abstract int <B>getRevision</B>()</PRE>
+<DL><DD>Implemented by extending module to give its revision number.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>int of the Revision Number</DD>
+</DL>
+<HR>
+
+<A NAME="getDate()"></A>
+
+<H3>getDate</H3>
+<PRE>
+protected abstract java.lang.String <B>getDate</B>()</PRE>
+<DL><DD>Implemented by extending module to give its last modified date.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>String containing the date.</DD>
+</DL>
+<HR>
+
+<A NAME="getAuthor()"></A>
+
+<H3>getAuthor</H3>
+<PRE>
+protected abstract java.lang.String <B>getAuthor</B>()</PRE>
+<DL><DD>Implemented by extending module to give the name of it's author(s).<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>String containg the author's name.</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstFocus()"></A>
+
+<H3>getFirstFocus</H3>
+<PRE>
+protected abstract java.awt.Component <B>getFirstFocus</B>()</PRE>
+<DL><DD>Implemented by extending class to give the Component that has the initial focus. This will not be called before setupGUI().<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>Component with initial focus.</DD>
+</DL>
+<HR>
+
+<A NAME="preconstructor()"></A>
+
+<H3>preconstructor</H3>
+<PRE>
+protected void <B>preconstructor</B>()</PRE>
+<DL><DD>Executed immediately after the call to JFrame's constructor via super(). This method should be used to set up any variables that need to be non-null before anything else executes. It is not necessary to implement this method. It is primarily available to resolve strange issues such as class-global arrays being null despite assignment at their declaration.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="setupGUI()"></A>
+
+<H3>setupGUI</H3>
+<PRE>
+protected abstract void <B>setupGUI</B>()</PRE>
+<DL><DD>Called during WApplication constructor; should establish user interface objects. The WSLPlayer will be available during this method's invocation.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="setupX3D()"></A>
+
+<H3>setupX3D</H3>
+<PRE>
+protected abstract void <B>setupX3D</B>()</PRE>
+<DL><DD>Called during WApplication constructor; should use the SAI object (obtained with getSAI()) to connect to X3D objects.<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="setupMenubar()"></A>
+
+<H3>setupMenubar</H3>
+<PRE>
+protected abstract void <B>setupMenubar</B>()</PRE>
+<DL><DD>Modules should implement their menubars here, ending this method with a call to setMenuBar().<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="setDefaults()"></A>
+
+<H3>setDefaults</H3>
+<PRE>
+protected abstract void <B>setDefaults</B>()</PRE>
+<DL><DD>This should reset the module (and will be used to set it up in start()) There may be subtleties here...<DL><DD></DD></DL></DD>
+</DL>
+<DL></DL>
+<HR>
+
+<A NAME="getSAI()"></A>
+
+<H3>getSAI</H3>
+<PRE>
+public org.webtop.x3d.SAI <B>getSAI</B>()</PRE>
+<DL><DD>Returns a reference to the WApplication's <code>org.webtop.x3d.SAI</code> object. This method is normally called in order to gain access to X3D fields and to create Named Nodes.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Returns:</B><DD>SAI object for the WApplication.</DD>
+<DT><B>See Also:</B><DD>org.webtop.x3d.SAI.getNode</DD>
+</DL>
+<HR>
+
+<A NAME="addToConsole(java.awt.Component)"></A>
+
+<H3>addToConsole</H3>
+<PRE>
+public void <B>addToConsole</B>(java.awt.Component&nbsp;c)</PRE>
+<DL><DD>Adds a component to the WApplication's control GUI.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>c</CODE> - Component to be added</DD>
+</DL>
+<HR>
+
+<A NAME="setMenubar()"></A>
+
+<H3>setMenubar</H3>
+<PRE>
+protected void <B>setMenubar</B>()</PRE>
+<DL><DD>Sets the menu bar for a WApplication. Use in conjunction with setupMenubar().<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>menubar</CODE> - JMenuBar</DD>
+</DL>
+<HR>
+
+</BODY>
+</HTML>

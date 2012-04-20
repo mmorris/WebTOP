@@ -1,0 +1,11 @@
+<wsl>
+  <polarization history1="off" history2="off" animation="play" widgets="visible" fieldMode="composite">
+    <source sourceType="polarized" wavelength="540.0" amplitudex="1.0" amplitudey="1.0" phaseDifference="1.5708" />
+    <filters>
+      <polarizer id="polarizer0" z="5.0" angle="0.0" />
+      <polarizer id="polarizer1" z="10.0" angle="0.7853982" />
+      <polarizer id="polarizer2" z="15.0" angle="1.5707964" />
+    </filters>
+    <view value="-0.6 -0.7 0.0 1.0 3.0 -17.0" />
+  </polarization>
+</wsl>

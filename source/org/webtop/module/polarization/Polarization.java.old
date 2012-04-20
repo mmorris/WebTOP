@@ -1,0 +1,115 @@
+package webtop.polarization;
+
+import java.awt.event.KeyEvent;
+
+import webtop.component.*;
+import webtop.util.*;
+import webtop.vrml.*;
+import webtop.vrml.widget.NavigationPanel;
+import webtop.util.script.NavigationPanelScripter;
+import webtop.wsl.client.*;
+import webtop.wsl.script.WSLNode;
+import webtop.wsl.event.*;
+
+public class Polarization extends java.applet.Applet implements WSLModule {
+	private EAI eai;
+	private Engine engine;
+	private Animation anim;
+	private SourcePanel sourcePanel;
+	private ControlPanel controlPanel;
+	private FilterPanel filterPanel;
+	private StatusBar statusBar;
+	private EventManager eManager;
+	private WSLPanel wslPanel;
+	private WSLPlayer wslPlayer;
+	//Remove once WAppletized:
+	private NavigationPanelScripter nps;
+
+	public void init() {
+		wslPlayer = new WSLPlayer(this);
+		wslPanel = new WSLPanel(wslPlayer);
+
+		setForeground(WApplet.FOREGROUND);
+		setBackground(WApplet.BACKGROUND);
+		setLayout(new VerticalLayout());
+
+		sourcePanel = new SourcePanel(this);
+		add(sourcePanel);
+
+		controlPanel = new ControlPanel(this);
+		add(controlPanel);
+
+		Separator sep = new Separator(getSize().width,4);
+		add(sep);
+
+		filterPanel = new FilterPanel(this);
+		add(filterPanel);
+
+		statusBar = new StatusBar("Welcome to the Polarization Module");
+		statusBar.setPreferredSize(new java.awt.Dimension(getSize().width, 20));
+		statusBar.setForeground(WApplet.STATUS);
+		add(statusBar);
+
+		if(wslPanel!=null) add(wslPanel);
+	}
+
+	public void start() {
+		eai = new EAI(this);
+
+		NavigationPanel navPanel=new NavigationPanel(eai,eai.getNode("NavPanel"),(short)0,"Changes viewpoints.");
+		nps=new NavigationPanelScripter(navPanel,wslPlayer);
+
+		eManager = new EventManager(this);
+		engine = new Engine(this);
+
+		sourcePanel.setEngine(engine);
+		sourcePanel.eaiSetup(eai);
+		controlPanel.setEngine(engine);
+		controlPanel.setFilterPanel(filterPanel);
+		filterPanel.setEngine(engine);
+
+		eManager.setEngine(engine);
+		eManager.setSourcePanel(sourcePanel);
+		eManager.setControlPanel(controlPanel);
+		eManager.setFilterPanel(filterPanel);
+
+		wslPlayer.loadParameter(this);
+		
+		new RecursiveListener(this,new ViewpointReader(navPanel,KeyEvent.VK_F12,KeyEvent.SHIFT_MASK)).setup();
+		new RecursiveListener(this,new ViewpointReset(navPanel,KeyEvent.VK_F12,0)).setup();
+		
+		anim=new Animation(engine,null,Engine.PERIOD);
+		anim.setMinDelay(Engine.MIN_DELAY);
+		anim.setPlaying(true);
+	}
+
+	public void stop() {anim.kill();}
+
+	//This is called by the ControlPanel.
+	public void reset() {
+		engine.reset(true);
+		controlPanel.reset();
+		sourcePanel.reset();
+		filterPanel.reset();
+	}
+
+	public SourcePanel getSourcePanel() {return sourcePanel;}
+	public ControlPanel getControlPanel() {return controlPanel;}
+	public FilterPanel getFilterPanel() {return filterPanel;}
+	public EventManager getEventManager() {return eManager;}
+	public EAI getEAI() {return eai;}
+	public WSLPlayer getWSLPlayer() {return wslPlayer;}
+
+	public void setStatusText(String text) {statusBar.setText(text);}
+	public void setWarningText(String text) {statusBar.setWarningText(text);}
+	public void resetStatus() {statusBar.reset();}
+
+	//WSL
+	public String getWSLModuleName() {return "polarization";}
+
+	public WSLNode toWSLNode() {
+		final WSLNode node=engine.toWSLNode();
+		nps.addTo(node);
+		return node;
+	}
+}

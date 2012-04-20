@@ -1,0 +1,28 @@
+<wsl>
+  <rayleigh wavelength="550.0" z="50.0" diameter="2.5" hideWidgets="Hide Widgets" angle="2.0E-5">
+    <view value="-0.53 -0.5 0.0 -1.5 -1.0 -12.0" />
+  </rayleigh>
+  <script>
+    <actionPerformed param="diameter" value="2.6" timeStamp="500" />
+    <actionPerformed param="diameter" value="2.7" timeStamp="500" />
+    <actionPerformed param="diameter" value="2.8" timeStamp="500" />
+    <actionPerformed param="diameter" value="2.9" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.0" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.1" timeStamp="5000" />
+    <actionPerformed param="diameter" value="3.2" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.3" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.4" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.5" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.6" timeStamp="5000" />
+    <actionPerformed param="diameter" value="3.7" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.8" timeStamp="500" />
+    <actionPerformed param="diameter" value="3.9" timeStamp="500" />
+    <actionPerformed param="diameter" value="4.0" timeStamp="500" />
+    <actionPerformed param="diameter" value="4.1" timeStamp="5000" />
+    <actionPerformed param="diameter" value="4.2" timeStamp="500" />
+    <actionPerformed param="diameter" value="4.3" timeStamp="500" />
+    <actionPerformed param="diameter" value="4.4" timeStamp="500" />
+    <actionPerformed param="diameter" value="4.5" timeStamp="500" />
+    <scriptEnded timeStamp="225" />
+  </script>
+</wsl>

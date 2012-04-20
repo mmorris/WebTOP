@@ -1,0 +1,432 @@
+PROTO	haxis []{Transform	{ rotation 0 0 1 1.5707963267949  children [DEF myshape Shape	{geometry Cylinder	{ radius 0.01 height	16 }appearance Appearance	{material Material	{diffuseColor 0 0 0 emissiveColor	0 0 0}}}]}}
+PROTO RotationWidget [
+  field        SFFloat     minAngle            0
+  eventIn      SFFloat     set_minAngle
+  eventOut     SFFloat     minAngle_changed
+  field        SFFloat     maxAngle            -1
+  eventIn      SFFloat     set_maxAngle
+  eventOut     SFFloat     maxAngle_changed
+  field        SFFloat     offset              0
+  eventIn      SFFloat     set_offset
+  eventOut     SFFloat     offset_changed
+  exposedField SFBool      enabled             TRUE
+  eventOut     SFBool      isActive
+  eventOut     SFBool      isOver
+  eventIn      SFBool      set_isOver
+  eventIn      SFBool      set_isActive
+  eventOut     SFRotation  rotation_changed
+  eventOut     SFVec3f     trackPoint_changed
+  field        MFNode      normalGeometry      []
+  field        MFNode      overGeometry        []
+  field        MFNode      clickedGeometry     []
+]
+{
+  Group {
+    children [
+      DEF Touch-SENSOR TouchSensor {
+        enabled IS enabled
+        isOver IS isOver
+      }
+      DEF Rotational-SENSOR PlaneSensor {
+        isActive IS isActive
+        enabled IS enabled
+        maxPosition 1000 1000
+        minPosition -1000 -1000
+        offset 1000 0 0
+      }
+      DEF Rotational-TRANSFORM Transform {
+        children DEF Rotational-SWITCH Switch {
+          whichChoice 0
+          choice [
+            Group { children IS normalGeometry }
+            Group { children IS overGeometry }
+            Group { children IS clickedGeometry }
+          ]
+        }
+      }
+    ]
+  }
+  DEF Rotational-SCRIPT Script {
+    field    SFFloat minAngle IS minAngle
+    eventIn  SFFloat set_minAngle IS set_minAngle
+    eventOut SFFloat minAngle_changed IS minAngle_changed
+    field    SFFloat maxAngle IS maxAngle
+    eventIn  SFFloat set_maxAngle IS set_maxAngle
+    eventOut SFFloat maxAngle_changed IS maxAngle_changed
+    field    SFFloat trackOffset 0
+    field    SFFloat offset IS offset
+    eventIn  SFFloat set_offset IS set_offset
+    eventOut SFFloat offset_changed IS offset_changed
+    eventIn  SFVec3f set_translation
+    eventIn  SFVec3f set_hitPoint
+    eventIn  SFBool  set_touchSensorIsActive
+    eventIn  SFBool  set_touchSensorIsOver
+    eventIn  SFBool  set_planeSensorIsActive
+    eventIn  SFBool  set_isActive IS set_isActive
+    eventIn  SFBool  set_isOver IS set_isOver
+    eventOut SFRotation rotation_changed IS rotation_changed
+    eventOut SFVec3f    trackPoint_changed IS trackPoint_changed
+    eventOut SFVec3f    internalOffset_changed
+    eventOut SFInt32    whichChoice_changed
+    field    SFBool  setOffset FALSE
+    field    SFFloat lastOffset 0
+    field    SFFloat lastAngle  0
+    field    SFBool  isActive FALSE
+    field    SFBool  isOver   FALSE
+    field    MFNode  normalGeometry IS normalGeometry
+    field    MFNode  overGeometry IS overGeometry
+    field    MFNode  clickedGeometry IS clickedGeometry
+    field    SFNode  Rotational-SWITCH USE Rotational-SWITCH
+    url "javascript:
+      function initialize() {
+        rotation_changed = new SFRotation(0, 0, 1, offset);
+        internalOffset_changed = new SFVec3f(1000, 0, 0);
+        trackOffset = offset;
+        lastOffset = offset;
+        lastAngle = offset;
+        whichChoice_changed = 0;
+      }
+      function set_translation(value, time) {
+        angle = Math.atan2(value[1], value[0]);
+        if(angle<0) angle = 2*Math.PI + angle;
+        if(angle>=0 && angle<Math.PI/2.0 && lastAngle>=Math.PI*3.0/2.0)
+          trackOffset += angle + Math.PI*2.0 - lastAngle;
+        else if(angle>=Math.PI*3.0/2.0 && lastAngle>=0 && lastAngle<Math.PI/2.0)
+          trackOffset += angle - lastAngle - Math.PI*2.0;
+        else
+          trackOffset += angle - lastAngle;
+        offset = trackOffset;
+        if(minAngle<maxAngle) {
+          if(offset<minAngle) offset = minAngle;
+          if(trackOffset<minAngle-Math.PI*2.0) trackOffset += Math.PI*2.0;
+        }
+        if(maxAngle>minAngle) {
+          if(offset>maxAngle) offset = maxAngle;
+          if(trackOffset>maxAngle+Math.PI*2.0) trackOffset -= Math.PI*2.0;
+        }
+        lastOffset = offset;
+        lastAngle = angle;
+        rotation_changed[3] = offset;
+        offset_changed = offset;
+      }
+      function set_hitPoint(value, time) {
+        if(setOffset) {
+          setOffset = FALSE;
+          internalOffset_changed[0] = value[0];
+          internalOffset_changed[1] = value[1];
+          length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);
+          lastAngle = Math.atan2(value[1], value[0]);
+          if(lastAngle<0) lastAngle = Math.PI*2.0 + lastAngle;
+        }
+      }
+      function set_offset(value, time) {
+        offset = value;
+        trackOffset = offset;
+        rotation_changed[3] = offset;
+        internalOffset_changed[0] = 1000 * Math.cos(offset);
+        internalOffset_changed[1] = 1000 * Math.sin(offset);
+      }
+      function set_touchSensorIsActive(value, time) {
+        isActive = value;
+        if(value) setOffset = TRUE;
+      }
+      function set_touchSensorIsOver(value, time) {
+        isOver = value;
+        if(value && !isActive && overGeometry.length > 0) {
+          whichChoice_changed = 1;
+        }
+        else if(!value && !isActive) {
+          whichChoice_changed = 0;
+        }
+      }
+      function set_planeSensorIsActive(value, time) {
+        if(!value) {
+          trackOffset = offset;
+          lastOffset = offset;
+          whichChoice_changed = 0;
+       }
+        else {
+          if(clickedGeometry.length >0) {
+            whichChoice_changed = 2;
+          }
+        }
+      }
+      function set_isActive(value, time) {
+        isActive = value;
+        if(value && clickedGeometry.length > 0) whichChoice_changed = 2;
+        else if(!value) {
+          if(isOver && overGeometry.length > 0) whichChocie_changed = 1;
+          else whichChoice_changed = 0;
+        }
+      }
+      function set_isOver(value, time) {
+        isOver = value;
+        if(value && !isActive && overGeometry.length > 0) whichChoice_changed = 1;
+        else if(!value) {
+          if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;
+          else whichChoice_changed = 0;
+        }
+      }
+    "
+  }
+  ROUTE Touch-SENSOR.hitPoint_changed TO Rotational-SCRIPT.set_hitPoint
+  ROUTE Touch-SENSOR.isActive TO Rotational-SCRIPT.set_touchSensorIsActive
+  ROUTE Touch-SENSOR.isOver TO Rotational-SCRIPT.set_touchSensorIsOver
+  ROUTE Rotational-SENSOR.translation_changed TO Rotational-SCRIPT.set_translation
+  ROUTE Rotational-SENSOR.isActive TO Rotational-SCRIPT.set_planeSensorIsActive
+  ROUTE Rotational-SCRIPT.rotation_changed TO Rotational-TRANSFORM.set_rotation
+  ROUTE Rotational-SCRIPT.internalOffset_changed TO Rotational-SENSOR.set_offset
+  ROUTE Rotational-SCRIPT.whichChoice_changed TO Rotational-SWITCH.set_whichChoice
+}
+PROTO Polarizer [ field        SFFloat z         0
+                  field        SFFloat angle     0
+                  exposedField SFInt32 state     0
+                  exposedField SFBool  enabled   TRUE
+                  eventIn      SFFloat set_z
+                  eventIn      SFFloat set_angle
+                  eventIn      SFBool  set_angleHighlighted
+                  eventIn      SFBool  set_zHighlighted
+                  eventOut     SFBool  isOver
+                  eventOut     SFFloat z_changed
+                  eventOut     SFFloat angle_changed
+                  eventOut     SFBool  z_isOver
+                  eventOut     SFBool  z_isActive
+                  eventOut     SFBool  angle_isOver
+                  eventOut     SFBool  angle_isActive       ]
+{
+  DEF Polarizer-SWITCH Switch {
+    whichChoice IS state
+    choice [
+      # Polarizer when not selected
+      Transform {
+        rotation 1 0 0 1.5707963
+        children DEF Box-TRANSFORM Transform {
+          children [
+            DEF Polarizer-TOUCHSENSOR TouchSensor {
+              isOver IS isOver
+              enabled IS enabled
+            }
+            Transform {
+              rotation 1 0 0 -1.5707963
+              children DEF Box-SHAPE Shape {
+                appearance Appearance {
+                  material Material {
+                    diffuseColor 0.2 0.5 0.9
+                    transparency 0.9
+                  }
+                }
+                geometry Box { size 11 11 0.05 }
+              }
+            }
+            Transform {
+              rotation 1 0 0 -1.5707963
+              children DEF Line-TRANSFORM Transform {
+                children [
+                  DEF Line-SHAPE Shape {
+                    appearance Appearance { material Material { emissiveColor 0 0 0 } }
+                   geometry Cylinder {
+										 radius 0.01  height 8 }}
+                  DEF TA-TRANSFORM Transform {
+                    translation 9 0 0
+                    children DEF TA-SHAPE Shape {
+                      appearance Appearance {
+                        material Material { emissiveColor 0 0 0  diffuseColor 0 0 0}
+                      }
+                      geometry Text { string "TA" }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+      # Polarizer when selected
+      Group {
+        children [
+          # Angle Widget
+          Transform {
+            rotation 1 0 0 1.5707963
+            children DEF Angle_SELECTED-TRANSFORM Transform {
+              children Transform {
+                rotation 1 0 0 -1.5707963
+                children [
+                  DEF TA_HIGHLIGHTED-TRANSFORM Transform {
+                    children Transform {
+                      translation 9 0 0
+                      children USE TA-SHAPE
+                    }
+                  }
+                  DEF Angle-ROTATIONWIDGET RotationWidget {
+                    minAngle 0
+                    maxAngle 6.2831853
+                    enabled IS enabled
+                    isOver IS angle_isOver
+                    isActive IS angle_isActive
+                    offset IS angle
+                    offset_changed IS angle_changed
+                    set_isActive IS set_angleHighlighted
+                    set_offset IS set_angle
+                    normalGeometry [
+                      Transform {
+                        translation -8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children DEF Angle_NORMAL-SHAPE Shape {
+                          appearance DEF Appearance-NORMAL Appearance {
+                            material Material { diffuseColor 0.8 0.8 1.0 }
+                          }
+                          geometry Cylinder { radius 0.2 height 0.8 }
+                        }
+                      }
+                      Transform {
+                        translation 8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children USE Angle_NORMAL-SHAPE
+                      }
+                      haxis{}#USE Line-SHAPE
+                    ]
+                    clickedGeometry [
+                      Transform {
+                        translation -8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children DEF Angle_HIGHLIGHTED-SHAPE Shape {
+                          appearance DEF Appearance-HIGHLIGHTED Appearance {
+                            material Material { diffuseColor 1.0 1.0 0.4 }
+                          }
+                          geometry Cylinder { radius 0.2 height 0.8 }
+                        }
+                      }
+                      Transform {
+                        translation 8 0 0
+                        rotation 1 0 0 -1.5707963
+                        children USE Angle_HIGHLIGHTED-SHAPE
+                      }
+                      USE Line-SHAPE
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+          # Z Widget
+          Transform {
+            rotation 1 0 0 1.5707963
+            children [
+              Transform {
+                rotation 0 1 0 -1.5707963
+                children [
+                  TouchSensor {
+                    enabled IS enabled
+                    isOver IS z_isOver
+                  }
+                  DEF Z-PLANESENSOR PlaneSensor {
+                    minPosition 0 0
+                    maxPosition 0 20
+                    enabled IS enabled
+                    isActive IS z_isActive
+                  }
+                  DEF Z-TRANSFORM Transform {
+                    children DEF Z-SWITCH Switch {
+                      whichChoice 0
+                      choice [
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z-SHAPE Shape {
+                              appearance USE Appearance-NORMAL
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                            children USE Z-SHAPE
+                          }
+                        ] }
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z_HIGHLIGHTED-SHAPE Shape {
+                              appearance USE Appearance-HIGHLIGHTED
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                            children USE Z_HIGHLIGHTED-SHAPE
+                          }
+                        ] }
+                      ]
+                    }
+                  }
+                ]
+              }
+              DEF Box_SELECTED-TRANSFORM Transform {
+                children Transform {
+                  rotation 1 0 0 -1.5707963
+                  children USE Box-SHAPE
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  DEF Polarizer-SCRIPT Script {
+    field     SFFloat z IS z
+    eventIn   SFBool  isOver
+    eventIn   SFFloat set_z IS set_z
+    eventIn   SFVec3f set_zTranslation
+    eventIn   SFBool  z_isActive
+    eventIn   SFBool  set_zHighlighted IS set_zHighlighted
+    eventOut  SFInt32 whichChoice_changed
+    eventOut  SFInt32 zWhichChoice_changed
+    eventOut  SFVec3f zOffset_changed
+    eventOut  SFFloat z_changed IS z_changed
+    url "javascript:
+      function initialize() {
+        zOffset_changed = new SFVec3f(0, z, 0);
+      }
+      function isOver(value, time) {
+        if(value) {
+          whichChoice_changed = 1;
+        }
+      }
+      function set_z(value, time) {
+        zOffset_changed[1] = value;
+      }
+      function set_zTranslation(value, time) {
+        z_changed = value[1];
+      }
+      function z_isActive(value, time) {
+        zWhichChoice_changed = value ? 1 : 0;
+      }
+      function set_zHighlighted(value, time) {
+        zWhichChoice_changed = value ? 1 : 0;
+      }
+    "
+  }
+  ROUTE Polarizer-SCRIPT.zWhichChoice_changed TO Z-SWITCH.whichChoice
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-PLANESENSOR.offset
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Z-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Box_SELECTED-TRANSFORM.set_translation
+  ROUTE Polarizer-SCRIPT.zOffset_changed TO Angle_SELECTED-TRANSFORM.set_translation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO TA_HIGHLIGHTED-TRANSFORM.set_rotation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO Line-TRANSFORM.set_rotation
+  ROUTE Z-PLANESENSOR.isActive TO Polarizer-SCRIPT.z_isActive
+  ROUTE Z-PLANESENSOR.translation_changed TO Z-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Box_SELECTED-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Box-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Angle_SELECTED-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Polarizer-SCRIPT.set_zTranslation
+}
+

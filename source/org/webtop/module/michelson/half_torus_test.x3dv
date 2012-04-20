@@ -1,0 +1,36 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+EXTERNPROTO HalfTorus [
+    initializeOnly SFVec3f    torusTranslation    
+    initializeOnly SFRotation torusRotation  
+    initializeOnly SFVec3f    torusScale     
+    initializeOnly SFNode     torusMaterial  
+]
+"half_torus.x3dv#HalfTorus"
+
+NavigationInfo {
+	headlight FALSE
+	visibilityLimit 100.0
+	type ["EXAMINE", "ANY"]
+	avatarSize [0.25, 1.75, 0.75]
+} 
+ 
+Background {
+	groundColor 0.057 0.221 0.4
+	skyColor 0.057 0.221 0.4
+}
+
+HalfTorus {
+    torusRotation 0 0 1 1.57
+    torusTranslation 5 0 0 
+    torusMaterial Material {
+        diffuseColor .02 .5 .12
+    	specularColor .76 .76 .76
+    	emissiveColor 0 .16 0
+    	ambientIntensity 0
+    	shininess .15
+    	transparency .31
+    }
+}

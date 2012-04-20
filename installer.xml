@@ -1,0 +1,116 @@
+<!-- File Description: Prototype WebTOP IzPack installer XML. -->
+<!-- Author: Paul Cleveland -->
+<!-- IMPORTANT:  This file is designed to be placed in the root of 
+                 the repository tree. 
+-->
+
+<installation version="1.0">
+    <!-- Obviously, the information section -->
+    <info>
+        <appname>WebTOP</appname>
+        <appversion>7.0</appversion>
+        <!-- Not sure what to put here
+        <appsubpath></subpath>
+        -->
+        <url>http://webtop.msstate.edu</url>
+        <authors>
+            <author name="Paul Cleveland" email="cleveland.paul@gmail.com"/>
+            <author name="Matt Hogan" email="matt@blah.com"/>
+            <author name="Brian Thomas" email="brian@blah.com"/>
+            <author name="Shane Fry" email="shane@blah.com"/>
+            <author name="Jeremy Davis" email="jeremy@blah.com"/>
+            <author name="Peter Gilbert" email="peter@blah.com"/>
+        </authors>
+        <javaversion>1.5</javaversion>  <!-- Minimum Java version -->
+        <uninstaller write="yes"/>  <!-- Create an uninstaller also. -->
+    </info>
+    
+    
+    <!-- GUI setup -->
+    <guiprefs resizable="no" width="800" height="600"></guiprefs>
+    
+    <!-- Language selection. English only since no multi-lingual modules -->
+    <locale>
+        <langpack iso3="eng"/>
+        <!-- Example for Spanish:
+        <langpack iso3="spa"/>
+        -->
+    </locale>
+    
+    <resources>
+    
+        <!--<res src="$doc_srcdir\install_readme.html" id="HTMLInfoPanel.info"/>   <!-- Content for the Hello Panel. -->
+        <!--<res src="$doc_srcdir\webtop_license.txt" id="LicencePanel.licence"/>  <!-- Content for Licence Panel.  -->
+        <res src="doc\install_readme.html" id="HTMLInfoPanel.info"/>   <!-- Content for the Hello Panel. -->
+        <res src="doc\webtop_license.txt" id="LicencePanel.licence"/>  <!-- Content for Licence Panel.  -->
+    </resources>
+    
+    <!-- Ordered list of panels to be displayed upon execution. -->
+    <panels>
+        <panel classname="HelloPanel"/>        <!-- Splash screen type panel. -->
+        <panel classname="HTMLInfoPanel"/>     <!-- Readme for the installer -->
+        <panel classname="LicencePanel"/>      <!-- Software licence. -->
+        <panel classname="PacksPanel"/>        <!-- Installation options selction panel. -->
+        <panel classname="TargetPanel"/>       <!-- Choose installation path. (I think.) -->
+        <panel classname="InstallPanel"/>      <!-- The 'Insall it already' Panel. -->
+        <panel classname="SimpleFinishPanel"/> <!-- Installation acknowledgement. -->
+    </panels>
+    
+    <!-- Individual installation options. -->
+    <!-- Eventually we could probably use these for individual module installation. -->
+    <!-- NOTE:  There are pack update features available in IzPack.  Investigate later. -->
+    <packs>
+        <!-- Note that theses packs use ANT fileset syntax. -->
+        
+        <!-- Xj3D libraries. -->
+        <pack name="Xj3D" required="yes">
+            <description>Xj3D Libraries (required)</description>
+            <fileset dir="lib" targetdir="$INSTALL_PATH/xj3d">
+                <include name="*"/>  <!-- We want it all.  Check the wildcard syntax. -->
+            </fileset>
+        </pack>
+        
+        <!-- JOGL libraries.  Can do selective installation based on OS. -->
+        <!-- Must also come up with a way to set system environment variables. -->
+        <!-- Otherwise the user will have to set the variables. Could execute 
+             using a shell script that first sets a variable, then executes 
+             the module using 'java -jar'.  Also look into JAR manifest options. -->
+        <pack name="JOGL" required="yes">
+            <description>OpenGL bindings for Java (required)</description>'
+            <!-- Now we selectively choose which natives to include. -->
+            <!-- Windows -->
+            <fileset dir="libnative" targetdir="$INSTALL_PATH/jogl">
+                <os family="windows"/>
+                <include name="*.dll"/>  
+            </fileset>
+            <!-- Mac -->
+            <fileset dir="libnative" targetdir="$INSTALL_PATH/jogl">
+                <os family="mac"/>
+                <include name="*.so"/>  <!-- Must also come up with a way to set system environment variables, unless JAR manifests have a way to do this, too. -->
+            </fileset>
+            <!-- Unix-like (Same as Mac, but have to copy the fileset anyway. -->
+            <fileset dir="libnative" targetdir="$INSTALL_PATH/jogl">
+                <os family="unix"/>
+                <include name="*.o"/>  <!-- Must also come up with a way to set system environment variables, unless JAR manifests have a way to do this, too. -->
+            </fileset>
+        </pack>
+        
+        <!-- Include the WebTOP core packages (org.webtop.util, .component, .x3d, etc...). -->
+        <pack name="WebTOP Core" required="yes"> 
+            <description>WebTOP Core Libraries (required)</description>
+            <fileset dir="jars" targetdir="$INSTALL_PATH/wtcore">  <!-- My suggestion for seperating the core JARS from the modules. The modules' executable JARs will need this in their manifest classpath. -->
+                <include name="*.jar"/>  <!-- Currently (7/15/2007) this will get SDL, too. -->
+            </fileset>
+        </pack>
+        
+        <!-- An example module as a 'pack.' Repeat this for other modules.-->
+        <pack name="Fresnel Circular" required="no" preselected="yes">
+            <description>A description of the features of the Fresnel Circular module.</description>
+            <fileset dir="module_jars" targetdir="$INSTALL_PATH">  
+                <include name="circular.jar"/>   <!-- Specific module JAR filename. -->
+            </fileset>
+        </pack>
+    </packs>
+    
+    <!-- End of installation file. -->
+</installation>
