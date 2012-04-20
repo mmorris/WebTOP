@@ -1,0 +1,22 @@
+distance_tooltip,Use these red cones to adjust the distance of the observation screen from the aperture.
+wavelength_tooltip,The wheel modifies the wavelength of the light -- clockwise increases wavelength
+width_tooltip,Use this pair of red cones to adjust the width of the slits.
+distance2_tooltip,Use this pair of blue cones to adjust the distance between the slits.
+calculating_msg,Calculating... Please wait.
+welcome_msg,Welcome to WebTOP - Fraunhofer Diffraction (N Slit) Module
+slit_err,Must have a positive number of slits.
+wavelength_err,The wavelength must be between 400 and 700 nanometers (visible light).
+slit_width_err,Each slit must be no more than .25 millimeters wide.
+slit_extend_err,Slits may not overlap or extend beyond the edge of the aperture plane.
+screen_err,The observation screen must be between one and two meters from the slits.
+slits_label,Slits:
+wavelength_label,Wavelength:
+width_label,Width:
+distance_label,Distance:
+z_label,Z:
+arrangement_err,That arrangement of slits would be larger than the aperture. Please decrease the width, distance, and/or number of slits.
+reset_label,Reset
+hide_label,Hide Widgets
+show_label,Show Widgets
+position_label,Position on screen: 
+intensity_label,mm; intensity = 

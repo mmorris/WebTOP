@@ -1,0 +1,2 @@
+Reduce number of rays to cast while dragging a widget
+Draw screen with ElevationGrid or the like (allows intensity changes)

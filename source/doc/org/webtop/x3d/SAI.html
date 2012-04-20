@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML><!--JBuilder QuickDoc-->
+<HEAD>
+<TITLE>Class org.webtop.x3d.SAI</TITLE><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+</HEAD>
+<BODY>
+
+<H2>
+<FONT SIZE="-1">org.webtop.x3d</FONT>
+<BR>Class SAI</H2>
+<DL>
+<DT>public class <B>SAI</B>
+</DL>
+<DL><DD><p>Title: </p> <p>Description: </p> <p>Copyright: Copyright (c) 2006</p> <p>Company: </p><DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Version:</B><DD>1.0</DD>
+<DT><B>Author:</B><DD>Paul Cleveland</DD>
+</DL>
+<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR BGCOLOR="#CCCCFF"><TD COLSPAN=1><FONT SIZE="+2">
+<B>Method Detail</B>
+</FONT></TD></TR></TABLE>
+
+<A NAME="getInputField(java.lang.String, java.lang.String)"></A>
+
+<H3>getInputField</H3>
+<PRE>
+public org.web3d.x3d.sai.X3DField <B>getInputField</B>(java.lang.String&nbsp;nodeName,
+                                                java.lang.String&nbsp;fieldName)</PRE>
+<DL><DD>Returns an input field <code>fieldName</code> from node <code>nodeName</code>.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>nodeName</CODE> - String containing the name of the node containing the field.</DD>
+<DD><CODE>fieldName</CODE> - String containing the name of the field.</DD>
+<DT><B>Returns:</B><DD>X3DField corresponding to the field.</DD>
+</DL>
+<HR>
+
+<A NAME="getInputField(org.webtop.x3d.NamedNode, java.lang.String)"></A>
+
+<H3>getInputField</H3>
+<PRE>
+public org.web3d.x3d.sai.X3DField <B>getInputField</B>(org.webtop.x3d.NamedNode&nbsp;nn,
+                                                java.lang.String&nbsp;fieldName)</PRE>
+<DL><DD>Returns an input field <code>fieldname</code> from <code>NamedNode nn</code>.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>nn</CODE> - NamedNode referring to the node containing the field.</DD>
+<DD><CODE>fieldName</CODE> - String containing the name of the field.</DD>
+<DT><B>Returns:</B><DD>X3DField corresponding to the field.</DD>
+</DL>
+<HR>
+
+<A NAME="getOutputField(java.lang.String, java.lang.String, org.web3d.x3d.sai.X3DFieldEventListener, java.lang.Object)"></A>
+
+<H3>getOutputField</H3>
+<PRE>
+public org.web3d.x3d.sai.X3DField <B>getOutputField</B>(java.lang.String&nbsp;nodeName,
+                                                 java.lang.String&nbsp;fieldName,
+                                                 org.web3d.x3d.sai.X3DFieldEventListener&nbsp;fieldListener,
+                                                 java.lang.Object&nbsp;data)</PRE>
+<DL><DD>Returns an output field <code>fieldName</code> from node <code>nodeName</code>.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>nodeName</CODE> - String containing the name of the node containing the field.</DD>
+<DD><CODE>fieldName</CODE> - String containing the name of the field.</DD>
+<DT><B>Returns:</B><DD>X3DField corresponding to the field</DD>
+</DL>
+<HR>
+
+<A NAME="getOutputField(org.webtop.x3d.NamedNode, java.lang.String, org.web3d.x3d.sai.X3DFieldEventListener, java.lang.Object)"></A>
+
+<H3>getOutputField</H3>
+<PRE>
+public org.web3d.x3d.sai.X3DField <B>getOutputField</B>(org.webtop.x3d.NamedNode&nbsp;nn,
+                                                 java.lang.String&nbsp;fieldName,
+                                                 org.web3d.x3d.sai.X3DFieldEventListener&nbsp;fieldListener,
+                                                 java.lang.Object&nbsp;data)</PRE>
+<DL><DD>Returns an output field <code>fieldName</code> from <code>NamedNode nn</code>.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>nn</CODE> - NamedNode referring to the node containing the field.</DD>
+<DD><CODE>fieldName</CODE> - String containing the name of the field.</DD>
+<DT><B>Returns:</B><DD>X3DField corresponding to the field</DD>
+</DL>
+<HR>
+
+<A NAME="setMultipleVectors(org.web3d.x3d.sai.X3DField, float[][])"></A>
+
+<H3>setMultipleVectors</H3>
+<PRE>
+public static void <B>setMultipleVectors</B>(org.web3d.x3d.sai.X3DField&nbsp;target,
+                                      float[][]&nbsp;vectors)</PRE>
+<DL><DD>Takes the an X3DField <code>target</code> referencing either a MFVec2f, MFVec3f, or MFColor, casts it appropriately, and sets it. Throws an IllegalArgument exception if not one of these.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>target</CODE> - X3DField to be set</DD>
+<DD><CODE>vectors</CODE> - float[][] containing the values</DD>
+</DL>
+<HR>
+
+<A NAME="setMultipleFloats(org.web3d.x3d.sai.X3DField, float[])"></A>
+
+<H3>setMultipleFloats</H3>
+<PRE>
+public static void <B>setMultipleFloats</B>(org.web3d.x3d.sai.X3DField&nbsp;target,
+                                     float[]&nbsp;floats)</PRE>
+<DL><DD>Takes an X3DField <code>target</code> referencing a MFFloat, casts it, and sets it.<DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>target</CODE> - X3DField to be set</DD>
+<DD><CODE>floats</CODE> - float[] containing the values</DD>
+</DL>
+<HR>
+
+<A NAME="getGeometricProperty(org.webtop.x3d.NamedNode, java.lang.String)"></A>
+
+<H3>getGeometricProperty</H3>
+<PRE>
+public static org.web3d.x3d.sai.X3DField <B>getGeometricProperty</B>(org.webtop.x3d.NamedNode&nbsp;geometry,
+                                                              java.lang.String&nbsp;property)</PRE>
+<DL><DD>Returns the X3DField for the geometric property <code>property</code> of the geometry node contained in <code>geometry</code> cast as it's appropriate type:<br/> <ul><li>MFColor if <code>property</code> = &quot;color&quot;.</li> <li>MFVec3f if <code>property</code> = &quot;coord&quot; or &quot;normal&quot;.</li> <li>MFVec2f if <code>property</code> = &quot;texCoord&quot;.</li></ul><DL><DD></DD></DL></DD>
+</DL>
+<DL><DT><B>Parameters:</B><DD><CODE>geometry</CODE> - NamedNode containing the geometry X3DNode</DD>
+<DD><CODE>property</CODE> - String containing the property name</DD>
+<DT><B>Returns:</B><DD>X3DField of the property cast as it's appropriate type.</DD>
+</DL>
+<HR>
+
+</BODY>
+</HTML>

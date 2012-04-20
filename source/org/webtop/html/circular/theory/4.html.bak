@@ -1,0 +1,250 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<title>Fresnel Diffraction, Circular Aperture-Off-axis Intensity</title>
+
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+document.write(stdMenu(1,'Fresnel Circular',2,true));
+document.write(moduleList(2,true));
+</script>
+
+<div class=module id=vrml></div><p>&nbsp;
+<center>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tablemain" id="tablemain">
+<p><big><font color="#800000"><big><b>Fresnel Diffraction, Circular Aperture: Theory</b> </big></font></big><br>
+<big><font color="#008040"><b>Off-axis Intensity</b></font></big></p>
+
+<p>Let us now consider off-axis (<font FACE="Symbol"><i>r<font FACE="Symbol">¹</font> </i></font>0)
+observation points in the region to the right of the aperture. Such points lie in one of
+three different regions: (a) the &quot;lit&quot; region,0&lt;<font FACE="Symbol"><i>r</i></font>&lt;<i>R</i>,
+(b) the &quot;shadow&quot; region, <font FACE="Symbol"><i>r</i></font>&gt;<i>R</i>, or (c)
+the shadow boundary region, <font FACE="Symbol"><i>r</i></font>=<i>R</i>. The formula we
+will use to evaluate the intensity at various points will be different in these different
+regions.</p>
+
+<p>In what subsequent formulas, the following parameters will be used: <font FACE="Symbol"><i>s</i></font>=<font FACE="Symbol"><i> r</i></font>/R, <i>u</i>=2<i><font FACE="Symbol">p</font>N</i>, and v=2<i><font FACE="Symbol">p</font>N<font FACE="Symbol">s</font></i>, where N is the Fresnel number. In
+each region we are using Eq. (<a href="1.html#1.2">1.2</a>) to calculate
+the electric field and the formula</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory20.gif" WIDTH="204" HEIGHT="25"></td>
+    <td width="20%"><p align="right">(<a name="4.1">4.1</a>)</td>
+  </tr>
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>to evaluate the intensity.</p>
+<b>
+
+<p><font color="#800080">A. Intensity in the Lit Region</font></b></p>
+
+<p>In this region we find that the intensity is give by the formula:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory21.gif" WIDTH="522" HEIGHT="29"></td>
+    <td width="20%"><p align="right">(<a name="4.2">4.2</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>where <i>V</i><sub>0</sub>(<i>u,v</i>) and <i>V</i><sub>1</sub>(<i>u,v</i>) are two
+particular examples of Lommel&#146;s functions of two variables:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory22.gif" WIDTH="232" HEIGHT="45"></td>
+    <td width="20%"><p align="right">(4.3)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>Here <i>J<sub>2n+m</sub></i>(<i>v</i>) is the Bessel function of the first kind of
+order 2<i>m</i>+<i>n</i>.</p>
+<b>
+
+<p><font color="#800080">B. Intensity in the Shadow Region</font></b></p>
+
+<p>In this region we find that the intensity is give by the formula:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory23.gif" WIDTH="205" HEIGHT="25"></td>
+    <td width="20%"><p align="right">(4.4)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>where <i>U</i><sub>1</sub>(<i>u,v</i>) and <i>U</i><sub>2</sub>(<i>u,v</i>) are two
+particular examples of Lommel&#146;s functions of two variables:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory24.gif" WIDTH="236" HEIGHT="45"></td>
+    <td width="20%"><p align="right">(4.5)</td>
+  </tr>
+</table>
+</center></div><b>
+
+<p><font color="#800080">C. Intensity in the Shadow Boundary Region</font></b></p>
+
+<p>In this region we find that the intensity is give by the formula:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory25.gif" WIDTH="245" HEIGHT="25"></td>
+    <td width="20%"><p align="right">(4.6)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>Figures 4 &#150;6 below show the intensity patterns obtained when the Fresnel numbers
+are, respectively, five, six, and seven. In each figure the top part displays a plot of
+the intensity as a function of position along the x-axis in the observation plane. The
+bottom portion of each figure shows a WebTOP visualization of what the pattern on the
+screen will look like. Note that in <a href="#fig4">Fig. 4</a> and <a href="#fig5">Fig. 5</a>
+the Fresnel numbers are both odd, and the on axis intensity is high [as was predicted by
+(a) above]. In <a href="#fig6">Fig. 6</a>, the Fresnel number is even, and the intensity
+on-axis is zero. When we look at the intensity patterns in these three cases, we also see
+a &quot;trend&quot; which turns out to be quite general, namely the number of
+&quot;major&quot; maxima observed across the intensity pattern is equal to the Fresnel
+number.</p>
+
+<p>&nbsp;</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="70%">
+  <tr>
+    <td width="100%"><a name="fig4"></a><img src="../images/cir-theory-q1.gif" hspace="45" WIDTH="292" HEIGHT="187"></td>
+  </tr>
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/frescir5.jpg" align="left" WIDTH="400" HEIGHT="412"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Fig. 4 Fresnel number of 5.0. Top: the red line is a plot of the
+    intensity along the x-axis in the observation plane. The blue line is the prediction of
+    geometrical optics. Bottom: WebTOP visualization. </small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>&nbsp;</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="70%">
+  <tr>
+    <td width="100%"><p align="left"><a name="fig5"></a><img src="../images/cir-theory-q2.gif" hspace="47" WIDTH="292" HEIGHT="193"></td>
+  </tr>
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/frescir6.jpg" align="left" WIDTH="400" HEIGHT="410"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Fig. 5 Fresnel number of 6.0. Top: the red line is a plot of the
+    intensity along the x-axis in the observation plane. The blue line is the prediction of
+    geometrical optics. Bottom: WebTOP visualization. </small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p><a name="fig6"></a></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="70%">
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/cir-theory-q3.gif" align="left" hspace="50" WIDTH="295" HEIGHT="187"></td>
+  </tr>
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/frescirc7.jpg" align="left" WIDTH="400" HEIGHT="414"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Fig. 6 Fresnel number of 7.0. Top: the red line is a plot of the
+    intensity along the x-axis in the observation plane. The blue line is the prediction of
+    geometrical optics. Bottom: WebTOP visualization. </small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+<div align="center"><center>
+
+<table border="1" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td rowspan="2" class="tablemain" id="tablemain"><font color="#FF0000"><strong>Navigate:</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="1.html">Basic
+    Equations</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="2.html">On-Axis
+    Intensity; Fresnel Number</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="3.html">Fresnel Zones</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#008040">Off-axis Intensity</font></td>
+  </tr>
+  <tr>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Start</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Previous</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain">&nbsp;</td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

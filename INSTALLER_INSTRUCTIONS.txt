@@ -1,0 +1,51 @@
+New directories:
+----------------------
+* create_installer_scripts := example batch file w/ command line for creating the installer
+* doc                      := Place for license file, etc., and izPack docs
+* jar_scripts              := Batch file for JARing a module
+* manifests                := Storage location for manifest files
+* module_jars              := Storage location for JAR'd modules.
+* example_installer        := An example installer.  
+                              NOTE: The manifest file for the circular.jar 
+                              executable is incorrect, so it won't actually 
+                              run. The class-path attribute of the manifest 
+                              needs to have the wildcards taken out.
+
+New files:
+----------------------
+* install.xml          := sample installer for a single module
+* install_circular.jar := sample installer program (not from most recent build tools)
+* create_installer_scripts/create_installer_circular.bat  := total commands required to 
+                                                             create the installer for 
+                                                             a build module.
+
+
+DOCUMENTATION:
+----------------------
+You're reading it!  There are also the documents that I used to figure this out in the 
+/doc directory.  Remember, this is an open-source project, so documentation is...meh...  
+This project's documentation isn't too bad, though.
+
+Also, reference the "tutorial" PDF alongside the "installer.xml" sample for Circular in 
+the repository root directory.  Hopefully the plethora of XML comments will make things 
+muddie....I mean clearer.
+
+
+SOFTWARE REQUIREMENTS:
+------------------------
+You must have the IzPack installer system installed.  See www.izforge.com.
+
+
+TO CREATE AN INSTALLER:
+--------------------------
+1. Jar all libraries (xj3d, all libraries in /jars; can probably use Ant for all but xj3d)
+2. Have a license file and HelloPanel HTML file ready (samples in /doc)
+3. Prepare the module's manifest file (samples in /manifests)
+4. Build the module with Ant.
+4. Jar the module (sample jar command in /jar_scripts)
+5. Prepare the installer's XML file (sample provided in installer.xml)
+6. Create the installer (sample commands in build_installer.bat)
+7. Test your installer!  (The sample one's manifest has a bad class-path, but if you add
+                          all of the sdl, wtcore, xj3d, etc. jars individually to that 
+                          attribute, it should work.  Run it from the command line to 
+                          see where it fails to find an SDL class.  [java -jar circular.jar])

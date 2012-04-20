@@ -1,0 +1,85 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+PROTO Pool [ initializeOnly        SFInt32 resolution 50
+             initializeOnly        SFFloat spacing 2
+             initializeOnly        MFFloat height []
+             initializeOnly        SFInt32 sparse_resolution 25
+             initializeOnly        SFFloat sparse_spacing 4
+             initializeOnly        MFFloat sparse_height []
+             initializeOnly        SFBool  sparse FALSE
+             initializeOnly        SFBool  normalPerVertex TRUE
+             initializeOnly        SFVec3f translation 0 0 0
+             inputOnly      MFFloat set_height
+             inputOnly      MFFloat set_sparse_height
+             inputOnly      SFBool  set_sparse
+]
+{
+  DEF Pool-TRANSFORM Transform {
+    translation IS translation
+    children [
+      DEF Pool-SWITCH Switch {
+        whichChoice 0
+        choice [
+          Shape {
+            geometry ElevationGrid {
+              normalPerVertex IS normalPerVertex
+              solid FALSE
+              creaseAngle 3.142
+              height          IS height
+              xDimension      IS resolution
+              zDimension      IS resolution
+              xSpacing        IS spacing
+              zSpacing        IS spacing
+              set_height      IS set_height
+            }
+            appearance DEF Pool-APPEARANCE Appearance {
+              material Material {
+                ambientIntensity 0.4
+                #diffuseColor     0.7 0.7 1.0
+                diffuseColor     0.2 0.2 0.24
+                specularColor    0.1 0.1 0.1
+                #emissiveColor    0.1 0.1 0.2
+                shininess        1.0
+                transparency     0
+              }
+            }
+          }
+          Shape {
+            geometry ElevationGrid {
+              colorPerVertex  FALSE
+              normalPerVertex IS normalPerVertex
+              solid TRUE
+              creaseAngle 3.142
+              height          IS sparse_height
+              xDimension      IS sparse_resolution
+              zDimension      IS sparse_resolution
+              xSpacing        IS sparse_spacing
+              zSpacing        IS sparse_spacing
+              set_height      IS set_sparse_height
+            }
+            appearance USE Pool-APPEARANCE
+          }
+        ]
+      }
+    ]
+  }
+  DEF Pool-SCRIPT Script {
+    initializeOnly    SFBool  sparse IS sparse
+    inputOnly  SFBool  set_sparse IS set_sparse
+    inputOnly SFInt32 whichChoice
+    url "ecmascript:
+      function initialize() {
+        if(sparse) whichChoice = 1;
+        whichChoice = 0;
+        mouse_clicked = new SFVec3f(0, 0, 0);
+      }
+      function set_sparse(value, time) {
+        if(value) whichChoice = 1;
+        else whichChoice = 0;
+      }
+	"
+  }
+  ROUTE Pool-SCRIPT.whichChoice TO Pool-SWITCH.whichChoice
+}

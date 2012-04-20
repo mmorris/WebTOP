@@ -1,0 +1,199 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<title>Rayleigh Resolution Criterion Theory-The</title>
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/webtopmain.css">
+<script language="JavaScript" src="../../webtopscripts/menucode.js"></script>
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+document.write(stdMenu(1,'Fraunhofer Rayleigh Resolution',2,true));
+document.write(moduleList(2,true));
+</script>
+<p>&nbsp;
+<center>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tablemain" id="tablemain">
+<p><big><b><font color="#800000"><big>Rayleigh Resolution Criterion</big><br>
+</font><font color="#008040">The Rayleigh Resolution Criterion</b> </font></big></p>
+
+<p>Let us now consider what the intensity on the observation screen will look like. If the
+angular separation <em><font FACE="Symbol">q</font></em> is large, then the Airy disks of
+the two sources do not overlap, and it is obvious that there are <font color="#0000FF"><i>two</i></font>
+point sources illuminating the lens. In this case we say that the two objects are <font color="#0000FF"><i>resolved</i></font> by the lens. If <em><font FACE="Symbol">q</font></em>
+is very small, the Airy disks of the two patterns can overlap so much that the intensity
+pattern on the screen can look like the pattern from a single point source. In this case
+we say that the two sources are <font color="#0000FF"><i>not resolved</i></font>.</p>
+
+<p>Lord Rayleigh came up with a practical criterion (now referred to as the Rayleigh
+resolution criterion) for specifying under what conditions two sources are <font color="#0000FF"><i>just resolved</i></font> by a lens:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="4" width="75%">
+  <tr>
+    <td width="100%" class="tableblue" id="tableblue"><b><font color="#0000FF">Two sources are said to be </font><font color="#FF0000">just resolved</font><font color="#0000FF"> when the center of the
+    diffraction pattern of one falls on the first minimum of the diffraction pattern of the
+    other</font></b></td>
+  </tr>
+</table>
+</center></div>
+
+<p>For the Airy patterns from each source, the angular &quot;distance&quot; from the peak
+of the distribution to its first minimum is <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub>=1.22<em><font FACE="Symbol">l</font></em>/<em>D</em>. It therefore follows from the geometry (see <a onmouseover="window.status='View Figure'; return true" href="javascript:imageWindow('../images/two-source-diagram.gif')">Figure 4</a>) that the
+center of one pattern of one falls on the first minimum of the other when the angular
+separation of the sources, <em><font FACE="Symbol">q</font></em>, is equal to <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub>. Thus the three possible situations
+can be classified by comparing the angular separation of the sources to <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub>:</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%" bgcolor="#BCDEDE">
+  <tr>
+    <td width="5%" class="tableblue" id="tableblue">(a)</td>
+    <td width="80%" class="tableblue" id="tableblue">If <font color="#FF0000"><strong><em><font FACE="Symbol">q</font></em>
+    &gt; <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub></strong></font>,
+    then the two sources are <font color="#FF0000"><strong>resolved</strong></font>.</td>
+    <td width="15%" class="tableblue" id="tableblue"><a href="theory/3.html#Resolved">View Image</a></td>
+  </tr>
+  <tr>
+    <td width="5%" class="tableblue" id="tableblue">(b)</td>
+    <td width="80%" class="tableblue" id="tableblue">If <font color="#FF0000"><strong><em><font FACE="Symbol">q</font></em> = <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub></strong></font>, then the two
+    sources are <font color="#FF0000"><strong>just resolved</strong></font>.</td>
+    <td width="15%" class="tableblue" id="tableblue"><a href="theory/3.html#JResolved">View Image</a></td>
+  </tr>
+  <tr>
+    <td width="5%" class="tableblue" id="tableblue">(c)</td>
+    <td width="80%" class="tableblue" id="tableblue">If <strong><font color="#FF0000"><em><font FACE="Symbol">q</font></em>
+    &lt; <em><font FACE="Symbol">q</font></em><sub><small>1</small></sub></font></strong>,
+    then the two sources are <font color="#FF0000"><strong>not resolved</strong></font>.</td>
+    <td width="15%" class="tableblue" id="tableblue"><a href="theory/3.html#NResolved">View Image</a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>Examples of the three cases are depicted in Figures 5 through 7. (In each case <em>I</em><small><sub>c</sub></small>
+is the intensity at the center of the Airy pattern due to one source.)<font color="#ff0000">&nbsp; </font>In Figure 5, the angular separation of the objects is twice
+the Rayleigh angle, <em><font FACE="Symbol">q</font></em>=2<em><font FACE="Symbol">q</font></em><small><sub>r</sub></small>.
+The top part of the figure shows plots of the intensities on the observation screen due to
+each source, for observation points along the x-axis,&nbsp; <em>I</em><small><sub>1</sub></small>(<em>x</em>,0)
+and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0). The bottom part of this figure
+shows the corresponding WebTOP visualization. The two objects are clearly resolved in this
+case.<a name="Resolved"></a></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="75%">
+  <tr>
+    <td width="100%"><p align="center"><img align="left" src="../images/rayleigh90.gif" hspace="100" WIDTH="288" HEIGHT="205"></td>
+  </tr>
+  <tr>
+    <td width="100%"><p align="center"><img align="left" src="../images/rayleigh_2theta.jpg" WIDTH="450" HEIGHT="356"></td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="75%">
+  <tr>
+    <td width="100%"><small>Figure 5:&nbsp; Imaging of two off-axis point sources, <em><font FACE="Symbol">q</font></em>=2<em><font FACE="Symbol">q</font></em><small><sub>r</sub></small>.
+    </small><br>
+    <small>Top image: Plots of <em>I</em><small><sub>1</sub></small>(<em>x</em>,0) [blue line]
+    and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0) [red line]. </small><br>
+    <small>Bottom image: Image from WebTOP. </small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>In Figure 6, the angular separation of the objects is equal to the Rayleigh angle, <em><font FACE="Symbol">q</font></em>=<em><font FACE="Symbol">q</font></em><small><sub>r</sub></small>.
+The top part of the figure shows plots of intensities on the observation screen due to
+each source, for observation points along the x-axis, <em>I</em><small><sub>1</sub></small>(<em>x</em>,0)
+and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0), and it shows a plot of the total
+intensity along the x-axis, <em>I</em>(<em>x</em>,0). The bottom part of this figure shows
+the corresponding WebTOP visualization. The two objects are just resolved in this case.<a name="JResolved"></a></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="75%">
+  <tr>
+    <td width="100%"><img align="absmiddle" src="../images/rayleigh91.gif" hspace="100" WIDTH="284" HEIGHT="201"></td>
+  </tr>
+  <tr>
+    <td width="100%"><img align="absmiddle" src="../images/rayleigh_theta.jpg" WIDTH="450" HEIGHT="353"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 6:&nbsp; Imaging of two off-axis point sources, <em><font FACE="Symbol">q</font></em>=<em><font FACE="Symbol">q</font></em><small><sub>r</sub></small>.
+    </small><br>
+    <small>Top image: Plots of <em>I</em><small><sub>1</sub></small>(<em>x</em>,0) [blue line]
+    and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0) [red line], and <em>I</em>(<em>x</em>,0)
+    [black line]. </small><br>
+    <small>Bottom image: Image from WebTOP.</small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>In Figure 7, the angular separation of the objects is equal to one half the Rayleigh
+angle, <em><font FACE="Symbol">q</font></em>=<font FACE="Symbol">0.5<em>q</em></font><small><sub>r</sub></small>.
+The top part of the figure shows plots of intensities on the observation screen due to
+each source, for observation points along the x-axis, <em>I</em><small><sub>1</sub></small>(<em>x</em>,0)
+and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0), and shows a plot of the total
+intensity at points along the x-axis, <em>I</em>(<em>x</em>,0). The bottom part of this
+figure shows the corresponding WebTOP visualization. The two objects are not resolved in
+this case.<a name="NResolved"></a></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="75%">
+  <tr>
+    <td width="100%"><img align="absmiddle" src="../images/rayleigh92.gif" hspace="100" WIDTH="282" HEIGHT="198"></td>
+  </tr>
+  <tr>
+    <td width="100%"><img align="absmiddle" src="../images/rayleigh_htheta.jpg" WIDTH="450" HEIGHT="357"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 7:&nbsp; Imaging of two off-axis point sources, <em><font FACE="Symbol">q</font></em>=<font FACE="Symbol">0.5<em>q</em></font><small><sub>r</sub></small>.
+    </small><br>
+    <small>Top image: Plots of <em>I</em><small><sub>1</sub></small>(<em>x</em>,0) [blue line]
+    and <em>I</em><small><sub>2</sub></small>(<em>x</em>,0) [red line], and <em>I</em>(<em>x</em>,0)
+    [black line]. </small><br>
+    <small>Bottom image: Image from WebTOP</small><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+<div align="center"><center>
+
+<table border="1" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td rowspan="2" class="tablemain" id="tablemain"><font color="#FF0000"><strong>Navigate:</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="1.html">Image of an
+    On-Axis Point Source</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="2.html">Image of Two
+    Off-Axis Point Sources</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#008040">The Rayleigh Resolution
+    Criterion</font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="4.html">WebTOP
+    Calculations</a></td>
+  </tr>
+  <tr>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Start</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Next</strong></font></td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+
+<p><br>
+<br>
+<br>
+</p>
+
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

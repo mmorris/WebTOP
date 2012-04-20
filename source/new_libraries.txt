@@ -1,0 +1,18 @@
+* denotes work still to be done
+- denotes libraries complete at this time
+
+X3D Libraries:
+* Screen Backdrop
+* Quad-based IFS screen
+* Standardized quad screen (combination of above two)
+* Navigation panel
+* Phase-diff widget
+* some sort of axis for line plots / observation screens
+* vector new marker
+
+Java Libraries:
+- ToggleButton (specialized StateButton)
+- WApplication pre-constructor function
+* WApplication's GUI stuff
+* Navigation panel control interface
+* Scrollbar/slider control

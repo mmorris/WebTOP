@@ -1,0 +1,13 @@
+<wsl>
+  <wavesimulation mode="animation" grid="hidden" linearLayout="1" resolution="3" animation="play">
+    <sources>
+      <pointsource id="point1" amplitude="4.0" wavelength="8.0" phase="12.566371" position="-50.0,16.0" />
+      <pointsource id="point2" amplitude="4.0" wavelength="8.0" phase="0.0" position="-50.0,0.0" />
+      <pointsource id="point3" amplitude="4.0" wavelength="8.0" phase="0.0" selected="true" position="-50.0,-16.0" />
+    </sources>
+    <view value="-0.87 0.0 0.0 0.0 0.0 -7.5" />
+  </wavesimulation>
+  <script>
+    <viewpointSelected value="1" timeStamp="20149" />
+  </script>
+</wsl>

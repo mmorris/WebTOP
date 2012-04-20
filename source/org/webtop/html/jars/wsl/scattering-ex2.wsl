@@ -1,0 +1,183 @@
+<wsl>
+  <scattering animation="play" widgets="visible">
+    <source sourceType="unpolarized" />
+    <view value="0.0 0.5 0.0 0.2 -0.3 -2.5" />
+  </scattering>
+  <script>
+    <mousePressed param="phi" timeStamp="2974" />
+    <mouseDragged param="phi" value="3.1377559" timeStamp="361" />
+    <mouseDragged param="phi" value="3.130154" timeStamp="130" />
+    <mouseDragged param="phi" value="3.122648" timeStamp="40" />
+    <mouseDragged param="phi" value="3.1152325" timeStamp="40" />
+    <mouseDragged param="phi" value="3.1079042" timeStamp="10" />
+    <mouseDragged param="phi" value="3.10066" timeStamp="40" />
+    <mouseDragged param="phi" value="3.097068" timeStamp="40" />
+    <mouseDragged param="phi" value="3.093496" timeStamp="40" />
+    <mouseDragged param="phi" value="3.0899425" timeStamp="41" />
+    <mouseDragged param="phi" value="3.0828934" timeStamp="0" />
+    <mouseDragged param="phi" value="3.0759168" timeStamp="40" />
+    <mouseDragged param="phi" value="3.0655828" timeStamp="40" />
+    <mouseDragged param="phi" value="3.0553973" timeStamp="10" />
+    <mouseDragged param="phi" value="3.038731" timeStamp="40" />
+    <mouseDragged param="phi" value="3.0192027" timeStamp="30" />
+    <mouseDragged param="phi" value="2.9814951" timeStamp="50" />
+    <mouseDragged param="phi" value="2.9662514" timeStamp="40" />
+    <mouseDragged param="phi" value="2.9364767" timeStamp="40" />
+    <mouseDragged param="phi" value="2.9219105" timeStamp="40" />
+    <mouseDragged param="phi" value="2.898999" timeStamp="40" />
+    <mouseDragged param="phi" value="2.88771" timeStamp="40" />
+    <mouseDragged param="phi" value="2.8654323" timeStamp="40" />
+    <mouseDragged param="phi" value="2.8544314" timeStamp="40" />
+    <mouseDragged param="phi" value="2.838087" timeStamp="40" />
+    <mouseDragged param="phi" value="2.829981" timeStamp="441" />
+    <mouseDragged param="phi" value="2.8165607" timeStamp="40" />
+    <mouseDragged param="phi" value="2.8032446" timeStamp="40" />
+    <mouseDragged param="phi" value="2.7900243" timeStamp="10" />
+    <mouseDragged param="phi" value="2.7534478" timeStamp="40" />
+    <mouseDragged param="phi" value="2.7379398" timeStamp="40" />
+    <mouseDragged param="phi" value="2.7020543" timeStamp="0" />
+    <mouseDragged param="phi" value="2.6614046" timeStamp="40" />
+    <mouseDragged param="phi" value="2.5804772" timeStamp="40" />
+    <mouseDragged param="phi" value="2.5449061" timeStamp="40" />
+    <mouseDragged param="phi" value="2.52958" timeStamp="40" />
+    <mouseDragged param="phi" value="2.493548" timeStamp="10" />
+    <mouseDragged param="phi" value="2.4779615" timeStamp="40" />
+    <mouseDragged param="phi" value="2.4622707" timeStamp="41" />
+    <mouseDragged param="phi" value="2.4517462" timeStamp="0" />
+    <mouseDragged param="phi" value="2.4411657" timeStamp="40" />
+    <mouseDragged param="phi" value="2.4305253" timeStamp="40" />
+    <mouseDragged param="phi" value="2.4225032" timeStamp="10" />
+    <mouseDragged param="phi" value="2.4144428" timeStamp="30" />
+    <mouseDragged param="phi" value="2.4036334" timeStamp="40" />
+    <mouseDragged param="phi" value="2.3982005" timeStamp="10" />
+    <mouseDragged param="phi" value="2.3900142" timeStamp="40" />
+    <mouseDragged param="phi" value="2.3845308" timeStamp="40" />
+    <mouseDragged param="phi" value="2.3817816" timeStamp="0" />
+    <mouseDragged param="phi" value="2.3707294" timeStamp="441" />
+    <mouseDragged param="phi" value="2.3312907" timeStamp="40" />
+    <mouseDragged param="phi" value="2.2904675" timeStamp="40" />
+    <mouseDragged param="phi" value="2.272471" timeStamp="10" />
+    <mouseDragged param="phi" value="2.2290914" timeStamp="40" />
+    <mouseDragged param="phi" value="2.2098198" timeStamp="40" />
+    <mouseDragged param="phi" value="2.1900806" timeStamp="0" />
+    <mouseDragged param="phi" value="2.1419106" timeStamp="40" />
+    <mouseDragged param="phi" value="2.0335069" timeStamp="40" />
+    <mouseDragged param="phi" value="2.007363" timeStamp="40" />
+    <mouseDragged param="phi" value="1.9845153" timeStamp="40" />
+    <mouseDragged param="phi" value="1.9352802" timeStamp="40" />
+    <mouseDragged param="phi" value="1.9084773" timeStamp="40" />
+    <mouseDragged param="phi" value="1.8615822" timeStamp="40" />
+    <mouseDragged param="phi" value="1.8424039" timeStamp="40" />
+    <mouseDragged param="phi" value="1.8290281" timeStamp="40" />
+    <mouseDragged param="phi" value="1.8221432" timeStamp="50" />
+    <mouseDragged param="phi" value="1.8151163" timeStamp="60" />
+    <mouseDragged param="phi" value="1.8006054" timeStamp="41" />
+    <mouseDragged param="phi" value="1.785414" timeStamp="40" />
+    <mouseDragged param="phi" value="1.7694448" timeStamp="40" />
+    <mouseDragged param="phi" value="1.7346432" timeStamp="40" />
+    <mouseDragged param="phi" value="1.734642" timeStamp="50" />
+    <mouseDragged param="phi" value="1.715439" timeStamp="40" />
+    <mouseDragged param="phi" value="1.7052743" timeStamp="521" />
+    <mouseDragged param="phi" value="1.6946709" timeStamp="50" />
+    <mouseDragged param="phi" value="1.6596102" timeStamp="40" />
+    <mouseDragged param="phi" value="1.6465361" timeStamp="40" />
+    <mouseDragged param="phi" value="1.6325467" timeStamp="40" />
+    <mouseDragged param="phi" value="1.6174357" timeStamp="10" />
+    <mouseDragged param="phi" value="1.6008977" timeStamp="40" />
+    <mouseDragged param="phi" value="1.571" timeStamp="40" />
+    <mouseReleased param="phi" timeStamp="310" />
+    <mousePressed param="phi" timeStamp="10222" />
+    <mouseDragged param="phi" value="1.571" timeStamp="140" />
+    <mouseDragged param="phi" value="1.5535718" timeStamp="50" />
+    <mouseDragged param="phi" value="1.5349449" timeStamp="40" />
+    <mouseDragged param="phi" value="1.5292382" timeStamp="40" />
+    <mouseDragged param="phi" value="1.5123197" timeStamp="50" />
+    <mouseDragged param="phi" value="1.5011984" timeStamp="40" />
+    <mouseDragged param="phi" value="1.4820156" timeStamp="41" />
+    <mouseDragged param="phi" value="1.471202" timeStamp="40" />
+    <mouseDragged param="phi" value="1.4498687" timeStamp="50" />
+    <mouseDragged param="phi" value="1.4393377" timeStamp="40" />
+    <mouseDragged param="phi" value="1.4288902" timeStamp="0" />
+    <mouseDragged param="phi" value="1.4159396" timeStamp="40" />
+    <mouseDragged param="phi" value="1.3353878" timeStamp="40" />
+    <mouseDragged param="phi" value="1.2865062" timeStamp="50" />
+    <mouseDragged param="phi" value="1.1998839" timeStamp="40" />
+    <mouseDragged param="phi" value="1.1615096" timeStamp="40" />
+    <mouseDragged param="phi" value="1.1374502" timeStamp="50" />
+    <mouseDragged param="phi" value="1.1277983" timeStamp="40" />
+    <mouseDragged param="phi" value="1.1157043" timeStamp="40" />
+    <mouseDragged param="phi" value="1.1084306" timeStamp="351" />
+    <mouseDragged param="phi" value="1.0962739" timeStamp="50" />
+    <mouseDragged param="phi" value="1.0471227" timeStamp="40" />
+    <mouseDragged param="phi" value="1.0120606" timeStamp="40" />
+    <mouseDragged param="phi" value="0.9554522" timeStamp="40" />
+    <mouseDragged param="phi" value="0.9181857" timeStamp="50" />
+    <mouseDragged param="phi" value="0.8880553" timeStamp="40" />
+    <mouseDragged param="phi" value="0.8740747" timeStamp="40" />
+    <mouseDragged param="phi" value="0.84550834" timeStamp="40" />
+    <mouseDragged param="phi" value="0.8338342" timeStamp="40" />
+    <mouseDragged param="phi" value="0.8039501" timeStamp="50" />
+    <mouseDragged param="phi" value="0.78859663" timeStamp="40" />
+    <mouseDragged param="phi" value="0.7697685" timeStamp="40" />
+    <mouseDragged param="phi" value="0.7665851" timeStamp="51" />
+    <mouseDragged param="phi" value="0.7569516" timeStamp="330" />
+    <mouseDragged param="phi" value="0.74060655" timeStamp="40" />
+    <mouseDragged param="phi" value="0.71017814" timeStamp="40" />
+    <mouseDragged param="phi" value="0.69264746" timeStamp="40" />
+    <mouseDragged param="phi" value="0.6560242" timeStamp="40" />
+    <mouseDragged param="phi" value="0.6328976" timeStamp="50" />
+    <mouseDragged param="phi" value="0.59202623" timeStamp="40" />
+    <mouseDragged param="phi" value="0.5747218" timeStamp="40" />
+    <mouseDragged param="phi" value="0.5381248" timeStamp="40" />
+    <mouseDragged param="phi" value="0.528502" timeStamp="51" />
+    <mouseDragged param="phi" value="0.49828577" timeStamp="40" />
+    <mouseDragged param="phi" value="0.4823184" timeStamp="40" />
+    <mouseDragged param="phi" value="0.45418596" timeStamp="40" />
+    <mouseDragged param="phi" value="0.44830298" timeStamp="50" />
+    <mouseDragged param="phi" value="0.43624568" timeStamp="280" />
+    <mouseDragged param="phi" value="0.41736245" timeStamp="50" />
+    <mouseDragged param="phi" value="0.3904481" timeStamp="40" />
+    <mouseDragged param="phi" value="0.36868405" timeStamp="40" />
+    <mouseDragged param="phi" value="0.3369894" timeStamp="40" />
+    <mouseDragged param="phi" value="0.31970358" timeStamp="41" />
+    <mouseDragged param="phi" value="0.2914405" timeStamp="40" />
+    <mouseDragged param="phi" value="0.27060747" timeStamp="40" />
+    <mouseDragged param="phi" value="0.2476561" timeStamp="40" />
+    <mouseDragged param="phi" value="0.23517346" timeStamp="80" />
+    <mouseDragged param="phi" value="0.22185087" timeStamp="390" />
+    <mouseDragged param="phi" value="0.2075026" timeStamp="141" />
+    <mouseDragged param="phi" value="0.19187474" timeStamp="80" />
+    <mouseReleased param="phi" timeStamp="220" />
+    <viewpointChanged value="0.0 0.5 0.0 0.2 -0.3 -2.5" timeStamp="4346" />
+    <viewpointChanged value="0.0 0.53251445 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.03254175 0.53251445 0.0 0.2 -0.3 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.03254175 0.5325141 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.032541275 0.5325141 0.0 0.2 -0.3 -2.5" timeStamp="80" />
+    <viewpointChanged value="0.032541275 0.5650289 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.032539845 0.5650289 0.0 0.2 -0.3 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.032539845 0.59754324 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.06507969 0.59754324 0.0 0.2 -0.3 -2.5" timeStamp="41" />
+    <viewpointChanged value="0.06507969 0.6300578 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.06507921 0.6300578 0.0 0.2 -0.3 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.06507921 0.66257274 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.06507969 0.66257274 0.0 0.2 -0.3 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.06507969 0.6950867 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09761953 0.6950867 0.0 0.2 -0.3 -2.5" timeStamp="60" />
+    <viewpointChanged value="0.09761953 0.7276012 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09761906 0.7276012 0.0 0.2 -0.3 -2.5" timeStamp="50" />
+    <viewpointChanged value="0.09761906 0.76011646 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09762049 0.76011646 0.0 0.2 -0.3 -2.5" timeStamp="50" />
+    <viewpointChanged value="0.09762049 0.7926302 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09762001 0.7926302 0.0 0.2 -0.3 -2.5" timeStamp="90" />
+    <viewpointChanged value="0.09762001 0.8251449 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09761906 0.8251449 0.0 0.2 -0.3 -2.5" timeStamp="100" />
+    <viewpointChanged value="0.09761906 0.85765946 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09762001 0.85765946 0.0 0.2 -0.3 -2.5" timeStamp="150" />
+    <viewpointChanged value="0.09762001 0.8901738 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09762001 0.8901738 0.0 0.2 -0.3 -2.5" timeStamp="281" />
+    <viewpointChanged value="0.09762001 0.9226881 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.09762144 0.9226881 0.0 0.2 -0.3 -2.5" timeStamp="380" />
+    <viewpointChanged value="0.09762144 0.95520246 0.0 0.2 -0.3 -2.5" timeStamp="0" />
+    <scriptEnded timeStamp="100" />
+  </script>
+</wsl>

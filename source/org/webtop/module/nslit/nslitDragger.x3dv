@@ -1,0 +1,292 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+### Imports ###
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO BlueConeXDragger [ 
+    inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation 
+	inputOutput SFRotation rotation 
+
+	initializeOnly SFFloat position 
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition 
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition 
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value 
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue 
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue 
+
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized 
+]
+"../../x3dlib/Widgets.x3dv#BlueConeXDragger"
+
+EXTERNPROTO GreyNYCone [ 
+    inputOutput SFVec3f coneScale 
+]
+"../../x3dlib/Widgets.x3dv#BlueConeXDragger"
+
+
+EXTERNPROTO ScreenBackdrop [
+    #Positioning
+	inputOnly	SFFloat	set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat position
+	#Sizing/appearance
+	initializeOnly SFVec3f size
+	initializeOnly SFColor diffuseColor
+	initializeOnly SFFloat transparency
+	inputOnly	SFFloat	set_transparency
+]
+"../../x3dlib/Screens.x3dv#RectangularScreenBackdrop"
+
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#WheelWidget"
+
+
+
+#### NSlitDragger Definition ####
+PROTO NSlitDragger [
+	#Oddly enough, this file doesn't use the following three values.
+	#classes FraunNSlit and NSlitDragger do, though, to talk to each other.
+	inputOutput SFInt32 n 3
+	inputOutput SFFloat width 40
+	inputOutput SFFloat distance 220
+
+	inputOutput SFInt32 dd_on 0
+
+    inputOutput SFBool wd_enabled TRUE
+    inputOutput SFBool dd_enabled TRUE
+
+	inputOnly SFFloat set_max_wd_position
+	initializeOnly   SFFloat max_wd_position 499
+
+	inputOnly SFFloat set_min_wd_position
+	initializeOnly   SFFloat min_wd_position 0
+
+	inputOnly SFFloat set_max_dd_position
+	initializeOnly   SFFloat max_dd_position 499
+
+	inputOnly SFFloat set_min_dd_position
+	initializeOnly   SFFloat min_dd_position 0
+
+	initializeOnly    SFFloat wd_position 240
+	inputOnly  SFFloat set_wd_position
+	outputOnly SFFloat wd_position_changed
+
+	initializeOnly    SFFloat dd_position 220
+	inputOnly  SFFloat set_dd_position
+	outputOnly SFFloat dd_position_changed
+
+    inputOnly SFBool wd_set_isActive
+	outputOnly SFBool  wd_isOver_changed
+	outputOnly SFBool  wd_isActive_changed
+
+    inputOnly SFBool dd_set_isActive
+	outputOnly SFBool  dd_isOver_changed
+	outputOnly SFBool  dd_isActive_changed 
+
+    #Paul's additions
+    #Widget for the width dragger
+#    inputOutput    SFVec3f wd_coneScale 1 1 1     #alias for 'coneScale' initializeOnly of 'wd'
+#    inputOutput    SFVec3f dd_coneScale 1 1 1     #alias for 'coneScale' initializeOnly of 'dd'
+#    inputOutput    SFNode  wd DEF wd Red2ConeXDragger {
+#    }
+#    #Widget for the distance draggers
+#    initializeOnly    SFNode  dd BlueConeXDragger {} 
+]
+{
+
+	Group {
+		children [
+			########################################################################
+			# Width Draggers
+#Old way
+#			#This is the one on the right
+
+            DEF wd Red2ConeXDragger {            
+                debugName "WidthDragger"
+                enabled IS wd_enabled
+                coneScale 25 25 25
+				position IS wd_position
+				set_position IS set_wd_position
+				position_changed IS wd_position_changed
+				isOver_out IS wd_isOver_changed
+                set_isActive IS wd_set_isActive
+				isActive_out IS wd_isActive_changed
+			}
+            
+#            #Cheat cheat cheat!  The one on the left is actually the same dragger.
+			Transform {
+				rotation 0 1 0 3.14159265
+				children USE wd
+			}
+#end old way
+            
+
+			########################################################################
+			# Distance Draggers
+			DEF dd_SWITCH Switch {
+				whichChoice IS dd_on
+				choice [
+					Group {
+						children [
+							#This is the one on the right.
+							DEF dd BlueConeXDragger {
+							    debugName "DistDragger"
+								enabled IS wd_enabled
+                                coneScale 25 25 25
+								position IS	dd_position
+								set_position IS set_dd_position
+								position_changed IS dd_position_changed
+								isOver_out IS dd_isOver_changed
+                                set_isActive IS dd_set_isActive
+								isActive_out IS dd_isActive_changed
+							}
+
+							#Cheating again
+							Transform {
+								rotation 0 1 0 3.14159265
+								children USE dd
+							}
+						]
+					}
+				]
+			}
+
+			DEF CONTROL_MIN_MAX Script {
+				initializeOnly    SFFloat minWidth IS min_wd_position
+				inputOnly  SFFloat set_minWidth IS set_min_wd_position
+				outputOnly SFFloat minWidth_changed
+
+				initializeOnly    SFFloat maxWidth IS max_wd_position
+				inputOnly  SFFloat set_maxWidth IS set_max_wd_position
+				outputOnly SFFloat maxWidth_changed
+
+				initializeOnly    SFFloat minDistance IS min_dd_position
+				inputOnly  SFFloat set_minDistance IS set_min_dd_position
+				outputOnly SFFloat minDistance_changed
+
+				initializeOnly    SFFloat maxDistance IS max_dd_position
+				inputOnly  SFFloat set_maxDistance IS set_max_dd_position
+				outputOnly SFFloat maxDistance_changed
+
+				url "ecmascript:
+				function initialize() {
+					minWidth_changed = minWidth;
+					maxWidth_changed = maxWidth;
+					minDistance_changed = minDistance;
+					maxDistance_changed = maxDistance;
+				}
+
+				function set_minWidth(value, time) {
+					minWidth_changed = value;
+				}
+
+				function set_maxWidth(value, time) {
+					maxWidth_changed = value;
+				}
+
+				function set_minDistance(value, time) {
+					minDistance_changed = value;
+				}
+
+				function set_maxDistance(value, time) {
+					maxDistance_changed = value;
+				}"
+			}
+		]
+	}
+
+	############################################################################
+	# The minimums and maximums for the widgets
+	############################################################################
+	ROUTE CONTROL_MIN_MAX.minWidth_changed TO wd.set_minPosition
+	ROUTE CONTROL_MIN_MAX.maxWidth_changed TO wd.set_maxPosition
+
+	ROUTE CONTROL_MIN_MAX.minDistance_changed TO dd.set_minPosition
+	ROUTE CONTROL_MIN_MAX.maxDistance_changed TO dd.set_maxPosition
+}
+
+
+
+
+
+
+###############################################
+###############  MODULE MODELS  ###############
+###############################################
+
+#Viewpoint {
+ #   position 0 300 300
+  #  orientation 1 0 0 2.3561944901923449288469825374596
+#}
+
+
+DEF SingleRed2Cone Red2ConeXDragger {
+    coneScale 25 25 25
+    minPosition 0
+    maxPosition 499
+    position 240
+}

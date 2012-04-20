@@ -1,0 +1,6 @@
+Main-Class: org.webtop.module.wavefront.WaveFront
+Class-Path: lib/libs.jar jars/sdl.jar 
+  jars/webtop_component.jar jars/webtop_util.jar 
+  jars/webtop_wsl.jar jars/webtop_x3d.jar 
+  jars/webtop_x3dlib.jar
+

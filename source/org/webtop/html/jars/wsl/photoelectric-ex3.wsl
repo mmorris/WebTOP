@@ -1,0 +1,12 @@
+<wsl>
+  <photoelectric wavelength="200.0" intensity="10.0" workFunction="2.0" voltage="0.0" hideWidgets="Hide " animation="Stop" list="User Defined">
+    <view value="0.0 0.0 0.0 10.0 17.0 -60.0" />
+  </photoelectric>
+  <script>
+    <actionPerformed param="wavelength" value="400.0" timeStamp="9000" />
+    <actionPerformed param="wavelength" value="500.0" timeStamp="9000" />
+    <actionPerformed param="wavelength" value="600.0" timeStamp="9000" />
+    <actionPerformed param="wavelength" value="625.0" timeStamp="9000" />
+    <scriptEnded timeStamp="12" />
+  </script>
+</wsl>

@@ -1,0 +1,382 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head><title>Reflection and Refraction: Theory</title>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Reflection and Refraction - Vectorial: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+
+
+<p>Consider two homogeneous dielectric media that have a planar
+interface. The "incident" medium occupies the half space y &gt; 0 and has index
+of refraction n<sub>i</sub> . The "transmitting" medium occupies the half space
+y &lt; 0 and has index of refraction n<sub>t</sub> . This module simulates the
+reflection and refraction of a monochromatic electromagnetic plane wave from
+such an interface (see Fig. 1). For simplicity only the electric field (and not
+the magnetic field) is considered. The module also allows the incident field to
+be unpolarized, but the relevant theory for that case will not be treated here.</p>
+
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=337 height=286 src="images/image002.jpg"></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 1 The Reflection and Refraction module</small></center></td>
+  </tr>
+</table></center></div>
+
+<p><big><font color="#008040"><b>The Incident, Reflected, and Transmitted Electric Fields</b></font></big></p>
+
+<p>To be succinct, we will assume that the incident electric
+field is linearly polarized. The results we obtain for this case can be adapted
+to treat waves of more general states of polarization. </p>
+
+<p>Let <b>k</b><sub>i</sub> be the incident wave vector, <font face=symbol>q</font><sub>i</sub> 
+be the angle of incidence, and the x-y plane be the <span style='color:blue;font-weight: bold'>plane of incidence</span> (see Fig. 2 below). </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=516 height=388 src="images/image010.gif" align=left></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 2 The incident, reflected, and transmitted (refracted) rays (wave vectors).</small></center></td>
+  </tr>
+</table></center></div>
+
+<p>In Fig. 2 <b>k</b><sub>r</sub> is the reflected wave vector and <font face=symbol>q</font><sub>r
+</sub> is the angle of reflection. The law of reflection tells us that <font face=symbol>q</font><sub>r</sub> = <font face=symbol>q</font><sub>i</sub> . 
+In Fig. 2 <b>k</b><sub>t</sub> is the transmitted (refracted) wave vector
+and <font face=symbol>q</font><sub>t</sub> is the
+angle of refraction. The angle of refraction and the angle of incidence are
+related by Snell's law, n<sub>t</sub> sin <font face=symbol>q</font><sub>t</sub> 
+= n<sub>i</sub> sin <font face=symbol>q</font><sub>i</sub> .</p>
+
+
+
+<p>The incident electric field can be written as </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><b>E</b><sub>i</sub> (r,t) = <b>E</b><sub>0i</sub> cos(<b>k</b><sub>i</sub><b>.r</b> - <font face=symbol>w</font>t)</center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+<p>where</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+    <P align="center"><IMG border="0" src="images/index.1.gif" width="227" height="28"></td>
+    <td width="20%" class=tablemain>
+    <P align="center">(<A name="2">2</A>)</P>
+    </td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain>&nbsp;</td>
+    <td width="20%" class=tablemain>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=129 height=26 src="images/image016.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="3">3</A>)</CENTER></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;&nbsp;</CENTER></td>
+    <td width="20%" class=tablemain><center>&nbsp;</CENTER></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=68 height=25 src="images/image018.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="4">4</A>)</CENTER></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+<p>Here E<sub>0i,</sub> <sub><font face=symbol>^</font></sub> is the component of <b>E</b><sub>0i</sub> that is perpendicular to the
+plane of incidence, <b>E</b><sub>0i,</sub> <sub><font face=symbol>||</font></sub> is the component of
+E<sub>0i</sub> that is parallel to the plane of
+incidence, <font face=symbol>l</font><sub>i</sub> 
+is the wavelength of the incident light, <font face=symbol>w</font> is the angular frequency of the light, and 
+<img align=absbottom width=16 height=25 src="images/image020.gif"> is a unit vector in
+the direction of the incident wave vector.</p>
+<p>Let <b>k</b><sub>r</sub> be the wave vector of the reflected wave. The reflected electric field can be written as </p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><b>E</b><sub>r</sub> (r,t) = <b>E</b><sub>0r</sub> cos(<b>k</b><sub>r</sub><b>.r</b> - <font face=symbol>w</font>t)</center></td>
+    <td width="20%" class=tablemain><center>(<A name="5">5</A>)</CENTER></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+
+<p>where</p>
+
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+    <P align="center"><IMG border="0" src="images/index.2.gif" width="230" height="28"></td>
+    <td width="20%" class=tablemain>
+    <P align="center">(<A name="6">6</A>)</P>
+    </td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain>&nbsp;</td>
+    <td width="20%" class=tablemain>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=136 height=26 src="images/image022.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="7">7</A>)</CENTER></td>
+  </tr>
+  <TR>
+    <td width="80%" class=tablemain>&nbsp;</td>
+    <td width="20%" class=tablemain>&nbsp;</td>
+  </TR>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=72 height=25 src="images/image024.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="8">8</A>)</CENTER></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+<p>Here E<sub>0r,</sub> <sub><font face=symbol>^</font></sub> is the component of <b>E</b><sub>0r</sub> that is perpendicular to the plane of
+incidence, E<sub>0r,</sub> <sub><font face=symbol>||</font></sub> 
+is the component of <b>E</b><sub>0r</sub> that is parallel to the plane of incidence,
+and <img align=absbottom width=18 height=26 src="images/image026.gif"> is a unit vector in
+the direction of the reflected wave vector.</p>
+<p>Let <b>k</b><sub>t</sub> be the wave vector of the transmitted wave. The transmitted electric field can be written as </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><b>E</b><sub>t</sub> (r,t) = <b>E</b><sub>0t</sub> cos(<b>k</b><sub>t</sub><b>.r</b> - <font face=symbol>w</font>t)</center></td>
+    <td width="20%" class=tablemain><center>(<A name="9">9</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+<p>where</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+    <P align="center"><IMG border="0" src="images/index.3.gif" width="228" height="28"></td>
+    <td width="20%" class=tablemain>
+    <P align="center">(<A name="10">10</A>)</P>
+    </td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain>&nbsp;</td>
+    <td width="20%" class=tablemain>&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=130 height=25 src="images/image028.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="11">11</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=69 height=27 src="images/image030.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="12">12</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>Here E<sub>0t,</sub> <sub><font face=symbol>^</font></sub> is the component of <b>E</b><sub>0t</sub> that is perpendicular to the
+plane of incidence, E<sub>0,||</sub> is the component of <b>E</b><sub>0t</sub> that is
+parallel to the plane of incidence, and 
+<img align=absbottom width=18 height=26 src="images/image032.gif">is a unit vector in
+the direction of the reflected wave vector.</p>
+<p>The amplitude reflection coefficients for the perpendicular and parallel components of the electric field are defined as, respectively,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=68 height=48 src="images/image034.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="13">13</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=61 height=48 src="images/image036.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="14">14</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>The amplitude transmission coefficients for the perpendicular and parallel components of the electric field are defined as, respectively,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=65 height=48 src="images/image038.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="15">15</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=60 height=48 src="images/image040.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="16">16</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>The four amplitude coefficients can be calculated from the following four formulas (the <span style='color:blue;font-weight: bold'>Fresnel equations</span>),</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=120 height=46 src="images/image042.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="17">17</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=108 height=46 src="images/image044.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="18">18</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=122 height=45 src="images/image046.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="19">19</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=184 height=46 src="images/image048.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="20">20</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>WebTOP uses Eqs. (1) and (3) to calculate the incident electric
+field. It uses Eqs.(5), (7), (13), (14), (17), and (18) to calculate the
+reflected electric field. It uses Eqs.(9), (11), (15), (16), (19), and (20) to
+calculate the transmitted electric field. </p>
+<p>Light that is linearly polarized perpendicular (parallel) to the
+plane of incidence is called s-polarized (p-polarized) light. <a href=examples.html#Ex1>Example 1 </a>depicts s-polarized light incident from air
+onto glass at different angles of incidence. <a href=examples.html#Ex2>Example 2
+</a>depicts p-polarized light incident from air onto glass at different
+angles of incidence. <a href=examples.html#Ex5>Example 5 </a>depicts
+s-polarized light incident from glass onto air at different angles of
+incidence. <a href=examples.html#Ex6>Example 6 </a>depicts p-polarized light
+incident from glass onto air at different angles of incidence. </p>
+
+<p><big><font color="#008040"><b>Brewster's Angle and the Critical Angle</b></font></big></p>
+
+<p>For the component of the electric field that is parallel to the
+plane of incidence, there is a an angle called <span style='color:blue;font-weight: bold'>Brewster's
+angle</span>, denoted by <font face=symbol>q</font><sub>B</sub>, that has special significance. When the angle of incidence is equal to <font face=symbol>q</font><sub>B</sub> ,
+the component of the reflected electric field that is parallel to the plane of
+incidence is zero. As a result, whenever light is incident at the angle <font face=symbol>q</font><sub>B
+</sub> , the reflected light is linearly polarized, no matter what the state of
+polarization of the incident light. For this reason, Brewster's angle is also
+referred to as the <span style='color:blue;font-weight: bold'>polarization angle</span>, and this
+phenomenon is referred to as <span style='color:blue;font-weight: bold'>polarization by reflection</span>.
+The formula for calculating Brewster's angle is:</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=77 height=46 src="images/image050.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="21">21</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+<p>WebTOP's Reflection and Refraction module displays the current
+value of <font face=symbol>q</font><sub>B</sub> 
+on the right-hand side of its console. <a href=examples.html#Ex3>Example 3 </a>depicts
+unpolarized light incident from air onto glass at Brewster's angle. <a href=examples.html#Ex4>Example 4 </a>depicts unpolarized light incident from
+glass onto air at Brewster's angle.</p>
+
+<p>For the case of internal reflection (n<sub>i</sub>&gt;n<sub>t</sub>) the <span style='color:blue;font-weight: bold'>critical angle</span> <font face=symbol>q</font><sub>C</sub> 
+is extremely important. If the angle of incidence is greater than the critical
+angle, the electric field in the transmitting medium is an evanescent wave, not
+a traveling wave. As a result no energy is transmitted through the interface;
+all the energy goes into the reflected field. In this case we say that <span style='color:blue;font-weight: bold'>total internal reflection</span> occurs. The formula
+for calculating the critical angle is </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=76 height=46 src="images/image054.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<A name="22">22</A>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img align=absbottom src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+
+<p>WebTOP's Reflection and Refraction module displays the current
+value of <font face=symbol>q</font><sub>C</sub> 
+on the right-hand side of its console.</p>
+
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

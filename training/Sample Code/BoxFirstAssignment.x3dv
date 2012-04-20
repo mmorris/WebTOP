@@ -1,0 +1,73 @@
+#X3D V3.0 utf8  #this has to be at the top of every file
+PROFILE Immersive #this tells x3d what profile we are currently importing
+
+#setting up a viewpoint
+DEF mainView Viewpoint { 
+	 description "Main View"
+	 position 0.0 0.0 31.384281
+     orientation 0.0 1.0 0.0 0.0
+
+}
+
+DEF secondaryView Viewpoint {
+	description "Secondary View"
+	position 5.0 0.0 31.384281
+     orientation 0.0 1.0 0.0 0.0
+}
+
+#Tells the browser how fast to rotate/move/walk around world
+NavigationInfo {
+	speed 100
+	}
+
+#begin creating the box
+ Transform {
+	scale 10 10 10
+	
+    children [
+		#touch sensor allows you to check if something is being clicked/hovered on in the world
+		DEF myTouch TouchSensor{
+			enabled TRUE
+		}
+		#creating the box 
+	    Shape {
+        appearance Appearance {
+            material DEF myBox Material {
+                diffuseColor 1 0 0
+            }
+        }
+        geometry Box {
+			size 1 1 1 
+		}
+       }
+	]
+   }
+
+
+### SCRIPTS ##
+
+DEF colorChange Script {
+
+	inputOnly SFBool isTouchOver
+	outputOnly SFColor changeColor
+
+	url "ecmascript: 
+		function isTouchOver(value, time) {
+			if(value){
+				changeColor[0] = 0;
+				changeColor[1] = 0;
+				changeColor[2] = 1;
+				}
+			else {
+				changeColor[0] = 1; 
+				changeColor[1] = 0; 
+				changeColor[2] = 0;
+			}
+			
+		} "
+
+}
+
+## ROUTES ##
+ROUTE myTouch.isOver TO colorChange.isTouchOver
+ROUTE colorChange.changeColor TO myBox.diffuseColor

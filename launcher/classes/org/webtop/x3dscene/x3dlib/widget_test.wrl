@@ -1,0 +1,54 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Red2ConeXDragger [ exposedField SFVec3f coneScale
+	exposedField SFVec3f translation 
+	exposedField SFRotation rotation 
+
+	field SFFloat position 
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition 
+	eventIn SFFloat set_minPosition
+	field SFFloat maxPosition
+	eventIn SFFloat set_maxPosition
+	field SFFloat value 
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue 
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue 
+	eventIn SFFloat set_maxValue
+	field SFBool positionAsValue
+
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out
+	eventIn SFBool set_isActive
+
+	exposedField SFBool enabled 
+	field SFString debugName
+	eventOut SFBool initialized 
+]
+"Widgets.wrl#Red2ConeXDragger"
+
+Viewpoint {
+    position 0 0 1000
+}
+
+
+
+Shape {
+    appearance Appearance {
+        material Material {}
+    }
+    geometry Sphere {
+        radius 5
+    }
+}
+
+Red2ConeXDragger {
+    coneScale 25 25 25
+    translation 0 100 0
+    enabled TRUE
+    minPosition 0
+    maxPosition 500
+}

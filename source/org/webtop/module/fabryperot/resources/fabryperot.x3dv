@@ -1,0 +1,441 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+DEF	VP1 Viewpoint{
+	position 0 0 10
+}
+
+
+#This is a Blaxxun-required copy from Widgets.wrl.  Do not modify!
+EXTERNPROTO XDragWidget [ inputOutput SFVec3f translation
+										inputOutput SFRotation rotation
+
+										initializeOnly SFFloat position 
+										inputOnly SFFloat set_position
+										outputOnly SFFloat position_changed
+
+										initializeOnly SFFloat minPosition 				#If minPosition > maxPosition, all values allowed
+										inputOnly SFFloat set_minPosition
+										initializeOnly SFFloat maxPosition 
+										inputOnly SFFloat set_maxPosition
+
+										outputOnly SFBool isOver_out
+										outputOnly SFBool isActive_out
+										inputOnly SFBool set_isActive
+
+										inputOutput SFBool enabled
+
+										inputOutput MFNode geometry 
+										inputOutput MFNode activeGeometry 
+										initializeOnly SFString debugName 
+										outputOnly SFBool initialized ]
+"../../x3dlib/Widgets.x3dv#XDragWidget"
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#WheelWidget"
+
+PROTO SlidingCylinder [ inputOutput SFColor color 1 0 0 ]
+{
+	Transform {
+		rotation 0 0 1 1.5707963
+		children Shape {
+			geometry	Cylinder { radius .125 height .35 }
+			appearance Appearance { material Material { diffuseColor IS color } }
+		}
+	}
+}
+
+PROTO ActiveSlidingCylinder [ inputOutput SFColor color 1 0 0 ]
+{
+	Transform {
+		rotation 0 0 1 1.5707963
+		children Shape {
+			geometry	Cylinder { radius .1 height .35 }
+			appearance Appearance { material Material { diffuseColor IS color } }
+		}
+	}
+}
+
+#Not to be confused with the CylinderXDragger from Widgets.wrl
+PROTO RodXDragger [ inputOutput SFColor color 1 1 1					#Of cylinder
+										inputOutput SFColor activeColor 1 1 1		#Of active cylinder
+										inputOutput SFVec3f translation 0 0 0		#Of cylinders
+										inputOutput SFRotation rotation 0 0 1 0	#Of whole widget
+										inputOutput SFVec3f scale 1 1 1					#Of cylinders
+
+										initializeOnly SFFloat position 0
+										inputOnly SFFloat set_position
+										outputOnly SFFloat position_changed
+										outputOnly SFFloat inversePosition_out
+
+										initializeOnly SFFloat minPosition 0
+										inputOnly SFFloat set_minPosition
+										initializeOnly SFFloat maxPosition 1
+										inputOnly SFFloat set_maxPosition
+
+										outputOnly SFBool isOver_out
+										outputOnly SFBool isActive_out
+										inputOnly SFBool set_isActive
+
+										inputOutput SFBool enabled TRUE
+										initializeOnly SFString debugName "<unnamed>"
+										outputOnly SFBool initialized ]
+{
+	XDragWidget {
+		translation IS translation
+		rotation IS rotation
+		position IS position
+		set_position IS set_position
+		position_changed IS position_changed
+		minPosition IS minPosition
+		set_minPosition IS set_minPosition
+		maxPosition IS maxPosition
+		set_maxPosition IS set_maxPosition
+		isOver_out IS isOver_out
+		isActive_out IS isActive_out
+		set_isActive IS set_isActive
+		enabled IS enabled
+		geometry Transform {
+			scale IS scale
+			children SlidingCylinder { color IS color }
+		}
+		activeGeometry Transform {
+			scale IS scale
+			children ActiveSlidingCylinder { color IS activeColor }
+		}
+		debugName IS debugName
+		initialized IS initialized
+	}
+}
+
+PROTO Etalon [ initializeOnly SFVec3f     position 0 0 0
+							 initializeOnly SFRotation  rotation 0 1 0 0
+							 initializeOnly SFFloat     transparency 0.5 ]
+{
+	Transform {
+		translation IS position
+		rotation IS rotation
+		children [
+			Shape {
+				geometry Cylinder { radius 0.550 height 0.25 }
+				appearance Appearance {
+					material Material {
+						transparency IS transparency
+						ambientIntensity 1
+						shininess 1
+						diffuseColor 0.9 0.9 0.9
+					}
+				}
+			}
+		]
+	}
+}
+
+
+		# the Loading...Please Wait message
+		DEF IntroductionSwitch Switch {
+			whichChoice 0
+			choice Transform {
+				translation 0 1 -3
+				children Billboard {
+					axisOfRotation 0 0 0		# Screen-aligned
+					children Shape {
+						appearance Appearance {
+							material DEF IntroMaterial Material {
+								diffuseColor 1 0 0
+								ambientIntensity 0
+							}
+						}
+						geometry Text {
+							string [ "Loading ... Please Wait" ]
+							fontStyle FontStyle {
+								size 1.5
+								family "SERIF"
+								style "ITALIC"
+								justify "MIDDLE"
+							}
+						}
+					}
+				}
+			}
+		}
+
+		Etalon { rotation 1 0 0 1.5707963 }
+
+		DEF WidgetSwitch Switch {
+			whichChoice 0
+			choice Group {
+				children [
+					Transform {
+						translation 0 -.75 0
+						children [
+							Transform {
+								scale .45 1 1
+								children DEF ReflectivityWidget RodXDragger {
+									minPosition 0
+									maxPosition 1
+									position 0.5
+									translation -.5 0 0
+									scale 2.2222222 1 1
+									color 0 .5 .5
+									activeColor 0 1 1
+								}
+							}
+							Transform {
+								rotation 0 0 1 -1.5707963267949
+								children
+								Shape {
+									geometry Cylinder {
+										radius .03
+										height .9
+									}
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 1 1
+										}
+									}
+								}
+							}
+						]
+					}
+					Transform {
+						translation .7 -.75 0
+						rotation 0 1 0 1.5707963
+						children [
+							Transform {
+								scale .225 1 1
+								children DEF DepthWidget RodXDragger {
+									minPosition 0
+									maxPosition 2
+									position 1
+									translation -1 0 0
+									scale 4.444444 1 1
+									color 0.5 0.5 0
+									activeColor 1 1 0
+								}
+							}
+							Transform {
+								rotation 0 0 1 -1.5707963267949
+								children
+								Shape {
+									geometry Cylinder {
+										radius .03
+										height .9
+									}
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 1 0
+										}
+									}
+								}
+							}
+						]
+					}
+					Transform {
+						translation 0.7 0 0
+						scale 0.5 0.5 0.5
+						rotation 0 0 1 -1.5707963
+						children DEF RefractionWidget WheelWidget {
+							minValue 1
+							maxValue 3
+							value 1.5
+						}
+					}
+					Transform {
+						translation .25 -.25 3.25
+						rotation 0 0 1 -1.5707963
+						scale 0.5 0.5 0.5
+						children DEF WavelengthWidget WheelWidget { }
+					}
+				]
+			}
+		}
+
+		Transform {
+			translation 0 0 3.1
+			rotation 0 1 0 1.5707963
+			scale 0.008 0.008 0.008
+			children Inline { url "../../x3dlib/Wave.x3dv" }
+		}
+
+		## Below here lies the screen's stuff -- IFS plots, ILS plot, and axis
+
+		Transform {
+			translation 0 0 -10
+			children [
+				DEF ScreenTouch TouchSensor {}
+				Transform {
+					rotation 1 0 0 -1.5707963267948966
+					children DEF ResolutionSwitch Switch {
+						whichChoice 0
+						choice [
+							# choice 0: high-res stuff
+							Group {
+								children [
+									DEF HiScreen Shape {
+										geometry DEF ifsNode IndexedFaceSet {
+										    color Color	{}
+										    coord Coordinate {}
+											coordIndex []
+											colorPerVertex TRUE
+											ccw FALSE
+										} # end geometry
+									}
+									Transform {
+										rotation 0 1 0, 1.570796
+										children USE HiScreen
+									}
+									Transform {
+										rotation 0 1 0, 3.141593
+										children USE HiScreen
+									}
+									Transform {
+										rotation 0 1 0, 4.712389
+										children USE HiScreen
+									}
+								]
+							}
+
+							# choice 1: low-res stuff
+							Group {
+								children [
+									DEF LowScreen Shape {
+										geometry DEF ifsNode_low IndexedFaceSet {
+										    color Color	{}
+											coord Coordinate {}
+											coordIndex []
+											colorPerVertex TRUE
+											ccw FALSE
+										} # end geometry
+									}
+									Transform {
+										rotation 0 1 0, 1.570796
+										children USE LowScreen
+									}
+									Transform {
+										rotation 0 1 0, 3.141593
+										children USE LowScreen
+									}
+									Transform {
+										rotation 0 1 0, 4.712389
+										children USE LowScreen
+									}
+								]
+							}
+						]
+					} # end switch
+				}
+				Transform {
+					translation 0 4.25 0
+					scale 1 1.3333 1							#exaggerate plot scale
+					children Shape {
+						geometry DEF ilsNode IndexedLineSet {
+						  color Color	{}
+                          coord Coordinate {}
+						  coordIndex []
+                        }
+						appearance Appearance {
+							material Material {
+								emissiveColor 1 1 1
+								diffuseColor	1 1 1
+								specularColor 1 1 1
+							}
+						}
+					}
+				}
+				DEF AxisSwitch Switch {
+					whichChoice 0
+					choice Group {
+						children [
+							Transform {
+								translation 0 4 0
+								children Shape { # Axis
+									geometry IndexedLineSet {
+										coord Coordinate { point [ -3.5 0 0, 3.5 0 0
+												-3.5 0.25 0, -3.5 -0.25 0, 3.5 0.25 0, 3.5 -0.25 0
+												-2.8 0.125 0, -2.8 -0.125 0, 2.8 0.125 0, 2.8 -0.125 0
+												-2.1 0.125 0, -2.1 -0.125 0, 2.1 0.125 0, 2.1 -0.125 0
+												-1.4 0.125 0, -1.4 -0.125 0, 1.4 0.125 0, 1.4 -0.125 0
+												-0.7 0.125 0, -0.7 -0.125 0, 0.7 0.125 0, 0.7 -0.125 0
+												0 0.25 0, 0 -0.25 0
+											]
+										}
+										colorPerVertex FALSE
+										coordIndex [	0 1 -1						 # Horizontal Axis
+											2 3 -1 4 5 -1			 # tick 5
+											#									6 7 -1 8 9 -1			 # tick 4
+											#									10 11 -1 12 13 -1	 # tick 3
+											#									14 15 -1 16 17 -1	 # tick 2
+											#									18 19 -1 20 21 -1	 # tick 1
+											22 23 -1					 # tick 0
+										]
+									}
+									appearance Appearance {
+										material Material {
+											emissiveColor 0.9 0.9 0.2
+											diffuseColor	0.9 0.9 0.2
+											specularColor 0.9 0.9 0.2
+										}
+									}
+								}
+							}
+							Transform {
+								translation 3.5 3 .2
+								scale 0.75 0.75 1
+								children Shape {
+									geometry Text {
+										string "3.5cm"
+										fontStyle DEF FS FontStyle {
+											family "SANS"
+											justify ["MIDDLE", "MIDDLE"]
+										}
+									}
+									appearance Appearance {
+										material Material {
+											emissiveColor 1 1 1
+											diffuseColor	1 1 1
+											specularColor 1 1 1
+										}
+									}
+								}
+							}
+							Transform {
+								translation -3.5 3 .2
+								scale 0.75 0.75 1
+								children Shape {
+									geometry Text {
+										string "-3.5cm"
+										fontStyle USE FS
+									}
+									appearance Appearance {
+										material Material {
+											emissiveColor 1 1 1
+											diffuseColor	1 1 1
+											specularColor 1 1 1
+										}
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}

@@ -1,0 +1,66 @@
+<wsl>
+  <scattering animation="play" widgets="visible">
+    <source sourceType="polarized" wavelength="400.0" amplitudex="0.0" amplitudey="1.0" theta="1.5707964" phi="3.1415927" />
+    <view value="0.0 0.5 0.0 0.2 -0.5 -2.5" />
+  </scattering>
+  <script>
+    <viewpointChanged value="0.0 0.40221846 0.0 0.2 -0.5 -2.5" timeStamp="3826" />
+    <viewpointChanged value="0.0 0.46747327 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="9.536743E-7 0.46747327 0.0 0.2 -0.5 -2.5" timeStamp="170" />
+    <viewpointChanged value="9.536743E-7 0.43494654 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.43494654 0.0 0.2 -0.5 -2.5" timeStamp="170" />
+    <viewpointChanged value="0.0 0.40242004 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.40242004 0.0 0.2 -0.5 -2.5" timeStamp="120" />
+    <viewpointChanged value="0.0 0.36989343 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="4.7683716E-7 0.36989343 0.0 0.2 -0.5 -2.5" timeStamp="91" />
+    <viewpointChanged value="4.7683716E-7 0.33736694 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="-4.7683716E-7 0.33736694 0.0 0.2 -0.5 -2.5" timeStamp="40" />
+    <viewpointChanged value="-4.7683716E-7 0.30484056 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="4.7683716E-7 0.30484056 0.0 0.2 -0.5 -2.5" timeStamp="90" />
+    <viewpointChanged value="4.7683716E-7 0.27231395 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.27231395 0.0 0.2 -0.5 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.0 0.23978734 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.23978734 0.0 0.2 -0.5 -2.5" timeStamp="90" />
+    <viewpointChanged value="0.0 0.2072612 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="-9.536743E-7 0.2072612 0.0 0.2 -0.5 -2.5" timeStamp="80" />
+    <viewpointChanged value="-9.536743E-7 0.17473471 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.17473471 0.0 0.2 -0.5 -2.5" timeStamp="130" />
+    <viewpointChanged value="0.0 0.14220798 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.14220798 0.0 0.2 -0.5 -2.5" timeStamp="80" />
+    <viewpointChanged value="0.0 0.10968137 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.10968137 0.0 0.2 -0.5 -2.5" timeStamp="131" />
+    <viewpointChanged value="0.0 0.077154875 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="1.4305115E-6 0.077154875 0.0 0.2 -0.5 -2.5" timeStamp="50" />
+    <viewpointChanged value="1.4305115E-6 0.044628263 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0 0.044628263 0.0 0.2 -0.5 -2.5" timeStamp="160" />
+    <viewpointChanged value="0.0 0.01210165 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.03255129 0.01210165 0.0 0.2 -0.5 -2.5" timeStamp="180" />
+    <viewpointChanged value="0.03255129 -0.020424843 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.065103054 -0.020424843 0.0 0.2 -0.5 -2.5" timeStamp="250" />
+    <viewpointChanged value="0.065103054 -0.020424843 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.06510353 -0.020424843 0.0 0.2 -0.5 -2.5" timeStamp="211" />
+    <viewpointChanged value="0.06510353 -0.052951336 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.0976553 -0.052951336 0.0 0.2 -0.5 -2.5" timeStamp="380" />
+    <viewpointChanged value="0.0976553 -0.052951396 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.097653866 -0.052951396 0.0 0.2 -0.5 -2.5" timeStamp="301" />
+    <viewpointChanged value="0.097653866 -0.08547783 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <viewpointChanged value="0.13020802 -0.08547783 0.0 0.2 -0.5 -2.5" timeStamp="40" />
+    <viewpointChanged value="0.13020802 -0.08547801 0.0 0.2 -0.5 -2.5" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="7711" />
+    <actionPerformed param="amplitudex" value="0.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="40" />
+    <actionPerformed param="theta" value="1.5707963267948966" timeStamp="0" />
+    <actionPerformed param="phi" value="3.141592653589793" timeStamp="0" />
+    <actionPerformed param="wavelength" value="400.0" timeStamp="8072" />
+    <actionPerformed param="amplitudex" value="0.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="40" />
+    <actionPerformed param="theta" value="1.5707963267948966" timeStamp="0" />
+    <actionPerformed param="phi" value="3.141592653589793" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="8211" />
+    <actionPerformed param="amplitudex" value="0.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="41" />
+    <actionPerformed param="theta" value="1.5707963267948966" timeStamp="0" />
+    <actionPerformed param="phi" value="3.141592653589793" timeStamp="0" />
+    <scriptEnded timeStamp="3905" />
+  </script>
+</wsl>

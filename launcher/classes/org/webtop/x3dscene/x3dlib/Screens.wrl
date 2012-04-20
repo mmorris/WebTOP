@@ -1,0 +1,696 @@
+#VRML V2.0 utf8
+
+#File: Screens.wrl
+#Author: Paul Cleveland
+#Description: Intended as a library of various screens useful to WebTOP
+
+
+
+############################################################
+### RectangularApertureScreen: A generalized (hopefully) ###
+### rectangular aperture screen.  Can add an XYDragger   ###
+### to facilitate resizing of the aperture.              ###
+############################################################
+PROTO RectangularApertureScreen [
+	#Gernalized fields.  Need to get back to implementing these later.
+	#  Would need scripting to properly size all of the screen parts.
+	exposedField SFVec3f translation 0 0 0		 #translation for entire screen
+#	exposedField SFVec3f screen_dim 0 0 0 		 #dimensions of the screen itself
+	field SFVec2f aperture_dim 0 0 		 #dimensions of the aperture opening.  NEEDED BY JAVA
+#	eventIn	SFVec2f	set_scrn_dim				 #to set screen dimensions
+	eventIn	SFVec2f	set_ap_dim			 #to set aperture dimensions
+	eventOut SFVec2f ap_dim_changed
+#	exposedField SFVec3f center 0 0 0		     #translation of the entire screen
+	exposedField SFVec3f scale 1 1 1             #overall scale of the entire screen
+#	exposedField SFVec2f def_aperture_size  0 0  #default x/y size of aperture
+	field SFFloat transparency 0.6 		 #transparency of all parts of the screen
+	eventIn	SFFloat	set_transparency		 	 #to set screen transparency
+	eventOut SFFloat transparency_changed
+#	exposedField SFVec3f widgets_scale 1 1 1     #scale for all widgets.  can override
+
+	#Non-gernalized fields
+	eventIn	SFVec3f	trans_changed
+	field SFVec3f top_size 1 1 1
+	exposedField SFVec3f top_scale 200 400 1
+	field SFVec3f right_size 1 1000 1
+	exposedField SFVec3f right_scale 400 1 1
+	#Material attributes for screen
+	exposedField SFFloat ambientIntesity 0.2
+	exposedField SFColor specularColor 0 0 0
+	exposedField SFColor diffuseColor 0.3 0.6 0.9
+	field SFFloat minTransparency 0.0
+	field SFFloat maxTransparency 1.0
+]
+{
+	Transform {
+		translation	IS translation
+		children [
+			DEF	Slits Group {
+				children [
+					#Here are the actual slits.
+					DEF	slitT_trans Transform {
+						translation 0 300 0
+						scale IS top_scale
+						children [
+							DEF	slitT Shape	{
+								appearance Appearance {
+									material DEF slitT_mat Material {
+										ambientIntensity IS	ambientIntesity
+										diffuseColor IS	diffuseColor
+										specularColor IS specularColor
+										transparency IS	transparency
+									}
+								}
+								geometry Box {
+									size IS	top_size
+								}
+							}
+						]
+					}
+					DEF	slitR_trans Transform {
+						translation	300 0 0
+						scale IS right_scale
+						children [
+							DEF	slitR Shape	{
+								appearance Appearance {
+									material DEF slitR_mat Material {
+										ambientIntensity IS	ambientIntesity
+										diffuseColor IS	diffuseColor
+										specularColor IS specularColor
+										transparency IS	transparency
+									}
+								}
+								geometry Box {
+									size IS	right_size
+								}
+							}
+						]
+					}
+					DEF	slitB_trans Transform {
+						translation	0 -300 0
+						scale IS top_scale
+						children [
+							DEF	slitB Shape	{
+								appearance Appearance {
+									material DEF slitB_mat Material {
+										ambientIntensity IS	ambientIntesity
+										diffuseColor IS	diffuseColor
+										specularColor IS specularColor
+										transparency IS	transparency
+									}
+								}
+								geometry Box {
+									size IS	top_size
+								}
+							}
+						]
+					}
+					DEF	slitL_trans Transform {
+						translation	-300 0 0
+						scale IS right_scale
+						children [
+							DEF	slitL Shape	{
+								appearance Appearance {
+									material DEF slitL_mat Material {
+										ambientIntensity IS	ambientIntesity
+										diffuseColor IS	diffuseColor
+										specularColor IS specularColor
+										transparency IS	transparency
+									}
+								}
+								geometry Box {
+									size IS	right_size
+								}
+							}
+						]
+					}					
+				]#end of Slits children
+			}#end SLITS	
+		]#end main children
+	}#end main Node
+	DEF	RectAperture_WORKER Script {
+		#Resizing/recentering fields
+		eventIn	SFVec2f	resize_ap IS set_ap_dim #resized dimensions
+		eventOut SFVec3f sides_scale #new dimensions
+		eventOut SFVec3f sideR_trans
+		eventOut SFVec3f sideL_trans
+		eventOut SFVec3f middles_scale
+		eventOut SFVec3f top_trans
+		eventOut SFVec3f bottom_trans
+		eventOut SFVec2f ap_change IS ap_dim_changed
+		field SFVec2f ap_size IS aperture_dim
+
+		#Fading fields
+		eventIn	SFFloat	fade_in IS	set_transparency
+		field SFFloat fade_init 0.6
+		eventOut SFFloat fade_out IS  transparency_changed
+		field SFBool fade_set FALSE
+		field SFFloat minTrans IS minTransparency
+		field SFFloat maxTrans IS maxTransparency
+		
+		url	"javascript:
+		//Initial setup for resizing
+		function initialize() {
+			sides_scale = new SFVec3f(400, 1, 1);
+			sideR_trans = new SFVec3f(300, 0, 0);
+			sideL_trans = new SFVec3f(-300, 0, 0);
+			middles_scale = new SFVec3f(200, 400, 1);
+			top_trans = new SFVec3f(0, 300, 0);
+			bottom_trans = new SFVec3f(0, -300, 0);
+			fade_out = 0.6;
+			fade_init = 0.6;
+		}
+
+		//Dynamic sizing function
+		function resize_ap(value, time) {
+			//Record the resized aperture
+			ap_size[0] = 2*value[0];
+			ap_size[1] = 2*value[0];
+			ap_change = value;  //Sends the change in aperture dimensions directly out
+			//Rescale the sides
+			sides_scale[0] = 400 - value[0];  //original scale - any change (-change = +rescale)
+			//Recenter the sides
+			sideR_trans[0] = 300 + 0.5*value[0];
+			sideL_trans[0] = -sideR_trans[0];
+			//Rescale the top/bottom
+			middles_scale[0] = 200 + 2*value[0];
+			middles_scale[1] = 400 + value[1];
+			//Recenter the top/bottom
+			top_trans[1] = 300 - 0.5*value[1];
+			bottom_trans[1] = -top_trans[1];
+		}
+
+		//Dynamic fading
+		function fade_in(value, time) {
+			//Turn the new fading value into transparency for the material
+			/* We our observation screen to be never completely transparent,
+			   nor ever completely opaque.  We'll go with 0.6 < value < 0.9.
+			   This way, the base transparency is the same as other modules,
+			   and the maximum is nearly fully transparent, allowing it to
+			   cause little obstruction.
+			   Since VRML transparency values range from 0 to 1, the 
+			   function for our results is:*/
+			fade_out = minTrans + value*(maxTrans-minTrans);
+		}
+		"
+	}#end WORKER
+	#Resize/recenter ROUTEs
+	ROUTE RectAperture_WORKER.middles_scale	TO slitT_trans.set_scale
+	ROUTE RectAperture_WORKER.middles_scale TO slitB_trans.set_scale
+	ROUTE RectAperture_WORKER.top_trans	TO slitT_trans.set_translation
+	ROUTE RectAperture_WORKER.bottom_trans TO slitB_trans.set_translation
+	ROUTE RectAperture_WORKER.sides_scale TO slitR_trans.set_scale
+	ROUTE RectAperture_WORKER.sides_scale TO	slitL_trans.set_scale
+	ROUTE RectAperture_WORKER.sideR_trans TO slitR_trans.set_translation
+	ROUTE RectAperture_WORKER.sideL_trans TO slitL_trans.set_translation
+	#Fader ROUTEs.
+	ROUTE RectAperture_WORKER.fade_out TO slitT_mat.set_transparency
+	ROUTE RectAperture_WORKER.fade_out TO slitR_mat.set_transparency
+	ROUTE RectAperture_WORKER.fade_out TO slitB_mat.set_transparency
+	ROUTE RectAperture_WORKER.fade_out TO slitL_mat.set_transparency
+}
+#############################################################
+###########  End PROTO RectangularApertureScreen  ###########
+#############################################################
+															 
+
+#################################################################
+#### IFSQuadsObservationScreen: A generalized observation     ###
+#### screen for use in a wide variety of modules.  This PROTO ###
+#### uses a rectangular shape as in the slit modules, as well ###
+#### as an IFS to display the results.  It moves along the Z  ###
+#### axis only, so ROUTEing a SFFloat to set_position will    ###
+#### translate the screen.  Also, a dragger is included, but  ###
+#### a backdrop (the yellow box in slits) is not.  That PROTO ###
+#### can be found below, and can be made to move with the     ###
+#### IFSQuadsObservationScreen by ROUTEs from position_changed###
+#### to the ScreenBackdrop object's set_position eventIn.     ###
+#################################################################
+##Supporting EXTERNPROTO(s)
+#EXTERNPROTO Red2ConeXDragger [
+#	exposedField SFVec3f coneScale
+#	exposedField SFVec3f translation
+#	exposedField SFRotation rotation
+#	field SFFloat position
+#	eventIn SFFloat set_position
+#	eventOut SFFloat position_changed
+#	field SFFloat minPosition
+#	eventIn SFFloat set_minPosition
+#	field SFFloat maxPosition
+#	eventIn SFFloat set_maxPosition
+#	field SFFloat value
+#	eventIn SFFloat set_value
+#	eventOut SFFloat value_changed
+#	field SFFloat minValue
+#	eventIn SFFloat set_minValue
+#	field SFFloat maxValue
+#	eventIn SFFloat set_maxValue
+#	field SFBool positionAsValue
+#	eventOut SFBool isOver_out
+#	eventOut SFBool isActive_out
+#	eventIn SFBool set_isActive
+#	exposedField SFBool enabled
+#	field SFString debugName
+#	eventOut SFBool initialized
+#]
+#"../vrmllib/Widgets.wrl#Red2ConeXDragger"
+#PROTO IFSQuadsObservationScreen [
+#	#Position information
+#	field SFFloat position -500
+#	field SFFloat minPosition -1000
+#	field SFFloat maxPosition 0
+#	eventIn	SFFloat	set_position
+#	eventOut SFFloat position_changed
+#	#Size information
+#	field SFVec3f size 1 1 1
+#	field SFVec2f minSize 0.5 0.5
+#	field SFVec2f maxSize 1000 1000
+#	eventIn SFVec2f	set_size
+#	eventOut SFVec2f size_changed
+#	#Mouse information
+#	exposedField SFNode	IFS IndexedFaceSet {}
+#	eventIn SFBool	isOver_in
+#	eventOut SFBool	isOver_out
+#	eventOut SFBool	isDragging_out
+#	exposedField SFBool	reportMousePosition TRUE
+#	eventIn	SFVec3f	mousePosition_in
+#	eventOut SFVec3f mousePosition_out	#use in WApplet to get coordinates of cursor
+#	field SFBool isDraggable TRUE
+#	field SFInt32 dragChoice 0
+#	#Widget information
+#	field SFVec3f defScaleWidgets 0.6 0.6 0.6
+#	field SFVec3f scaleWidgets 0.6 0.6 0.6
+#	eventIn	SFBool set_widgets_visible    #can scale widgets very tiny to make "disappear"
+#	#Ruler information.  Note that the scale of the observation screen relates to the min/max ruler values.
+#	eventIn	SFBool set_ruler_visible
+#	field SFFloat label_size 60
+#	field SFColor label_color 0.8 0.8 0.8
+#	field SFFloat ruler_minX -10
+#	field SFFloat ruler_maxX 10
+#	field SFFloat ruler_minY -10
+#	field SFFloat ruler_maxY 10
+#	field MFString ruler_units     "mm"
+#	field MFString ruler_minXLabel "-"
+#	field MFString ruler_maxXLabel "+"
+#	field MFString ruler_minYLabel "-"
+#	field MFString ruler_maxYLabel "+"
+#	field SFBool rulerVisible TRUE
+#]
+#{	 
+#	DEF	IFSQuads_Screen Transform {
+#		translation 0 0 0
+#		scale IS size
+#		children [
+#			DEF	ObservationAndTouch Group {
+#				children [
+#					DEF	IFSQuads_TS TouchSensor {
+#						enabled	IS reportMousePosition
+#						isOver IS isOver_out
+#						isActive IS	isDragging_out
+#					}
+#					DEF IFSImage Transform {
+#						rotation 1 0 0 1.5707963267949
+#						children [
+#							DEF IFSQuad1 Shape {
+#								appearance Appearance { 
+#									material Material {
+#										emissiveColor 1 1 1
+#									}
+#								}
+#								geometry IS	IFS
+#							}
+#							Transform {
+#								rotation 0 1 0 3.14159265
+#								children USE IFSQuad1
+#							}
+#							Transform {
+#								rotation 0 0 1 3.14159265
+#								children USE IFSQuad1
+#							}
+#							Transform {
+#								rotation 1 0 0 3.14159265
+#								children USE IFSQuad1
+#							}
+#						]#end IFSImage children
+#					}
+#				]
+#			}
+#			#Text labels
+#			DEF	LabelsMover Transform {	#This transfrom should move along with the rest of the screen
+#				translation	0 0 0
+#				children
+#					DEF	Labels Group {
+#						children [
+#							DEF	negX Transform {
+#								children
+#									Shape {
+#										appearance Appearance {
+#											material Material {
+#												diffuseColor IS label_color
+#											    emissiveColor IS label_color
+#											}
+#										}
+#										geometry DEF negXLabel Text {
+#											fontStyle FontStyle	{
+#												justify	"END"
+#												family "SANS"
+#												size IS	label_size
+#											}
+#										#'string' attribute assigned at init
+#										}
+#									}#end -X
+#							}
+#							DEF	posX Transform {
+#								children
+#									Shape {
+#										appearance Appearance {
+#											material Material {
+#												diffuseColor IS	label_color
+#												emissiveColor IS label_color
+#												}
+#										}
+#										geometry DEF posXLabel Text {
+#											fontStyle FontStyle	{
+#												justify	"BEGIN"
+#												family "SANS"
+#												size IS label_size
+#											}
+#											#'string' attribute assigned at init
+#										}
+#									}#end +X
+#							}
+#							DEF	negY Transform {
+#								children
+#									Shape {
+#										appearance Appearance {
+#											material Material {
+#												diffuseColor IS	label_color
+#												emissiveColor IS label_color
+#											}
+#										}
+#										geometry DEF negYLabel Text {
+#											fontStyle FontStyle	{
+#												justify	"MIDDLE"
+#												family "SANS"
+#												size IS label_size
+#											}
+#										#'string' attribute assigned at init
+#										}
+#									}#end -Y
+#							}
+#							DEF	posY Transform {
+#								children
+#									Shape {
+#										appearance Appearance {
+#											material Material {
+#												diffuseColor IS	label_color
+#												emissiveColor IS label_color
+#											}
+#										}
+#										geometry DEF posYLabel Text {
+#											fontStyle FontStyle	{
+#												justify	"MIDDLE"
+#												family "SANS"
+#												size IS label_size
+#											}
+#											#'string' attribute assigned at init
+#										}
+#									}#end +Y
+#							}
+#						]#end Labels children
+#					}#end Labels Group
+#			}#end LabelMover
+#		]#end Screen children
+#	}#end Screen Transform
+#
+#	#Object for translating screen
+#	DEF translateScreenSwitch Switch {
+#		whichChoice IS dragChoice
+#		choice
+#			Transform {
+#				translation 0 500 0 # -500
+#				rotation -1 1 1 2.1		#a vector (X,Y,Z) without -> (-Y,Z,-X) with
+#				scale IS scaleWidgets	
+#				children [
+#					DEF screenDragger Red2ConeXDragger {
+#						coneScale 2.5 2.5 2.5		#This only has to do part of the work.
+#						minPosition 50
+#						maxPosition 100
+#						position 50
+#					}
+#				]
+#			}
+#	}#end translateScreenSwitch
+#	DEF	IfsQuadObserv_WORKER Script {
+#		#positioning
+#		field SFFloat pos IS position
+#		field SFFloat minPos IS	minPosition
+#		field SFFloat maxPos IS	maxPosition
+#		eventIn	SFFloat	scrnTranslation_in  IS set_position
+#		eventOut SFFloat pos_change IS position_changed
+#		eventOut SFVec3f scrnTranslation_out
+#		eventOut SFVec3f top_of_scrn
+#		#sizing
+#		field SFVec3f scrnSize IS size
+#		field SFVec2f scrnSize_min IS minSize
+#		field SFVec2f scrnSize_max IS maxSize
+#		eventIn SFVec2f	set_scrnSize IS	set_size
+#		eventOut SFVec2f scrnSize_changed IS size_changed
+#		field SFVec3f defWidgetsScale IS defScaleWidgets
+#		field SFVec3f widgetsScale IS scaleWidgets
+#		eventIn	SFBool widgetsVisible IS set_widgets_visible 
+#		#mouse info
+#		eventIn SFBool	mouseOverIn IS isOver_in
+#		eventOut SFBool	mouseOverOut IS	isOver_out
+#		eventOut SFBool	dragging IS	isDragging_out
+#		eventIn	SFVec3f	mousePosIn IS mousePosition_in
+#		eventOut SFVec3f mousePosOut IS mousePosition_out
+#		field SFBool draggable IS isDraggable
+#		field SFInt32 draggerChoice IS dragChoice
+#		#widget info
+#		#label info
+#		eventIn	SFBool setRulerVisible
+#		eventOut SFVec3f setLabelScale
+#		eventOut SFVec3f negXPos
+#		eventOut SFVec3f posXPos
+#		eventOut SFVec3f negYPos
+#		eventOut SFVec3f posYPos
+#		field SFFloat labelSize IS label_size
+#		field MFString rulerUnits IS ruler_units
+#		field SFFloat rulerMinX IS ruler_minX
+#		field SFFloat rulerMaxX IS ruler_maxX
+#		field SFFloat rulerMinY IS ruler_minY
+#		field SFFloat rulerMaxY IS ruler_maxY
+#		field MFString rulerMinXTxt IS	ruler_minXLabel
+#		field MFString rulerMaxXTxt IS	ruler_maxXLabel
+#		field MFString rulerMinYTxt IS	ruler_minYLabel
+#		field MFString rulerMaxYTxt IS	ruler_maxYLabel
+#		field SFBool rulerVisible IS rulerVisible
+#		
+#		url	"javascript:
+#		function initialize() {
+#			/*As of now, size and position limits not checked,
+#			so make sure they're not invalid when instantiaing. [PC]
+#			 */
+#			//Write the proper text labels
+#			if(rulerVisible) {
+#				drawRuler(labelSize);
+#			}
+#			else { //If text not supposed to be visible, just shrink to infinity.
+#				drawRuler(0);
+#			}
+#			//move labels to starting positions
+#			moveLabels();
+#			//Display the dragger widget?
+#			if(draggable) {
+#				draggerChoice = 0;
+#			}
+#			else {
+#				draggerChoice = -1;
+#			}
+#		}//end initialize()
+#		//utility function to reposition dragger after resizing screen
+#		//function for resizing the screen
+#		function set_scrnSize(value, time) {
+#			if(value>=scrnSize_min && value<=scrnSize_max) {
+#				scrnSize[0] = value[0];
+#				scrnSize[1] = value[1];
+#				scrnSize_changed = value;
+#			}
+#			//reposition labels
+#			moveLabels();
+#		}//end set_scrnSize
+#		//function for repositioning the labels
+#		function moveLabels() {
+#			negXPos[0] = -scrnSize[0]/2 - 20;
+#			negXPos[1] = 0; negXPos[2] = 0;
+#			posXPos[0] = scrnSize[0]/2 + 20;
+#			posXPos[1] = 0; posXPos[2] = 0;
+#
+#			negYPos[1] = -scrnSize[1]/2 - 20;
+#			negYPos[0] = 0; negYPos[2] = 0;
+#			posYPos[1] = scrnSize[1]/2 + 20;
+#			posYPos[0] = 0; posYPos[2] = 0;
+#		}
+#		//function for making ruler visible
+#		function setRulerVisible(value, time) {
+#			if(value) {
+#				rulerVisible = true;
+#				drawRuler(labelSize);
+#			}
+#			else {
+#				rulerVisible = false;
+#				drawRuler(0);
+#			}
+#		}
+#		//utility function for resizing labels
+#		function drawRuler(size) {
+#			//By sending a very small 'size', you can make the text disappear
+#			setLabelScale[0] = size;
+#			setLabelScale[1] = size;
+#			setLabelScale[2] = size;
+#			rulerMinXTxt = new MFString('-' + rulerMinX.toString() + ' ' + rulerUnits);
+#			rulerMaxXTxt = new MFString('+' + rulerMaxX.toString() + ' ' + rulerUnits);
+#			rulerMinYTxt = new MFString('-' + rulerMinY.toString() + ' ' + rulerUnits);
+#			rulerMaxYTxt = new MFString('+' + rulerMaxY.toString() + ' ' + rulerUnits);
+#		}
+#		//widget scaling function
+#		function widgetsVisible(value, time) {
+#			if(value) {
+#				widgetsScale = defScaleWidgets;
+#			}
+#			else {
+#				widgetsScale = new SFVec3f(0, 0, 0);
+#			}
+#		}
+#		//mouseover reporting function
+#		function mouseOverIn(value, time) {
+#			mouseOverOut = value;
+#		}
+#		//mouse cursor position reporting function.  Will only occur when mouse is over screen
+#		function mousePosIn(value, time) {
+#			if(scrnEnabled) {
+#				mouseOverOut = value;  //This will generate an event sending a SFVec3f anytime the mouse is over the screen
+#			}
+#		}
+#		//function for dragging screen
+#		function scrnTranslation_in(value, time) {
+#			//first check if this screen is draggable
+#			if(draggable) {
+#				/*Need to convert to Z-scale of the screen?
+#				 */
+#				//update global position
+#				pos_change = value;
+#				pos = pos + value;
+#				//translate on Z axis
+#				scrnTranslation_out[2] = value;
+#			}
+#		}
+#		"
+#	}#end IfsQuadObserv_WORKER
+#	ROUTE IfsQuadObserv_WORKER.scrnTranslation_out TO IFSQuads_Screen.set_translation
+#	ROUTE IfsQuadObserv_WORKER.setLabelScale TO LabelsMover.set_scale
+#	ROUTE IFSQuads_TS.isOver	TO IfsQuadObserv_WORKER.mouseOverIn
+#	ROUTE IFSQuads_TS.hitPoint_changed TO IfsQuadObserv_WORKER.mousePosIn
+#	ROUTE screenDragger.position_changed TO	IfsQuadObserv_WORKER.scrnTranslation_in
+#}
+###############################################################
+############ End PROTO RectangularObservationScreen ###########
+###############################################################
+#
+#
+################################################################
+### RectangularScreenBackdrop: This is a backdrop for box-   ###
+### shaped observation screens (like the yellow boxes in the ###
+### slit modules).  It is useful to help the user see where  ###
+### the observation screen is if nothing is showing on the   ###
+### screen itself or if it's just hard to tell.  It moves    ###
+### along the Z axis and can be moved by a ROUTE to the      ###
+### set_position evenIn.  Size is static once set.			 ###
+################################################################
+
+PROTO RectangularScreenBackdrop [
+	#Positioning
+	eventIn	SFFloat	set_position
+	eventOut SFFloat position_changed
+	field SFFloat position 0
+    field SFInt32 axisOfMotion 2        #axis this screen moves on, x=0, y=1, z=2
+    field SFInt32 directionOfMotion -1  #direction on the axisOfMotion, -1 or 1; assumes set_position receives positive values
+	#Sizing/appearance
+	field SFVec3f size 0 0 0
+	field SFColor diffuseColor 1 1 0
+	field SFFloat transparency 0
+	eventIn	SFFloat	set_transparency
+]
+{
+	DEF	Backdrop Transform {
+		children [
+			DEF	Backdrop_Box Shape {
+				appearance Appearance {
+					material DEF Backdrop_mat Material {
+						transparency IS	transparency
+						diffuseColor IS	diffuseColor
+					}
+				}
+				geometry DEF BackdropIFS IndexedFaceSet	{
+					coord DEF BackdropIFS_coord Coordinate {}
+				}
+			}
+		]#end Backdrop children
+	}
+
+	DEF	RectangularBackdrop_WORKER Script {
+		eventIn	SFFloat	setPos IS set_position
+		eventOut SFFloat pos_change IS position_changed	
+		eventOut SFVec3f translation_out
+		field SFFloat pos IS position
+		field SFVec3f size IS size
+        field SFInt32 axis IS axisOfMotion
+        field SFInt32 direction IS directionOfMotion
+		eventOut MFVec3f coords
+		eventOut MFInt32 points_out
+		field SFFloat transparency IS transparency
+		eventIn	SFFloat	transparency_in IS set_transparency
+		eventOut SFFloat transparency_out
+
+		url	"javascript:
+		//initialization
+		function initialize() {
+			/*set up the box IFS according to size*/
+			//create the coordinates
+			coords = new MFVec3f (new SFVec3f( size[0]/2, -size[1]/2, -size[2]),   //v0
+								  new SFVec3f(-size[0]/2, -size[1]/2, -size[2]),  //v1
+								  new SFVec3f(-size[0]/2,  size[1]/2, -size[2]), //v2
+								  new SFVec3f( size[0]/2,  size[1]/2, -size[2]), //v3
+								  new SFVec3f( size[0]/2, -size[1]/2, 0),          //v4
+								  new SFVec3f(-size[0]/2, -size[1]/2, 0),         //v5
+								  new SFVec3f(-size[0]/2,  size[1]/2, 0),        //v6
+								  new SFVec3f( size[0]/2,  size[1]/2, 0));      //v7
+			//create the faces
+			points_out = new MFInt32(0, 1, 2, 3, -1,  //back
+									 1, 5, 6, 2, -1,  //top
+									 0, 3, 7, 4, -1,  //right
+									 3, 2, 6, 7, -1,  //left
+									 0, 4, 5, 1, -1); //bottom
+			//after sizing, move to proper place
+			setPos(pos, new Date());
+		}
+		function setPos(value, time) {
+			pos = pos - value;
+			translation_out[axis] = direction*value;
+			pos_change = -value;
+		}
+		function transparency_in(value, time) {
+			transparency_out = value;
+		}
+		"
+		ROUTE RectangularBackdrop_WORKER.transparency_out TO Backdrop_mat.set_transparency
+		ROUTE RectangularBackdrop_WORKER.coords	TO BackdropIFS_coord.set_point
+		ROUTE RectangularBackdrop_WORKER.points_out TO BackdropIFS.set_coordIndex
+		ROUTE RectangularBackdrop_WORKER.translation_out TO	Backdrop.translation
+	}#end WORKER
+}
+##############################################################
+###########  End PROTO RectangularScreenBackdrop   ###########
+##############################################################
+

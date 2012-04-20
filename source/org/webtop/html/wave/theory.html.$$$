@@ -1,0 +1,178 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head><title>Waves: Theory</title>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+self.name='module';
+document.write(stdMenu(0,'Waves',2,true));
+document.write(moduleList(1,true));
+</script>
+<p>&nbsp;
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<p><big><font color="#800000"><big><b>Waves: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>The module simulates a "ripple tank" with the surface of the water
+being the x-y plane. The user may place one or more monochromatic point sources
+(which create circular waves), or monochromatic line sources (which create
+waves with straight-line wavefronts, let's call them "linear waves") on the
+water surface. The module shows the resultant disturbance, either in a static
+form (a still picture) or as traveling waves.</p>
+
+<p><big><font color="#008040"><b>Linear Wave (Line Source)</b></font></big></p>
+<p>Each line source creates a linear wave of amplitude A, wavelength <font face=symbol>l</font>,
+initial phase <font face=symbol>d</font>, and
+angle of propagation <font face=symbol>q</font>.
+The wave function for the disturbance at position (x,y) on the surface, at time
+t, is given by the formula</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><font face=symbol>y</font>(x,y,t) = Acos(k<sub>x</sub>x + k<sub>y</sub> 
+    y - kvt +<font face=symbol>d</font>)</center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>where k<sub>x</sub> = (2<font face=symbol>p</font>/<font face=symbol>l</font>)cos<font face=symbol>q</font>,
+k<sub>y</sub> = (2<font face=symbol>p</font>/<font face=symbol>l</font>)sin<font face=symbol>q</font>,
+and <img align=bottom src="images/image002.gif" width="142" height="32">. In Eq. (1) v is the wave speed. Fig. 1 below depicts a
+linear wave of amplitude A, wavelength <font face=symbol>l</font>, initial phase zero, and angle of
+propagation zero, i.e., the wave is propagating in the positive x-direction.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img src="images/image004.jpg" width="574" height="485"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 1 A linear wave traveling in the positive x-direction (towards the right).</small></td>
+  </tr>
+</table></center></div>
+<p><a href=examples.html#waves-ex4>Example 4</a> simulates the waves from
+a single line source. In it A, <font face=symbol>l</font>, <font face=symbol>d</font>, and <font face=symbol>q</font> are
+varied. <a href=examples.html#waves-ex5>Example 5 </a>&nbsp;simulates the resultant wave for two identical linear waves
+traveling in opposite directions. This is a <span style='color:red'>standing
+wave</span> pattern. <a href=examples.html#waves-ex6>Example 6</a> simulates the
+resultant wave for two identical linear waves traveling in different
+directions. In which direction is the resultant wave traveling? <a href=examples.html#waves-ex7>Example 7</a> simulates the resultant wave for two waves
+that are identical, except that they have slightly different wavelengths. This
+causes <span style='color:red'>beats</span>. Can you identify the wave packets
+as they travel by?</p>
+<p><big><font color="#008040"><b>Circular Waves (Point Sources)</b></font></big></p>
+<p>In this case the theory is more complex, because there is no such
+thing as a truly "point" source. Therefore the module will simulate the waves
+made by a small circular plunger of radius 'a' that is touching the water surface
+and performing simple harmonic motion of angular frequency <font face=symbol>w</font> =
+kv&nbsp; = (2<font face=symbol>p</font>/<font face=symbol>l</font>)v,
+where v is the wave speed. Let F<sub>0</sub> be the maximum force per unit area
+that the plunger exerts on the water. Let&nbsp;
+T be the tension per unit length on the water surface, and let the
+position of the point source be (x<sub>0</sub>, y<sub>0</sub>). The wave
+function for the disturbance at the position (x,y) on the surface, at time t,
+is given by the formula </p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><font face=symbol>y</font>(x,y,t) = B(x,y)cos(kvt - </span><font face=symbol>d</font>) + C(x,y)sin(kvt - <font face=symbol>d</font>)</center></td>
+    <td width="20%" class=tablemain><center>(<a name="2">2</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>where</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=332 height=93 src="images/image006.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="3">3</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=179 height=44 src="images/image008.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="4">4</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=76 height=42 src="images/image010.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="5">5</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center>&nbsp;</center></td>
+    <td width="20%" class=tablemain><center>&nbsp;</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><img width=182 height=34 src="images/image012.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="6">6</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>and <font face=symbol>b</font> = ka. Here J<sub>0</sub>(x) and J<sub>1</sub>(x) are Bessel functions of the
+first kind of orders zero and one, respectively. N<sub>0</sub>(x) and N<sub>1</sub>(x)
+are Bessel functions of the second kind (Neumann functions) of orders zero and
+one, respectively. WebTOP uses Eqs. (2) through (5) to do its circular wave
+calculations. In order to simulate a point source, it takes 'a' to be an
+extremely small number. The user can vary the following parameters: A, <font face=symbol>l</font>, <font face=symbol>d</font>, x<sub>0</sub>,
+and y<sub>0</sub>.</p>
+
+<p>Fig. 2 below shows one circular wave from WebTOP:</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=537 height=327 src="images/image014.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 2 A circular wave due to a "point source" at the origin. The source itself is not pictured.</small></td>
+  </tr>
+</table></center></div>
+<p><a href=examples.html#waves-ex1>Example 1</a> simulates the waves from
+a single point source. In it A, <font face=symbol>l</font>,
+<font face=symbol>d</font>, x<sub>0
+</sub>and y<sub>0</sub> are varied. <a href=examples.html#waves-ex2>Example 2</a>
+simulates the resultant wave when two identical, in-phase point sources are
+separated by two, three, and four wavelengths. <a href=examples.html#waves-ex3>Example 3</a> simulates the resultant wave when three identical, in-phase point
+sources are separated by two wavelengths</p>
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

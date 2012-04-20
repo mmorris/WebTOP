@@ -1,0 +1,33 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="hidden" fieldMode="composite">
+    <source sourceType="polarized" wavelength="700.0" amplitudex="1.0" amplitudey="0.25" phaseDifference="1.5707964" />
+    <filters />
+    <view value="-0.1953255 -0.7540267 0.0 4.2737546 1.3486795 -15.924015" />
+  </polarization>
+  <script>
+    <actionPerformed param="wavelength" value="700.0" timeStamp="10184" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.5" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="23484" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.75" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="23835" />
+    <actionPerformed param="amplitudex" value="1.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="24024" />
+    <actionPerformed param="amplitudex" value="0.75" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="30804" />
+    <actionPerformed param="amplitudex" value="0.5" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="25707" />
+    <actionPerformed param="amplitudex" value="0.25" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="1.0" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="1.5707964" timeStamp="70" />
+  </script>
+</wsl>

@@ -1,0 +1,178 @@
+<wsl>
+  <geometrical quality="100" source="3" selected="0">
+    <elements>
+      <converginglens id="1" diameter="10.0" focus="40.0" position="20.0" />
+      <observationscreen id="0" width="25.0" height="40.0" position="23.5" transparency="0.0" />
+      <converginglens id="2" diameter="10.0" focus="20.0" position="70.0" />
+    </elements>
+    <view value="-0.23 2.414 0.0 15.986 5.596 -114.287" />
+  </geometrical>
+  <script>
+    <actionPerformed target="ObservationScreen0" param="position" value="25.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="26.0" timeStamp="100" />    
+    <actionPerformed target="ObservationScreen0" param="position" value="27.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="28.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="29.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="30.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="31.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="32.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="33.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="34.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="35.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="36.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="37.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="38.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="39.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="40.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="41.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="42.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="43.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="44.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="45.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="46.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="47.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="48.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="49.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="50.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="51.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="52.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="53.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="54.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="55.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="56.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="57.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="58.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="59.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="60.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="61.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="62.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="63.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="64.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="65.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="66.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="67.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="68.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="69.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="70.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="71.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="72.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="73.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="74.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="75.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="76.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="77.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="78.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="79.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="80.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="81.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="82.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="83.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="84.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="85.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="86.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="87.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="88.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="89.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="90.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="91.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="92.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="93.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="94.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.1" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.3" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.5" timeStamp="100" />
+    <viewpointChanged value="-0.23 2.392 0.0 15.986 5.596 -114.287" timeStamp="2293" />
+    <viewpointChanged value="-0.208 2.392 0.0 15.986 5.596 -114.287" timeStamp="100" />
+    <viewpointChanged value="-0.208 2.37 0.0 15.986 5.596 -114.287" timeStamp="91" />
+    <viewpointChanged value="-0.208 2.37 0.0 15.986 5.596 -114.287" timeStamp="110" />
+    <viewpointChanged value="-0.208 2.37 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.208 2.347 0.0 15.986 5.596 -114.287" timeStamp="60" />
+    <viewpointChanged value="-0.186 2.347 0.0 15.986 5.596 -114.287" timeStamp="60" />
+    <viewpointChanged value="-0.186 2.347 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.186 2.347 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.186 2.347 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.163 2.347 0.0 15.986 5.596 -114.287" timeStamp="20" />
+    <viewpointChanged value="-0.163 2.347 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.325 0.0 15.986 5.596 -114.287" timeStamp="40" />
+    <viewpointChanged value="-0.163 2.325 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.303 0.0 15.986 5.596 -114.287" timeStamp="20" />
+    <viewpointChanged value="-0.163 2.303 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.281 0.0 15.986 5.596 -114.287" timeStamp="50" />
+    <viewpointChanged value="-0.163 2.281 0.0 15.986 5.596 -114.287" timeStamp="111" />
+    <viewpointChanged value="-0.141 2.281 0.0 15.986 5.596 -114.287" timeStamp="20" />
+    <viewpointChanged value="-0.141 2.281 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.281 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.281 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.259 0.0 15.986 5.596 -114.287" timeStamp="100" />
+    <viewpointChanged value="-0.141 2.259 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.259 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.141 2.259 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="90" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="110" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.141 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="80" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="100" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="121" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <viewpointChanged value="-0.163 2.236 0.0 15.986 5.596 -114.287" timeStamp="120" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.7" timeStamp="2000" />
+    <actionPerformed target="ObservationScreen0" param="position" value="95.9" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="96.1" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="96.3" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="96.5" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="97.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="98.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="99.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="100.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="101.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="102.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="103.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="104.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="105.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="106.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="107.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="108.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="109.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="110.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="111.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="112.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="113.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="114.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="115.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="116.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="117.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="118.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="119.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="120.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="121.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="122.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="123.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="124.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="125.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="126.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="127.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="128.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="129.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="130.0" timeStamp="100" />
+    <scriptEnded timeStamp="1983" />
+  </script>
+</wsl>

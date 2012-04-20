@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- JNLP File for Xj3D Application -->
+
+<jnlp spec="1.0+" codebase="WEBSITE_ADDRESS" href="grating.jnlp"> 
+	<information>
+		<title>Grating Module</title>    
+		<vendor>WebTOP</vendor>    
+		<homepage href="http://webtop.dnsalias.org/wiki" />    
+		<description>WebTOP Webstart Distribution</description>    
+	    <offline-allowed/>     
+	    <!--
+		<association extensions="wrl" mime-type="model/vrml" />
+		<association extensions="x3dv" mime-type="model/x3d+vrml" />
+		<association extensions="x3d" mime-type="model/x3d+xml" />
+		<association extensions="x3db" mime-type="model/x3d+binary" />
+		-->
+	    <shortcut online="false">      
+	    	<desktop />      
+	    	<menu submenu="WebTOP" />    
+	    </shortcut>  
+   	</information>  
+   	<security>      
+   		<all-permissions />  
+   	</security>  
+   	<resources>    
+ 		<j2se version="1.5+" java-vm-args="-Xmx512M -XX:MaxDirectMemorySize=256M -Dsun.java2d.noddraw=true" href="http://java.sun.com/products/autodl/j2se" />
+   		<jar href="modules/grating.jar" />
+      <jar href="lib/FastInfoset.jar" />
+      <jar href="lib/aviatrix3d-all_2.0.0.jar" />
+      <jar href="lib/dis.jar" />
+      <jar href="lib/disxml.jar" />
+      <jar href="lib/geoapi-nogenerics-2.1-M2.jar" />
+      <jar href="lib/gnu-regexp-1.0.8.jar" />
+      <jar href="lib/gt2-main-2.3.1.jar" />
+      <jar href="lib/gt2-referencing-2.3.1.jar" />
+      <jar href="lib/httpclient.jar" />
+<jar href="lib/imageloader_1.1.0.jar" />
+<jar href="lib/j3d-org-all_0.9.0.jar" />
+<jar href="lib/j3d-org-java3d-all_0.9.0.jar" />
+<jar href="lib/jhall.jar" />
+<jar href="lib/jinput.jar" />
+<jar href="lib/js.jar" />
+<jar href="lib/jsr108-0.01.jar" />
+<jar href="lib/jutils.jar" />
+<jar href="lib/log4j.jar" />
+<jar href="lib/odejava.jar" />
+<jar href="lib/smack.jar" />
+<jar href="lib/smackx.jar" />
+<jar href="lib/uri.jar" />
+<jar href="lib/vecmath.jar" />
+<jar href="lib/vlc_uri.jar" />
+<jar href="lib/xj3d-all_2.0.0.jar" />
+<jar href="lib/xj3d-common_2.0.0.jar" />
+<jar href="lib/xj3d-config_.jar" />
+<jar href="lib/xj3d-config_2.0.0.jar" />
+<jar href="lib/xj3d-core_2.0.0.jar" />
+<jar href="lib/xj3d-device_2.0.0.jar" />
+<jar href="lib/xj3d-eai_2.0.0.jar" />
+<jar href="lib/xj3d-ecmascript_2.0.0.jar" />
+<jar href="lib/xj3d-external-sai-concrete_2.0.0.jar" />
+<jar href="lib/xj3d-external-sai_2.0.0.jar" />
+<jar href="lib/xj3d-images_.jar" />
+<jar href="lib/xj3d-images_2.0.0.jar" />
+<jar href="lib/xj3d-java-sai-concrete_2.0.0.jar" />
+<jar href="lib/xj3d-java-sai_2.0.0.jar" />
+<jar href="lib/xj3d-jaxp_2.0.0.jar" />
+<jar href="lib/xj3d-jsai_2.0.0.jar" />
+<jar href="lib/xj3d-net_2.0.0.jar" />
+<jar href="lib/xj3d-norender_2.0.0.jar" />
+<jar href="lib/xj3d-ogl_2.0.0.jar" />
+<jar href="lib/xj3d-parser_2.0.0.jar" />
+<jar href="lib/xj3d-render_2.0.0.jar" />
+<jar href="lib/xj3d-runtime_2.0.0.jar" />
+<jar href="lib/xj3d-sai-concrete_2.0.0.jar" />
+<jar href="lib/xj3d-sai_2.0.0.jar" />
+<jar href="lib/xj3d-sav_2.0.0.jar" />
+<jar href="lib/xj3d-script-base_2.0.0.jar" />
+<jar href="lib/xj3d-xml-util_2.0.0.jar" />
+<jar href="lib/xj3d-xml_2.0.0.jar" />
+<jar href="jars/sdl.jar" />
+<jar href="jars/webtop_component.jar" />
+<jar href="jars/webtop_util.jar" />
+<jar href="jars/webtop_wsl.jar" />
+<jar href="jars/webtop_x3d.jar" />
+<jar href="jars/webtop_x3dlib.jar" />
+<jar href="jars/webtop_html.jar" />
+   	</resources>
+   	<resources os="Windows">
+		  <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+	  </resources>	   	
+    <resources os="Mac OS X" arch="i386"> 
+      <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+	  </resources>	
+    <resources os="Linux" arch="i386">
+      <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+    </resources>
+    <resources os="Linux" arch="x86">
+      <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+    </resources>
+    <resources os="Linux" arch="amd64">
+      <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+    </resources>
+    <resources os="Linux" arch="x86_64">
+      <extension name="jogl" href="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp" />
+		  <extension name="jogl" href="http://download.java.net/media/joal/webstart/joal.jnlp" />
+    </resources>
+   	<application-desc main-class="org.webtop.module.grating.Grating">
+   	</application-desc> 
+   		
+</jnlp> 

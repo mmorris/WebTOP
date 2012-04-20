@@ -1,0 +1,400 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:st1="urn:schemas-microsoft-com:office:smarttags" xmlns="http://www.w3.org/TR/REC-html40">
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head><title>Planar Waveguide: Theory</title>
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+<style>
+.MPPH { visibility:hidden; page-break-inside:avoid }
+.MPPHSpan { text-indent:0 }
+sub,sup { font-size:x-small }
+#MPDpiSpan { position:absolute; top:1in; left:1in; width:100px; border:none; visibility:hidden }
+.MPEntity { font-family:'Times New Roman',Times,serif }
+</style>
+<style media=screen>
+.MPScreenEqn { position:absolute; visibility:visible; z-index:98 }
+.MPPrintEqn { display:none }
+.MPScreenPH { }
+.MPPrintPH { display:none }
+.MPPopup { position:absolute; visibility:hidden; z-index:99; top:0; left:0; text-indent:0; cursor:hand; 
+border:solid blue 1px; padding:5px; background-color:#FFFFCC; 
+filter:progid:DXImageTransform.Microsoft.DropShadow(color=#444444,offx=3,offy=3,positive=1) 
+}
+.MPPopupNoBg { position:absolute; visibility:hidden; z-index:99; top:0; left:0; text-indent:0; cursor:hand; 
+border:solid blue 1px; padding:5px; 
+filter:progid:DXImageTransform.Microsoft.DropShadow(color=#444444,offx=3,offy=3,positive=1) 
+}
+</style>
+<style media=print>
+.MPScreenEqn { display:none }
+.MPPrintEqn { position:absolute; visibility:visible }
+.MPScreenPH { display:none }
+.MPPrintPH { }
+.MPPopup { display:none }
+.MPPopupNoBg { display:none }
+</style>
+<script language=javascript src='mathpage.js'></script>
+<script language=javascript>
+if (typeof DSMP == 'undefined') {
+	alert('MathPage Javascript file missing; equations and symbols will not display.');
+	var DSMP = new Object;
+	MPBodyInit=MPSetEqnAttrs=MPSetChAttrs=MPEquation=MPInlineChar=MPDeleteCode=MPNNCalcTopLeft=MPHidePopup=MPShowPopup=MPNNSelectScreenEqn=MPWebEQApplet=MPTechexplorerObject=function(){};
+	DSMP.gEmptySrc=DSMP.gPlaceholderHeight=DSMP.gPlaceholderWidth=DSMP.gPlaceholder2Height=DSMP.gNNPopupBgColor=DSMP.gPopupEqnSrc=DSMP.gPopupEqnPadding=DSMP.gNNLayerTop=DSMP.gNNLayerLeft=DSMP.gScreenEqnSrc=DSMP.gScreenEqnWidth=DSMP.gScreenEqnHeight=DSMP.gPrintEqnSrc=null;
+}
+DSMP.gPageVersion = '1.1';
+DSMP.gMaxCharCompat = 0;
+DSMP.gGenMathZoom = 1;
+DSMP.gPopupEqnBgColorDefault = '#FFFFCC';
+DSMP.gPopupEqnPaddingDefault = 5;
+DSMP.gPlaceholderPadding = 4;
+DSMP.gOldJSMessage = 'Warning: this MathPage document requires a newer JavaScript file and may not display correctly.';
+DSMP.gCompatMessage = 'Warning: this MathPage document was generated for Windows IE5 or later only and may not display correctly.';
+DSMP.gMinBrowserMessage = 'Warning: MathPage requires a version 4 or later browser.';
+DSMP.gHidePopupMessage = 'Click on a MathZoom equation to dismiss it, or shift-Click to close all.';
+DSMP.gShowPopupMessage = 'Click on an equation to show the enlarged MathZoom version.';
+</script>
+</head>
+<body bgcolor="#FFFFFF">
+<span id=MPDpiSpan></span>
+<script language=javascript>
+MPBodyInit('images')
+</script>
+<p>&nbsp;
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Planar Waveguide: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>This module simulates the transverse electric (TE) guided
+modes of a planar dielectric waveguide for light of a fixed angular frequency, <i
+><span style='font-family:Symbol'>w</span></i>. The module displays the wave function of the
+electric field of the mode, and it allows the user to vary the relevant
+parameters and to animate the display.</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><p class=MsoNormal align=center style='text-align:center'><span style='color:windowtext;text-decoration:none'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter" />
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0" />
+  <v:f eqn="sum @0 1 0" />
+  <v:f eqn="sum 0 0 @1" />
+  <v:f eqn="prod @2 1 2" />
+  <v:f eqn="prod @3 21600 pixelWidth" />
+  <v:f eqn="prod @3 21600 pixelHeight" />
+  <v:f eqn="sum @0 0 1" />
+  <v:f eqn="prod @6 1 2" />
+  <v:f eqn="prod @7 21600 pixelWidth" />
+  <v:f eqn="sum @8 21600 0" />
+  <v:f eqn="prod @7 21600 pixelHeight" />
+  <v:f eqn="sum @10 21600 0" />
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect" />
+ <o:lock v:ext="edit" aspectratio="t" />
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:431.25pt;
+ height:275.25pt' o:ole="" o:allowoverlap="f" fillcolor="aqua">
+ <v:fill color2="blue" o:detectmouseclick="t" />
+ <v:imagedata src="images/image001.png" o:title="" />
+</v:shape><![endif]--><![if !vml]><img border=0 width=575 height=367 src="images/image002.jpg" v:shapes="_x0000_i1025"><![endif]></span></a></p>
+</td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 1 The Waveguide Module</small></td>
+  </tr>
+</table></center></div>
+
+
+<p><big><font color="#008040"><b>Basic Physics</b></font></big></p>
+<p>Consider the situation depicted in Fig. 2. The waveguide, a
+slab of material of thickness <i >d</i> and
+index of refraction <i >n</i><sub>1</sub>, is
+sandwiched between two media, the cladding, of index of refraction <i>n</i><sub>2</sub>. The wavelengths of the
+light in the two media are, respectively, <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0001','',3,[[45,12,3,-1,-1],[61,16,4,-1,-1],[76,20,5,-1,-1],[69,19,5,-1,-1],[92,24,6,-1,-1],[115,31,8,-2,-2],[190,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> and <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0002','',3,[[48,12,3,-1,-1],[64,16,4,-1,-1],[80,20,5,-1,-1],[72,19,5,-1,-1],[96,24,6,-1,-1],[120,31,8,-2,-2],[200,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,
+where <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0003','',3,[[54,12,3,-1,-1],[73,16,4,-1,-1],[92,20,5,-1,-1],[83,19,5,-1,-1],[109,24,6,-1,-1],[135,31,8,-2,-2],[222,51,13,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> is the wavelength of the light in vacuum. The
+corresponding angular wave numbers are <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0004','',3,[[48,12,3,-1,-1],[65,16,4,-1,-1],[80,20,5,-1,-1],[72,19,5,-1,-1],[96,24,6,-1,-1],[120,31,8,-2,-2],[200,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> and <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0005','',3,[[50,12,3,-1,-1],[67,16,4,-1,-1],[84,20,5,-1,-1],[74,19,5,-1,-1],[101,24,6,-1,-1],[126,31,8,-2,-2],[209,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.</p>
+
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%">
+<p class=MsoNormal align=center style='text-align:center'><!--[if gte vml 1]><v:shape id="_x0000_i1031" type="#_x0000_t75" style='width:414.75pt;height:236.25pt' o:ole="" o:allowoverlap="f" fillcolor="aqua"> <v:fill color2="blue" /> <v:imagedata src="images/image003.emz" o:title="" />
+</v:shape><![endif]--><![if !vml]><img border=0 width=553 height=315 src="images/image004.gif" v:shapes="_x0000_i1031"><![endif]></p>
+</td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Figure 2 Planar Dielectric Waveguide Slab</small></td>
+  </tr>
+</table></center></div>
+
+
+<p> The waveguide, a slab of material of thickness <i >d</i> and index of refraction <i >n</i><sub>1</sub>, is sandwiched between two media, the cladding, of index of refraction <i>n</i><sub>2</sub>. The wavelengths of the
+light in the two media are, respectively, <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0006','',3,[[45,12,3,-1,-1],[61,16,4,-1,-1],[76,20,5,-1,-1],[69,19,5,-1,-1],[92,24,6,-1,-1],[115,31,8,-2,-2],[190,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> and <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0007','',3,[[48,12,3,-1,-1],[64,16,4,-1,-1],[80,20,5,-1,-1],[72,19,5,-1,-1],[96,24,6,-1,-1],[120,31,8,-2,-2],[200,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,
+where <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0008','',3,[[54,12,3,-1,-1],[73,16,4,-1,-1],[92,20,5,-1,-1],[83,19,5,-1,-1],[109,24,6,-1,-1],[135,31,8,-2,-2],[222,51,13,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> is the wavelength of the light in vacuum. The
+corresponding angular wave numbers are <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0009','',3,[[48,12,3,-1,-1],[65,16,4,-1,-1],[80,20,5,-1,-1],[72,19,5,-1,-1],[96,24,6,-1,-1],[120,31,8,-2,-2],[200,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> and <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0010','',3,[[50,12,3,-1,-1],[67,16,4,-1,-1],[84,20,5,-1,-1],[74,19,5,-1,-1],[101,24,6,-1,-1],[126,31,8,-2,-2],[209,52,14,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.</p>
+
+<p>We are interested in the guided modes for this waveguide. The guided modes are the solutions of Maxwell€™s equations (plus the appropriate boundary conditions) that correspond to traveling waves in the waveguide and evanescent waves in the cladding. In terms of a ray picture, this means that each ray inside the waveguide undergoes total internal reflection at the core-cladding boundary.</p>
+
+<p>It can be shown in the literature<sup>1,2</sup> that for a given parameter set (<i ><span style='font-family:Symbol'>w</span></i>, <i >n</i><sub>1</sub>,<i > n</i><sub>2</sub>, and <i >d</i>) there exist <i >M</i> such modes, where</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+    <p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0011','',3,[[82,34,12,-1,-1],[109,46,17,-1,-1],[137,57,21,-1,-1],[124,51,19,-1,-1],[166,68,25,-1,-1],[208,86,32,-2,-2],[347,142,52,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.</p>
+	</td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>It turns out that inside the waveguide the electric field of each mode is a superposition of two plane wave fields, one with the wave vector
+<!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0012','',3,[[114,14,4,-1,-1],[153,18,5,-1,-1],[192,23,7,-1,-1],[172,21,7,-1,-1],[230,27,8,-1,-1],[287,34,10,-2,-2],[479,59,17,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> and the other <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0013','',3,[[121,14,4,-1,-1],[163,18,5,-1,-1],[204,23,7,-1,-1],[183,21,7,-1,-1],[244,27,8,-1,-1],[305,34,10,-2,-2],[508,59,17,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,
+where <i ><span style='font-family:Symbol;'>q</span></i> is the "bounce" angle depicted in Fig. 2. In order for the field to be a mode, the bounce angle must
+be a solution of the transcendental equation</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0014','',3,[[199,32,11,-1,-1],[265,43,15,-1,-1],[332,53,19,-1,-1],[298,48,17,-1,-1],[398,64,22,-1,-1],[497,79,28,-2,-2],[829,132,45,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="2">2</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>where <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0015','',3,[[104,21,6,-1,-1],[136,28,8,-1,-1],[172,34,9,-1,-1],[154,32,9,-1,-1],[205,41,11,-1,-1],[257,52,14,-2,-2],[427,86,23,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.
+The integer <i >m</i> = 0, 1, 2, ... <i>M</i> labels the different solutions, i.e., the different modes. We will refer to <i >m</i> as the mode number.</p>
+
+<p><big><font color="#008040"><b>Even Modes</b></font></big></p>
+
+
+<p>The electric fields of the even modes, <i >m</i> = 0, 2, 4, .... are even functions of <i >x </i>and are given by the expression</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0016','',3,[[164,14,4,-1,-1],[218,18,5,-1,-1],[273,23,7,-1,-1],[245,21,7,-1,-1],[328,27,8,-1,-1],[411,34,10,-2,-2],[685,59,17,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --> </p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="3">3</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>where</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0017','',3,[[192,36,15,-1,-1],[259,47,20,-1,-1],[325,57,23,-1,-1],[293,53,22,-1,-1],[390,70,29,-1,-1],[486,88,37,-2,-2],[811,147,61,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="4">4</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p><i >A</i> is an a arbitrary constant, </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0018','',3,[[184,16,5,-1,-1],[243,21,7,-1,-1],[305,27,9,-1,-1],[273,24,7,-1,-1],[366,33,11,-1,-1],[459,41,13,-2,-2],[764,67,21,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="5">5</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0019','',3,[[64,12,3,-1,-1],[83,15,4,-1,-1],[107,19,5,-1,-1],[93,18,5,-1,-1],[128,23,6,-1,-1],[158,29,8,-2,-2],[267,48,13,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="6">6</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!--MP EQ( --><script>
+	MPSetEqnAttrs('eq0020','',3,[[69,18,5,-1,-1],[91,24,6,-1,-1],[115,30,8,-1,-1],[102,27,8,-1,-1],[137,36,9,-1,-1],[172,44,12,-2,-2],[286,74,18,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --></p>
+    </td>
+    <td width="20%" class=tablemain><center>(<a name="7">7</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>where <i><span style=font-family:symbol>b</span><sub>m</sub></i> and <i ><span style=font-family:symbol>g</span><sub>m</sub></i>, respectively, are the
+propagation constant and the decay rate of the mode.</p>
+
+<p>It can be shown from Eqs. (3) and (4) that the waves in the cladding decay exponentially away from the surfaces <!-- MP EQ( --><script>
+	MPSetEqnAttrs('eq0021','',3,[[44,12,3,-1,-1],[58,16,4,-1,-1],[74,19,4,-1,-1],[66,19,5,-1,-1],[89,24,6,-1,-1],[111,31,8,-2,-2],[184,51,13,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.</p>
+
+<p><big><font color="#008040"><b>Odd Modes</b></font></big></p>
+
+<p class=MsoNormal>The electric fields of the odd modes are odd functions of <i>x</i>, <i >m</i> = 1, 3, 5, ... are given by the expression</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!--MP EQ( --><script>
+	MPSetEqnAttrs('eq0022','',3,[[164,14,4,-1,-1],[218,18,5,-1,-1],[273,23,7,-1,-1],[245,21,7,-1,-1],[328,27,8,-1,-1],[411,34,10,-2,-2],[685,59,17,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ --></p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="8">8</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p class=MsoNormal>where</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!--MP EQ( --><script>
+	MPSetEqnAttrs('eq0023','',3,[[210,36,15,-1,-1],[282,47,20,-1,-1],[353,57,23,-1,-1],[319,53,22,-1,-1],[424,70,29,-1,-1],[529,88,37,-2,-2],[883,147,61,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->,</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="9">9</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p class=MsoNormal><i >A</i> is an a arbitrary constant, and</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain>
+<p style=text-align:center><!--MP EQ( --><script>
+	MPSetEqnAttrs('eq0024','',3,[[182,16,5,-1,-1],[243,21,7,-1,-1],[303,27,9,-1,-1],[273,24,7,-1,-1],[365,33,11,-1,-1],[458,41,13,-2,-2],[762,67,21,-3,-3]]);
+	MPEquation();</script><!-- )MP EQ -->.</p>    </td>
+    <td width="20%" class=tablemain><center>(<a name="10">10</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p class=MsoNormal>It can be shown from Eqs. (8) and (9) that the waves in the cladding decay exponentially away from the surfaces.</p>
+
+
+
+<p><big><font color="#008040"><b>Evanescent Waves</b></font></big></p>
+<p class=MsoNormal>The exponentially decaying waves present for both even and
+odd modes are the evanescent waves in the cladding. The decay rate, <i><span style=font-family:symbol>g</span><sub>m</sub></i>, is the extinction coefficient of the evanescent wave.  Eq.
+(6) shows that the decay rate depends on the propagation constant, <i><span style=font-family:symbol>b</span><sub>m</sub></i>, which depends on <i><span style=font-family:symbol>q</span><sub>m</sub></i> and the mode number, <i>m</i>. 
+As the mode number increases, <i ><span style=font-family:symbol>q</span><sub>m</sub></i>, cos <i ><span style=font-family:symbol>q</span><sub>m</sub></i> and <i><span style=font-family:symbol>b</span><sub>m</sub></i> also increase while <i><span style=font-family:symbol>g</span><sub>m</sub></i> decreases. This results in
+higher order modes penetrating further into the cladding of the waveguide.  This is illustrated in Example 4. </p>
+
+<p><big><font color="#008040"><b>References</b></font></big></p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li class=MsoNormal >B.E.A      Saleh and M.C. Teich. (1991) <i >Fundamentals      of Photonics.</i>Wiley, <st1:State><st1:place>New York</st1:place></st1:State>.
+     </li>
+ <li class=MsoNormal >A.      Ghatak and K. Thyagarajan. (1998). Introduction to fiber optics. <st1:City><st1:place>Cambridge</st1:place></st1:City>,
+     <st1:City><st1:place>Cambridge</st1:place></st1:City>. </li>
+</ol>
+
+<p class=MsoNormal> </p>
+
+
+
+
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

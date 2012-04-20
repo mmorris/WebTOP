@@ -1,0 +1,12 @@
+<wsl>
+  <fabryperot wavelength="550.0" indexOfRefraction="1.5" d="0.50" reflectivity="0.7" widgets="visible" axis="visible">
+    <view value="-0.229 -0.655 0.0 -0.167 -0.1 0.0147" />
+  </fabryperot>
+  <script>
+    <actionPerformed param="d" value="0.75" timeStamp="4000" />
+    <actionPerformed param="d" value="1.0" timeStamp="4000" />
+    <actionPerformed param="d" value="1.25" timeStamp="4000" />
+    <scriptEnded timeStamp="20" />
+
+  </script>
+</wsl>

@@ -1,0 +1,1000 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+#########################################################################################
+## This file used for WavesTest.java is for dynamic widget allocation testing purposes ##
+#########################################################################################
+
+
+######START NAV PANEL######
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+NavLight { navigationType "NONE" }
+
+######END NAV PANEL######
+
+
+
+
+#####################################################
+## ROTATION AND LINEAR WIDGET TAKEN FROM 2/3 MEDIA ##
+#####################################################
+
+##Updated RotationWidget [JD]
+PROTO RotationWidget [
+	inputOutput SFVec3f translation 0 0 0
+	inputOutput SFRotation rotation 1 0 0 1.570796
+	inputOutput SFVec3f scale 1 1 1
+	initializeOnly SFFloat angle 0
+	#initializeOnly SFFloat angle0  #added this line...was giving an unknown field exception requesting it [JD]
+	inputOnly SFFloat set_angle
+	outputOnly SFFloat angle_changed
+	#rotation_changed is provided for convenience; will always be (0,0,1,angle_changed)
+	outputOnly SFRotation rotation_changed
+
+	initializeOnly SFFloat minAngle 0			#If minAngle > maxAngle (as here), all angles allowed
+	inputOnly SFFloat set_minAngle
+	initializeOnly SFFloat maxAngle -1
+	inputOnly SFFloat set_maxAngle
+
+	initializeOnly SFFloat value 0
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue 0
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 1
+	inputOnly SFFloat set_maxValue
+
+	#If this is TRUE (the default), the min/maxValue fields
+	#are ignored and 'angle' and 'value' are equivalent.
+	#(This could probably have a better name.)
+	initializeOnly SFBool angleAsValue TRUE
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	#Invoking the following set_ events affects which geometry is displayed.
+	inputOnly SFBool set_isActive
+	inputOnly SFBool set_isOver
+
+	inputOutput SFBool enabled TRUE
+
+	initializeOnly MFNode normalGeometry []
+	initializeOnly MFNode overGeometry []
+	initializeOnly MFNode activeGeometry []
+	outputOnly SFBool initialized
+]
+{
+	#Group {
+	Transform {
+		translation IS translation
+		rotation IS rotation
+		scale IS scale
+		children [
+			DEF TS2 TouchSensor {
+				enabled IS enabled
+				isOver IS isOver_out
+				isActive IS isActive_out
+			}
+			DEF PS2 PlaneSensor {
+				enabled IS enabled
+			}
+			DEF RotationalTransform Transform {
+				children DEF GeometrySwitch Switch {
+					whichChoice 0
+					choice [
+						Group { children IS normalGeometry }
+						Group { children IS overGeometry }
+						Group { children IS activeGeometry }
+					]
+				}
+			}
+		]
+	}
+
+	DEF Worker2 Script {
+		#Xj3D hack
+		inputOutput SFVec3f translation IS translation
+		inputOutput SFVec3f scale IS scale
+
+		initializeOnly SFFloat minAngle IS minAngle
+		inputOnly SFFloat set_minAngle IS set_minAngle
+
+		initializeOnly SFFloat maxAngle IS maxAngle
+		inputOnly SFFloat set_maxAngle IS set_maxAngle
+
+		initializeOnly SFFloat angle IS angle
+		inputOnly SFFloat set_angle IS set_angle
+		outputOnly SFFloat angle_changed IS angle_changed
+		initializeOnly SFRotation rotation 0 0 1 0
+		outputOnly SFRotation rotation_changed IS rotation_changed
+
+		initializeOnly SFFloat val0 IS value
+		inputOnly SFFloat val_in IS set_value
+		outputOnly SFFloat val_out IS value_changed
+
+		initializeOnly		SFFloat minVal IS minValue
+		initializeOnly		SFFloat maxVal IS maxValue
+		inputOnly SFFloat set_minValue IS set_minValue
+		inputOnly SFFloat set_maxValue IS set_maxValue
+
+		initializeOnly SFBool ignoreLogical IS angleAsValue
+
+		inputOnly SFVec3f ps_trans_in
+		inputOnly SFVec3f ts_hitPoint_in
+		inputOnly SFBool ts_active_in
+
+		outputOnly SFVec3f offset_out
+
+		inputOnly SFBool set_isActive IS set_isActive
+		inputOnly SFBool set_isOver IS set_isOver		#Also used by TS
+
+		initializeOnly SFBool firstHitPoint FALSE
+
+		#The current angle of the widget (between drags or individual mouse-moves) is
+		#represented as N*(2Pi)+theta; spins holds N and curTheta holds theta.
+		initializeOnly SFInt32 spins 0
+		initializeOnly SFFloat curTheta 0
+
+		#These keep up with the user's attempt to go past pegging the widget:
+		#inputTheta is unclamped, inputSpins is clamped to maximum useful spins + 1
+		initializeOnly SFFloat inputTheta 0
+		initializeOnly SFInt32 inputSpins 0
+		#This still isn't perfect for widgets with non-x-axis stop points... [?]
+
+		#The angle from the widget's x-axis at which the user grabbed it must be considered...
+		initializeOnly SFFloat grabDelta 0
+
+		initializeOnly SFFloat grabDeltaTemp 0
+		initializeOnly SFVec3f offset_outTemp 0 0 0
+
+		#Memory of mouse activity (for selecting which geometry to display)
+		initializeOnly SFBool isActive FALSE
+		initializeOnly SFBool isOver FALSE
+		outputOnly SFInt32 whichChoice_changed
+
+		initializeOnly MFNode overGeometry IS overGeometry
+		initializeOnly MFNode activeGeometry IS activeGeometry
+
+		initializeOnly SFBool inited TRUE				#temp: for compatibility
+		outputOnly SFBool initialized IS initialized
+
+		url "ecmascript:
+		function initialize() {
+			if(ignoreLogical) set_angle(angle,0);
+			else val_in(val0,0);
+
+			inited=true;
+			initialized=true;
+
+			firstHitPoint = true;
+		}
+
+		function ps_trans_in(value,time) {
+			//Xj3D hack
+			//value[0]=value[0]-translation[0]*scale[0];
+			//value[1]=value[1]-translation[1]*scale[1];
+
+			var theta = Math.atan2(value[1], value[0])-grabDelta;
+			while(theta<0) theta += 2*Math.PI;
+
+			//Xj3D hack
+			//Browser.println('value: ' + value[0] + ' ' + value[1]);
+			//Browser.println('theta: ' + theta);
+
+			//Discard extra spins when crossing the maxAngle/minAngle point
+			var angle=currentAngle0(theta,spins);
+			Browser.println('theta: '+theta+'\tangle: '+angle+'\ninputSpins0: '+inputSpins+'\tspins0: '+spins);
+
+			if(theta<Math.PI/2 && inputTheta>=Math.PI*3/2) {
+				if(inputSpins<=spins) inputSpins++;		//Extra extra spins are ignored
+			} else if(theta>=Math.PI*3/2 && inputTheta<Math.PI/2) {
+				if(inputSpins>=spins) inputSpins--;
+			} else if(minAngle<maxAngle && ((angle<minAngle && inputSpins<spins) ||
+																			(angle>maxAngle && inputSpins>spins))) {
+				//Browser.println('(a<min & i<s) | (a>max & i>s)');
+				inputSpins=spins;
+			}
+
+			inputTheta=theta;
+			angle=currentAngle0(theta,inputSpins);
+
+			//Browser.println('inputSpins\': '+inputSpins+'\tangle2: '+angle);
+			//Discard invalid values if min and max angles set
+			if(minAngle<=maxAngle && (angle<minAngle || angle>maxAngle)) {
+				//Browser.println('!denied!');
+				var lastAngle=currentAngle();
+				//When first crossing the line, peg the widget
+				if(lastAngle!=minAngle && lastAngle!=maxAngle)
+					set_angle((angle<minAngle)?minAngle:maxAngle,time);
+				return;
+			}
+
+			//Browser.println('accepted\n\n');
+			//Otherwise, update the widget
+			spins=inputSpins;
+			curTheta = theta;
+			send_events(angle);
+		}
+
+		//Davis: I'm not sure of the safety of calling this from
+		//the outside while a drag is going on.  So don't.
+		function set_angle(value,time) {
+			if(minAngle>=maxAngle || (value>=minAngle && value<=maxAngle)) {
+				send_events(value);
+				curTheta = value;
+				spins=0;
+				//Unfortunately, we now have to work curTheta into the [0,2*PI) interval.
+				while(curTheta>=2*Math.PI) {curTheta-=2*Math.PI; spins++;}
+				while(curTheta<0) {curTheta+=2*Math.PI; spins--;}
+				if(!isActive) {
+					inputTheta=curTheta;
+					inputSpins=spins;
+				}
+			} else
+			Browser.println('RotationWidget::set_angle: angle '+value+' out of range ['+minAngle+', '+maxAngle+']');
+		}
+
+		function send_events(angle) {
+			rotation[3] = angle;
+			if(inited) {
+				angle_changed = angle;
+				val_out = ignoreLogical?angle:xlate(minAngle,maxAngle,minVal,maxVal,angle);
+				rotation_changed=rotation;
+			}
+		}
+
+		function val_in(value,time) {
+			if(!ignoreLogical && (value<minVal && value<maxVal || value>minVal && value>maxVal))
+				Browser.println('RotationWidget::val_in: value '+value+' out of range ['+minVal+', '+maxVal+']');
+			else set_angle(ignoreLogical?value:xlate(minVal,maxVal,minAngle,maxAngle,value),time);
+		}
+
+		function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+
+		function set_minAngle(value,time) {
+			var oldMin=minAngle;
+			minAngle = value;
+			if(ignoreLogical) {
+				if(minAngle<=maxAngle && currentAngle()<minAngle)	//Need to clamp angle
+					set_angle(minAngle,time);
+			} else
+				set_angle(xlate(oldMin,maxAngle,minAngle,maxAngle,currentAngle()),time);
+		}
+		function set_maxAngle(value,time) {
+			var oldMax=maxAngle;
+			maxAngle = value;
+			if(ignoreLogical) {
+				if(minAngle<=maxAngle && currentAngle()>maxAngle)	//Need to clamp angle
+					set_angle(maxAngle,time);
+			} else
+				set_angle(xlate(minAngle,oldMax,minAngle,maxAngle,currentAngle()),time);
+		}
+
+		//There is no 'value' state, and as such these functions are very simple.
+		function set_minValue(value,time) {minVal=value;}
+		function set_maxValue(value,time) {maxVal=value;}
+
+		function currentAngle() {return currentAngle0(curTheta,spins);}
+		function currentAngle0(angle,s) {return angle+s*2*Math.PI;}
+
+		function ts_hitPoint_in(value,time) {			
+			/*if(firstHitPoint) {
+				firstHitPoint = false;
+				offset_out[0]=offset_outTemp[0];
+				offset_out[1]=offset_outTemp[1];
+				grabDelta = grabDeltaTemp;
+				Browser.println('grabDelta: ' + grabDelta);
+				Browser.println('offset_out: ' + offset_out[0] + ' ' + offset_out[1]);
+			}
+			else {
+				offset_outTemp[0] = value[0];
+				offset_outTemp[1] = value[1];
+				//Browser.println('offset_outTemp: ' + offset_outTemp[0] + ' ' + offset_outTemp[1]);
+				grabDeltaTemp = Math.atan2(value[1], value[0]) - curTheta;
+				if(grabDeltaTemp<0) grabDeltaTemp += Math.PI*2;	
+			}*/
+			if(firstHitPoint) {
+				firstHitPoint = false;
+				offset_out[0] = value[0];
+				offset_out[1] = value[1];
+				grabDelta = Math.atan2(value[1], value[0]) - curTheta;
+				if(grabDelta<0) grabDelta += Math.PI*2;
+			}
+			
+		}
+
+		function ts_active_in(value,time) {
+			if(value)
+				firstHitPoint = true;
+			else {
+				//Overwrite mouse-tracking data with real data
+				//inputSpins=spins;
+				//inputTheta=curTheta;
+				Browser.println('overwrite: spins: ' + inputSpins + ', theta: ' + inputTheta);
+			}
+			set_isActive(value,time);
+		}
+
+		function set_isActive(value,time) {
+			isActive = value;
+			if(value) {
+				if(activeGeometry.length > 0) whichChoice_changed = 2;
+			} else {
+				if(isOver && overGeometry.length > 0) whichChoice_changed = 1;
+				else whichChoice_changed = 0;
+			}
+		}
+
+		function set_isOver(value,time) {
+			isOver = value;
+			if(value) {
+				if(!isActive && overGeometry.length > 0) whichChoice_changed = 1;
+			} else {
+				if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;
+				else whichChoice_changed = 0;
+			}
+		}"
+	}
+
+	ROUTE TS2.hitPoint_changed TO Worker2.ts_hitPoint_in
+	ROUTE TS2.isActive TO Worker2.ts_active_in
+	ROUTE TS2.isOver TO Worker2.set_isOver
+	ROUTE PS2.translation_changed TO Worker2.ps_trans_in
+	ROUTE Worker2.rotation_changed TO RotationalTransform.set_rotation
+	ROUTE Worker2.offset_out TO PS2.set_offset
+	ROUTE Worker2.whichChoice_changed TO GeometrySwitch.whichChoice
+}
+
+##Updated LinearWidget [JD]
+PROTO LinearWidget [ initializeOnly    SFFloat amplitude  0.0
+                     initializeOnly    SFFloat angle      0.0
+                     initializeOnly    SFFloat phase      0.0
+                     initializeOnly    SFFloat wavelength 1.0
+                     initializeOnly    SFFloat x          0.0
+                     initializeOnly    SFFloat y          0.0
+                     inputOutput SFBool enabled TRUE
+                     inputOnly  SFFloat set_amplitude
+                     inputOnly  SFFloat set_angle
+                     inputOnly  SFFloat set_phase
+                     inputOnly  SFFloat set_wavelength
+                     inputOnly  SFVec3f set_position
+                     inputOnly  SFBool  set_widgetVisible
+                     outputOnly SFFloat amplitude_changed
+                     outputOnly SFFloat angle_changed
+                     outputOnly SFFloat phase_changed
+                     outputOnly SFFloat wavelength_changed
+                     outputOnly SFVec3f position_changed
+                     outputOnly SFBool  mouseClicked
+                     outputOnly SFBool  mouseOver
+                     outputOnly SFBool  mouseOverAmplitude
+                     outputOnly SFBool  mouseOverWavelength
+                     outputOnly SFBool  mouseOverPhase
+                     outputOnly SFBool  mouseOverAngle      ]
+{
+  DEF PoolWidget-SWITCH Switch {
+    whichChoice 0
+    choice [
+      Transform { children [
+        DEF Icon0-SENSOR TouchSensor {
+          isOver IS mouseOver
+          enabled IS enabled
+        }
+        DEF Icon0-TRANSFORM3 Transform {
+          rotation 1 0 0 -1.57
+          children DEF Icon0-TRANSFORM2 Transform {
+            children Transform {
+              rotation 1 0 0 1.57
+              children Transform {
+                rotation 0 1 0 -1.57
+                children DEF Icon0-TRANSFORM Transform {
+                  children DEF Icon-SHAPE Group { children [
+                    Shape {
+                      appearance DEF PoolWidget-APPEARANCE2 Appearance {
+                        material Material {
+                          diffuseColor 1.0 0.2 0.2
+                        }
+                      }
+                      geometry Sphere {
+                        radius 1.0
+                      }
+                    }
+                    DEF Linear-SHAPE Shape {
+                      appearance DEF PoolWidget-APPEARANCE3 Appearance {
+                        material Material {
+                          diffuseColor 0.2 0.2 0.2
+                          transparency 0.25
+                        }
+                      }
+                      geometry Box {
+                        size 4.0 1.0 0.04
+                      }
+                    }
+                    Transform {
+                      translation 0 0 -0.5
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 -1.0
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 0.5
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 1.0
+                      children USE Linear-SHAPE
+                    }
+                  ] }
+                }
+              }
+            }
+          }
+        }
+      ] }
+      Group { children [
+        USE Icon0-TRANSFORM3
+        Transform { rotation 1 0 0 -1.57 children [
+          DEF PoolWidget-TRANSFORM Transform { children [
+            DEF Angle-TRANSFORM Transform { rotation 1 0 0 -1.57 children [
+								
+              DEF Angle-ROTATIONWIDGET RotationWidget {
+                minAngle 0
+                maxAngle 1.57
+								angle 0.7
+								#angle0 0.7
+                set_angle IS set_angle
+                angle_changed IS angle_changed
+                angle IS angle
+                #isOver IS mouseOverAngle
+        enabled IS enabled
+                normalGeometry [
+                  Transform { rotation 0  0 1 1.5707 children [
+                    Transform {
+                      rotation 0 0 0 -1.57
+                      children [
+                        DEF Arrow-TRANSFORM Transform { children [
+                          Transform {
+                            translation 20 0 0
+                            scale 4 4 4
+                            children [
+                              DEF Arrow Transform {
+                                translation -0.141421 -0.125 0.353553
+                                rotation 0 1 0 0.785398
+                                children [
+                                  Shape {
+                                    appearance DEF PoolWidget-APPEARANCE Appearance {
+                                      material Material {
+                                        diffuseColor 0.4 0.4 0.8
+                                      }
+                                    }
+                                    geometry DEF Arrow-FACES IndexedFaceSet {
+                                      ccw TRUE
+                                      solid TRUE
+                                      coord DEF Arrow-COORD Coordinate { point [
+                                        0 0.25 0, 0.5 0.25 0, 0.5 0.25 -0.5, 0 0.25 -0.1, 0.4 0.25 -0.1, 
+                                        0.4 0.25 -0.5, 0 0.25 0, 0.5 0.25 0, 0.5 0.25 -0.5, 
+                                        0.4 0.25 -0.5, 0.4 0.25 -0.1, 0 0.25 -0.1, 0 0 0, 0.5 0 0, 
+                                        0.5 0 -0.5, 0.4 0 -0.5, 0.4 0 -0.1, 0 0 -0.1, 0 0 0, 
+                                        0.5 0 0, 0.5 0 -0.5, 0 0 -0.1, 0.4 0 -0.1, 0.4 0 -0.5]
+                                      }
+                                      coordIndex [
+                                        3, 0, 1, -1, 3, 1, 4, -1, 4, 1, 2, -1, 4, 2, 5, -1, 6, 12, 13, -1, 
+                                        6, 13, 7, -1, 7, 13, 14, -1, 7, 14, 8, -1, 8, 14, 15, -1, 
+                                        8, 15, 9, -1, 9, 15, 16, -1, 9, 16, 10, -1, 10, 16, 17, -1, 
+                                        10, 17, 11, -1, 11, 17, 12, -1, 11, 12, 6, -1, 18, 21, 22, -1, 
+                                        18, 22, 19, -1, 19, 22, 23, -1, 19, 23, 20, -1]
+                                      }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                          Transform {
+                            rotation 0 1 0 3.142
+                            scale 4 4 4
+                            translation -20 0 0
+                            children USE Arrow
+                          }
+                          Transform {
+                            rotation 0 0 1 1.57
+                            children [
+                              Shape {
+                                appearance USE PoolWidget-APPEARANCE
+                                geometry Cylinder {
+                                  radius 0.1
+                                  height 41
+                                }
+                              }
+                            ]
+                          }
+                        ] }
+                      ]
+                    }
+                  ] }
+                ]
+              }
+            ] }
+            DEF WidgetGroup-TRANSFORM Transform {
+              children [
+                Transform { rotation 1 0 0 1.57 children [
+                  Transform {
+                    rotation 0 0 1 -1.57
+                    children [
+                      DEF Wavelength-TRANSFORM2 Transform { children
+                        Transform {
+                          translation 0 0.5 0
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cylinder {
+                              radius 0.1
+                              height 1
+                            }
+                          }
+                        }
+                      }
+                      Transform { children [
+                        TouchSensor {
+                          isOver IS mouseOverWavelength
+                          enabled IS enabled
+                        }
+                        DEF Wavelength-SENSOR PlaneSensor {
+                          minPosition 0 2.01
+                          maxPosition 0 52.0
+                          offset      0 2.01 0
+                          isActive IS mouseClicked
+                          enabled IS enabled
+                        }
+                        DEF Wavelength-TRANSFORM Transform {
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cone {
+                              height 2.0
+                              bottomRadius 0.8
+                            }
+                          }
+                        }
+                      ] }
+                    ]
+                  }
+                ] }
+                DEF Phase-TRANSFORM3 Transform { children
+                  Transform {
+                    rotation 0 0 1 -1.57
+                    children [
+                      DEF Phase-TRANSFORM2 Transform { children
+                        Transform {
+                          translation 0 -0.5 0
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cylinder {
+                              radius 0.1
+                              height 1
+                            }
+                          }
+                        }
+                      }
+                      Transform { children [
+                        TouchSensor {
+                          isOver IS mouseOverPhase
+                          enabled IS enabled
+                        }
+                        DEF Phase-SENSOR PlaneSensor {
+                          minPosition 0 -8.283195
+                          maxPosition 0 -2.0
+                          offset      0 -2.0 0
+                          isActive IS mouseClicked
+                          enabled IS enabled
+                        }
+                        DEF Phase-TRANSFORM Transform { translation 0 -0.5 0 children [
+                          Shape {
+                            appearance USE PoolWidget-APPEARANCE2
+                            #geometry Sphere { BJT add back
+                            #  radius 0.8
+                            #}
+                          }
+                        ] }
+                      ] }
+                    ]
+                  }
+                }
+              ]
+            }
+            Transform {
+              rotation 1 0 0 1.57
+              children [
+                DEF Amplitude-TRANSFORM2 Transform { children
+                  Transform {
+                    translation 0 0.5 0
+                    children [
+                      Shape {
+                        appearance USE PoolWidget-APPEARANCE
+                        geometry Cylinder {
+                          radius 0.1
+                          height 1
+                        }
+                      }
+                    ]
+                  }
+                }
+                Transform { children [
+                  TouchSensor {
+                    isOver IS mouseOverAmplitude  #changed to mouseOverAmplitude....was originally mouseOverPhase
+                    enabled IS enabled
+                  }
+                  DEF Amplitude-SENSOR PlaneSensor {
+                    minPosition 0 2.0
+                    maxPosition 0 12.0
+                    offset 0 2.0 0
+                    isActive IS mouseClicked
+                    enabled IS enabled
+                  }
+                  DEF Amplitude-TRANSFORM Transform {
+                    translation 0 3 0
+                    children [   
+                      Shape {
+                        appearance USE PoolWidget-APPEARANCE
+                        geometry Cone {
+                          height 2.0
+                          bottomRadius 0.8
+                        }
+                      }
+                    ]
+                  }
+                ] }
+              ]
+            }
+          ] }
+        ] }
+      ] }
+    ]
+  }
+  DEF Linear-SCRIPT Script {
+    initializeOnly    SFFloat amplitude  IS amplitude
+    initializeOnly    SFFloat angle      IS angle
+    initializeOnly    SFFloat wavelength IS wavelength
+    initializeOnly    SFFloat phase      IS phase
+    initializeOnly    SFFloat x          IS x
+    initializeOnly    SFFloat y          IS y
+    inputOnly  SFVec3f    set_translation1
+    inputOnly  SFVec3f    set_translation2
+    inputOnly  SFVec3f    set_translation3
+    inputOnly  SFVec3f    set_translation4
+    inputOnly  SFRotation set_rotation
+    inputOnly  SFFloat    set_amplitude  IS set_amplitude
+    inputOnly  SFFloat    set_angle      IS set_angle
+    inputOnly  SFFloat    set_phase      IS set_phase
+    inputOnly  SFFloat    set_wavelength IS set_wavelength
+    inputOnly  SFVec3f    set_position   IS set_position
+    inputOnly  SFBool     set_widgetVisible IS set_widgetVisible
+    inputOnly  SFBool     set_widgetVisibleInternal
+    outputOnly SFVec3f    scale1_changed
+    outputOnly SFVec3f    translation1_changed
+    outputOnly SFRotation rotation_changed
+    outputOnly SFVec3f    scale2_changed
+    outputOnly SFVec3f    translation2_changed
+    outputOnly SFVec3f    scale3_changed
+    outputOnly SFVec3f    translation3_changed
+    outputOnly SFVec3f    translation4_changed
+    outputOnly SFVec3f    offset1_changed
+    outputOnly SFVec3f    offset2_changed
+    outputOnly SFVec3f    offset3_changed
+    outputOnly SFFloat    angle_init
+    outputOnly SFInt32    whichChoice
+    outputOnly SFFloat amplitude_changed  IS amplitude_changed
+    outputOnly SFFloat angle_changed      IS angle_changed
+    outputOnly SFFloat phase_changed      IS phase_changed
+    outputOnly SFFloat wavelength_changed IS wavelength_changed
+    url "ecmascript:
+      function initialize() {
+        offset1_changed = new SFVec3f(0, amplitude+2.0, 0);
+        scale1_changed = new SFVec3f(1, amplitude+2.0, 1);
+        translation1_changed = new SFVec3f(0, amplitude+2.0, 0);
+        angle_init = angle;
+        rotation_changed = new SFRotation(0, 0, 1, angle_init);
+        if(wavelength<=0) wavelength = 0.01;
+        offset2_changed = new SFVec3f(0, wavelength+2.0, 0);
+        scale2_changed = new SFVec3f(1, wavelength+2.0, 1);
+        translation2_changed = new SFVec3f(0, wavelength+2.0, 0);
+        offset3_changed = new SFVec3f(0, -2.0-phase, 0);
+        scale3_changed = new SFVec3f(1, 2.0+phase, 1);
+        translation3_changed = new SFVec3f(0, -2.0-phase, 0);
+        translation4_changed = new SFVec3f(x, y, 10);
+        //position_changed = new SFVec3f(x, y, 0);
+      }
+      function set_translation1(value, time) {
+        scale1_changed[1] = value[1];
+        amplitude = value[1]-2.0;
+        amplitude_changed = amplitude;
+      }
+      function set_amplitude(value, time) {
+        amplitude = value;
+        translation1_changed[1] = value+2.0;
+        scale1_changed[1] = value+2.0;
+        offset1_changed[1] = value+2.0;
+      }
+      function set_rotation(value, time) {
+        angle = value[3];
+        angle_changed = angle;
+      }
+      function set_angle(value, time) {
+        angle = value;
+        rotation_changed[3] = value;
+        angle_init = value;
+      }
+      function set_translation2(value, time) {
+        scale2_changed[1] = value[1];
+        wavelength = value[1]-2.0;
+        wavelength_changed = wavelength;
+      }
+      function set_wavelength(value, time) {
+        scale2_changed[1] = value+2.0;
+        translation2_changed[1] = value+2.0;
+        offset2_changed[1] = value+2.0;
+        wavelength = value;
+      }
+      function set_translation3(value, time) {
+        scale3_changed[1] = -value[1];
+        phase = -2.0-value[1];
+        phase_changed = phase;
+      }
+      function set_phase(value, time) {
+        scale3_changed[1] = value+2.0;
+        translation3_changed[1] = -2.0-value;
+        offset3_changed[1] = -2.0-value;
+        phase = value;
+      }
+      function set_translation4(value, time) {
+        x = value[0];
+        y = value[1];
+        position_changed[0] = x;
+        position_changed[1] = y;
+      }
+      function set_position(value, time) {
+        x = value[0];
+        y = value[1];
+        translation4_changed[0] = x;
+        translation4_changed[1] = y;
+      }
+      function set_widgetVisible(value, time) {
+        if(value) whichChoice = 1;
+        else whichChoice = 0;
+      }
+      function set_widgetVisibleInternal(value, time) {
+        if(value) whichChoice = 1;
+      }
+    "
+  }
+  ROUTE Icon0-SENSOR.isOver TO Linear-SCRIPT.set_widgetVisibleInternal
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO WidgetGroup-TRANSFORM.rotation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO Icon0-TRANSFORM2.rotation  
+  ROUTE Amplitude-SENSOR.translation_changed TO Amplitude-TRANSFORM.translation
+  ROUTE Amplitude-SENSOR.translation_changed TO Linear-SCRIPT.set_translation1
+  ROUTE Wavelength-SENSOR.translation_changed TO Wavelength-TRANSFORM.set_translation
+  ROUTE Wavelength-SENSOR.translation_changed TO Linear-SCRIPT.set_translation2
+  ROUTE Phase-SENSOR.translation_changed TO Phase-TRANSFORM.set_translation
+  ROUTE Phase-SENSOR.translation_changed TO Linear-SCRIPT.set_translation3
+  ROUTE Linear-SCRIPT.rotation_changed TO Icon0-TRANSFORM2.rotation
+  ROUTE Linear-SCRIPT.rotation_changed TO WidgetGroup-TRANSFORM.rotation
+  ROUTE Linear-SCRIPT.offset1_changed TO Amplitude-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale1_changed TO Amplitude-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation1_changed TO Amplitude-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.offset2_changed TO Wavelength-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale2_changed TO Wavelength-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation2_changed TO Wavelength-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.offset3_changed TO Phase-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale3_changed TO Phase-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation3_changed TO Phase-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.translation4_changed TO Icon0-TRANSFORM2.set_translation
+  ROUTE Linear-SCRIPT.translation4_changed TO PoolWidget-TRANSFORM.set_translation
+  ROUTE Linear-SCRIPT.whichChoice TO PoolWidget-SWITCH.whichChoice
+}
+
+
+
+#####################################################
+## END ROTATION AND LINEAR WIDGET FROM 2/3 MEDIA   ##
+#####################################################
+
+
+#####################################################
+## END PROTOS FROM WAVE SIMULATION FILE            ##
+#####################################################
+
+NavLight { navigationType "NONE" }
+#NavigationInfo { type "NONE" } #disables x3d controls [JD]
+
+NavLight { navigationType "NONE" }
+			
+			## To Remove xj3d Navigation Controls [JD] ##
+			NavigationInfo {
+				type "NONE"
+			}
+
+
+
+DEF NavPanel NavigationPanel {
+
+
+views [
+	0 -1.5 0 0 -1.5 -7
+    0 0 0 0 0 0
+]
+
+translation_speed 10 
+
+children [
+
+##Commenting this section of code out....trying to dynamically create the widgets again by looking at photoelectric.  See Photoelectron.java
+##and Engine.java of the PhotoElectric Module
+
+###THESE  ARE ALL OF THE LINEAR WIDGETS AVAILABLE IN THE MODULE
+
+####Page 90 of x3d book. 
+#The switch node shows 1 or 0 of the children at any given time.  
+#Possibly create 4 groups for each situation, 1 linear widget, 2 linear widgets, etc...
+##Look at photoelectric to see how they created photoelectrons (Photoelectron.java).  This would be the easiest thing to do and much more 
+#efficient.  The way I'm doing it below will cause n # of transforms where n is the max number of widgets.
+#DEF LinearSwitch Switch {
+#    whichChoice 3  #0-n
+#    children [ 
+##DEF WorldGroup Group {
+##children [
+#    DEF Widget1Trans Transform {
+#        scale 1 1 1
+#        #translation 24 0 0 
+#        children [
+#        DEF Widget1 LinearWidget { 
+#            amplitude 4.0
+#            wavelength 16.0
+#            angle 0.7853982
+#            x -50.0
+#            y 0.0
+#        }
+#        ]
+#        }
+#        DEF Widget2Trans Transform {
+#        scale 1 1 1
+#        #translation 8 0 0 
+#        children [ 
+#        DEF Widget2 LinearWidget { 
+#            amplitude 0
+#            wavelength 0
+#            angle 0.7853982
+#            x -50.0
+#            y 0.0
+#        }
+#        ]
+#        }
+#        DEF Widget3Trans Transform {
+#        scale 1 1 1 
+#      #  translation 16 0 0 
+#        children [
+#        DEF Widget3 LinearWidget { 
+#            amplitude 4.0
+#            wavelength 16.0
+#            angle 0.7853982
+#            x -50.0
+#            y 0.0
+#        }
+#        ]
+#        }
+#        DEF Widget4Trans Transform { 
+#        scale 1 1 1 
+#       # translation 24 0 0 
+#        children [
+#        DEF Widget4 LinearWidget { 
+#            amplitude 4.0
+#            wavelength 16.0
+#            angle 0.7853982
+#            x -50.0
+#            y 0.0
+#    }
+#    ]
+#    }
+#   # ]
+#   # }
+#    ]
+#    }
+
+
+##using LinearWidget.java to create dynamic linear widgets and place them in the scene
+
+#Group{
+#    children[
+#
+#        DEF Linear0 Transform{
+#            children [
+#                 DEF One LinearWidget{}
+#            ]
+#        }
+#
+#        DEF Linear1 Transform{
+#            translation 0 0 15
+#        }
+#
+#        DEF Linear2 Transform{
+#            translation 0 0 5
+#        }
+#        
+#        DEF Linear3 Transform{
+#            translation 0 0 10
+#        }
+#    ]
+#}
+
+####Trying method from WaveSimulation
+DEF World Transform{
+    children [ 
+       # DEF Widget-SWITCH Switch{
+            whichChoice 0 
+            #This transform should hold all of the widgets in the Pool
+            choice DEF Widget-TRANSFORM Transform {}
+       }
+       
+     ]
+}
+
+
+
+
+
+] #end navPanel Children #end navPanel group}
+}

@@ -1,0 +1,108 @@
+package x3dwebtop.x3d;
+
+import org.web3d.x3d.sai.*;
+
+/**
+ * <p>Title: </p>
+ *
+ * <p>Description: </p>
+ *
+ * <p>Copyright: Copyright (c) 2006</p>
+ *
+ * <p>Company: </p>
+ *
+ * @author not attributable
+ * @version 1.0
+ */
+
+//class EAI provides four basic services:
+// - acquisition of X3D node/event references (optionally 'patient')
+//	* getScene()
+//	* getNode("nodename")
+//	* getInputField("nodename","eventname")
+//	* getOutputField("nodename","eventname",listener(=null for none),data)
+//	* getInputField(NamedNode,"eventname")
+//	* getOutputField(NamedNode,"eventname")
+// - automatic error reporting (with optional error messages and hooks)
+//	See below for details of implementing handlers.
+// - some generally useful X3D routines:
+//	* enableDraw(InputFieldSFBool/InputFieldSFInt32 for Switch)
+//	* disableDraw(InputFieldSFBool/InputFieldSFInt32)
+//	* setDraw(InputFieldSFBool/InputFieldSFInt32,boolean)
+//	* set3(InputFieldSFVec3f/SFColor,x/r,y/g,z/b)
+// - the Try class (see below)
+
+
+public class SAI {
+    //This interface should be implemented if a client class wishes to be
+    //informed of X3D invalid event-get exceptions.  This is supported as an
+    //alternative to exception propagation (if no InvalidEventListener is given,
+    //exceptions will be propagated to the caller). event will be null if the
+    //connection to the node failed.  [PC edit of Davis]
+    //Actually, we may not need this at all.  Not really sure since X3D includes the
+    //X3DFieldEventListener and it's only method, readableFieldChanged(), doesn't
+    //throw exceptions.  We'll keep the whole thing for now.  [PC]
+    public static class Try implements X3DFieldEventListener {
+        public final X3DFieldEventListener wrapped;
+        public Try(X3DFieldEventListener wrap) {
+            wrapped = wrap;
+        }
+
+        public void readableFieldChanged(X3DFieldEvent evt) {
+            try {
+                wrapped.readableFieldChanged(evt);
+            }
+            catch (RuntimeException e) { //readable...() doesn't actually throw exceptions, but we're just sort of leaving this here for now. [PC]
+                System.err.println(
+                    "Exception occurred during X3D event handling:");
+                e.printStackTrace();
+                throw e;
+            }
+            catch (Error e) {
+                System.err.println("ERROR occurred during X3D event handling:");
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
+
+
+
+    public interface InvalidEventListener extends java.util.EventListener {
+        public void invalidEvent(String node, String event);
+    }
+
+    public X3DScene scene;
+    public InvalidEventListener listener;
+
+    public SAI() {
+        scene = null;
+        listener = null;
+    }
+    public SAI(X3DScene mainScene) {
+        this(mainScene, null);
+    }
+    public SAI(X3DScene mainScene, InvalidEventListener whocares) {
+        scene = mainScene;
+        listener = whocares;
+    }
+
+    public X3DScene getScene() {
+        return scene;
+    }
+
+    public NamedNode getNode(String nodeName) {
+        return new NamedNode(scene.getNamedNode(nodeName), nodeName);
+    }
+
+    /* Since X3D uses inputOnly, outputOnly, inputOutput fields, but not
+       different types like EventIn and EventOut.  Therefore, we only
+       need one call to get either type of field.
+       Note that the caller will need to register an X3DFieldEventListener
+       for the returned X3DField.
+     */
+    public X3DField getField(String nodeName, String fieldName) {
+        NamedNode nn = getNode(nodeName);
+        return nn==null ? null : nn.node.getField(fieldName);
+    }
+}

@@ -1,0 +1,390 @@
+#X3D V3.0 utf8
+			  
+PROFILE Immersive
+
+
+PROTO	haxis []{Shape { geometry Cylinder { radius 0.01 height 16 } appearance Appearance { material Material {diffuseColor 0 0 0 emissiveColor 0 0 0 } } } Transform	{ rotation 0 0 1 1.5707963267949  children [ DEF myshape Shape	{geometry Cylinder	{ radius 0.01 height	16 }appearance Appearance	{material Material	{diffuseColor 0 0 0 emissiveColor	0 0 0}}}]}}
+
+EXTERNPROTO RotationWidget [
+	initializeOnly SFFloat angle
+	inputOnly SFFloat set_angle
+	outputOnly SFFloat angle_changed
+	outputOnly SFRotation rotation_changed
+	initializeOnly SFFloat minAngle
+	inputOnly SFFloat set_minAngle
+	initializeOnly SFFloat maxAngle
+	inputOnly SFFloat set_maxAngle
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOnly SFBool set_isOver
+	inputOutput SFBool enabled
+	initializeOnly MFNode normalGeometry
+	initializeOnly MFNode overGeometry
+	initializeOnly MFNode activeGeometry
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#RotationWidget"
+
+PROTO WavePlate [ 
+  initializeOnly        SFFloat z          0
+  initializeOnly        SFFloat angle      0
+  initializeOnly        SFFloat thickness  0.5
+  inputOutput SFInt32 state      0
+  inputOutput SFBool  enabled    TRUE
+  inputOnly      SFFloat set_z
+  inputOnly      SFFloat set_angle
+  inputOnly      SFFloat set_thickness
+  inputOnly      SFBool  set_zHighlighted
+  inputOnly      SFBool  set_angleHighlighted
+  inputOnly      SFBool  set_thicknessHighlighted
+  outputOnly     SFBool  isOver
+  outputOnly     SFFloat z_changed
+  outputOnly     SFFloat angle_changed
+  outputOnly     SFFloat thickness_changed
+  outputOnly     SFBool  z_isOver
+  outputOnly     SFBool  z_isActive
+  outputOnly     SFBool  angle_isOver
+  outputOnly     SFBool  angle_isActive
+  outputOnly     SFBool  thickness_isOver
+  outputOnly     SFBool  thickness_isActive ]
+{
+  DEF WavePlate-SWITCH Switch {
+    whichChoice IS state
+    choice [
+      # Wave Plate when not selected
+      Transform {
+        rotation 1 0 0 1.57
+        children [
+          DEF WavePlate_NORMAL-TRANSFORM Transform {
+            children Transform {
+              rotation 1 0 0 -1.57
+              children [
+                DEF Thickness_NORMAL-TRANSFORM Transform {
+                  scale 1 1 0.5
+                  children DEF Box-SHAPE Shape {
+                    appearance DEF Box-APPEARANCE Appearance {
+                      material Material {
+                        diffuseColor 0.2 0.5 0.9
+                        transparency 0.5
+                      }
+                    }
+                    geometry Box {
+                      size 11 11 1
+                    }
+                  }
+                }
+                DEF Axes_NORMAL-TRANSFORM Transform {
+                  children [
+                    DEF Axes_NORMAL-SHAPE Shape {
+                      appearance Appearance {
+                        material Material {
+                          diffuseColor 0 0 0
+                          emissiveColor 0 0 0
+                        }
+                      }
+									geometry Cylinder { radius .01 height 16 } 
+                    }
+                    DEF Label-TRANSFORM Transform {
+                      translation 9 0 0
+                      children Shape {
+                        appearance Appearance {
+                          material Material {
+                            diffuseColor 1 1 1
+                            emissiveColor 1 1 1
+                          }
+                        }
+                        geometry Text {
+                          string "FAST"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          DEF WavePlate-TOUCHSENSOR TouchSensor {
+            enabled IS enabled
+            isOver IS isOver
+          }
+        ]
+      }
+      # Wave Plate when selected
+      Transform {
+        rotation 1 0 0 1.57
+        children [
+          DEF WavePlate_SELECTED-TRANSFORM Transform {
+            children Transform {
+              rotation 1 0 0 -1.57
+              children [
+                USE Thickness_NORMAL-TRANSFORM
+                DEF Angle-WIDGET RotationWidget {
+                  minAngle 0
+                  maxAngle 6.2831853
+                  enabled IS enabled
+                  offset IS angle
+                  offset_changed IS angle_changed
+                  set_offset IS set_angle
+                  isOver IS angle_isOver
+                  isActive IS angle_isActive
+                  set_isActive IS set_angleHighlighted
+                  normalGeometry [
+                    haxis{}#USE Axes_NORMAL-SHAPE
+                    USE Label-TRANSFORM
+                    Transform {
+                      translation 8 0 0
+                      rotation 1 0 0 1.57
+                      children DEF Angle_NORMAL-SHAPE Shape {
+                        appearance DEF Normal-APPEARANCE Appearance {
+                          material Material {
+                            diffuseColor 0.8 0.8 1.0
+                          }
+                        }
+                        geometry Cylinder {
+                          height 0.8
+                          radius 0.2
+                        }
+                      }
+                    }
+                    Transform {
+                      translation -8 0 0
+                      rotation 1 0 0 1.57
+                      children USE Angle_NORMAL-SHAPE
+                    }
+                  ]
+                  clickedGeometry [
+                    USE Axes_NORMAL-SHAPE
+                    USE Label-TRANSFORM
+                    Transform {
+                      translation 8 0 0
+                      rotation 1 0 0 1.57
+                      children DEF Angle_HIGHLIGHTED-SHAPE Shape {
+                        appearance DEF Highlighted-APPEARANCE Appearance {
+                          material Material {
+                            diffuseColor 1.0 1.0 0.4
+                          }
+                        }
+                        geometry Cylinder {
+                          height 0.8
+                          radius 0.2
+                        }
+                      }
+                    }
+                    Transform {
+                      translation -8 0 0
+                      rotation 1 0 0 1.57
+                      children USE Angle_HIGHLIGHTED-SHAPE
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          Transform {
+                rotation 0 1 0 -1.5707963
+                children [
+                  TouchSensor {
+                    enabled IS enabled
+                    isOver IS z_isOver
+                  }
+                  DEF Z-PLANESENSOR PlaneSensor {
+                    minPosition 0 0
+                    maxPosition 0 20
+                    enabled IS enabled
+                    isActive IS z_isActive
+                  }
+                  DEF Z-TRANSFORM Transform {
+                    children DEF Z-SWITCH Switch {
+                      whichChoice 0
+                      choice [
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z-SHAPE Shape {
+                              appearance USE Normal-APPEARANCE
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                            children USE Z-SHAPE
+                          }
+                        ] }
+                        Group { children [
+                          Transform {
+                            translation -5.5 0.4 0
+                            children DEF Z_HIGHLIGHTED-SHAPE Shape {
+                              appearance USE Highlighted-APPEARANCE
+                              geometry Cone {
+                                bottomRadius 0.2
+                                height 0.8
+                              }
+                            }
+                          }
+                          Transform {
+                            rotation 1 0 0 3.141592653
+                            translation -5.5 -0.4 0
+                          children USE Z_HIGHLIGHTED-SHAPE
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+          DEF Thickness-TRANSFORM Transform {
+            children [
+              Group {
+                children [
+                  TouchSensor {
+                    enabled IS enabled
+                    isOver IS thickness_isOver
+                  }
+                  DEF Thickness-PLANESENSOR1 PlaneSensor {
+                    enabled IS enabled
+                    isActive IS thickness_isActive
+                    minPosition 5.5 0.05
+                    maxPosition 5.5 0.25
+                    offset 5.5 0.5 -5.5
+                  }
+                  DEF Thickness_WIDGET1-TRANSFORM Transform {
+                    translation 5.5 0.25 -5.5
+                    children Transform {
+                      translation 0 0.125 0
+                      children DEF Thickness_WIDGET-SWITCH Switch {
+                        whichChoice 0
+                        choice [
+                          Shape {
+                            appearance USE Normal-APPEARANCE
+                            geometry Box { size 0.25 0.25 0.25 }
+                          }
+                          Shape {
+                            appearance USE Highlighted-APPEARANCE
+                            geometry Box { size 0.25 0.25 0.25 }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+              Group {
+                children [
+                  DEF Thickness-PLANESENSOR2 PlaneSensor {
+                    enabled IS enabled
+                    isActive IS thickness_isActive
+                    minPosition 5.5 -0.25
+                    maxPosition 5.5 -0.05
+                    offset 5.5 -0.5 -5.5
+                  }
+                  DEF Thickness_WIDGET2-TRANSFORM Transform {
+                    translation 5.5 -0.25 -5.5
+                    children Transform {
+                      translation 0 -0.125 0
+                      children USE Thickness_WIDGET-SWITCH
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  DEF WavePlate-SCRIPT Script {
+    initializeOnly    SFFloat    z IS z
+    initializeOnly    SFFloat    angle IS angle
+    initializeOnly    SFFloat    thickness IS thickness
+    inputOnly  SFBool     isOver
+    inputOnly  SFFloat    set_z IS set_z
+    inputOnly  SFVec3f    set_zTranslation
+    inputOnly  SFBool     set_zIsActive IS set_zHighlighted
+    inputOnly  SFFloat    set_thickness IS set_thickness
+    inputOnly  SFVec3f    set_thicknessTranslation1
+    inputOnly  SFVec3f    set_thicknessTranslation2
+    inputOnly  SFBool     set_thicknessIsActive IS set_thicknessHighlighted
+    outputOnly SFInt32    state_changed
+    outputOnly SFInt32    zWhichChoice_changed
+    outputOnly SFVec3f    zTranslation_changed
+    outputOnly SFFloat    z_changed IS z_changed
+    outputOnly SFRotation rotation_changed 
+    outputOnly SFVec3f    thicknessTranslation1_changed
+    outputOnly SFVec3f    thicknessTranslation2_changed
+    outputOnly SFVec3f    thicknessScale_changed
+    outputOnly SFFloat    thickness_changed IS thickness_changed
+    outputOnly SFInt32    thicknessWhichChoice_changed
+    url "ecmascript:
+      function initialize() {
+        zTranslation_changed = new SFVec3f(0, z, 0);
+        rotation_changed = new SFRotation(0, 0, 1, angle);
+        thicknessTranslation1_changed = new SFVec3f(5.5, thickness/2.0, -5.5);
+        thicknessTranslation2_changed = new SFVec3f(5.5, -thickness/2.0, -5.5);
+        thicknessScale_changed = new SFVec3f(1, 1, thickness);
+      }
+      function isOver(value, time) {
+        if(value) state_changed = 1;
+      }
+      function set_z(value, time) {
+        zTranslation_changed[1] = value;
+      }
+      function set_zTranslation(value, time) {
+        z_changed = value[1];
+      }
+      function set_zIsActive(value, time) {
+        zWhichChoice_changed = value ? 1 : 0;
+      }
+      function set_thickness(value, time) {
+        thicknessTranslation1_changed[1] = value / 2.0;
+        thicknessTranslation2_changed[1] = -value / 2.0;
+        thicknessScale_changed[2] = value;
+      }
+      function set_thicknessTranslation1(value, time) {
+        thicknessTranslation2_changed[1] = -value[1];
+        thickness_changed = value[1] * 2.0;
+        thicknessScale_changed[2] = value[1] * 2.0;
+      }
+      function set_thicknessTranslation2(value, time) {
+        thicknessTranslation1_changed[1] = -value[1];
+        thickness_changed = value[1] * -2.0;
+        thicknessScale_changed[2] = value[1] * -2.0;
+      }
+      function set_thicknessIsActive(value, time) {
+        thicknessWhichChoice_changed = value ? 1 : 0;
+      }
+    "
+  }
+  ROUTE Z-PLANESENSOR.isActive TO WavePlate-SCRIPT.set_zIsActive
+  ROUTE Z-PLANESENSOR.translation_changed TO Z-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate_NORMAL-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate_SELECTED-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO Thickness-TRANSFORM.set_translation
+  ROUTE Z-PLANESENSOR.translation_changed TO WavePlate-SCRIPT.set_zTranslation
+  ROUTE WavePlate-SCRIPT.zWhichChoice_changed TO Z-SWITCH.whichChoice
+  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Z-PLANESENSOR.set_offset
+  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Z-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.zTranslation_changed TO WavePlate_NORMAL-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.zTranslation_changed TO WavePlate_SELECTED-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.zTranslation_changed TO Thickness-TRANSFORM.set_translation
+  ROUTE Angle-WIDGET.rotation_changed TO Axes_NORMAL-TRANSFORM.set_rotation
+  ROUTE WavePlate-SCRIPT.rotation_changed TO Axes_NORMAL-TRANSFORM.set_rotation
+  ROUTE Thickness-PLANESENSOR1.isActive TO WavePlate-SCRIPT.set_thicknessIsActive
+  ROUTE Thickness-PLANESENSOR2.isActive TO WavePlate-SCRIPT.set_thicknessIsActive
+  ROUTE Thickness-PLANESENSOR1.translation_changed TO WavePlate-SCRIPT.set_thicknessTranslation1
+  ROUTE Thickness-PLANESENSOR2.translation_changed TO WavePlate-SCRIPT.set_thicknessTranslation2
+  ROUTE Thickness-PLANESENSOR1.translation_changed TO Thickness_WIDGET1-TRANSFORM.set_translation
+  ROUTE Thickness-PLANESENSOR2.translation_changed TO Thickness_WIDGET2-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.thicknessWhichChoice_changed TO Thickness_WIDGET-SWITCH.whichChoice
+  ROUTE WavePlate-SCRIPT.thicknessTranslation1_changed TO Thickness_WIDGET1-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.thicknessTranslation2_changed TO Thickness_WIDGET2-TRANSFORM.set_translation
+  ROUTE WavePlate-SCRIPT.thicknessTranslation1_changed TO Thickness-PLANESENSOR1.set_offset
+  ROUTE WavePlate-SCRIPT.thicknessTranslation2_changed TO Thickness-PLANESENSOR2.set_offset
+  ROUTE WavePlate-SCRIPT.thicknessScale_changed TO Thickness_NORMAL-TRANSFORM.set_scale
+}
+

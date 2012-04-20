@@ -1,0 +1,155 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<title>Rayleigh Resolution Criterion Theory-How WebTOP Does the Calculations</title>
+<meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+<meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/webtopmain.css">
+<script language="JavaScript" src="../../webtopscripts/menucode.js"></script>
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+document.write(stdMenu(1,'Fraunhofer Rayleigh Resolution',2,true));
+document.write(moduleList(2,true));
+</script>
+<p>&nbsp;
+<center>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tablemain" id="tablemain">
+<p><big><b><font color="#800000"><big>Rayleigh Resolution Criterion</big><br>
+</font><font color="#008040">How WebTOP Does the Calculations</b> </font></big></p>
+
+<p>First, let us consider the on-axis point source problem discussed in the <a href="1.html">Image of an On-Axis Point Source</a>
+section. Let I<sub>o</sub> be the intensity of the light incident upon the lens, and let
+the on-axis point in the focal plane (the observation screen in <a onmouseover="window.status='View Figure'; return true" href="javascript:imageWindow('../images/circular.gif')">Figure 2</a>) be the origin of the
+coordinate system in that plane. The intensity in the focal plane at the observation point
+<i>P</i> = (<i>x,y</i>) is then given by the formula</p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh2.gif" WIDTH="192" HEIGHT="53"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.1)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>where </p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh3.gif" WIDTH="104" HEIGHT="53"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.2)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>is the intensity at the center of the pattern (i.e., at x=y=0),</p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh4.gif" WIDTH="94" HEIGHT="29"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.3)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>is the distance, in the focal plane, from the center of the pattern to the observation
+point, and <em>J</em><sub>1</sub>(<em>u</em>) is the Bessel function of the first kind of
+order one.</p>
+
+<p>Now let us look at the two off-axis sourcs case. It follows from <a onmouseover="window.status='View Figure'; return true" href="javascript:imageWindow('../images/two-source-diagram.gif')">Figure 4</a> that <em>I</em><sub>1</sub>(<em>x</em>,<em>y</em>)
+is centered about the point P<sub>1</sub>=(<font face="Symbol">¦×</font>tan(<em><font face="Symbol">q</font></em>/2),0) in the focal plane and that <em>I</em><sub>2</sub>(<em>x</em>,<em>y</em>)
+is centered about the point <em>P</em><sub>2</sub>=(-<font face="Symbol">¦×</font>tan(<em><font face="Symbol">q</font></em>/2),0). The individual intensities may therefore be written as </p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh5.gif" WIDTH="206" HEIGHT="53"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.4)</td>
+  </tr>
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh6.gif" WIDTH="209" HEIGHT="53"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.5)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>where I<sub>c</sub> is given by Eq. (4.2) and</p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh7.gif" WIDTH="338" HEIGHT="30"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.6)</td>
+  </tr>
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh8.gif" WIDTH="337" HEIGHT="30"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.7)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>&nbsp;It follows from Eqs. (2.1), (4.4), and (4.5) that the intensity on the
+observation screen is given by</p>
+<div align="center"><center>
+
+<table CELLSPACING="0" BORDER="0" CELLPADDING="7" WIDTH="80%">
+  <tr>
+    <td WIDTH="80%" VALIGN="TOP"><p ALIGN="CENTER"><img src="../images/rayleigh1.gif" WIDTH="12" HEIGHT="22"><img src="../images/rayleigh9.gif" WIDTH="345" HEIGHT="53"></td>
+    <td WIDTH="20%" VALIGN="middle"><p ALIGN="right">(4.8)</td>
+  </tr>
+</table>
+</center></div>
+
+<p>The intensities of the rings which surround the Airy disk of each Airy pattern are very
+dim as compared to intensity at the center of each disk. In order to make the rings
+observable, the intensity that WebTOP displays on the observation screen is [<em>I</em>(<em>x</em>,<em>y</em>)]<sup>1/4</sup>.</p>
+
+<p><b>&nbsp;</p>
+</b>
+
+<hr>
+<div align="center"><center>
+
+<table border="1" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td rowspan="2" class="tablemain" id="tablemain"><font color="#FF0000"><strong>Navigate:</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="1.html">Image of an
+    On-Axis Point Source</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="2.html">Image of Two
+    Off-Axis Point Sources</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="3.html">The Rayleigh
+    Resolution Criterion</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#008040">WebTOP Calculations</font></td>
+  </tr>
+  <tr>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Start</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain">&nbsp;</td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center">&nbsp;</td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+
+<p><br>
+<br>
+<br>
+</p>
+
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

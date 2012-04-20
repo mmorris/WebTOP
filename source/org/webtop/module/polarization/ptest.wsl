@@ -1,0 +1,387 @@
+<wsl>
+  <polarization history1="off" history2="off" animation="play" widgets="visible" fieldMode="composite">
+    <source sourceType="polarized" wavelength="540.0" amplitudex="0.7071" amplitudey="0.7071" phaseDifference="1.5708" />
+    <filters />
+    <view value="-0.6 -0.7 0.0 1.0 3.0 -17.0" />
+  </polarization>
+  <script>
+    <viewpointChanged value="-0.6000005 -0.7 0.0 1.0 3.0 -17.0" timeStamp="631" />
+    <viewpointChanged value="-0.6000005 -0.67295665 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.59999955 -0.67295665 0.0 1.0 3.0 -17.0" timeStamp="110" />
+    <viewpointChanged value="-0.59999955 -0.672957 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.43767273 -0.672957 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.43767273 -0.59182817 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.30240262 -0.59182817 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.30240262 -0.5106978 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.22124112 -0.5106978 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.22124112 -0.48365575 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.14007628 -0.48365575 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.14007628 -0.42956895 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.11302197 -0.42956895 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.11302197 -0.40252584 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.031857133 -0.40252584 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.031857133 -0.3484407 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.022250056 -0.3484407 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.022250056 -0.32139677 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.049304366 -0.32139677 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.049304366 -0.2673102 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.10341489 -0.2673102 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.10341489 -0.26731056 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.18457544 -0.26731056 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.18457544 -0.24026817 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.18457592 -0.24026817 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.18457592 -0.18618125 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.21163023 -0.18618125 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.21163023 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.21163023 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="120" />
+    <viewpointChanged value="0.21163023 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.21163023 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="120" />
+    <viewpointChanged value="0.21163023 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.15752113 -0.18618137 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.15752113 -0.15913826 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="0.07636011 -0.15913826 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="0.07636011 -0.10505277 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.0048037767 -0.10505277 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.0048037767 -0.10505265 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.05891192 -0.10505265 0.0 1.0 3.0 -17.0" timeStamp="21" />
+    <viewpointChanged value="-0.05891192 -0.07800919 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.08596814 -0.07800919 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.08596814 -0.07800931 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.16713059 -0.07800931 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.16713059 -0.023923934 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.30240262 -0.023923934 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.30240262 0.0031195283 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.38356507 0.0031195283 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.38356507 0.057206094 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.46472943 0.057206094 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.46472943 0.057206094 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.46472847 0.057206094 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.46472847 0.084248364 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.49178374 0.084248364 0.0 1.0 3.0 -17.0" timeStamp="30" />
+    <viewpointChanged value="-0.49178374 0.084248245 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.54589045 0.084248245 0.0 1.0 3.0 -17.0" timeStamp="20" />
+    <viewpointChanged value="-0.54589045 0.084248245 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <viewpointChanged value="-0.5458938 0.084248245 0.0 1.0 3.0 -17.0" timeStamp="110" />
+    <viewpointChanged value="-0.5458938 0.08424848 0.0 1.0 3.0 -17.0" timeStamp="0" />
+    <mousePressed param="wavelength" timeStamp="1232" />
+    <mouseDragged param="wavelength" value="540.0" timeStamp="30" />
+    <mouseDragged param="wavelength" value="540.613" timeStamp="100" />
+    <mouseDragged param="wavelength" value="540.94293" timeStamp="30" />
+    <mouseDragged param="wavelength" value="542.2018" timeStamp="20" />
+    <mouseDragged param="wavelength" value="543.873" timeStamp="20" />
+    <mouseDragged param="wavelength" value="544.2289" timeStamp="20" />
+    <mouseDragged param="wavelength" value="544.57043" timeStamp="0" />
+    <mouseDragged param="wavelength" value="545.2307" timeStamp="20" />
+    <mouseDragged param="wavelength" value="545.5221" timeStamp="20" />
+    <mouseDragged param="wavelength" value="545.8535" timeStamp="20" />
+    <mouseDragged param="wavelength" value="546.05817" timeStamp="30" />
+    <mouseDragged param="wavelength" value="546.43933" timeStamp="20" />
+    <mouseDragged param="wavelength" value="546.995" timeStamp="20" />
+    <mouseDragged param="wavelength" value="547.3115" timeStamp="20" />
+    <mouseDragged param="wavelength" value="547.6146" timeStamp="0" />
+    <mouseDragged param="wavelength" value="548.44653" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.5296" timeStamp="20" />
+    <mouseDragged param="wavelength" value="550.82745" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.296" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.35004" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.609" timeStamp="20" />
+    <mouseDragged param="wavelength" value="552.15247" timeStamp="20" />
+    <mouseDragged param="wavelength" value="553.26373" timeStamp="21" />
+    <mouseDragged param="wavelength" value="553.9975" timeStamp="0" />
+    <mouseDragged param="wavelength" value="555.73303" timeStamp="20" />
+    <mouseDragged param="wavelength" value="557.15796" timeStamp="20" />
+    <mouseDragged param="wavelength" value="558.39374" timeStamp="20" />
+    <mouseDragged param="wavelength" value="559.9149" timeStamp="20" />
+    <mouseDragged param="wavelength" value="561.5992" timeStamp="20" />
+    <mouseDragged param="wavelength" value="562.60016" timeStamp="20" />
+    <mouseDragged param="wavelength" value="563.00665" timeStamp="70" />
+    <mouseDragged param="wavelength" value="562.60016" timeStamp="80" />
+    <mouseDragged param="wavelength" value="562.4683" timeStamp="20" />
+    <mouseDragged param="wavelength" value="560.2327" timeStamp="20" />
+    <mouseDragged param="wavelength" value="559.1267" timeStamp="0" />
+    <mouseDragged param="wavelength" value="556.9378" timeStamp="20" />
+    <mouseDragged param="wavelength" value="553.359" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.2688" timeStamp="20" />
+    <mouseDragged param="wavelength" value="550.1587" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.7096" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.47107" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.366" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.1902" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.2095" timeStamp="0" />
+    <mouseDragged param="wavelength" value="549.23315" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.45105" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.6215" timeStamp="20" />
+    <mouseDragged param="wavelength" value="549.88153" timeStamp="20" />
+    <mouseDragged param="wavelength" value="550.1768" timeStamp="20" />
+    <mouseDragged param="wavelength" value="550.4489" timeStamp="20" />
+    <mouseDragged param="wavelength" value="550.8178" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.219" timeStamp="20" />
+    <mouseDragged param="wavelength" value="551.39636" timeStamp="0" />
+    <mouseDragged param="wavelength" value="551.94226" timeStamp="20" />
+    <mouseDragged param="wavelength" value="552.41296" timeStamp="20" />
+    <mouseDragged param="wavelength" value="553.39886" timeStamp="21" />
+    <mouseDragged param="wavelength" value="554.7075" timeStamp="20" />
+    <mouseDragged param="wavelength" value="555.78143" timeStamp="20" />
+    <mouseDragged param="wavelength" value="556.3805" timeStamp="20" />
+    <mouseDragged param="wavelength" value="556.5887" timeStamp="20" />
+    <mouseDragged param="wavelength" value="557.01764" timeStamp="20" />
+    <mouseDragged param="wavelength" value="557.0323" timeStamp="20" />
+    <mouseDragged param="wavelength" value="557.25525" timeStamp="30" />
+    <mouseDragged param="wavelength" value="557.25525" timeStamp="120" />
+    <mouseDragged param="wavelength" value="557.25525" timeStamp="120" />
+    <mouseDragged param="wavelength" value="557.25525" timeStamp="120" />
+    <mouseDragged param="wavelength" value="557.2732" timeStamp="100" />
+    <mouseDragged param="wavelength" value="560.22876" timeStamp="30" />
+    <mouseDragged param="wavelength" value="569.8034" timeStamp="20" />
+    <mouseDragged param="wavelength" value="571.9498" timeStamp="21" />
+    <mouseDragged param="wavelength" value="572.4654" timeStamp="20" />
+    <mouseDragged param="wavelength" value="572.6354" timeStamp="20" />
+    <mouseDragged param="wavelength" value="572.6918" timeStamp="0" />
+    <mouseDragged param="wavelength" value="572.7396" timeStamp="20" />
+    <mouseDragged param="wavelength" value="572.79785" timeStamp="0" />
+    <mouseDragged param="wavelength" value="572.88245" timeStamp="20" />
+    <mouseDragged param="wavelength" value="572.889" timeStamp="20" />
+    <mouseDragged param="wavelength" value="572.9293" timeStamp="40" />
+    <mouseDragged param="wavelength" value="572.99506" timeStamp="80" />
+    <mouseDragged param="wavelength" value="573.54175" timeStamp="20" />
+    <mouseDragged param="wavelength" value="574.57025" timeStamp="20" />
+    <mouseDragged param="wavelength" value="576.64484" timeStamp="20" />
+    <mouseDragged param="wavelength" value="577.6782" timeStamp="20" />
+    <mouseDragged param="wavelength" value="578.8012" timeStamp="20" />
+    <mouseDragged param="wavelength" value="580.3511" timeStamp="20" />
+    <mouseDragged param="wavelength" value="581.4985" timeStamp="0" />
+    <mouseDragged param="wavelength" value="582.26355" timeStamp="20" />
+    <mouseDragged param="wavelength" value="584.3893" timeStamp="20" />
+    <mouseDragged param="wavelength" value="585.21436" timeStamp="0" />
+    <mouseDragged param="wavelength" value="586.87006" timeStamp="20" />
+    <mouseDragged param="wavelength" value="588.7091" timeStamp="20" />
+    <mouseDragged param="wavelength" value="589.67206" timeStamp="20" />
+    <mouseDragged param="wavelength" value="590.37573" timeStamp="20" />
+    <mouseDragged param="wavelength" value="591.3289" timeStamp="20" />
+    <mouseDragged param="wavelength" value="592.131" timeStamp="20" />
+    <mouseDragged param="wavelength" value="592.54297" timeStamp="0" />
+    <mouseDragged param="wavelength" value="592.91394" timeStamp="20" />
+    <mouseDragged param="wavelength" value="594.85114" timeStamp="20" />
+    <mouseDragged param="wavelength" value="596.41296" timeStamp="20" />
+    <mouseDragged param="wavelength" value="597.35834" timeStamp="20" />
+    <mouseDragged param="wavelength" value="597.6136" timeStamp="20" />
+    <mouseDragged param="wavelength" value="597.6848" timeStamp="20" />
+    <mouseDragged param="wavelength" value="597.7201" timeStamp="20" />
+    <mouseDragged param="wavelength" value="597.9303" timeStamp="20" />
+    <mouseDragged param="wavelength" value="598.0847" timeStamp="21" />
+    <mouseDragged param="wavelength" value="598.0847" timeStamp="110" />
+    <mouseReleased param="wavelength" timeStamp="20" />
+    <mousePressed param="phaseDifference" timeStamp="861" />
+    <mouseDragged param="phaseDifference" value="1.57" timeStamp="40" />
+    <mouseDragged param="phaseDifference" value="1.57" timeStamp="120" />
+    <mouseDragged param="phaseDifference" value="1.8537153" timeStamp="20" />
+    <mouseDragged param="phaseDifference" value="2.1356149" timeStamp="20" />
+    <mouseDragged param="phaseDifference" value="2.6930194" timeStamp="50" />
+    <mouseDragged param="phaseDifference" value="2.6930194" timeStamp="111" />
+    <mouseReleased param="phaseDifference" timeStamp="20" />
+    <objectAdded timeStamp="2353">
+      <polarizer id="polarizer0" z="2.0" angle="0.0" />
+    </objectAdded>
+    <mousePressed target="polarizer0" param="z" timeStamp="1542" />
+    <mouseDragged target="polarizer0" param="z" value="2.0" timeStamp="30" />
+    <mouseDragged target="polarizer0" param="z" value="2.6428108" timeStamp="100" />
+    <mouseDragged target="polarizer0" param="z" value="3.704752" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="4.846493" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="5.64983" timeStamp="21" />
+    <mouseDragged target="polarizer0" param="z" value="6.1674576" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="6.7821503" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="7.4916935" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="8.164591" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="8.803371" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="9.115719" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="z" value="9.812828" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="10.283407" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="10.650013" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="10.916256" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="11.181749" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="11.352341" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="11.686516" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="11.850143" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="z" value="11.9310665" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="z" value="12.09133" timeStamp="0" />
+    <mouseReleased target="polarizer0" param="z" timeStamp="60" />
+    <mousePressed target="polarizer0" param="angle" timeStamp="1672" />
+    <mouseDragged target="polarizer0" param="angle" value="0.0" timeStamp="10" />
+    <mouseDragged target="polarizer0" param="angle" value="0.0" timeStamp="121" />
+    <mouseDragged target="polarizer0" param="angle" value="0.0052778283" timeStamp="40" />
+    <mouseDragged target="polarizer0" param="angle" value="0.03504653" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.049938988" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="angle" value="0.06482724" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.079709865" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="angle" value="0.10446868" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.119286686" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.13990194" timeStamp="30" />
+    <mouseDragged target="polarizer0" param="angle" value="0.16453397" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.18139756" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.20460983" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.24812141" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.27374443" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.30665165" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.34366903" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.37322167" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.41799256" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.46918634" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.4969993" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="angle" value="0.5227898" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.57863796" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.59771633" timeStamp="0" />
+    <mouseDragged target="polarizer0" param="angle" value="0.6121044" timeStamp="20" />
+    <mouseDragged target="polarizer0" param="angle" value="0.6185504" timeStamp="60" />
+    <mouseDragged target="polarizer0" param="angle" value="0.6185504" timeStamp="110" />
+    <mouseReleased target="polarizer0" param="angle" timeStamp="51" />
+    <actionPerformed param="history1" value="on" timeStamp="2193" />
+    <actionPerformed param="history2" value="on" timeStamp="2283" />
+    <objectAdded timeStamp="3255">
+      <waveplate id="waveplate0" z="14.09133" angle="0.0" thickness="0.5" />
+    </objectAdded>
+    <mouseEntered target="polarizer0" timeStamp="691" />
+    <mouseExited target="polarizer0" timeStamp="0" />
+    <mouseEntered target="waveplate0" timeStamp="310" />
+    <mouseExited target="waveplate0" timeStamp="20" />
+    <mousePressed target="waveplate0" param="z" timeStamp="932" />
+    <mouseDragged target="waveplate0" param="z" value="14.09133" timeStamp="100" />
+    <mouseDragged target="waveplate0" param="z" value="14.228674" timeStamp="60" />
+    <mouseDragged target="waveplate0" param="z" value="14.630299" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="z" value="14.825569" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="z" value="15.017218" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="z" value="15.205423" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="z" value="15.269432" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="z" value="15.453084" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="z" value="15.637545" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="z" value="15.933077" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="z" value="16.161804" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="z" value="16.278078" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="z" value="16.333817" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="z" value="16.333817" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="z" value="16.333817" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="z" value="16.333817" timeStamp="70" />
+    <mouseDragged target="waveplate0" param="z" value="16.333817" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="z" value="16.444286" timeStamp="110" />
+    <mouseReleased target="waveplate0" param="z" timeStamp="0" />
+    <mousePressed target="waveplate0" param="angle" timeStamp="991" />
+    <mouseDragged target="waveplate0" param="angle" value="1.035168E-7" timeStamp="40" />
+    <mouseDragged target="waveplate0" param="angle" value="2.070336E-7" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="80" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="110" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="100" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="50" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="90" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="21" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="6.065382E-4" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.004938498" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.0136231575" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.017967753" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.018397737" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.027163228" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.031549595" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.031549536" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.031284872" timeStamp="60" />
+    <mouseDragged target="waveplate0" param="angle" value="0.031284854" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.040041257" timeStamp="100" />
+    <mouseDragged target="waveplate0" param="angle" value="0.04004126" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="angle" value="0.040041264" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.043808762" timeStamp="80" />
+    <mouseDragged target="waveplate0" param="angle" value="0.043506075" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.043808874" timeStamp="90" />
+    <mouseDragged target="waveplate0" param="angle" value="0.044111103" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.05353011" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.07115725" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.094684325" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.099148594" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.13743074" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.20683968" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.2577547" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.31245974" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.37969476" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.44459727" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.565878" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.6042728" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.6662608" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.68394744" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.69267505" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.6926751" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="angle" value="0.6926752" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.6897454" timeStamp="100" />
+    <mouseDragged target="waveplate0" param="angle" value="0.67650765" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.62866414" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.59919304" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.56579834" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.54478467" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.5378421" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.52400774" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.5076778" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.5029276" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.49868372" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.48917732" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.48439926" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.48233807" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.47275186" timeStamp="0" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4679349" timeStamp="60" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4639342" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.45430085" timeStamp="71" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4475196" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.43781328" timeStamp="70" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4340418" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.42919382" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.42734236" timeStamp="70" />
+    <mouseDragged target="waveplate0" param="angle" value="0.41763332" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4176334" timeStamp="110" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4176335" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4176336" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4140273" timeStamp="20" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40741298" timeStamp="30" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40741286" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40741274" timeStamp="121" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40741262" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.4074125" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40741238" timeStamp="120" />
+    <mouseDragged target="waveplate0" param="angle" value="0.40391344" timeStamp="20" />
+    <mouseReleased target="waveplate0" param="angle" timeStamp="90" />
+    <actionPerformed target="waveplate0" param="z" value="16.444" timeStamp="7692" />
+    <actionPerformed target="waveplate0" param="angle" value="0.40392154" timeStamp="0" />
+    <actionPerformed target="waveplate0" param="thickness" value="0.25" timeStamp="0" />
+    <scriptEnded timeStamp="6249" />
+  </script>
+</wsl>

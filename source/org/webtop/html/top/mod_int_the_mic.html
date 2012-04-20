@@ -1,0 +1,56 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<TITLE>The Optics Project - Modules - Interference - Theory - Michelson Interferometer</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER><BR>
+<B><U><FONT SIZE=5>Theory of Interference<BR>(Michelson Interferometer)
+</B></U><BR><BR>
+</FONT>
+</CENTER>
+<FONT SIZE=4>
+<B><U>1. Description</B></U>
+</FONT>
+<FONT SIZE=4>
+<P>Consider light from a monochromatic point source of wavelength 
+<IMG SRC="figs/lambda.jpg" ALIGN=TOP width="17" height="16"> incident upon a Michelson interferometer.  (See any of the still pictures from this module to see the setup.)  The interferometer works in the following way.  The light from the point source first strikes a beam splitter that divides the beam into two equal amplitude beams: a reflected one, which we will call Beam 1, and a transmitted one, which we will call Beam 2.  It is assumed that the back surface of the beam splitter is the coated surface. </P>
+
+<P>Beam 1 travels to the &quot;translation&quot; mirror of the interferometer.  This mirror can translate back and forth in order to provide a desired path length difference, call it <I><B>d</B></I>, between the paths traveled by Beams 1 and 2.  Beam 1 then reflects off of the translation mirror and travels back to the beam splitter.  At the beam splitter Beam 1 splits into two equal amplitude beams.  The beam of interest is the one that transmits through the beam splitter and travels to the observation screen.</P>
+
+<P>Let us now discuss Beam 2.  It is the transmitted beam created when the light from the point source was incident upon the beam splitter.  It travels from the beam splitter through the compensator plate to the &quot;tilt&quot; mirror of the interferometer.  In our interferometer this mirror can only be rotated about its vertical axis; we will call this angle of rotation <FONT FACE="Symbol">&#102;</FONT>
+.  (In most Michelson interferometers it can be tilted with respect to two orthogonal axes.)  The beam then reflects from the tilt mirror and travels back through the compensator plate to the beam splitter.  At the beam splitter, beam 2 is divided into equal amplitude reflected and transmitted beams.  We are interested in the reflected beam, which travels to the observation screen and interferes there with the beam that has traveled in the other arm of the interferometer.  In this submodule the irradiance on the observation screen is calculated and displayed.</P>
+<BR><BR>
+</FONT>
+<FONT SIZE=4>
+<B><U>2. Calculations</B></U><BR><BR>
+</FONT>
+<FONT SIZE=4>
+<OL TYPE="a">
+<LI>Tilt Mirror Not Tilted&nbsp;&nbsp;<IMG SRC="figs/mich/Image59.gif" WIDTH=58 HEIGHT=28 ALIGN=MIDDLE></LI>
+<P>Let P = (<I>x, y</I>) be a point on the observation screen.  The irradiance at P is given by the following formula</P>
+<P ALIGN="CENTER"><IMG SRC="figs/mich/Image60.gif" WIDTH=242 HEIGHT=30></P>
+<P>Here <IMG SRC="figs/mich/Image61.gif" WIDTH=80 HEIGHT=28 ALIGN=MIDDLE> is the wave number of the light, <IMG SRC="figs/mich/Image62.gif" WIDTH=50 HEIGHT=28 ALIGN=MIDDLE>&nbsp;&nbsp;is the irradiance that would be observed at <I>P</I> if only one of the two beams were incident upon the observation screen, and <IMG SRC="figs/theta.jpg" ALIGN=TOP width="20" height="19">
+ is defined in the usual way.  [See for example, E. Hecht, <I>Optics</I>, (Addison Wesley Longman, New York, 1998), p. 401.]</P>
+<LI>Tilt Mirror Not Tilted <IMG SRC="figs/mich/Image63.gif" WIDTH=60 HEIGHT=28 ALIGN=MIDDLE><BR><BR>
+<P>The expression for <IMG SRC="figs/mich/Image64.gif" WIDTH=44 HEIGHT=26 ALIGN=CENTER> is quite complicated and we will not discuss its mathematical form here, other than to say that the submodule calculates it correctly.</P>
+</OL>
+</FONT>
+<CENTER><BR>
+<IMG SRC="figs/roygbiv.gif" WIDTH=450><BR><BR><BR>
+<FONT SIZE=2 FACE="helvetica, arial">
+<P>
+Created by Srihari Angaluri 
+and Kiril Vidimce<BR>
+Send comments to <A  HREF="mailto:webtop@webtop.org">comments@webtop.org</A>
+<BR>
+</P>
+</FONT>
+</CENTER>
+<!-- <!--#include virtual="/secure-ssi/counter.html"-->
+</BODY>
+</HTML>

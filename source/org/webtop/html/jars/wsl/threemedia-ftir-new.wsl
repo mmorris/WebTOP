@@ -1,0 +1,25 @@
+<wsl>
+  <threemedia play="Play" waveQuality="Very Smooth" amplitude="4.0" wavelength="15.0" angle="45.0" n1="1.0" n2="1.25" n3="1.5" distance="35.0">
+    <view value="-0.77 0.0 0.0 0.0 0.2 -7.0" />
+  </threemedia>
+  <script>
+    <actionPerformed param="reset" timeStamp="10" />
+    <actionPerformed param="distance" value="25.0" timeStamp="10" />
+    <actionPerformed param="grid" timeStamp="10" />
+    <actionPerformed param="widgets" timeStamp="10" />
+    <actionPerformed param="angle" value="42.0" timeStamp="10" />
+    <actionPerformed param="n1" value="1.5" timeStamp="10" />
+    <actionPerformed param="n2" value="1.0" timeStamp="10" />
+    <viewpointSelected value="1" timeStamp="10" />
+    <actionPerformed param="play" value="Stop" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="distance" value="5.0" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="8000" />
+    <actionPerformed param="play" value="Play" timeStamp="8000" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <scriptEnded timeStamp="10" />
+  </script>
+</wsl>

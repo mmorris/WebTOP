@@ -1,0 +1,40 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="E:/webtop/deployment/website/webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="E:/webtop/deployment/website/webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="E:/webtop/deployment/website/webtopscripts/modulelist.js"></script>
+<script language="JavaScript" src="E:/webtop/deployment/website/webtopscripts/module.js"></script>
+<script language="JavaScript" src="E:/webtop/deployment/website/webtopscripts/caption.js"></script>
+</head>
+<body bgcolor="#000000" text="#FFFFFF">
+<script language="JavaScript">
+self.name='module';
+var scriptName='nslit-test';
+document.write(stdMenu(0,'Fraunhofer N-Slit',0,false));
+document.write(moduleList(1,true));
+</script>
+<div class=module id=module>
+<script language="JavaScript">
+//document.write(moduleHTML(300,148,990,540,1230,790,660,125,'FraunNSlit.wrl','webtop.nslit.FraunNSlit.class','wslscript','component.jar, util.jar, sdlmath.jar, numberbox.jar, wsl.jar, nslit.jar',getScriptName()));
+document.write(moduleHTML(770,380,990,540,1230,790,660,125,'FraunNSlit.wrl','webtop.nslit.FraunNSlit.class','wslscript','component.jar, util.jar, sdlmath.jar, numberbox.jar, wsl.jar, nslit.jar',scriptName));
+</script>
+</div>
+<div id=control class=control style="position:relative;top:30">
+<a href=# onclick=Javascript:document.wslscript.wslPlayer.Pause();>Pause</a>[]
+<a href=# onclick=Javascript:scriptName='nslit-test';document.wslscript.wslPlayer.Play();ValueQuote=0;setcaption();>Play test</a>[]
+<a href=# onclick="Javascript:document.wslscript.wslPlayer.Reset();return;">Stop</a>[]
+<a href=# onclick=Javascript:document.wslscript.wslPlayer.run();>run</a><p>
+<a href=# onclick=Javascript:scriptName='nslit-ex4';document.wslscript.wslPlayer.Play();ValueQuote=0;setcaption();>Play ex4</a>[]
+<a href=# onclick=Javascript:document.wslscript.getParameter('wsl/nslit-ex3.wsl');document.wslscript.wslPlayer.Play();ValueQuote=0;setcaption();>Play ex3</a>[]
+<a href=# onclick=Javascript:document.wslscript.externalTest();>Test</a>[]
+</div>
+<div id="caption" style="position:relative;top:30">
+
+</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+package x3dwebtop.x3d.output;
+
+import x3dwebtop.x3d.*;
+import org.web3d.x3d.sai.*;
+
+/**
+ * <p>Title: X3DWebTOP</p>
+ *
+ * <p>Description: The X3D version of The Optics Project for the Web
+ * (WebTOP)</p>
+ *
+ * <p>Copyright: Copyright (c) 2006</p>
+ *
+ * <p>Company: MSU Department of Physics and Astronomy</p>
+ *
+ * @author Paul Cleveland, Peter Gilbert
+ * @version 0.0
+ */
+public class ElevationGrid extends Grid implements AbstractEG {
+        //X3D event name for an ElevationGrid's input
+        public static final String SET_HEIGHT="set_height";
+
+        //private final SAI sai;
+        //private final X3DObject.Blank control;
+
+        private String egridOptions = "";
+
+        /*X3D VERSION*/
+        private final X3DShapeNode shape;  //The Shape node containing the elevation grid
+        private final X3DNode geometry;  //The actual ElevationGrid node
+
+        public ElevationGrid(NamedNode shapeNode, int[][] res, float w, float h) {
+            super(res, w, h);
+
+            shape = shapeNode.node;
+
+            geometry = shape.getGeometry();
+
+
+        }
+        /*END X3D VERSION*/
+
+        //public ElevationGrid(SAI eai,String shapeNode,int[][] res,float w,float h)
+        //{this(eai,eai.getNode(shapeNode),res,w,h);}
+        public ElevationGrid(SAI eai, NamedNode shapeNode, int[][] res, float w, float h) {
+            super(res, w, h);
+
+            this.eai = eai;
+
+            //ElevationGrids can only be geometry nodes...
+            control = new X3DObject.Blank(eai, shapeNode, "set_geometry", null);
+        }
+
+        public void setGridOptions(String egOptions) {
+            if (egOptions == null)throw new NullPointerException();
+            egridOptions = egOptions;
+        }
+
+        protected void setup0() {
+            control.release();
+            control.create("ElevationGrid {\n\txDimension " + getMRes() +
+                           "\n\tzDimension " + getNRes() +
+                           "\n\txSpacing " + (getWidth() / (getMRes() - 1)) +
+                           "\n\tzSpacing " + (getHeight() / (getNRes() - 1)) +
+                           "\n\t" + egridOptions + "\n}", "<ElevationGrid>");
+            //Initialize with 0 height
+            setHeights(new float[getMRes() * getNRes()]);
+            control.place();
+        }
+
+        public NamedNode getNode() {
+            return control.getNode();
+        }
+
+        public void setHeights(float[] array) {
+            ((EventInMFFloat) eai.getEI(getNode(), SET_HEIGHT)).setValue(array);
+        }
+
+        public void setColors(float[][] array) {
+            ((EventInMFColor) eai.getEI(X3DObject.plant(eai, getNode(), SET_COLOR, "Color {}",
+                    "<ElevationGrid::Color>"), SET_COLOR)).setValue(array);
+        }
+}

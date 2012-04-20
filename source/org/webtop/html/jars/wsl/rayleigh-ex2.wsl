@@ -1,0 +1,38 @@
+<wsl>
+  <rayleigh wavelength="400.0" z="50.0" diameter="3.355" hideWidgets="Hide Widgets" angle="2.0E-5">
+    <view value="-0.53 -0.5 0.0 -1.5 -1.0 -12.0" />
+  </rayleigh>
+  <script>
+    <actionPerformed param="wavelength" value="410.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="420.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="430.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="440.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="450.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="460.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="470.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="480.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="490.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="500.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="510.0" timeStamp="5000" />
+    <actionPerformed param="wavelength" value="520.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="530.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="540.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="550.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="560.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="570.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="580.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="590.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="600.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="610.0" timeStamp="5000" />
+    <actionPerformed param="wavelength" value="620.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="630.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="640.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="650.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="660.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="670.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="680.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="690.0" timeStamp="500" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="500" />
+    <scriptEnded timeStamp="250" />
+  </script>
+</wsl>

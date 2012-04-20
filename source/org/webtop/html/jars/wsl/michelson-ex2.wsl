@@ -1,0 +1,72 @@
+<wsl>
+  <michelson wavelength="500.0" tiltAngle="0.0" pathLengthDifference="0.0070" axes="visible" widgets="visible">
+    <view value="0.0 0.0 0.0 -0.0367 -0.4663 -10.0" />
+  </michelson>
+  <script>
+    <mousePressed param="wavelength" timeStamp="2183" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="70" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="110" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="110" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="121" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="100" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="121" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="100" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="121" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="500.0" timeStamp="120" />
+    <mouseDragged param="wavelength" value="499.79385" timeStamp="90" />
+    <mouseDragged param="wavelength" value="499.79382" timeStamp="141" />
+    <mouseDragged param="wavelength" value="499.59457" timeStamp="80" />
+    <mouseDragged param="wavelength" value="499.4023" timeStamp="120" />
+    <mouseDragged param="wavelength" value="499.4023" timeStamp="110" />
+    <mouseDragged param="wavelength" value="499.28705" timeStamp="30" />
+    <mouseDragged param="wavelength" value="499.28702" timeStamp="110" />
+    <mouseDragged param="wavelength" value="499.28702" timeStamp="120" />
+    <mouseDragged param="wavelength" value="499.28702" timeStamp="121" />
+    <mouseDragged param="wavelength" value="499.0983" timeStamp="230" />
+    <mouseDragged param="wavelength" value="499.09827" timeStamp="110" />
+    <mouseDragged param="wavelength" value="499.09827" timeStamp="120" />
+    <mouseDragged param="wavelength" value="499.09827" timeStamp="120" />
+    <mouseDragged param="wavelength" value="499.09827" timeStamp="121" />
+    <mouseDragged param="wavelength" value="498.91708" timeStamp="60" />
+    <mouseDragged param="wavelength" value="498.7878" timeStamp="130" />
+    <mouseDragged param="wavelength" value="498.7878" timeStamp="110" />
+    <mouseDragged param="wavelength" value="498.7878" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.65048" timeStamp="50" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="110" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="111" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="100" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="130" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="110" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="121" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.47256" timeStamp="120" />
+    <mouseDragged param="wavelength" value="498.30298" timeStamp="130" />
+    <mouseDragged param="wavelength" value="498.30292" timeStamp="131" />
+    <mouseDragged param="wavelength" value="498.30292" timeStamp="110" />
+    <mouseDragged param="wavelength" value="498.30292" timeStamp="130" />
+    <mouseDragged param="wavelength" value="498.30292" timeStamp="110" />
+    <mouseDragged param="wavelength" value="498.15414" timeStamp="100" />
+    <mouseReleased param="wavelength" timeStamp="311" />
+    <actionPerformed param="wavelength" value="400.0" timeStamp="6579" />
+    <actionPerformed param="wavelength" value="500.0" timeStamp="6700" />
+    <actionPerformed param="wavelength" value="600.0" timeStamp="4807" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="4616" />
+    <scriptEnded timeStamp="3756" />
+  </script>
+</wsl>

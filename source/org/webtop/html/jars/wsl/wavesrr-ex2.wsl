@@ -1,0 +1,88 @@
+<wsl>
+  <rrwaves play="Play" waveQuality="Very Smooth" amplitude="4.0" wavelength="16.0" angle="45.0" n1="1.0" n2="1.5">
+    <view value="-0.77 0.0 0.0 0.0 0.2 -7.0" />
+  </rrwaves>
+  <script>
+    <actionPerformed param="reset" timeStamp="10" />
+    <actionPerformed param="grid" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <actionPerformed param="widgets" timeStamp="10" />
+    <viewpointSelected value="2" timeStamp="5" />
+    <actionPerformed param="n1" value="1.5" timeStamp="10" />
+    <actionPerformed param="n2" value="1.0" timeStamp="10" />
+    <actionPerformed param="angle" value="30.0" timeStamp="10" />
+    <actionPerformed param="play" value="Stop" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="angle" value="41.0" timeStamp="5000" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="angle" value="42.0" timeStamp="5000" />
+    <actionPerformed param="visible" timeStamp="10" />
+    <viewpointChanged value="-1.537 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="1375" />
+    <viewpointChanged value="-1.505 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.472 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="63" />
+    <viewpointChanged value="-1.439 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.406 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-1.374 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.341 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-1.308 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-1.276 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-1.243 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-1.21 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.177 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.145 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.112 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-1.079 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-1.047 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-1.014 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.981 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.949 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.916 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.883 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="62" />
+    <viewpointChanged value="-0.85 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="0" />
+    <viewpointChanged value="-0.818 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.785 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.752 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.72 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.687 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="15" />
+    <viewpointChanged value="-0.654 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.621 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.589 -8.754E-8 0.0 0.0 0.15 -7.0" timeStamp="63" />
+    <viewpointChanged value="-0.589 -0.0328 0.0 0.0 0.15 -7.0" timeStamp="60" />
+    <viewpointChanged value="-0.589 -0.0656 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.589 -0.0984 0.0 0.0 0.15 -7.0" timeStamp="45" />
+    <viewpointChanged value="-0.589 -0.131 0.0 0.0 0.15 -7.0" timeStamp="45" />
+    <viewpointChanged value="-0.589 -0.164 0.0 0.0 0.15 -7.0" timeStamp="45" />
+    <viewpointChanged value="-0.589 -0.197 0.0 0.0 0.15 -7.0" timeStamp="45" />
+    <viewpointChanged value="-0.589 -0.23 0.0 0.0 0.15 -7.0" timeStamp="15" />
+    <viewpointChanged value="-0.589 -0.263 0.0 0.0 0.15 -7.0" timeStamp="94" />
+    <viewpointChanged value="-0.589 -0.295 0.0 0.0 0.15 -7.0" timeStamp="78" />
+    <viewpointChanged value="-0.589 -0.328 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.589 -0.361 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.589 -0.394 0.0 0.0 0.15 -7.0" timeStamp="62" />
+    <viewpointChanged value="-0.589 -0.427 0.0 0.0 0.15 -7.0" timeStamp="109" />
+    <viewpointChanged value="-0.589 -0.459 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.589 -0.492 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.556 -0.492 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.556 -0.525 0.0 0.0 0.15 -7.0" timeStamp="0" />
+    <viewpointChanged value="-0.556 -0.558 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.556 -0.591 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.556 -0.623 0.0 0.0 0.15 -7.0" timeStamp="32" />
+    <viewpointChanged value="-0.556 -0.656 0.0 0.0 0.15 -7.0" timeStamp="234" />
+    <viewpointChanged value="-0.556 -0.689 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.556 -0.722 0.0 0.0 0.15 -7.0" timeStamp="47" />
+    <viewpointChanged value="-0.556 -0.755 0.0 0.0 0.15 -7.0" timeStamp="78" />
+    <viewpointChanged value="-0.556 -0.788 0.0 0.0 0.15 -7.0" timeStamp="125" />
+    <viewpointChanged value="-0.556 -0.82 0.0 0.0 0.15 -7.0" timeStamp="16" />
+    <viewpointChanged value="-0.556 -0.853 0.0 0.0 0.15 -7.0" timeStamp="31" />
+    <viewpointChanged value="-0.556 -0.853 0.0 0.0 0.15 -7.0" timeStamp="30" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="visible" timeStamp="5000" />
+    <actionPerformed param="angle" value="42.3" timeStamp="5000" />
+    <actionPerformed param="angle" value="45.0" timeStamp="5000" />
+    <actionPerformed param="play" value="Play" timeStamp="5000" />
+    <scriptEnded timeStamp="10" />
+  </script>
+</wsl>

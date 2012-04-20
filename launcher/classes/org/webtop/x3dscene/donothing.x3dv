@@ -1,0 +1,178 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+#The preceeding header is required for all .x3dv file.  The Immersive Profile uses the immersive specification(full spec). 
+
+#Include the Red Two Cone X-Dragger widget
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+##################################################
+#Main Viewpoint is the viewpoint that is initally# 
+#displayed on the screen                         #
+##################################################
+#DEF MainVP Viewpoint {
+#    description "Main View"
+#    position 0 1000 1900    #Changes viewpoint position (orig 0 500 2000)
+#    #orientation 1 0 0 -1.57 #Changes viewpoint orientation
+#}
+##End Main Viewpoint##
+
+NavLight { navigationType "NONE" }
+
+
+#NavigationInfo {
+#	speed 50
+#}
+
+DEF NavPanel NavigationPanel {
+	views [0 0 -10 0 0 0]
+
+	#views[ -.75 100 -150 0 -25 -230
+	#-.50 0 999999 0 -19.5 -180]
+	
+
+
+children [DEF HelloTransform Transform {
+			#Box#
+			scale 1 1 1 
+			translation -2 0 0
+			children [
+				Shape {
+					appearance Appearance {
+						material DEF boxColor Material {
+							diffuseColor 0 1 0
+						}
+					}
+					geometry DEF HelloSphere Sphere {
+				}
+			
+				}#End Shape
+			]
+}
+
+DEF RotationTransform Transform {
+	translation 2 0 0
+	children [
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 0 0 1
+				}
+			}
+			geometry Cylinder {}
+		}
+	]
+}
+
+
+Transform {
+	translation -2.5 -2 0
+	scale 0.5 0.5 0.5
+	children[
+		DEF TestWidget Red2ConeXDragger{
+			minPosition 0
+			maxPosition 10
+			value 0
+		}
+	]
+}
+Transform {
+	translation 0 2 0
+	scale 0.25 0.25 0.25
+	children[
+		DEF SpeedWidget Red2ConeXDragger{
+			minPosition -10
+			maxPosition 10
+			value 0
+		}
+	]
+}
+
+
+
+]
+}

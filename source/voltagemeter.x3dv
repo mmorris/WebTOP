@@ -1,0 +1,330 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+DEF VoltageMeter Group {
+	children [
+
+		DEF	Scaler Transform {
+			scale .25 .25 .25
+			translation	0 0 0
+			children [
+
+		DEF	Box Transform {
+			translation	0 0 0
+			rotation 0 0 0 0
+			scale 20 12 4
+			children [
+				DEF BoxPiece Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.7 0.7 0.7
+							ambientIntensity 1
+						}
+					}
+					geometry Box	{
+						size 1 1 1
+					}
+				}
+			]
+		}
+
+		DEF BoxFront Transform {
+			translation	0 0 2.5
+			rotation 0 0 0 0
+			children [
+
+				DEF	BoxTop Transform {
+					translation	0 5.5 0
+					rotation 0 0 0 0
+					scale 20 1 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxBottom Transform {
+					translation	0 -5.5 0
+					rotation 0 0 0 0
+					scale 20 1 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxLeft Transform {
+					translation	-9.5 0 0
+					rotation 0 0 0 0
+					scale 1 12 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxRight Transform {
+					translation	9.5 0 0
+					rotation 0 0 0 0
+					scale 1 12 1
+					children USE BoxPiece
+				}
+
+				DEF	Face Transform {
+					translation	0 0 -.5
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 1 1 1
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 19 11 .5
+							}
+						}
+					]
+				}
+
+				DEF	Text Transform {
+					translation	-4 -2.5 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "VOLTAGE"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 2
+								}
+								length 8
+							}
+						}
+					]
+				}
+
+				DEF	Text0 Transform {
+					translation	-8.5 5.2 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "0"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+				DEF	Text5 Transform {
+					translation	7.5 5.2 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "5"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+
+				DEF	NeedleHolder Transform {
+					translation 0 -10 0
+					rotation 0 0 0 0
+					children [
+		   
+						DEF RotationPS PlaneSensor {
+							enabled	TRUE
+							autoOffset TRUE
+						}	   
+
+						DEF	Needle Transform {
+							translation	0 10.3 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .8 5 .1
+									}
+								}
+							]
+						}
+
+						DEF	NeedleTip Transform	{
+							translation	0 12 0
+							rotation 1 0 0 3.14159265
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry IndexedFaceSet {
+										coord Coordinate {
+											point [ -1.5 0 0, 0 -2 0, 1.5 0 0 ]
+										}
+										coordIndex [ 2 1 0 2 ]
+									}
+								}
+							]
+						}
+								
+					]
+				}
+
+
+				DEF	OneNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .36 
+					children [
+
+						DEF	OneNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	TwoNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .12 
+					children USE OneNeedle
+				}
+
+				DEF	ThreeNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.12 
+					children USE OneNeedle
+				}
+
+				DEF	FourNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.36 
+					children USE OneNeedle
+				}
+
+				DEF	Min Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .6 
+					children [
+
+						DEF	MinNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .6 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	Max Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.6 
+					children USE MinNeedle
+				}
+
+			]
+		}
+
+		DEF Worker Script {
+			inputOnly		SFRotation rotationIn
+			inputOnly		SFVec3f	transIn
+			inputOnly		SFFloat	voltageIn
+			outputOnly	SFRotation rotationOut
+			outputOnly	SFFloat	voltageOut
+			outputOnly	SFVec3f	offsetOut
+			url [ "ecmascript:
+			function transIn(value) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				if (value[0]<6 && value[0]>-6) {
+					rotationOut[3]=-value[0]/10;
+					voltageOut = -25/6*rotationOut[3]+5/2;
+				}
+				else if (value[0]>6) {
+					rotationOut[3]=-3/5;
+					voltageOut=5;
+				}
+				else if (value[0]<-6) {
+					rotationOut[3]=3/5;
+					voltageOut=0;
+				}
+			}
+			function voltageIn(value) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				rotationOut[3]=-6*(value-5/2)/25;
+				offsetOut[1]=0;
+				offsetOut[2]=0;
+				offsetOut[0]=rotationOut[3]*-10;
+			}
+			" ]
+		}
+	]
+}
+
+		]
+
+	ROUTE RotationPS.translation_changed TO	Worker.transIn
+	ROUTE Worker.rotationOut TO	NeedleHolder.rotation
+	ROUTE Worker.offsetOut	TO	RotationPS.offset
+}

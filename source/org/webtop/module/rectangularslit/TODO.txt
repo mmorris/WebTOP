@@ -1,0 +1,4 @@
+* Check over X3D file.
+* Convert Screens.wrl to Screens.x3dv
+* Finish out java
+* Test run

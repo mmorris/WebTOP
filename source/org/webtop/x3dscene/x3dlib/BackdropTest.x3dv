@@ -1,0 +1,91 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+EXTERNPROTO Backdrop [
+    #Positioning
+	inputOnly	SFFloat	set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat position 
+    initializeOnly SFInt32 axisOfMotion
+    initializeOnly SFInt32 directionOfMotion
+	#Sizing/appearance
+	initializeOnly SFVec3f size 
+	initializeOnly SFColor diffuseColor 
+	initializeOnly SFFloat transparency 
+	inputOnly	SFFloat	set_transparency
+]
+"Screens.x3dv#RectangularScreenBackdrop"
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"Widgets.x3dv#Red2ConeXDragger"
+
+NavigationInfo {
+    speed 100
+}
+
+Viewpoint {
+    position 2000 500 0
+    orientation 0 1 0 1.5707963267949
+}
+Transform {
+    rotation 0 1 0 1.5707963267949
+    children
+        DEF Dragger Red2ConeXDragger {
+            translation 0 150 0
+            rotation 0 1 0 3.14159265358979
+            enabled TRUE
+            coneScale 25 25 25
+            position 0
+            minPosition 0
+            maxPosition 1000
+        }
+}
+
+DEF Box Backdrop {
+#    axisOfMotion 1
+#    directionOfMotion 1
+    diffuseColor 1 1 0
+    size 1000 300 10
+    transparency 0
+}
+
+#DEF Worker Script {
+#    inputOnly SFFloat drag_in
+#    outputOnly SFFloat pos_out
+
+#    url "javascript:
+#    function drag_in(value, time) {
+#        pos_out = -value*10;
+#    }
+#    "
+#}
+
+#ROUTE Dragger.position_changed TO Worker.drag_in
+#ROUTE Worker.pos_out TO Box.set_position
+ROUTE Dragger.position_changed TO Box.set_position

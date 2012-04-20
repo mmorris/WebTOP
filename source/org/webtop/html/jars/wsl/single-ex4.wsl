@@ -1,0 +1,13 @@
+<wsl>
+  <singleslit wavelength="500.0" z="10.0" slitWidth="0.2" hideWidgets="Hide Widgets">
+    <view value="-0.23 -0.5 0.0 -1.5 -1.0 -12.0" />
+  </singleslit>
+  <script>
+    <actionPerformed param="z" value="20.0" timeStamp="3000" />
+    <actionPerformed param="z" value="30.0" timeStamp="3000" />
+    <actionPerformed param="z" value="40.0" timeStamp="3000" />
+    <actionPerformed param="z" value="50.0" timeStamp="3000" />
+    <actionPerformed param="z" value="100.0" timeStamp="3000" />
+    <scriptEnded timeStamp="1046" />
+  </script>
+</wsl>

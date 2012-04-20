@@ -1,0 +1,105 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+EXTERNPROTO Red2ConeXDragger [ inputOutput SFVec3f coneScale
+												inputOutput SFVec3f translation
+												inputOutput SFRotation rotation
+
+												initializeOnly SFFloat position 
+												inputOnly SFFloat set_position
+												outputOnly SFFloat position_changed
+												initializeOnly SFFloat minPosition 
+												inputOnly SFFloat set_minPosition
+												initializeOnly SFFloat maxPosition 
+												inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value 
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue 
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue 
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue 
+
+												outputOnly SFBool isOver_out
+												outputOnly SFBool isActive_out
+												inputOnly SFBool set_isActive
+
+												inputOutput SFBool enabled
+												initializeOnly SFString debugName
+												outputOnly SFBool initialized ]
+"x3dwebtop/x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO CylinderXDragger [ inputOutput SFVec3f cylScale
+												 inputOutput SFVec3f translation
+												 inputOutput SFRotation rotation
+
+												 initializeOnly SFFloat position
+												 inputOnly SFFloat set_position
+												 outputOnly SFFloat position_changed
+
+												 initializeOnly SFFloat minPosition
+												 inputOnly SFFloat set_minPosition
+												 initializeOnly SFFloat maxPosition
+												 inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue
+
+												 outputOnly SFBool isOver_out
+												 outputOnly SFBool isActive_out
+												 inputOnly SFBool set_isActive
+
+												 inputOutput SFBool enabled
+												 initializeOnly SFString debugName
+												 outputOnly SFBool initialized ]
+"x3dwebtop/x3dlib/Widgets.x3dv#CylinderXDragger"
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+  inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+
+	inputOutput SFNode	 material
+	inputOutput SFNode	 activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized ]
+"x3dwebtop/x3dlib/Widgets.x3dv#WheelWidget"
+
+
+Transform {
+translation 1 1 1
+children DEF Dragger Red2ConeXDragger { }
+}
+Transform {
+translation -1 -1 -1
+children DEF Dragger2 CylinderXDragger { }
+}
+Transform {
+rotation 1 0 0 1.570796
+children DEF Wheel WheelWidget { }
+}
+
+

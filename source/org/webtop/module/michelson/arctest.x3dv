@@ -1,0 +1,16 @@
+#X3D V3.0 utf8
+PROFILE Immersive
+
+Shape {
+    appearance Appearance {
+        material Material {
+            diffuseColor 1 1 1
+        }
+    }
+    
+    geometry Arc2D {
+        startAngle 0
+        endAngle 3.14159256535
+        radius .07
+    }
+}

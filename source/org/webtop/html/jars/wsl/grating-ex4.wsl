@@ -1,0 +1,43 @@
+<wsl>
+  <grating slits="100" userSlits="50" width="0.1" userWidth="0.1" distance="2.0" userDistance="2.0" intensity="1" userIntensity="1" lampChoice="Hydrogen" wavelength="400.0" mode="Lamps" lambda1="400.1" lambda2="400.1">
+    <view value="0.0408 3.141 0.0 0.0 0.0 1.366" />
+  </grating>
+  <script>
+    <viewpointChanged value="0.0408 3.141 0.0 0.0 0.0 1.366" timeStamp="703" />
+    <viewpointChanged value="0.0408 3.108 0.0 0.0 0.0 1.366" timeStamp="94" />
+    <viewpointChanged value="0.0408 3.075 0.0 0.0 0.0 1.366" timeStamp="94" />
+    <viewpointChanged value="0.0408 3.043 0.0 0.0 0.0 1.366" timeStamp="62" />
+    <viewpointChanged value="0.0408 3.01 0.0 0.0 0.0 1.366" timeStamp="438" />
+    <viewpointChanged value="0.0408 2.977 0.0 0.0 0.0 1.366" timeStamp="250" />
+    <viewpointChanged value="0.0408 2.944 0.0 0.0 0.0 1.366" timeStamp="109" />
+    <viewpointChanged value="0.0408 2.912 0.0 0.0 0.0 1.366" timeStamp="344" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.366" timeStamp="906" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.366" timeStamp="641" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.399" timeStamp="2546" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.432" timeStamp="250" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.465" timeStamp="157" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.498" timeStamp="203" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.531" timeStamp="390" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.564" timeStamp="110" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.597" timeStamp="47" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.631" timeStamp="93" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.670" timeStamp="100" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.710" timeStamp="100" />
+    <viewpointChanged value="0.0408 2.900 0.0 0.0 0.0 1.750" timeStamp="100" />
+    <actionPerformed param="intensity" value="2" timeStamp="1235" />
+    <actionPerformed param="intensity" value="3" timeStamp="750" />
+    <actionPerformed param="intensity" value="4" timeStamp="672" />
+    <actionPerformed param="intensity" value="5" timeStamp="687" />
+    <actionPerformed param="intensity" value="6" timeStamp="750" />
+    <actionPerformed param="intensity" value="7" timeStamp="703" />
+    <actionPerformed param="intensity" value="8" timeStamp="719" />
+    <actionPerformed param="intensity" value="9" timeStamp="781" />
+    <actionPerformed param="intensity" value="10" timeStamp="782" />
+    <actionPerformed param="intensity" value="11" timeStamp="687" />
+    <actionPerformed param="intensity" value="12" timeStamp="703" />
+    <actionPerformed param="intensity" value="13" timeStamp="703" />
+    <actionPerformed param="intensity" value="14" timeStamp="672" />
+    <actionPerformed param="intensity" value="15" timeStamp="688" />
+    <scriptEnded timeStamp="20" />
+  </script>
+</wsl>

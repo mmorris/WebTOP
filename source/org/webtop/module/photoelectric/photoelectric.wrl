@@ -1,0 +1,1834 @@
+#VRML V2.0 utf8
+#doubleslit.wrl
+#VRML file for the DoubleSlit module
+#Peter Gilbert
+#Created June 15 2004
+#Updated June 15 2004
+#Version 0.1
+
+# -------------------------------------------------------------------
+# PROTOs that are part of Chi's NavigationPanel [v3.01]
+# -------------------------------------------------------------------
+
+#A prototype for the viewpoint objects
+PROTO NavigationPanel_ViewPointPROTO [ exposedField SFBool enabled TRUE
+	field SFInt32 num 0
+	eventOut SFInt32 selected
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out ]
+{
+	DEF T Transform {
+		scale 0.1 0.1 0.1
+		children [
+			DEF TS TouchSensor {
+				enabled IS enabled
+				isActive IS isActive_out
+				isOver IS isOver_out
+			}
+			Transform {
+				rotation 0 1 0 0.4
+				children Transform {
+					rotation 1 0 0 0.6
+					children Transform {
+						translation 0 0 0.5
+						children [
+							Shape {
+								appearance Appearance { material Material { diffuseColor 0 0 1 } }
+								geometry Sphere { radius 0.1 }
+							}
+							Transform {
+								rotation -0.7071 0.7071 0 -0.5236
+								children DEF Rod Transform {
+									translation 0 0 -0.5
+									rotation 1 0 0 -1.5707963
+									children Shape {
+										appearance Appearance { material Material { diffuseColor 0.6 0.6 0.6 } }
+										geometry Cylinder { radius 0.025 height 1 }
+									}
+								}
+							}
+							Transform {
+								rotation -0.7071 0.7071 0 0.5236
+								children USE Rod }
+							Transform {
+								rotation 0.7071 0.7071 0 -0.5236
+								children USE Rod }
+							Transform {
+								rotation 0.7071 0.7071 0 0.5236
+								children USE Rod }
+							Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 1 1 0.2
+										transparency 0.5
+									}
+								}
+								geometry IndexedFaceSet {
+									coord Coordinate {
+										point [ 0 0 0, 0.3536 0.3536 -0.866, -0.3536 0.3536 -0.866, -0.3536 -0.3536 -0.866, 0.3536 -0.3536 -0.866 ]
+									}
+									coordIndex [ 0 1 2 -1, 0 2 3 -1, 0 3 4 -1, 0 4 1 -1 ]
+								}
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+	DEF Worker Script {
+		field SFInt32 n IS num
+		eventIn SFBool active
+		eventOut SFInt32 selected IS selected
+		eventOut SFVec3f trans_out
+		url "javascript:
+		function initialize() {trans_out=new SFVec3f(-.7+n*.1,-0.75,-2);}
+		function active(value,time) {if(!value)selected=n;}"
+	}
+	ROUTE TS.isActive TO Worker.active
+	ROUTE Worker.trans_out TO T.set_translation
+}
+
+PROTO NavigationPanel [
+	exposedField SFBool enabled						 TRUE
+
+	field			SFBool visible							 TRUE
+	eventIn		SFBool set_visible
+	eventOut	SFBool visible_changed
+
+	exposedField MFNode children					 []
+
+	exposedField SFVec3f center							0 0 0
+
+	field		 MFFloat		views							 [0 0 0 0 0 0]
+	field		 SFInt32		activeView				 0
+
+	field		 SFFloat		rotation_speed		 1
+	field		 SFFloat		translation_speed	 20
+
+	#External (EAI) control of the view
+	eventIn	 SFVec2f		set_angles
+	eventIn	 SFVec2f		set_pan
+	eventIn	 SFFloat		set_zoom
+	eventIn	 MFFloat		set_view
+	eventIn	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	eventOut SFBool			isActive_out
+	eventOut SFBool			isOver_out
+	eventOut SFBool			rotation_isOver_out
+	eventOut SFBool			rotation_isActive_out
+	eventOut SFBool			pan_isOver_out
+	eventOut SFBool			pan_isActive_out
+	eventOut SFBool			zoom_isOver_out
+	eventOut SFBool			zoom_isActive_out
+	eventOut SFBool			switch_isOver_out
+	eventOut SFBool			switch_isActive_out
+	eventOut SFVec2f		angles_changed
+	eventOut SFVec2f		pan_changed
+	eventOut SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	eventOut MFFloat		view_changed
+	eventOut SFInt32		activeView_changed ]
+{
+	PROTO RotateIcon [
+		field	 SFVec2f	angles 0 0
+		field	 SFFloat	speed	 1
+		eventIn SFVec2f set_angles ]
+	{
+		DEF PitchTransform Transform {
+			children DEF YawTransform Transform {
+				children Shape {
+					appearance Appearance {
+						texture ImageTexture { url [ "../images/checker.jpg" "checker.jpg" ] }
+						material Material { diffuseColor 0.5 0.5 0.5 }
+					}
+					geometry Sphere { radius 0.5 }
+				}
+			}
+		}
+
+		DEF Worker Script {
+			field SFVec2f angles IS angles
+			field SFFloat speed IS speed
+
+			eventIn SFVec2f set_angles IS set_angles
+
+			eventOut SFRotation yawRotation_changed
+			eventOut SFRotation pitchRotation_changed
+
+			url "javascript:
+			function initialize() {
+				yawRotation_changed = new SFRotation(0, 1, 0, angles[1]*speed);
+				pitchRotation_changed = new SFRotation(1, 0, 0, -angles[0]*speed);}
+
+			function set_angles(value, time) {
+				yawRotation_changed[3] = value[1] * speed;
+				pitchRotation_changed[3] = -value[0] * speed;}
+			"
+		}
+
+		ROUTE Worker.yawRotation_changed TO YawTransform.set_rotation
+		ROUTE Worker.pitchRotation_changed TO PitchTransform.set_rotation
+	}
+
+	PROTO ZoomIcon [ ]
+	{
+		Transform {
+			scale 1 0.5 1
+			rotation 1 0 0 -1.0
+			children Shape {
+				appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+				geometry IndexedFaceSet {
+					coord Coordinate {
+						point [
+							0 1 0.1,	 0.4 0.25 0.1,		0.175 0.25 0.1,		 0.35 -0.5 0.1,	 0.5 -0.5 0.1,
+							0 -1 0.1,	 -0.5 -0.5 0.1,	 -0.35 -0.5 0.1,	-0.175 0.25 0.1,	-0.4 0.25 0.1,
+							0 1 -0.1,	 0.4 0.25 -0.1,		0.175 0.25 -0.1,	 0.35 -0.5 -0.1, 0.5 -0.5 -0.1,
+							0 -1 -0.1, -0.5 -0.5 -0.1, -0.35 -0.5 -0.1, -0.175 0.25 -0.1, -0.4 0.25 -0.1 ]
+					}
+					coordIndex [
+						0 9 1 -1, 8 7 3 2 -1, 4 6 5 -1,
+						10 11 19 -1, 18 12 13 17 -1, 16 14 15 -1,
+						10 0 1 11 -1, 11 1 2 12 -1, 12 2 3 13 -1, 13 3 4 14 -1, 14 4 5 15 -1,
+						0 10 19 9 -1, 9 19 18 8 -1, 8 18 17 7 -1, 7 17 16 6 -1, 6 16 15 5 -1 ]
+				}
+			}
+		}
+	}
+
+	PROTO PanIcon [ ]
+	{
+		Transform {
+			scale 0.5 0.5 1
+			children Shape {
+				appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+				geometry IndexedFaceSet {
+					coord Coordinate {
+						point [
+							0 1 0.1,	0.5 0.6 0.1,	 0.3 0.6 0.1,		0.3 0.3 0.1,		0.6 0.3 0.1,	 0.6 0.5 0.1,
+							1 0 0.1,	0.6 -0.5 0.1,	 0.6 -0.3 0.1, 0.3 -0.3 0.1,	 0.3 -0.6 0.1,	0.5 -0.6 0.1,
+							0 -1 0.1, -0.5 -0.6 0.1, -0.3 -0.6 0.1,	 -0.3 -0.3, 0.1, -0.6 -0.3 0.1, -0.6 -0.5 0.1,
+							-1 0 0.1, -0.6 0.5 0.1,	 -0.6 0.3 0.1,	-0.3 0.3 0.1,		-0.3 0.6 0.1,	 -0.5 0.6 0.1,
+
+							0 1 -0.1,	 0.5 0.6 -0.1,	 0.3 0.6 -0.1,	 0.3 0.3 -0.1,		0.6 0.3 -0.1,		0.6 0.5 -0.1,
+							1 0 -0.1,	 0.6 -0.5 -0.1,	 0.6, -0.3 -0.1, 0.3 -0.3 -0.1,		0.3 -0.6 -0.1,	0.5 -0.6 -0.1,
+							0 -1 -0.1, -0.5 -0.6 -0.1, -0.3 -0.6 -0.1,	-0.3 -0.3, -0.1, -0.6 -0.3 -0.1, -0.6 -0.5 -0.1,
+							-1 0 -0.1, -0.6 0.5 -0.1,	 -0.6 0.3 -0.1,	 -0.3 0.3 -0.1,		-0.3 0.6 -0.1,	-0.5 0.6 -0.1 ]
+					}
+					coordIndex [
+						0 23 1 -1, 2 22 14 10 -1, 6 5 7 -1, 4 3 9 8 -1, 11 13 12 -1, 19 18 17 -1, 21 20 16 15 -1,
+						24 25 47 -1, 46 26 34 38 -1, 29 30 31 -1, 27 28 32 33 -1, 35 36 37 -1, 39 33 34 38 -1, 41 42 43 -1, 44 45 39 40 -1,
+
+						24 0 1 25 -1, 25 1 2 26 -1, 26 2 3 27 -1, 27 3 4 28 -1, 28 4 5 29 -1, 29 5 6 30 -1,
+						30 6 7 31 -1, 31 7 8 32 -1, 32 8 9 33 -1, 33 9 10 34 -1, 34 10 11 35 -1, 35 11 12 36 -1,
+						36 12 13 37 -1, 37 13 14 38 -1, 38 14 15 39 -1, 39 15 16 40 -1, 40 16 17 41 -1, 41 17 18 42 -1,
+						42 18 19 43 -1, 43 19 20 44 -1, 44 20 21 45 -1, 45 21 22 46 -1, 46 22 23 47 -1, 47 23 0 24 -1 ]
+				}
+			}
+		}
+	}
+
+	PROTO SwitchIcon [ field SFBool on TRUE
+										 eventIn SFBool set_on ]
+	{
+		DEF OnOff Switch {
+			whichChoice 0
+			choice [
+				Transform {
+					rotation 1 0 0 1.5707963
+					children [
+						Shape {
+							appearance DEF OnAppearance Appearance {
+								material Material { diffuseColor 0.8 0.2 0.2 }
+							}
+							geometry DEF C1 Cylinder { radius 0.15 height 0.3 }
+						}
+						Shape {
+							appearance USE OnAppearance
+							geometry DEF C2 Cylinder { radius 0.25 height 0.2 }
+						}
+					]
+				}
+				Transform {
+					rotation 1 0 0 1.5707963
+					children [
+						Shape {
+							appearance DEF OffAppearance Appearance {
+								material Material { diffuseColor 0.4 0.0 0.0 }
+							}
+							geometry USE C1
+						}
+						Shape {
+							appearance USE OffAppearance
+							geometry USE C2
+						}
+					]
+				}
+			]
+		}
+		DEF Worker Script {
+			field SFBool on IS on
+			eventIn SFBool set_on IS set_on
+			eventOut SFInt32 whichChoice_changed
+			url "javascript:
+			function initialize() {if(!on) whichChoice_changed = 1;}
+			function set_on(value, time) {whichChoice_changed = value ? 0 : 1;}"
+		}
+		ROUTE Worker.whichChoice_changed TO OnOff.whichChoice
+	}
+	#END OF INTERIOR PROTOs
+
+	Group {
+		children [
+			DEF TranslationTransform Transform {
+				children DEF VerticalTransform Transform {
+					children DEF HorizontalTransform Transform {
+						center IS center
+						children IS children #This is where the scene goes
+					}
+				}
+			}
+
+			DEF	PanelTransform Transform {
+				children [
+					DEF PanelSwitch Switch {
+						whichChoice 0
+						choice DEF PanelGroup Group {
+							children [
+
+								#Here shall be inserted (at initialize time) the viewpoint-selection icons.
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation 0.15 -0.75 -2
+									children [
+										DEF RotationTS TouchSensor {
+											enabled IS enabled
+											isOver	IS rotation_isOver_out
+										}
+										DEF RotationPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS rotation_isActive_out
+										}
+										DEF RotationIcon RotateIcon { speed IS rotation_speed }
+									]
+								}
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation 0.0 -0.75 -2
+									children [
+										DEF PanTS TouchSensor {
+											enabled IS enabled
+											isOver	IS pan_isOver_out
+										}
+										DEF PanPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS pan_isActive_out
+										}
+										PanIcon { }
+									]
+								}
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation -0.15 -0.75 -2
+									children [
+										DEF ZoomTS TouchSensor {
+											enabled IS enabled
+											isOver	IS zoom_isOver_out
+										}
+										DEF ZoomPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS zoom_isActive_out
+										}
+										ZoomIcon { }
+									]
+								}
+							]
+						}
+					}
+
+					Transform {
+						scale 0.1 0.1 0.1
+						translation 0.85 -0.75 -2
+						children [
+							DEF SwitchTS TouchSensor {
+								enabled IS enabled
+								isOver IS switch_isOver_out
+								isActive IS switch_isActive_out
+							}
+							DEF SwitchIcon SwitchIcon {
+								on IS visible
+								set_on IS set_visible
+							}
+						]
+					}
+				]
+			}
+
+			DEF ProxSensor ProximitySensor {
+				size 1e10 1e10 1e10
+				ROUTE ProxSensor.orientation_changed TO PanelTransform.set_rotation
+				ROUTE ProxSensor.position_changed TO PanelTransform.set_translation
+			}
+
+			DEF NPViewpoint Viewpoint { position 0 0 0 }
+		]
+	}
+
+	# --------------------------------------------------------------- #
+	# Script node that processes and transforms all internal/					#
+	# external events.																								#
+	# --------------------------------------------------------------- #
+	DEF Worker Script {
+		#views is never changed and holds the pre-defined viewpoints.
+		field			MFFloat	 views IS views
+		field			SFInt32	 nViews 0					# count of predefined views
+		#activeView holds the current view, or -1 if the viewpoint has been
+		#modified since last predefined-view selection.
+		field			SFInt32	 activeView IS activeView
+		field			MFFloat	 currentView [ 0 0 0 0 0 0 ]
+
+		field			SFFloat	 rotation_speed IS rotation_speed
+		field			SFFloat	 translation_speed IS translation_speed
+
+		field			SFBool visible IS visible
+		eventIn		SFBool set_visible IS set_visible
+		eventOut	SFBool visible_out IS visible_changed
+
+		eventIn		SFVec2f	 set_angles IS set_angles
+		eventIn		SFVec2f	 set_pan		IS set_pan
+		eventIn		SFFloat	 set_zoom		IS set_zoom
+		eventIn		MFFloat	 set_view		IS set_view
+		eventIn		SFInt32	 set_activeView IS set_activeView
+
+		eventOut	SFBool	 isOver_out			IS isOver_out
+		eventOut	SFBool	 isActive_out		IS isActive_out
+
+		eventOut	SFVec2f	 angles_out IS angles_changed
+		eventOut	SFVec2f	 pan_out		IS pan_changed
+		eventOut	SFFloat	 zoom_out		IS zoom_changed
+		eventOut	MFFloat	 view_out		IS view_changed
+
+		eventOut	SFInt32	 activeView_out IS activeView_changed
+
+		#The other parts of NavigationPanel use these events:
+		eventIn		SFBool	 isOver_in
+		eventIn		SFBool	 isActive_in
+
+		eventIn		SFInt32	 vpActive_in
+		eventIn		SFBool	 switchActive_in
+
+		eventIn		SFVec3f		 rotationTrans_in
+		eventIn		SFVec3f		 panTrans_in
+		eventIn		SFVec3f		 zoomTrans_in
+
+		eventOut	SFRotation horizontalRotation_int
+		eventOut	SFRotation verticalRotation_int
+		eventOut	SFVec3f		 translation_int
+
+		eventOut	SFVec2f rotationAngles_int
+		eventOut	SFVec3f rotationOffset_int
+		eventOut	SFVec3f panOffset_int
+		eventOut	SFVec3f zoomOffset_int
+
+		#This will be routed to the switch holding the motion controls
+		eventOut	SFInt32 whichChoice_int
+
+		#This is used to add the viewpoint objects
+		eventOut	MFNode addChildren_int
+		field			SFNode This USE Worker
+		field			SFNode enabledSource USE RotationTS
+
+		url "javascript:
+		function initialize() {
+			var i,VPstr='',VPnodes;
+			nViews = views.length / 6;
+			if(nViews==0) {
+				views = new MFFloat(0,0,0,0,0,0);
+				nViews = 1;
+			}
+			if(nViews > 5) nViews=5;
+			if(activeView >= nViews) activeView = nViews - 1;
+			if(activeView < 0) activeView = 0;
+
+			//Initialize data: set_all_internal assumes
+			//zoomOffset_int has been initialized, so:
+			zoomOffset_int = new SFVec3f(0, 0, 0);
+			set_all_internal(views,activeView*6);
+
+			set_visible(visible,0);
+
+			for(i=0;i<nViews;i++) VPstr+='NavigationPanel_ViewPointPROTO{num '+i+'}';
+
+			VPnodes=Browser.createVrmlFromString(VPstr);
+
+			for(i=0;i<nViews;i++) {
+				Browser.addRoute(VPnodes[i],'selected',This,'vpActive_in');
+				Browser.addRoute(VPnodes[i],'isOver_out',This,'isOver_in');
+				Browser.addRoute(VPnodes[i],'isActive_out',This,'isActive_in');
+				Browser.addRoute(enabledSource,'enabled_changed',VPnodes[i],'set_enabled');
+			}
+
+			//Add nodes to panel
+			addChildren_int=VPnodes;
+		}
+
+		function set_visible(value, time) { whichChoice_int = value ? 0 : -1; }
+
+		function set_angles(value, time) {
+			rotationOffset_int = new SFVec3f(value[1],value[0]);
+			horizontalRotation_int[3] = value[1];
+			verticalRotation_int[3] = -value[0];
+
+			currentView[0] = value[0];
+			currentView[1] = value[1];
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_pan(value, time) {
+			panOffset_int[0] = value[0];
+			panOffset_int[1] = value[1];
+			translation_int[0] = value[0];
+			translation_int[1] = value[1];
+
+			currentView[3] = value[0];
+			currentView[4] = value[1];
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_zoom(value, time) {
+			zoomOffset_int[1] = value;
+			translation_int[2] = value;
+
+			currentView[5] = value;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_view(value,time) {
+			activeView_out=activeView=-1;
+			set_all_internal(value,0);
+		}
+
+		function set_activeView(value,time) {
+			if(value>=nViews || value<0) print('NavigationPanel::set_activeView: invalid view');
+			else set_all_internal(views,(activeView=value)*6);
+		}
+
+		function vpActive_in(value,time) {
+			//Only need to bother if changing
+			if(activeView!=value) {
+				activeView_out=activeView=value;
+				set_all_internal(views,value*6);
+			}
+		}
+
+		function set_all_internal(value,offset,setviewchanged) {
+			var i;
+
+			rotationAngles_int=new SFVec2f(value[offset],value[offset+1]);
+			rotationOffset_int=new SFVec3f(value[offset+1],value[offset]);
+			horizontalRotation_int=new SFRotation(0,1,0,value[offset+1] * rotation_speed);
+			verticalRotation_int=new SFRotation(1,0,0,-value[offset] * rotation_speed);
+
+			panOffset_int=new SFVec3f(value[offset+3],value[offset+4]);
+			zoomOffset_int[1] = value[offset+5];
+
+			translation_int=panOffset_int.multiply(translation_speed);
+			translation_int[2] = value[offset+5] * translation_speed;
+
+			for(i=0; i<6; i++) currentView[i] = value[offset+i];
+
+			angles_out=new SFVec2f(value[offset],value[offset+1]);
+			pan_out=new SFVec2f(value[offset+3],value[offset+4]);
+			zoom_out=value[offset+5];
+			view_out=currentView;
+		}
+
+		function rotationTrans_in(value, time) {
+			value=new SFVec2f(value[1],value[0]); // swap components/reduce to 2D
+			angles_out = value;
+			currentView[0] = value[0];
+			currentView[1] = value[1];
+
+			rotationAngles_int=value;
+
+			horizontalRotation_int[3] = value[1] * rotation_speed;
+			verticalRotation_int[3] = -value[0] * rotation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function panTrans_in(value, time) {
+			value=new SFVec2f(value[0],value[1]);		// reduce to 2D
+			pan_out=value;
+			currentView[3] = value[0];
+			currentView[4] = value[1];
+
+			translation_int[0] = value[0] * translation_speed;
+			translation_int[1] = value[1] * translation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function zoomTrans_in(value, time) {
+			value=value[1];												// reduce to scalar
+			zoom_out = value;
+			currentView[5] = value;
+
+			translation_int[2] = value * translation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function isOver_in(value, time) { isOver_out = value; }
+		function isActive_in(value, time) { isActive_out = value; }
+
+		function switchActive_in(value, time) {
+			if(!value) {
+				visible = !visible;
+				visible_out = visible;
+				whichChoice_int = visible ? 0 : -1;
+			}
+		}"
+	}
+
+	ROUTE RotationTS.isOver TO Worker.isOver_in
+	ROUTE RotationPS.isActive TO Worker.isActive_in
+	ROUTE PanTS.isOver TO Worker.isOver_in
+	ROUTE PanPS.isActive TO Worker.isActive_in
+	ROUTE ZoomTS.isOver TO Worker.isOver_in
+	ROUTE ZoomPS.isActive TO Worker.isActive_in
+
+	ROUTE RotationPS.translation_changed TO Worker.rotationTrans_in
+	ROUTE PanPS.translation_changed TO Worker.panTrans_in
+	ROUTE ZoomPS.translation_changed TO Worker.zoomTrans_in
+
+	ROUTE Worker.rotationOffset_int TO RotationPS.set_offset
+	ROUTE Worker.panOffset_int TO PanPS.set_offset
+	ROUTE Worker.zoomOffset_int TO ZoomPS.set_offset
+
+	ROUTE Worker.horizontalRotation_int TO HorizontalTransform.set_rotation
+	ROUTE Worker.verticalRotation_int TO VerticalTransform.set_rotation
+	ROUTE Worker.translation_int TO TranslationTransform.set_translation
+
+	ROUTE Worker.rotationAngles_int TO RotationIcon.set_angles
+
+	ROUTE Worker.addChildren_int TO PanelGroup.addChildren
+
+	ROUTE Worker.whichChoice_int TO PanelSwitch.whichChoice
+	ROUTE Worker.visible_out TO SwitchIcon.set_on
+
+	ROUTE SwitchTS.isActive TO Worker.switchActive_in
+}
+# -------------------------------------------------------------------
+# End of NavigationPanel
+# -------------------------------------------------------------------
+
+#Proto for augmentation/replacement for headlight/navinfo:
+PROTO NavLight [ exposedField SFFloat ambientIntensity 0.1
+								 exposedField SFFloat intensity 1
+								 exposedField SFColor color 1 1 1
+								 exposedField SFVec3f attenuation 1 0 0
+								 exposedField SFBool headlight FALSE
+								 exposedField MFFloat avatarSize [ .25 1.6 .75 ]
+								 exposedField SFFloat navigationSpeed 1
+								 exposedField MFString navigationType ["WALK" "ANY"]
+								 exposedField SFFloat visibilityLimit 0 ]
+{
+	DEF Fixture Transform {
+		children [
+			PointLight {
+				ambientIntensity IS ambientIntensity
+				intensity IS intensity
+				color IS color
+				attenuation IS attenuation
+				radius 1e10
+			}
+			NavigationInfo {
+				avatarSize IS avatarSize
+				type IS navigationType
+				speed IS navigationSpeed
+				visibilityLimit IS visibilityLimit
+				headlight IS headlight
+			}
+		]
+	}
+	DEF PS ProximitySensor { size 1e10 1e10 1e10 }
+	ROUTE PS.position_changed TO Fixture.set_translation
+	ROUTE PS.orientation_changed TO Fixture.set_rotation
+}
+
+EXTERNPROTO WheelWidget [
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFFloat maxRotations
+	eventIn SFFloat set_maxRotations
+	eventOut SFBool isActive_out
+	eventOut SFBool isOver_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	exposedField SFNode material
+	exposedField SFNode activeMaterial
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#WheelWidget"
+	  
+EXTERNPROTO CylinderXDragger [
+	exposedField SFVec3f cylScale
+	exposedField SFVec3f translation
+	exposedField SFRotation rotation
+	field SFFloat position
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition
+	eventIn SFFloat set_minPosition
+	field SFFloat maxPosition
+	eventIn SFFloat set_maxPosition
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFBool positionAsValue
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#CylinderXDragger"
+
+PROTO Spark [ ] {
+	 	DEF kugel Transform {
+		children [
+			#PointLight {radius 50 intensity 1}
+			Billboard {
+				children [
+					DEF star Transform {
+						children 	Shape {
+    						appearance	Appearance {
+    							material	DEF star_mat Material {
+    							}
+
+    							texture 	ImageTexture {
+									repeatS	FALSE
+									repeatT	FALSE
+									url	"../textures/flash.png"
+    							}
+	   
+    						}
+
+    						geometry	DEF _0 IndexedFaceSet {
+    							coord	Coordinate {
+									point	[ -1 -1 0,
+										-1 1 0,
+										1 1 0,
+										1 -1 0 ]
+    							}
+
+    							coordIndex	[ 0, 1, 2, 3, -1 ]
+    							solid	FALSE
+    						}
+
+						}
+
+						 scale 30 30 30
+					}
+				]
+			}
+
+
+			DEF star2 Transform {
+				children	Shape {
+    				appearance	Appearance {
+    					material	DEF star_mat2 Material {
+    					}
+
+    					texture 	ImageTexture {
+							repeatS	FALSE
+							repeatT	FALSE
+							url	"../textures/flash.png"
+    					}
+	   
+    				}
+
+    				geometry	 IndexedFaceSet {
+    					coord	Coordinate {
+							point	[ -1 -1 0,
+								-1 1 0,
+								1 1 0,
+								1 -1 0 ]
+    					}
+
+    					coordIndex	[ 0, 1, 2, 3, -1 ]
+    					solid	FALSE
+    				}
+
+				}
+
+				scale	30 30 30
+			}
+
+			DEF star2 Transform {
+				children	Shape {
+    				appearance	Appearance {
+    					material	DEF star_mat2 Material {
+    					}
+
+    					texture 	ImageTexture {
+							repeatS	FALSE
+							repeatT	FALSE
+							url	"../textures/flash.png"
+    					}
+	   
+    				}
+
+    				geometry	 IndexedFaceSet {
+    					coord	Coordinate {
+							point	[ -1 -1 0,
+								-1 1 0,
+								1 1 0,
+								1 -1 0 ]
+    					}
+
+    					coordIndex	[ 0, 1, 2, 3, -1 ]
+    					solid	FALSE
+    				}
+
+				}
+
+				rotation 1 0 0 1.4
+				translation	0 0 0
+				scale	30 30 30
+			}
+	 ]
+	}
+
+}
+
+PROTO Photoelectron [
+	#field			SFFloat xPosition 0
+	#field			SFFloat	yPosition 0
+	#field			SFFloat	zPosition 0
+	eventIn			SFFloat set_x_position
+	#eventOut		SFFloat x_position_changed
+	eventIn			SFFloat set_y_position
+	#eventOut		SFFloat y_position_changed
+	eventIn			SFFloat set_z_position
+	#eventOut		SFFloat z_position_changed
+	eventIn			SFFloat transparency_in
+	eventIn SFFloat x_position_in
+	eventIn SFFloat set_transparency
+]
+{
+	DEF SphereHolder Transform {
+		translation	-10000 -10000 -10000
+		children [
+
+#			Shape {
+#				appearance Appearance {
+#					material Material {
+	#					diffuseColor 1 0 0
+		#				transparency IS	set_transparency
+			#		}
+		#		}
+		#		geometry Sphere	{
+		#			radius 8
+		#		}
+		#	}
+			 Spark {}
+		]
+	}
+	DEF Worker Script {
+		eventIn SFFloat x_position_in IS set_x_position
+		eventIn	SFFloat y_position_in IS set_y_position
+		eventIn	SFFloat	z_position_in IS set_z_position
+		eventOut SFVec3f translation
+
+		url "javascript:
+
+		function x_position_in(value, time) {
+			translation[0] = value;
+		}
+
+		function y_position_in(value, time) {
+			translation[1] = value;
+		}
+
+		function z_position_in(value, time) {
+			translation[2] = value;
+		}"
+	}
+	ROUTE Worker.translation TO SphereHolder.set_translation
+}
+
+PROTO CylinderFrustum [
+	field SFFloat radius 1
+	eventIn SFFloat set_radius
+	field SFFloat tiltAngle .5
+	eventIn SFFloat set_tiltAngle
+	field SFBool doTilt FALSE
+	field SFFloat planeDistance 5
+	eventIn SFFloat set_planeDistance
+	field SFFloat extraLength 10
+	eventIn SFFloat set_extraLength
+	field SFInt32 resolution 32
+	field SFBool endCap TRUE
+	field SFBool solid TRUE
+]
+{
+	DEF IFS IndexedFaceSet {
+		coord DEF Coord Coordinate {}
+		solid IS solid
+		#ccw TRUE
+	}
+	DEF S Script {
+		field SFFloat r IS radius
+		eventIn SFFloat r_in IS set_radius
+		field SFFloat theta IS tiltAngle
+		eventIn SFFloat theta_in IS set_tiltAngle
+		field SFBool tilt IS doTilt
+		field SFFloat d IS planeDistance
+		eventIn SFFloat d_in IS set_planeDistance
+		field SFFloat eLen IS extraLength
+		eventIn SFFloat e_in IS set_extraLength
+		field SFInt32 res IS resolution
+		field SFBool cap IS endCap
+		eventOut MFVec3f coord_out
+		eventOut MFInt32 indices_out
+
+		url	"javascript:
+		function initialize() {render();}
+
+		function r_in(value,time) {r=value; render();}
+		function theta_in(value,time) {theta=value; render();}
+		function d_in(value,time) {d=value; render();}
+		function e_in(value,time) {eLen=value; render();}
+
+		function render() {
+			//print('render(r,t,d,e): '+r+' '+theta+' '+d+' '+eLen);
+			var i,phi,tiltVec,baseVec,k;
+			if(tilt)
+			tiltVec=new SFVec3f(Math.sin(theta),0,-Math.cos(theta));
+			else
+			tiltVec=new SFVec3f(0,0,-1);
+			for(i=0;i<res;i++) {
+				phi=2*Math.PI*i/(res-1);
+				k=(d+r*Math.sin(theta)*Math.cos(phi))/Math.cos(theta);		//eLen is used later
+				if(tilt) baseVec=new SFVec3f(r*Math.cos(theta)*Math.cos(phi),
+				r*Math.sin(phi),
+				r*Math.sin(theta)*Math.cos(phi));
+				else baseVec=new SFVec3f(r*Math.cos(phi),r*Math.sin(phi),0);
+				coord_out[i]=baseVec.subtract(tiltVec.multiply(eLen));
+				/*print(*/coord_out[i+res]=baseVec.add(tiltVec.multiply(k))/*)*/;
+				indices_out[5*i]=i;
+				indices_out[5*i+1]=(i+res-1)%res;
+				indices_out[5*i+2]=(i+res-1)%res+res;
+				indices_out[5*i+3]=i+res;
+				indices_out[5*i+4]=-1;
+				indices_out[5*res+i]=i;
+				if(cap)
+				indices_out[5*res+(res+1)+i]=(res-i-1)+res;
+			}
+			indices_out[5*res+res]=-1;
+			if(cap) indices_out[5*res+(res+1)+res]=-1;
+		}"
+	}
+	ROUTE S.coord_out TO Coord.set_point
+	ROUTE S.indices_out TO IFS.set_coordIndex
+}
+
+
+NavLight { navigationType "NONE" }
+
+DEF NavPanel NavigationPanel {
+	translation_speed 100
+	center 0 0 -500
+	views [ -0.172 0 0.0 -0.199 -0.941 -11.13,
+		-0.14 0.649 0.0 -2.873 -0.743 -11.13,
+		0.0 -1.558 0.0 5.051 -0.181 2.322 ]
+	children [
+		##########################################################
+		# Warning text
+		##########################################################
+		#		DEF warningTextSwitch Switch {
+			#			whichChoice 0
+			#			choice [
+				#				Billboard {
+					#					axisOfRotation 0 0 0
+					#					children [
+						#						Transform {
+							#							translation -200 350 0
+							#							children [
+								#								Shape {
+									#									appearance Appearance {
+										#										material Material {
+											#											diffuseColor 0 0 0    # black
+											#											specularColor 0 0 0   # black
+											#											ambientIntensity 0.0  # black
+											#											shininess 0.0         # none
+											#											emissiveColor 1 0 0
+											#										}
+										#									}
+									#									geometry Text {
+										#										string "Loading... Please wait."
+										#										fontStyle FontStyle {
+											#											size 120
+											#										}
+										#									}
+									#								}
+								#							]
+							#						}
+						#					]
+					#				}
+				#			]
+			#		}
+		##########################################################
+
+
+DEF VoltageMeter Group {
+	children [
+
+		DEF	Scaler Transform {
+			scale 10 10 10
+			translation	0 -220 0
+			children [
+
+		DEF	Box Transform {
+			translation	0 0 0
+			rotation 0 0 0 0
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.7 0.7 0.7
+							ambientIntensity 1
+						}
+					}
+					geometry Box	{
+						size 20 12 4
+					}
+				}
+			]
+		}
+
+		DEF BoxFront Transform {
+			translation	0 0 2.5
+			rotation 0 0 0 0
+			children [
+
+				DEF	BoxTop Transform {
+					translation	0 5.5 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.7 0.7 0.7
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 20 1 1
+							}
+						}
+					]
+				}
+
+				DEF	BoxBottom Transform {
+					translation	0 -5.5 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.7 0.7 0.7
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 20 1 1
+							}
+						}
+					]
+				}
+
+				DEF	BoxLeft Transform {
+					translation	-9.5 0 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.7 0.7 0.7
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 1 12 1
+							}
+						}
+					]
+				}
+
+				DEF	BoxRight Transform {
+					translation	9.5 0 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0.7 0.7 0.7
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 1 12 1
+							}
+						}
+					]
+				}
+
+				DEF	Face Transform {
+					translation	0 0 -.5
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 1 1 1
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 19 11 .5
+							}
+						}
+					]
+				}
+
+				DEF	Text Transform {
+					translation	-4 -5 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "VOLTAGE"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 8
+							}
+						}
+					]
+				}
+
+				DEF	Text0 Transform {
+					translation	-9 2.6 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "0"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+				DEF	Text5 Transform {
+					translation	7 2.6 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "5"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+
+				DEF	NeedleHolder Transform {
+					translation 0 -10 0
+					rotation 0 0 0 0
+					children [
+		   
+						DEF RotationPS PlaneSensor {
+							enabled	TRUE
+							autoOffset TRUE
+						}	   
+
+						DEF	Needle Transform {
+							translation	0 10.3 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .8 5 .1
+									}
+								}
+							]
+						}
+
+						DEF	NeedleTip Transform	{
+							translation	0 12 0
+							rotation 1 0 0 3.14159265
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry IndexedFaceSet {
+										coord Coordinate {
+											point [ -1.5 0 0, 0 -2 0, 1.5 0 0 ]
+										}
+										coordIndex [ 2 1 0 2 ]
+									}
+								}
+							]
+						}
+								
+					]
+				}
+
+
+				DEF	OneNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .36 
+					children [
+
+						DEF	OneNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	TwoNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .12 
+					children [
+
+						DEF	TwoNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	ThreeNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.12 
+					children [
+
+						DEF	ThreeNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	FourNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.36 
+					children [
+
+						DEF	FourNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	Min Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .6 
+					children [
+
+						DEF	MinNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .6 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	Max Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.6 
+					children [
+
+						DEF	MaxNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .6 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+
+
+			]
+		}
+
+		DEF Worker2 Script {
+			eventIn		SFRotation rotationIn
+			eventIn		SFVec3f	transIn
+			eventIn		SFFloat	voltageIn
+			eventOut	SFRotation rotationOut
+			eventOut	SFFloat	voltageOut
+			eventOut	SFVec3f	offsetOut
+			url "javascript:
+			function transIn(value,time) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				if (value[0]<6 && value[0]>-6) {
+					rotationOut[3]=-value[0]/10;
+					voltageOut = -25/6*rotationOut[3]+5/2;
+				}
+				else if (value[0]>6) {
+					rotationOut[3]=-3/5;
+					voltageOut=5;
+				}
+				else if (value[0]<-6) {
+					rotationOut[3]=3/5;
+					voltageOut=0;
+				}
+			}
+			function voltageIn(value,time) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				rotationOut[3]=-6*(value-5/2)/25;
+				offsetOut[1]=0;
+				offsetOut[2]=0;
+				offsetOut[0]=rotationOut[3]*-10;
+			}
+			"
+		}
+	]
+}
+
+		]
+
+	ROUTE RotationPS.translation_changed TO	Worker2.transIn
+	ROUTE Worker2.rotationOut TO	NeedleHolder.rotation
+	ROUTE Worker2.offsetOut	TO	RotationPS.offset
+}
+
+
+		Group {
+			children [
+
+				Transform {
+					rotation 0 1 0 1.5707963267949
+					children [
+						DEF	ElectronHolder Transform {
+							translation	0 0 -350
+						}
+						Transform {
+            				translation 0 285 0
+							rotation 0 0 1 1.5707963267949
+            				children [
+								Shape {
+									appearance Appearance {
+										material DEF LightPencilMaterial Material {
+											diffuseColor 1 1 1
+											transparency 0.6
+										}
+									}
+									geometry DEF LightPencilGeo CylinderFrustum {
+										solid FALSE
+										radius 120
+										doTilt TRUE
+										tiltAngle -.7
+										endCap TRUE
+										planeDistance 340
+										extraLength 200
+										resolution 64
+									}
+								}
+							]
+        				}
+					DEF intensityDraggerSwitch Switch {
+					whichChoice 0
+					choice
+						Transform {
+							translation	0 122 0
+							rotation 1 0 0 0.870796326
+							children [
+								DEF IntensityDragger CylinderXDragger {
+									rotation 0 0 1 1.570796
+									minPosition 100
+									maxPosition 290
+									minValue 0
+									maxValue 100
+									value 50
+									positionAsValue FALSE
+									enabled TRUE
+									cylScale 20 20 20
+								}
+							]
+						}
+					}
+
+					]
+				}
+
+				DEF workFunctionDraggerSwitch Switch {
+					whichChoice 0
+					choice
+				Transform {
+					translation	-350 -175 175
+					rotation 1 0 0 0
+					children [
+						DEF	WorkFunctionDragger CylinderXDragger {
+							rotation 0 0 1 1.570796
+							minPosition 0
+							maxPosition 350
+							minValue 2
+							maxValue 6
+							value 2.3
+							positionAsValue FALSE
+							enabled TRUE
+							cylScale 30 30 30
+						}
+					]
+				}
+			}
+				Transform {
+					translation	363 0 0
+					rotation 0 0 1 1.5707963267949
+					children [
+						DEF PositivePlate Shape	{
+							appearance Appearance {
+								material Material	{
+									diffuseColor .6 .6 .6
+									specularColor .9 .9 .9
+									shininess .1
+								}
+							}
+							geometry DEF Plate Box { size 350 10 350 }#Cylinder { radius 200 height 4 }
+						}
+					]
+				}
+				Transform {
+					translation	-350 0 0 
+					rotation 0 0 1 1.5707963267949
+					children [
+						DEF NegativePlate Shape	{
+							appearance Appearance {
+								material DEF PlateMaterial Material	{
+									diffuseColor .6 .6 .6
+									specularColor .9 .9 .9
+									shininess .1
+								}
+							}
+							geometry USE Plate
+						}
+					]
+				}
+				Transform {
+					translation	0 25 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									emissiveColor 0 0.7 0.7
+								}
+							}
+							geometry IndexedLineSet {
+								coord Coordinate {
+									point [ -350 -200 0,
+										-350 -250 0,
+										363 -250 0,
+										363 -200 0]
+								}
+								coordIndex [ 0, 1, 2, 3]
+							}
+						}
+
+					]
+				}
+			]
+		}
+
+
+
+		##########################################################
+
+		DEF WidgetsHolder Switch {
+			whichChoice 0
+			choice Group {
+				children [
+				]
+			}
+		}
+
+
+		#		Group {
+			#			children [
+				##				Inline {
+					##					url	"../vrmllib/BoundingBox.wrl"
+					##					bboxSize	1000 300 1000
+					##					bboxCenter	0 0 -500
+					##				},
+
+				#				Shape {
+					#					appearance Appearance {
+						#						material Material {
+							#							emissiveColor 0 0.7 0.7
+							#						}
+						#					}
+					#					geometry IndexedLineSet {
+						#						coord Coordinate {
+							#							point [ 0 -200 0,
+								#								200 -200 0,
+								#								200 200 0]
+							#							#	-500 150 -1000,
+							#							#	500 150 -1000 ]
+						#						}
+					#						coordIndex [ 0, 1, 2]
+					#					}
+				#				}
+
+			
+
+			
+			
+			DEF wavelengthWidgetSwitch Switch {
+				whichChoice 0
+				choice Transform {
+					#translation 0 -30 220
+					#translation 250 450 0
+					rotation 1 0 0 1.5707963267949
+					#scale 75 75 75
+					scale 70 70 70
+					children [
+						DEF WavelengthWidget WheelWidget	{
+							minValue 200
+							maxValue 700
+							value 400
+							maxRotations 3
+						}
+					]
+				}
+			}
+
+			#The wavy line for the incoming wave
+			#				Transform {
+				#					translation 0 50 300
+				#					rotation 0 1 0  1.5707963
+				#					children Inline { url "../vrmllib/Wave.wrl" }
+				#				}
+
+			DEF screenMover Transform {
+				translation	0 0 -1000
+				children [
+					Shape {
+						geometry PointSet {
+							coord DEF ImagePoints Coordinate {}
+							color DEF ImageColors Color	{}
+						}
+						appearance Appearance {
+ 							material Material {
+ 								emissiveColor 1 1 1
+								diffuseColor 1 1 1
+								shininess 1
+								transparency 0
+ 							}
+						}
+					}
+					Shape {
+						geometry PointSet {
+							coord USE ImagePoints
+							color DEF WhitePoints Color	{}
+						}
+						appearance Appearance {
+ 							material DEF WhiteMaterial Material {
+ 								emissiveColor 1 1 1
+								diffuseColor 1 1 1
+ 							}
+						}
+					}
+
+				]
+			}
+
+			#This is the observation screen
+			Transform {
+				translation	0 -150 0
+				children [
+					DEF meshMover Transform {
+						children [
+							#								Group {
+								#									children [
+									#										DEF MeshTS TouchSensor {}
+									#										Shape {
+										#											appearance Appearance {
+											#												material Material {
+												#													emissiveColor	0 0.0394919 0.0513394
+												#												}
+											#											}
+										#											geometry DEF ifsNode IndexedFaceSet {
+											#												coord DEF coordinateNode Coordinate {
+												#													point []
+												#												}
+											#												#normal
+											#												color DEF colorNode Color {
+												#													color []
+												#												}
+											#												solid FALSE
+											#												creaseAngle	3.14159
+											#												coordIndex	[]
+											#												colorIndex	[]
+											#												normalIndex	[]
+											#											}
+										#										}
+									#									]
+								#								}
+							#Shape { geometry Box { size 50 50 50 } }
+							Transform {
+								translation 0 300 -1000
+								children [
+									Shape {
+										appearance Appearance {
+											material DEF graphMaterial Material {
+												#emissiveColor       0.6 0 0
+												emissiveColor       0.7 0.7 0.7
+											}
+										}
+										geometry DEF ilsNode IndexedLineSet {
+											coord DEF plotCoordinateNode Coordinate {
+												point []
+											}
+											coordIndex  []
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+			DEF	TRANS_WORKER Script {
+				eventIn	SFFloat	transparency_in
+				eventOut SFFloat transparency_out
+
+				url	"javascript:
+				function transparency_in(value, time) {
+					transparency_out = transparency_in;
+
+				}"
+			}
+		]
+	}
+	]
+}
+DEF CHANGE_SLIT_WIDTH Script {
+	eventIn  SFFloat translation_in
+	eventOut SFVec3f translation1_out
+	eventOut SFVec3f translation2_out
+	eventOut SFVec3f scale_out
+	eventOut SFVec3f middle_scale_out
+	eventOut SFFloat width_out
+	eventOut SFFloat min_distance_out
+
+	url "javascript:
+	function initialize () {
+		translation1_out = new SFVec3f(350, 0, 0);
+		translation2_out = new SFVec3f(-350, 0, 0);
+		scale_out = new SFVec3f(300, 1, 1);
+		middle_scale_out = new SFVec3f(300, 1, 1);
+	}
+
+	function translation_in(value, time) {
+		if(value < 0) value = -1 * value;
+		translation1_out[0] = (500 - value) / 2 + value;
+		translation2_out[0] = -translation1_out[0];
+		scale_out[0] = 500 - value;
+		middle_scale_out[0] = 500 - value*2 - 2*translation1_out[0];
+		width_out = value * 2 / 1000;
+		min_distance_out = width_out/2;
+	}"
+}
+DEF CHANGE_SLIT_DISTANCE Script {
+	eventIn  SFFloat translation_in
+	eventOut SFVec3f translation1_out
+	eventOut SFVec3f translation2_out
+	eventOut SFVec3f scale_out
+	eventOut SFVec3f middle_scale_out
+	eventOut SFFloat width_out
+
+	url "javascript:
+	function initialize () {
+		translation1_out = new SFVec3f(350, 0, 0);
+		translation2_out = new SFVec3f(-350, 0, 0);
+		scale_out = new SFVec3f(300, 1, 1);
+		middle_scale_out = new SFVec3f(300, 1, 1);
+	}
+
+	function translation_in(value, time) {
+		if(value < 0) value = -1 * value;
+		translation1_out[0] = (500 - value) / 2 + value;
+		translation2_out[0] = -translation1_out[0];
+		scale_out[0] = 500 - value;
+		middle_scale_out[0] = 500 - value*2 - 2*translation1_out[0];
+		width_out = value * 2 / 1000;
+	}"
+}
+DEF AXIS_SWITCHER Script {
+	eventIn SFFloat t_in
+	eventOut SFVec3f t_out
+
+	#screenDragger reports in 0 to 100 for Java's sake; we need 0 to 1000
+	url "javascript: function t_in(value,time) {t_out[2]=-value*10;}"
+}
+
+#ROUTE screenDragger.position_changed TO AXIS_SWITCHER.t_in
+#ROUTE AXIS_SWITCHER.t_out TO screenMover.set_translation
+#ROUTE AXIS_SWITCHER.t_out TO meshMover.set_translation
+

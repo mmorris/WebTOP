@@ -1,0 +1,627 @@
+PROTO RotationWidget [
+  initializeOnly        SFFloat     minAngle            0
+  inputOnly      SFFloat     set_minAngle
+  outputOnly     SFFloat     minAngle_changed
+  initializeOnly        SFFloat     maxAngle            -1
+  inputOnly      SFFloat     set_maxAngle
+  outputOnly     SFFloat     maxAngle_changed
+  initializeOnly        SFFloat     offset              0
+  inputOnly      SFFloat     set_offset
+  outputOnly     SFFloat     offset_changed
+  inputOutput SFBool      enabled             TRUE
+  outputOnly     SFBool      isActive
+  outputOnly     SFBool      isOver
+  inputOnly      SFBool      set_isOver
+  inputOnly      SFBool      set_isActive
+  outputOnly     SFRotation  rotation_changed
+  outputOnly     SFVec3f     trackPoint_changed
+  initializeOnly        MFNode      normalGeometry      []
+  initializeOnly        MFNode      overGeometry        []
+  initializeOnly        MFNode      clickedGeometry     []
+]
+{
+  Group {
+    children [
+      DEF Touch-SENSOR TouchSensor {
+        enabled IS enabled
+        isOver IS isOver
+      }
+      DEF Rotational-SENSOR PlaneSensor {
+        isActive IS isActive
+        enabled IS enabled
+        maxPosition 2000 2000
+        minPosition -2000 -2000
+        offset 2000 0 0
+      }
+      DEF Rotational-TRANSFORM Transform {
+        children DEF Rotational-SWITCH Switch {
+          whichChoice 0
+          choice [
+            Group { children IS normalGeometry }
+            Group { children IS overGeometry }
+            Group { children IS clickedGeometry }
+          ]
+        }
+      }
+    ]
+  }
+  DEF Rotational-SCRIPT Script {
+    initializeOnly    SFFloat minAngle IS minAngle
+    inputOnly  SFFloat set_minAngle IS set_minAngle
+    outputOnly SFFloat minAngle_changed IS minAngle_changed
+    initializeOnly    SFFloat maxAngle IS maxAngle
+    inputOnly  SFFloat set_maxAngle IS set_maxAngle
+    outputOnly SFFloat maxAngle_changed IS maxAngle_changed
+    initializeOnly    SFFloat trackOffset 0
+    initializeOnly    SFFloat offset IS offset
+    inputOnly  SFFloat set_offset IS set_offset
+    outputOnly SFFloat offset_changed IS offset_changed
+    inputOnly  SFVec3f set_translation
+    inputOnly  SFVec3f set_hitPoint
+    inputOnly  SFBool  set_touchSensorIsActive
+    inputOnly  SFBool  set_touchSensorIsOver
+    inputOnly  SFBool  set_planeSensorIsActive
+    inputOnly  SFBool  set_isActive IS set_isActive
+    inputOnly  SFBool  set_isOver IS set_isOver
+    outputOnly SFRotation rotation_changed IS rotation_changed
+    outputOnly SFVec3f    trackPoint_changed IS trackPoint_changed
+    outputOnly SFVec3f    internalOffset_changed
+    outputOnly SFInt32    whichChoice_changed
+    initializeOnly    SFBool  setOffset FALSE
+    initializeOnly    SFFloat lastOffset 0
+    initializeOnly    SFFloat lastAngle  0
+    initializeOnly    SFBool  isActive FALSE
+    initializeOnly    SFBool  isOver   FALSE
+    initializeOnly    MFNode  normalGeometry IS normalGeometry
+    initializeOnly    MFNode  overGeometry IS overGeometry
+    initializeOnly    MFNode  clickedGeometry IS clickedGeometry
+    initializeOnly    SFNode  Rotational-SWITCH USE Rotational-SWITCH
+    #initializeOnly    SFNode  Touch-SENSOR USE Touch-SENSOR
+    url "ecmascript:
+      function initialize() {
+        rotation_changed = new SFRotation(0, 0, 1, offset);
+        internalOffset_changed = new SFVec3f(10, 0, 0);
+        trackOffset = offset;
+        lastOffset = offset;
+        lastAngle = offset;
+        whichChoice_changed = 0;
+      }
+      function set_translation(value, time) {
+        length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);
+        angle = Math.atan2(value[1], value[0]);
+        if(angle<0) angle = 2*Math.PI + angle;
+        if(angle>=0 && angle<Math.PI/2.0 && lastAngle>=Math.PI*3.0/2.0)
+          trackOffset += angle + Math.PI*2.0 - lastAngle;
+        else if(angle>=Math.PI*3.0/2.0 && lastAngle>=0 && lastAngle<Math.PI/2.0)
+          trackOffset += angle - lastAngle - Math.PI*2.0;
+        else
+          trackOffset += angle - lastAngle;
+        offset = trackOffset;
+        if(minAngle<maxAngle) {
+          if(offset<minAngle) offset = minAngle;
+          if(trackOffset<minAngle-Math.PI*2.0) trackOffset += Math.PI*2.0;
+        }
+        if(maxAngle>minAngle) {
+          if(offset>maxAngle) offset = maxAngle;
+          if(trackOffset>maxAngle+Math.PI*2.0) trackOffset -= Math.PI*2.0;
+        }
+        lastOffset = offset;
+        lastAngle = angle;
+        rotation_changed[3] = offset;
+        offset_changed = offset;
+      }
+      function set_hitPoint(value, time) {
+        if(setOffset) {
+          setOffset = FALSE;
+          internalOffset_changed[0] = value[0];
+          internalOffset_changed[1] = value[1];
+          length = Math.sqrt(value[0]*value[0] + value[1]*value[1]);
+          lastAngle = Math.atan2(value[1], value[0]);
+          if(lastAngle<0) lastAngle = Math.PI*2.0 + lastAngle;
+        }
+      }
+      function set_offset(value, time) {
+        offset = value;
+        trackOffset = offset;
+        rotation_changed[3] = offset;
+        internalOffset_changed[0] = 2000 * Math.cos(offset);
+        internalOffset_changed[1] = 2000 * Math.sin(offset);
+      }
+      function set_touchSensorIsActive(value, time) {
+        isActive = value;
+        if(value) setOffset = TRUE;
+      }
+      function set_touchSensorIsOver(value, time) {
+        isOver = value;
+        if(value && !isActive && overGeometry.length > 0) {
+          whichChoice_changed = 1;
+        }
+        else if(!value && !isActive) {
+          whichChoice_changed = 0;
+        }
+      }
+      function set_planeSensorIsActive(value, time) {
+        if(!value) {
+          trackOffset = offset;
+          lastOffset = offset;
+          whichChoice_changed = 0;
+       }
+        else {
+          if(clickedGeometry.length >0) {
+            whichChoice_changed = 2;
+          }
+        }
+      }
+      function set_isActive(value, time) {
+        isActive = value;
+        if(value && clickedGeometry.length > 0) whichChoice_changed = 2;
+        else if(!value) {
+          if(isOver && overGeometry.length > 0) whichChocie_changed = 1;
+          else whichChoice_changed = 0;
+        }
+      }
+      function set_isOver(value, time) {
+        isOver = value;
+        if(value && !isActive && overGeometry.length > 0) whichChoice_changed = 1;
+        else if(!value) {
+          if(isActive && activeGeometry.length > 0) whichChoice_changed = 2;
+          else whichChoice_changed = 0;
+        }
+      }
+      function set_minAngle(value, time) {
+        minAngle = value;
+      }
+      function set_maxAngle(value, time) {
+        maxAngle = value;
+      }
+    "
+  }
+  ROUTE Touch-SENSOR.hitPoint_changed TO Rotational-SCRIPT.set_hitPoint
+  ROUTE Touch-SENSOR.isActive TO Rotational-SCRIPT.set_touchSensorIsActive
+  ROUTE Touch-SENSOR.isOver TO Rotational-SCRIPT.set_touchSensorIsOver
+  ROUTE Rotational-SENSOR.translation_changed TO Rotational-SCRIPT.set_translation
+  ROUTE Rotational-SENSOR.isActive TO Rotational-SCRIPT.set_planeSensorIsActive
+  ROUTE Rotational-SCRIPT.rotation_changed TO Rotational-TRANSFORM.set_rotation
+  ROUTE Rotational-SCRIPT.internalOffset_changed TO Rotational-SENSOR.set_offset
+  ROUTE Rotational-SCRIPT.whichChoice_changed TO Rotational-SWITCH.set_whichChoice
+}
+PROTO LinearWidget [ initializeOnly    SFFloat amplitude  0.0
+                     initializeOnly    SFFloat angle      0.0
+                     initializeOnly    SFFloat phase      0.0
+                     initializeOnly    SFFloat wavelength 1.0
+                     initializeOnly    SFFloat x          0.0
+                     initializeOnly    SFFloat y          0.0
+                     inputOutput SFBool enabled TRUE
+                     inputOnly  SFFloat set_amplitude
+                     inputOnly  SFFloat set_angle
+                     inputOnly  SFFloat set_phase
+                     inputOnly  SFFloat set_wavelength
+                     inputOnly  SFVec3f set_position
+                     inputOnly  SFBool  set_widgetVisible
+                     outputOnly SFFloat amplitude_changed
+                     outputOnly SFFloat angle_changed
+                     outputOnly SFFloat phase_changed
+                     outputOnly SFFloat wavelength_changed
+                     outputOnly SFVec3f position_changed
+                     outputOnly SFBool  mouseClicked
+                     outputOnly SFBool  mouseOver
+                     outputOnly SFBool  mouseOverAmplitude
+                     outputOnly SFBool  mouseOverWavelength
+                     outputOnly SFBool  mouseOverPhase
+                     outputOnly SFBool  mouseOverAngle      ]
+{
+  DEF PoolWidget-SWITCH Switch {
+    whichChoice 0
+    choice [
+      Transform { children [
+        DEF Icon0-SENSOR TouchSensor {
+          isOver IS mouseOver
+          enabled IS enabled
+        }
+        DEF Icon0-TRANSFORM3 Transform {
+          rotation 1 0 0 -1.57
+          children DEF Icon0-TRANSFORM2 Transform {
+            children Transform {
+              rotation 1 0 0 1.57
+              children Transform {
+                rotation 0 1 0 -1.57
+                children DEF Icon0-TRANSFORM Transform {
+                  children DEF Icon-SHAPE Group { children [
+                    Shape {
+                      appearance DEF PoolWidget-APPEARANCE2 Appearance {
+                        material Material {
+                          diffuseColor 1.0 0.2 0.2
+                        }
+                      }
+                      geometry Sphere {
+                        radius 1.0
+                      }
+                    }
+                    DEF Linear-SHAPE Shape {
+                      appearance DEF PoolWidget-APPEARANCE3 Appearance {
+                        material Material {
+                          diffuseColor 0.2 0.2 0.2
+                          transparency 0.25
+                        }
+                      }
+                      geometry Box {
+                        size 4.0 1.0 0.04
+                      }
+                    }
+                    Transform {
+                      translation 0 0 -0.5
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 -1.0
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 0.5
+                      children USE Linear-SHAPE
+                    }
+                    Transform {
+                      translation 0 0 1.0
+                      children USE Linear-SHAPE
+                    }
+                  ] }
+                }
+              }
+            }
+          }
+        }
+      ] }
+      Group { children [
+        USE Icon0-TRANSFORM3
+        Transform { rotation 1 0 0 -1.57 children [
+          DEF PoolWidget-TRANSFORM Transform { children [
+            DEF Angle-TRANSFORM Transform { children [
+              DEF Angle-ROTATIONWIDGET RotationWidget {
+                minAngle 0
+                maxAngle 6.28318530
+                set_offset IS set_angle
+                offset_changed IS angle_changed
+                offset IS angle
+                isOver IS mouseOverAngle
+        enabled IS enabled
+                normalGeometry [
+                  Transform { rotation 1 0 0 1.57 children [
+                    Transform {
+                      rotation 0 1 0 -1.57
+                      children [
+                        DEF Arrow-TRANSFORM Transform { children [
+                          Transform {
+                            translation 20 0 0
+                            scale 4 4 4
+                            children [
+                              DEF Arrow Transform {
+                                translation -0.141421 -0.125 0.353553
+                                rotation 0 1 0 0.785398
+                                children [
+                                  Shape {
+                                    appearance DEF PoolWidget-APPEARANCE Appearance {
+                                      material Material {
+                                        diffuseColor 0.4 0.4 0.8
+                                      }
+                                    }
+                                    geometry DEF Arrow-FACES IndexedFaceSet {
+                                      ccw TRUE
+                                      solid TRUE
+                                      coord DEF Arrow-COORD Coordinate { point [
+                                        0 0.25 0, 0.5 0.25 0, 0.5 0.25 -0.5, 0 0.25 -0.1, 0.4 0.25 -0.1, 
+                                        0.4 0.25 -0.5, 0 0.25 0, 0.5 0.25 0, 0.5 0.25 -0.5, 
+                                        0.4 0.25 -0.5, 0.4 0.25 -0.1, 0 0.25 -0.1, 0 0 0, 0.5 0 0, 
+                                        0.5 0 -0.5, 0.4 0 -0.5, 0.4 0 -0.1, 0 0 -0.1, 0 0 0, 
+                                        0.5 0 0, 0.5 0 -0.5, 0 0 -0.1, 0.4 0 -0.1, 0.4 0 -0.5]
+                                      }
+                                      coordIndex [
+                                        3, 0, 1, -1, 3, 1, 4, -1, 4, 1, 2, -1, 4, 2, 5, -1, 6, 12, 13, -1, 
+                                        6, 13, 7, -1, 7, 13, 14, -1, 7, 14, 8, -1, 8, 14, 15, -1, 
+                                        8, 15, 9, -1, 9, 15, 16, -1, 9, 16, 10, -1, 10, 16, 17, -1, 
+                                        10, 17, 11, -1, 11, 17, 12, -1, 11, 12, 6, -1, 18, 21, 22, -1, 
+                                        18, 22, 19, -1, 19, 22, 23, -1, 19, 23, 20, -1]
+                                      }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                          Transform {
+                            rotation 0 1 0 3.142
+                            scale 4 4 4
+                            translation -20 0 0
+                            children USE Arrow
+                          }
+                          Transform {
+                            rotation 0 0 1 1.57
+                            children [
+                              Shape {
+                                appearance USE PoolWidget-APPEARANCE
+                                geometry Cylinder {
+                                  radius 0.1
+                                  height 41
+                                }
+                              }
+                            ]
+                          }
+                        ] }
+                      ]
+                    }
+                  ] }
+                ]
+              }
+            ] }
+            DEF WidgetGroup-TRANSFORM Transform {
+              children [
+                Transform { rotation 1 0 0 1.57 children [
+                  Transform {
+                    rotation 0 0 1 -1.57
+                    children [
+                      DEF Wavelength-TRANSFORM2 Transform { children
+                        Transform {
+                          translation 0 0.5 0
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cylinder {
+                              radius 0.1
+                              height 1
+                            }
+                          }
+                        }
+                      }
+                      Transform { children [
+                        TouchSensor {
+                          isOver IS mouseOverWavelength
+                          enabled IS enabled
+                        }
+                        DEF Wavelength-SENSOR PlaneSensor {
+                          minPosition 0 2.01
+                          maxPosition 0 52.0
+                          offset      0 2.01 0
+                          isActive IS mouseClicked
+                          enabled IS enabled
+                        }
+                        DEF Wavelength-TRANSFORM Transform {
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cone {
+                              height 2.0
+                              bottomRadius 0.8
+                            }
+                          }
+                        }
+                      ] }
+                    ]
+                  }
+                ] }
+                DEF Phase-TRANSFORM3 Transform { children
+                  Transform {
+                    rotation 0 0 1 -1.57
+                    children [
+                      DEF Phase-TRANSFORM2 Transform { children
+                        Transform {
+                          translation 0 -0.5 0
+                          children Shape {
+                            appearance USE PoolWidget-APPEARANCE
+                            geometry Cylinder {
+                              radius 0.1
+                              height 1
+                            }
+                          }
+                        }
+                      }
+                      Transform { children [
+                        TouchSensor {
+                          isOver IS mouseOverPhase
+                          enabled IS enabled
+                        }
+                        DEF Phase-SENSOR PlaneSensor {
+                          minPosition 0 -8.283195
+                          maxPosition 0 -2.0
+                          offset      0 -2.0 0
+                          isActive IS mouseClicked
+                          enabled IS enabled
+                        }
+                        DEF Phase-TRANSFORM Transform { translation 0 -0.5 0 children [
+                          Shape {
+                            appearance USE PoolWidget-APPEARANCE2
+                            geometry Sphere {
+                              radius 0.8
+                            }
+                          }
+                        ] }
+                      ] }
+                    ]
+                  }
+                }
+              ]
+            }
+            Transform {
+              rotation 1 0 0 1.57
+              children [
+                DEF Amplitude-TRANSFORM2 Transform { children
+                  Transform {
+                    translation 0 0.5 0
+                    children [
+                      Shape {
+                        appearance USE PoolWidget-APPEARANCE
+                        geometry Cylinder {
+                          radius 0.1
+                          height 1
+                        }
+                      }
+                    ]
+                  }
+                }
+                Transform { children [
+                  TouchSensor {
+                    isOver IS mouseOverPhase
+                    enabled IS enabled
+                  }
+                  DEF Amplitude-SENSOR PlaneSensor {
+                    minPosition 0 2.0
+                    maxPosition 0 12.0
+                    offset 0 2.0 0
+                    isActive IS mouseClicked
+                    enabled IS enabled
+                  }
+                  DEF Amplitude-TRANSFORM Transform {
+                    translation 0 3 0
+                    children [
+                      Shape {
+                        appearance USE PoolWidget-APPEARANCE
+                        geometry Cone {
+                          height 2.0
+                          bottomRadius 0.8
+                        }
+                      }
+                    ]
+                  }
+                ] }
+              ]
+            }
+          ] }
+        ] }
+      ] }
+    ]
+  }
+  DEF Linear-SCRIPT Script {
+    initializeOnly    SFFloat amplitude  IS amplitude
+    initializeOnly    SFFloat angle      IS angle
+    initializeOnly    SFFloat wavelength IS wavelength
+    initializeOnly    SFFloat phase      IS phase
+    initializeOnly    SFFloat x          IS x
+    initializeOnly    SFFloat y          IS y
+    inputOnly  SFVec3f    set_translation1
+    inputOnly  SFVec3f    set_translation2
+    inputOnly  SFVec3f    set_translation3
+    inputOnly  SFVec3f    set_translation4
+    inputOnly  SFRotation set_rotation
+    inputOnly  SFFloat    set_amplitude  IS set_amplitude
+    inputOnly  SFFloat    set_angle      IS set_angle
+    inputOnly  SFFloat    set_phase      IS set_phase
+    inputOnly  SFFloat    set_wavelength IS set_wavelength
+    inputOnly  SFVec3f    set_position   IS set_position
+    inputOnly  SFBool     set_widgetVisible IS set_widgetVisible
+    inputOnly  SFBool     set_widgetVisibleInternal
+    outputOnly SFVec3f    scale1_changed
+    outputOnly SFVec3f    translation1_changed
+    outputOnly SFRotation rotation_changed
+    outputOnly SFVec3f    scale2_changed
+    outputOnly SFVec3f    translation2_changed
+    outputOnly SFVec3f    scale3_changed
+    outputOnly SFVec3f    translation3_changed
+    outputOnly SFVec3f    translation4_changed
+    outputOnly SFVec3f    offset1_changed
+    outputOnly SFVec3f    offset2_changed
+    outputOnly SFVec3f    offset3_changed
+    outputOnly SFFloat    angle_init
+    outputOnly SFInt32    whichChoice
+    outputOnly SFFloat amplitude_changed  IS amplitude_changed
+    outputOnly SFFloat angle_changed      IS angle_changed
+    outputOnly SFFloat phase_changed      IS phase_changed
+    outputOnly SFFloat wavelength_changed IS wavelength_changed
+    url "ecmascript:
+      function initialize() {
+        offset1_changed = new SFVec3f(0, amplitude+2.0, 0);
+        scale1_changed = new SFVec3f(1, amplitude+2.0, 1);
+        translation1_changed = new SFVec3f(0, amplitude+2.0, 0);
+        angle_init = angle;
+        rotation_changed = new SFRotation(0, 1, 0, angle_init);
+        if(wavelength<=0) wavelength = 0.01;
+        offset2_changed = new SFVec3f(0, wavelength+2.0, 0);
+        scale2_changed = new SFVec3f(1, wavelength+2.0, 1);
+        translation2_changed = new SFVec3f(0, wavelength+2.0, 0);
+        offset3_changed = new SFVec3f(0, -2.0-phase, 0);
+        scale3_changed = new SFVec3f(1, 2.0+phase, 1);
+        translation3_changed = new SFVec3f(0, -2.0-phase, 0);
+        translation4_changed = new SFVec3f(x, y, 10);
+        //position_changed = new SFVec3f(x, y, 0);
+      }
+      function set_translation1(value, time) {
+        scale1_changed[1] = value[1];
+        amplitude = value[1]-2.0;
+        amplitude_changed = amplitude;
+      }
+      function set_amplitude(value, time) {
+        amplitude = value;
+        translation1_changed[1] = value+2.0;
+        scale1_changed[1] = value+2.0;
+        offset1_changed[1] = value+2.0;
+      }
+      function set_rotation(value, time) {
+        angle = value[3];
+        angle_changed = angle;
+      }
+      function set_angle(value, time) {
+        angle = value;
+        rotation_changed[3] = value;
+        angle_init = value;
+      }
+      function set_translation2(value, time) {
+        scale2_changed[1] = value[1];
+        wavelength = value[1]-2.0;
+        wavelength_changed = wavelength;
+      }
+      function set_wavelength(value, time) {
+        scale2_changed[1] = value+2.0;
+        translation2_changed[1] = value+2.0;
+        offset2_changed[1] = value+2.0;
+        wavelength = value;
+      }
+      function set_translation3(value, time) {
+        scale3_changed[1] = -value[1];
+        phase = -2.0-value[1];
+        phase_changed = phase;
+      }
+      function set_phase(value, time) {
+        scale3_changed[1] = value+2.0;
+        translation3_changed[1] = -2.0-value;
+        offset3_changed[1] = -2.0-value;
+        phase = value;
+      }
+      function set_translation4(value, time) {
+        x = value[0];
+        y = value[1];
+        position_changed[0] = x;
+        position_changed[1] = y;
+      }
+      function set_position(value, time) {
+        x = value[0];
+        y = value[1];
+        translation4_changed[0] = x;
+        translation4_changed[1] = y;
+      }
+      function set_widgetVisible(value, time) {
+        if(value) whichChoice = 1;
+        else whichChoice = 0;
+      }
+      function set_widgetVisibleInternal(value, time) {
+        if(value) whichChoice = 1;
+      }
+    "
+  }
+  ROUTE Icon0-SENSOR.isOver TO Linear-SCRIPT.set_widgetVisibleInternal
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO Icon0-TRANSFORM2.rotation
+  ROUTE Angle-ROTATIONWIDGET.rotation_changed TO WidgetGroup-TRANSFORM.rotation
+  ROUTE Amplitude-SENSOR.translation_changed TO Amplitude-TRANSFORM.translation
+  ROUTE Amplitude-SENSOR.translation_changed TO Linear-SCRIPT.set_translation1
+  ROUTE Wavelength-SENSOR.translation_changed TO Wavelength-TRANSFORM.set_translation
+  ROUTE Wavelength-SENSOR.translation_changed TO Linear-SCRIPT.set_translation2
+  ROUTE Phase-SENSOR.translation_changed TO Phase-TRANSFORM.set_translation
+  ROUTE Phase-SENSOR.translation_changed TO Linear-SCRIPT.set_translation3
+  ROUTE Linear-SCRIPT.rotation_changed TO Icon0-TRANSFORM2.rotation
+  ROUTE Linear-SCRIPT.rotation_changed TO WidgetGroup-TRANSFORM.rotation
+  ROUTE Linear-SCRIPT.offset1_changed TO Amplitude-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale1_changed TO Amplitude-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation1_changed TO Amplitude-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.offset2_changed TO Wavelength-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale2_changed TO Wavelength-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation2_changed TO Wavelength-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.offset3_changed TO Phase-SENSOR.offset
+  ROUTE Linear-SCRIPT.scale3_changed TO Phase-TRANSFORM2.scale
+  ROUTE Linear-SCRIPT.translation3_changed TO Phase-TRANSFORM.translation
+  ROUTE Linear-SCRIPT.translation4_changed TO Icon0-TRANSFORM2.set_translation
+  ROUTE Linear-SCRIPT.translation4_changed TO PoolWidget-TRANSFORM.set_translation
+  ROUTE Linear-SCRIPT.whichChoice TO PoolWidget-SWITCH.whichChoice
+}

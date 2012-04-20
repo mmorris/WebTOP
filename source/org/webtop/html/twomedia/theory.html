@@ -1,0 +1,283 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<TITLE>WebTOP</TITLE>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Reflection and Refraction - Waves Two Media: Theory</b> </big></font></big><br>
+
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>This module simulates the reflection and refraction of an s-polarized, monochromatic plane wave of light incident upon a planar interface between two nonmagnetic, dielectric media. The media occupy the half spaces x &lt; 0 and x &gt; 0, and the plane of incidence is the x-y plane. The module depicts, as the height in a “wave pool,” the total electric field on each side of the interface, for observation points in the plane of incidence (see Fig. 1 below). The module also has options that allow only incident wave or only the reflected wave in the region x &lt; 0 to be displayed.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=615 height=505 src="images/theory-02.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 1 The Reflection and Refraction/Waves Two Media module. The white vectors are the incident, reflected, and transmitted wave vectors. The widget on the left controls the parameters of the incident electric field.</small></center></td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Basic Equations</b></font></big></p>
+<p>In this section we will describe the basic theory applicable when total internal reflection is not occurring. The theory for the total internal reflection case will follow this section.</p>
+<p>Consider a monochromatic plane electromagnetic wave of vacuum wavelength <span style='font-family:Symbol;'>l</span><sub>0</sub> that is that is incident from the first medium on the second in the manner depicted in Fig. 2 below. The plane of incidence is the x-y plane and the incident field is linearly polarized in the z-direction. The two media occupy the half spaces x &lt; 0 and x &gt; 0 respectively, and have indices of refraction n<sub>i</sub>. and n<sub>t</sub>. The angle of incidence is <span style='font-family:Symbol;'>q</span><sub>i</sub>. The incident, reflected, and transmitted wave vectors are, respectively,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=187 height=45 src="images/theory-04.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=199 height=45 src="images/theory-06.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="2">2</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=187 height=45 src="images/theory-08.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="3">3</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>Here <span style='font-family:Symbol;'>l</span><sub>i</sub> = <span style='font-family:Symbol;'>l</span><sub>0</sub>/n<sub>i</sub> and </span><span style='font-family:Symbol;'>l</span><sub>t</sub> = <span style='font-family:Symbol;'>l</span><sub>0</sub>/n<sub>t</sub> are, respectively, the wavelength of the light in the first and second media, and <span style='font-family:Symbol;'>q</span><i><sub>t</sub></i> is the angle of transmission (refraction). The angle of transmission and the angle of incidence are related by Snell’s law</span></p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=124 height=24 src="images/theory-10.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="4">4</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=303 height=357 src="images/theory-12.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 2 The incident, reflected, and refracted wave vectors.</small></center></td>
+  </tr>
+</table></center></div>
+<p>Let an observation point in the plane of incidence be specified by the position vector <sub>&nbsp;</sub><img width=85 height=23 src="images/theory-14.gif" align=absbottom>. Since the light is s-polarized, the incident electric field vector is in the z-direction. Its z-component at such an observation point at time t is given by the formula</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=189 height=27 src="images/theory-16.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="5">5</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p>where E<sub>0</sub> is the amplitude of the incident field. The corresponding reflected and transmitted electric field vectors are also in the z-direction. Their z-components are, respectively, </p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=205 height=27 src="images/theory-18.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="6">6</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=201 height=27 src="images/theory-20.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="7">7</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>where <img width=16 height=24 src="images/theory-22.gif" align=absbottom><sub>&nbsp;</sub> and <img width=16 height=24 src="images/theory-24.gif" align=absbottom><sub>&nbsp;</sub> are, respectively, the amplitude reflection and transmission coefficients for s-polarized light,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=125 height=45 src="images/theory-26.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="8">8</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=71 height=24 src="images/theory-28.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="9">9</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+<p>These coefficients are plotted as a function of the angle of incidence in Fig. 3 for an external reflection situation (n<sub>t</sub> / n<sub>i</sub> = 1.50). They are plotted as a function of the angle of incidence in Fig. 4 for an internal reflection situation (n<sub>t</sub> / n<sub>i</sub> = 1/1.50)for angles of incidence less than the critical angle.</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=290 height=372 src="images/theory-30.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 3 The amplitude reflection coefficient and transmission coefficient as functions of the angle of incidence for an external reflection situation (n<sub>t</sub>/ n<sub>i</sub> =1.50).</small></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=285 height=365 src="images/theory-32.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 4 The amplitude reflection coefficient and transmission coefficient as functions of the angle of incidence for an internal reflection situation (n<sub>t</sub>/ n<sub>i</sub> = 1/1.50) and angles of incidence less than the critical angle.</small></center></td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Total Internal Reflection</b></font></big></p>
+<p>Total internal reflection occurs when n<sub>i</sub> &gt; n<sub>t</sub> and the angle of incidence is greater than the critical angle,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=119 height=27 src="images/theory-34.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="10">10</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p>When the incident electric field is in the z-direction and of the form (5), the reflected and transmitted fields are in the z-direction and their z-components are, respectively,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=217 height=27 src="images/theory-36.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="11">11</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=339 height=45 src="images/theory-38.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="12">12</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p>Here L is the penetration depth of the transmitted field,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=183 height=49 src="images/theory-40.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="13">13</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+<p>and <span style='font-family:Symbol;'>r</span> and <span style='font-family:Symbol;'>t</span> are, respectively, the phase shifts of the reflected and transmitted fields,</p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=187 height=27 src="images/theory-42.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="14">14</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=57 height=23 src="images/theory-44.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="15">15</a>)</center></td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center><P></P></center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></center></td>
+  </tr>
+</table></center></div>
+
+<p>The penetration depth as a function of the angle of incidence for angles of incidence near the critical angle is plotted in Fig. 5. It is plotted for larger angles of incidence in Fig. 6. The phase shifts are plotted as functions of the angle of incidence in Fig. 7. In all three figures the ratio of the indices of refraction is n<sub>t</sub></span> / n<sub>i</sub> = 1/1.50.</span></p>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=290 height=372 src="images/theory-46.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 5 The penetration depth L (in units of <span style='font-family:Symbol;'>l</span><sub>0</sub>) as a function of the angle of incidence near the critical angle. The ratio of the indices of refraction is n<sub>t</sub>/ n<sub>i</sub> = 1/1.50. The critical angle in this case is 41.8 degrees and is indicated with the dashed line).</small></center></td>
+  </tr>
+</table></center></div>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=294 height=375 src="images/theory-48.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 6 The penetration depth L (in units of <span style='font-family:Symbol;'>l</span><sub>0</sub>)as a function of the angle of incidence from 45 to 90 degrees. The ratio of the indices of refraction is n<sub>t</sub> / n<sub>i</sub> = 1/1.50.</small></center></td>
+  </tr>
+</table></center></div>
+
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=423 height=288 src="images/theory-50.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%"><center><small>Figure 7 The phase shifts due to reflection, <span style='font-family:Symbol;'>r</span>, and transmission, <span style='font-family:Symbol;'>t</span>, as functions of the angle of incidence The ratio of the indices of refraction is n<sub>t</sub>/ n<sub>i</sub> = 1/1.50.</small></center></td>
+  </tr>
+</table></center></div>
+
+
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

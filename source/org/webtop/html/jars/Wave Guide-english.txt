@@ -1,0 +1,31 @@
+playButton,Play
+prevButton,<
+nextButton,>
+resetButton,Reset
+widgetsButton,Widgets
+gridButton,Grid
+amplitude_label,Amplitude:
+wavelength_label,Wavelength:
+micro_label,µm
+n1_label,n1:
+n2_label,n2:
+d_label,d:
+m_label,m:
+bigM_label,M:
+fastest_choice,Fastest
+fast_choice,Fast
+medium_choice,Medium
+smooth_choice,Smooth
+VS_choice,Very Smooth
+custom_choice,Custom...
+reset_tooltip,Revert to default parameters.
+grid_tooltip,Show / Hide the grid.
+widgets_tooltip,Show / Hide widgets
+prev_tooltip,Step Backward.
+next_tooltip,Step Forward.
+wavelength_widget_tooltip,Spin to change wavelength
+widthDragger,Slide to change the waveguide's width.
+play,Play
+pause,Pause
+warning,N2 must not be greater than N1
+resolution_label,  Resolution:

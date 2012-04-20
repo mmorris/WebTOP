@@ -1,0 +1,1005 @@
+#X3D V3.0 utf8
+			  
+PROFILE Immersive
+
+#wavefront.x3dv
+#VRML file for the Wavefront module
+#Davis Herring, David Moore, and Brian Thomas
+#Created August 26 2003
+#Updated January 30 2004
+#Version 0.1
+
+###############
+#   Arrow     #
+###############
+PROTO Arrow [
+	inputOutput SFVec3f center 0 0 0
+	inputOutput SFRotation rotation 0 1 0 0
+	]
+{
+	DEF From Transform
+	{
+		translation IS center
+		rotation IS rotation
+
+		children
+		[
+			Transform
+			{
+				rotation 0 1 0 0.7
+				translation -10 0 5
+				scale 15 15 20
+
+				children Shape
+				{
+					geometry Box
+					{
+						size .15 .35 .7
+					}
+
+					appearance DEF Arrow-APP Appearance
+					{
+						material Material
+						{
+							diffuseColor 0.8 0.8 0.8
+							emissiveColor .8  .8 .8
+						}
+					}
+				}
+			}
+
+			Transform
+			{
+				rotation 0 1 0 -0.7
+				translation -10 0 -5
+				scale 15 15 20 
+
+				children Shape
+				{
+					geometry Box
+					{
+						size .15 .35 .7
+					}
+
+					appearance USE Arrow-APP
+				}
+			}
+            Transform {
+                translation 50 0 0
+                scale 6 6 8
+                children [ 
+			         Shape
+			         {
+				     geometry IndexedLineSet
+				     {
+					    coord Coordinate
+					    {
+					    	point [0 0 0, -10 0 0]
+					    }
+
+					    coordIndex [0 1 -1]
+				    }
+
+				        appearance USE Arrow-APP
+			        }
+                ]
+           }
+		]
+	}
+}
+
+###############
+#  End Arrow  #
+###############
+
+
+#Proto for augmentation/replacement for headlight/navinfo:
+
+EXTERNPROTO XDragWidget [
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	#outputOnly SFFloat inversePosition_out
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput MFNode geometry
+	inputOutput MFNode activeGeometry
+]
+"x3dlib/Widgets.x3dv#XDragWidget"
+
+EXTERNPROTO WheelWidget [
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled 
+
+	inputOutput SFNode	 material
+	inputOutput SFNode	 activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+#We cannot use extern proto now because xj3d does not properly load them at time of scene loading
+#EXTERNPROTO Octant [
+#	initializeOnly SFFloat radius
+#	inputOnly SFFloat set_radius
+#	outputOnly SFFloat radius_changed
+#	initializeOnly SFInt32 thetaResolution
+#	inputOnly SFInt32 set_thetaResolution
+#	initializeOnly SFInt32 phiResolution
+#	inputOnly SFInt32 set_phiResolution
+#	initializeOnly SFBool solid
+#	inputOutput SFNode color
+#	initializeOnly MFInt32 colorIndex
+#	inputOnly MFInt32 set_colorIndex
+#]
+#"../../x3dlib/Shapes.x3dv#Octant"
+#
+
+PROTO Octant [ initializeOnly SFFloat radius 1
+							 inputOnly SFFloat set_radius
+							 outputOnly SFFloat radius_changed
+
+							 initializeOnly SFInt32 thetaResolution 12
+							 inputOnly SFInt32 set_thetaResolution
+
+							 initializeOnly SFInt32 phiResolution 12
+							 inputOnly SFInt32 set_phiResolution
+
+							 initializeOnly SFBool solid FALSE
+
+							 inputOutput SFNode color NULL
+							 initializeOnly MFInt32 colorIndex []
+							 inputOnly MFInt32 set_colorIndex ]
+{
+	DEF IFS IndexedFaceSet {
+		coord DEF C Coordinate {}
+		solid IS solid
+		color IS color
+		colorIndex IS colorIndex
+		set_colorIndex IS set_colorIndex
+	}
+	DEF Worker Script {
+		initializeOnly SFFloat radius IS radius
+		inputOnly SFFloat radius_in IS set_radius
+		outputOnly SFFloat radius_out IS radius_changed
+
+		initializeOnly SFInt32 thetaRes IS thetaResolution
+		inputOnly SFInt32 thetaRes_in IS set_thetaResolution
+
+		initializeOnly SFInt32 phiRes IS phiResolution
+		inputOnly SFInt32 phiRes_in IS set_phiResolution
+
+		outputOnly MFVec3f point_out
+		outputOnly MFInt32 cindex_out
+
+		url "ecmascript:
+		function initialize() {render();}
+		function radius_in(value, time) {
+			if(value<0) print('Octant::radius_in: invalid negative value '+value);
+			radius=value;
+			radius_out=value;
+			render();
+		}
+		function thetaRes_in(value, time) {
+			if(value<3) print('Octant::thetaRes_in: resolution '+value+' too small (must be >=3)');
+			thetaRes=value;
+			render();
+		}
+		function phiRes_in (value, time) {
+			if(value<3) print('Octant::phiRes_in: resolution '+value+' too small (must be >=3)');
+			phiRes=value;
+			render();
+		}
+
+		function render() {
+			coord_out=new MFVec3f();
+			coordI_out=new MFInt32();
+
+			for(var i=0;i<thetaRes;++i) {
+				var theta=Math.PI/2/(thetaRes-1)*i;
+				for(var j=0;j<phiRes;++j) {
+					var phi=Math.PI/2/(phiRes-1)*j;
+					coord_out[i*phiRes+j]=new SFVec3f(radius*Math.sin(theta)*Math.cos(phi),
+																						radius*Math.sin(theta)*Math.sin(phi),
+																						radius*Math.cos(theta));
+				}
+			}
+
+			for(var i=0;i<thetaRes-1;++i)
+				for(var j=0;j<phiRes-1;++j) {
+					var index=5*(i*(phiRes-1)+j);
+					coordI_out[index]=i*phiRes+j;
+					coordI_out[index+1]=(i+1)*phiRes+j;
+					coordI_out[index+2]=(i+1)*phiRes+(j+1);
+					coordI_out[index+3]=i*phiRes+(j+1);
+					coordI_out[index+4]=-1;
+				}
+
+			point_out=coord_out;
+			cindex_out=coordI_out;
+		}
+		"
+	}
+	ROUTE Worker.point_out TO C.set_point
+	ROUTE Worker.cindex_out TO IFS.set_coordIndex
+}
+
+
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+
+PROTO Axis []
+{
+  Transform {
+	  rotation 0 0 1 1.57079
+	  translation 0 0 0
+	  children [
+	    Transform	{
+		  	#translation	30 4 -30
+			  #translation		42.426 0 -42.426
+			  #translation	  1
+        scale 5 5 5
+        children
+		
+	   		Transform	{
+		  		#rotation 0 -1 0 0.785398163397448
+			   	children
+				
+       	  Transform	{
+					  translation	0 -12.5 0
+					  #rotation 1 0 0 1.5707963267949
+					  children [
+						  Shape	{
+						    geometry Cylinder { radius .5 height 25 }
+							  appearance Appearance	{ material Material	{diffuseColor 1 0 0}}
+						  }
+					    Transform	{
+						    scale	1.5 1.5 1.5
+							  translation	0 -12.5 0
+							  children
+							  Transform	{
+								  rotation 1 0 0 3.14159265358979
+		    				  children Shape {
+								    geometry Cone	{bottomRadius 1 height 2.5}
+									  appearance Appearance	{material Material {diffuseColor 1 0 0}}
+								  }
+							  }
+						  }
+					  ]
+				  }
+			  }
+		  }
+    ]
+  }
+
+
+	#	Transform {
+	#		rotation 0 0 1 -0.7853975
+	#		children [
+	Transform	{
+		translation	65 0 0
+		children [
+			
+			#Shape	{
+			#	geometry Text {
+			#		fontStyle FontStyle {
+			#			justify "MIDDLE"
+			#			family "Times"
+			#			style	"italic"
+			#		}
+			#		string [ "F" ]
+			#	}
+			#}
+			Transform
+			{
+				rotation 0 0 1 -1.5707963267949
+				#translation 0 0 0.7
+				scale 3 3 3
+
+				children [
+					Shape
+					{
+						geometry DEF Cone-App Cone {
+							height	1.5
+							bottom TRUE
+							bottomRadius .4
+						}
+					
+						appearance DEF Arrow-APP Appearance	{
+							material Material	{
+								diffuseColor 0 0 0
+							}
+						}
+					}
+					#Transform	{
+					#	translation	0 -.75 0
+					#	children
+					#	Shape	{
+					#		geometry DEF Cone-sphere Sphere	{
+					#			radius .4
+					#		}
+					#		appearance Appearance	{ material Material	{diffuseColor	0 0 0}}
+					#	}
+					#}
+				]
+			}
+
+			Shape
+			{
+				geometry IndexedLineSet
+				{
+					coord Coordinate
+					{
+						point [0 0 0, -65 0 0]
+					}
+
+					coordIndex [0 1 -1]
+				}
+				appearance USE Arrow-APP
+			}
+		]
+	}
+
+	# Y-arrow
+	Transform	{
+		rotation 0 1 0 1.5707963267949
+		children
+		Transform	{
+			translation	75 0 0
+			children [
+				Transform	{
+					rotation 0 0 1 -1.5707963267949
+					scale	3 3 3
+					children Shape{
+						geometry USE Cone-App
+						appearance USE Arrow-APP
+					}
+				}
+				
+				Shape
+				{
+					geometry IndexedLineSet
+					{
+						coord Coordinate
+						{
+							point [0 0 0, -75 0 0]
+						}
+
+						coordIndex [0 1 -1]
+					}
+					appearance USE Arrow-APP
+				}
+			]
+		}
+	}
+
+	#Z-arrow
+	Transform	{
+		rotation 0 0 1 1.5707963267949
+		children
+		Transform	{
+			translation	40 0 0
+			children [
+				Transform	{
+					rotation 0 0 1 -1.5707963267949
+					scale	3.5 3.5 3.5
+					children Shape {
+						geometry Cone	{
+							height	1.5
+							bottom TRUE
+							bottomRadius .4
+						}
+						appearance USE Arrow-APP
+					}
+				}
+
+				Shape
+				{
+					geometry IndexedLineSet
+					{
+						coord Coordinate
+						{
+							point [0 0 0, -80 0 0]
+						}
+
+						coordIndex [0 1 -1]
+					}
+					appearance USE Arrow-APP
+				}
+			]
+		}
+	}
+	#]
+	#	}
+}
+
+Background {
+	skyColor 0 0 0
+}
+
+Viewpoint { 
+  position 0 0 500 
+  description "Start"
+  centerOfRotation 0 0 0
+}
+
+
+PROTO PlaneWave [
+	inputOnly	SFFloat	set_size
+	inputOnly	SFFloat	set_position
+	inputOnly	SFColor set_diffuseColor
+	inputOnly	SFFloat	set_transparency
+
+	#initializeOnly SFFloat set_test 0.2
+	outputOnly SFBool	exists
+]
+{
+	Transform	{
+		#rotation 1 0 0 0.785398163397448
+		children [
+			DEF PlaneTrans Transform {
+				scale 1 1 1
+				children [
+					Shape {
+						geometry Box {
+							size 1 1 .005
+						}
+						appearance Appearance {
+							material Material {
+								#diffuseColor IS	set_diffuseColor
+								diffuseColor .122 .129 .604
+								specularColor	.1 .1 .1
+								emissiveColor	.4 .4 .4
+								transparency IS	set_transparency
+							}
+						}
+					}
+				]
+			}
+		]
+	}
+	DEF	PlaneScript Script {
+		inputOnly	SFFloat	my_scale IS	set_size
+		inputOnly	SFFloat	set_position IS	set_position
+		outputOnly SFVec3f scale
+		outputOnly SFVec3f position
+		outputOnly SFBool	exists IS exists
+		
+		url	"ecmascript:
+		function initialize(){
+			//for(i=0; i<100; i++) {
+			//	exists = new SFBool();
+			//	exists=true;
+			//}
+			//print('set');
+		}
+		
+		function set_position(value,time) {
+			position=new SFVec3f(0,0,value);
+		}
+
+		function my_scale(value,time){
+			scale=new SFVec3f(value,value,value);
+		}
+		"
+	}
+	ROUTE PlaneScript.scale TO PlaneTrans.scale
+	ROUTE PlaneScript.position TO PlaneTrans.translation
+}
+
+
+
+
+PROTO AllBut [
+	inputOnly	SFFloat	set_radius
+	inputOnly	SFColor set_diffuseColor
+	inputOnly	SFFloat	set_transparency
+	outputOnly SFBool	exists
+]
+{
+	DEF Trans Transform {
+		children [
+			Transform {
+				rotation 0 0 1 1.5707963267949
+				children DEF O Shape {
+					geometry Octant {
+						radius 1
+						thetaResolution 25
+						phiResolution 25
+					}
+					appearance Appearance {
+						material 	DEF	material Material {
+	            #diffuseColor     0.7 0.7 1.0
+	            diffuseColor     0.25 0.25 0.32
+	            specularColor    0.10 0.10 0.10
+	            emissiveColor    0.1 0.1 0.2
+	            transparency     0
+							#diffuseColor IS set_diffuseColor
+							#							 specularColor .19 .24 .24
+							#							 emissiveColor .07 .07 .07
+							#							 ambientIntensity .103
+							#							 shininess .07
+
+							#							 ambientIntensity .4
+							#							 diffuseColor .122 .129 .604
+							#							 specularColor .1 .1 .1
+							#							 emissiveColor .1 .1 .2
+														 transparency IS set_transparency
+						}
+					}
+				}
+			}
+			Transform {
+				rotation 0 0 1 3.14159265358979
+				children USE O
+			}
+
+			Transform {
+				rotation 0 0 1 4.71238898038469
+				children USE O
+			}
+
+			Transform {
+				rotation 1 0 0 -1.5707963267949
+				children USE O
+			}
+
+			Transform {
+				rotation 1 0 0 3.14159265358979
+				children USE O
+			}
+
+			Transform {
+				rotation 0 1 0 3.14159265358979
+				children USE O
+			}					 
+
+			Transform {
+				rotation 1 0 0 -1.5707963267949
+				children Transform {
+					rotation 0 1 0 3.14159265358979
+					children USE O
+				}
+			}
+		]
+	}
+	DEF	AllButScript Script {
+		inputOnly	SFFloat	my_scale IS	set_radius
+		outputOnly SFVec3f scale
+		outputOnly SFBool	exists IS exists
+		
+		url	"ecmascript:
+		function initialize(){
+		//	for(i=0; i<100; i++) {
+		//		exists = new SFBool();
+		//		exists=true;
+		//	}
+			//print('set');
+		}
+		
+		function my_scale(value,time){
+			scale=new SFVec3f(value,value,value);
+		}
+		"
+	}
+	ROUTE AllButScript.scale TO Trans.scale
+}
+
+
+
+#DirectionalLight {
+#	color	1 1 1
+#	direction	-1 0 0
+#	intensity	.7
+#}
+#DirectionalLight {
+#	color	1 1 1
+#	direction	0 0 -1
+#	intensity	.7
+#}
+#DirectionalLight {
+#	color	1 1 1
+#	direction	1 0 0
+#	intensity	.3
+#}
+
+#Background {
+#	skyColor 1 1 1
+#}
+
+		#		DirectionalLight {
+		#			ambientIntensity .2
+		#			intensity	.4
+		#			color	1 1 1
+		#			direction	0 -1 0
+		#		}
+#		PointLight {
+#			ambientIntensity 0
+#			intensity .7
+#			#color 0.5 1 0
+#			color 1 1 1
+#			attenuation 1 0.1 0
+#			radius 1
+#		}
+		DirectionalLight {
+			color	1 1 1
+			direction	0 1 0
+			intensity	1
+			on TRUE
+			ambientIntensity 1
+		}
+
+NavigationInfo {
+	type "NONE"
+}
+
+DEF NavPanel NavigationPanel {
+	views [
+    -0.36 -0.753 0.0 0.0 0.0 14.548
+    -0.327 -1.048 0.0 0.0 0.0 14.548
+    0 0 0 0 0 0
+    ]
+
+	translation_speed 10
+
+	children [
+		DEF	World Transform{				   
+			children[
+				Transform {
+					#rotation 1 0 0 -0.203
+					children [
+						#Transform	{ #rotation 1 0 0 -0.785398163397448
+						#	children Axis{}
+						#}
+						
+						DEF	PlaneRotationTheta Transform	{
+							children [
+								DEF PlaneRotationPhi Transform {
+									children[
+										DEF	PlaneTranslation Transform {}
+									]
+								}
+							]
+						}					
+						Transform {
+							rotation 0 1 0 0.305
+							children [
+								DEF	WidgetTransform Transform {
+									scale 20 20 20
+									translation -70 -57 130
+									#rotation 1 0 0 1.5708
+									children [
+										DEF	WavelengthWidgetSwitch Switch	{
+											whichChoice	0
+											choice Transform {
+                                                rotation 0 1 0 .5
+												children [
+													DEF WavelengthWidget WheelWidget	{
+														minValue 16
+														maxValue 32
+														value 20
+														maxRotations 3
+													}
+												]
+											}
+                                            choice Transform {
+                                                rotation 0 1 0 .5
+                                                children [
+                                                    DEF WavelengthWidget2 WheelWidget {
+                                                        minValue 16
+                                                        maxValue 32
+                                                        value 20
+                                                        maxRotations 3
+                                                    }
+                                                ]
+                                            }
+										}
+									]
+								}
+
+                           #Transform for the line and text
+                           DEF kVectorSwitch Switch {
+                                whichChoice 0 
+                                choice Group {
+                                    children [ 
+                                        Transform{
+                                             translation 120 0 0 
+                                             #rotation 0 1 0 -.5
+                                              rotation 0 1 0 -.45
+                                              children [
+                                                    Shape {
+			                                          appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor .8  .8 .8 } }
+			                                          geometry Text {
+				                                        string "k"
+				                                         fontStyle FontStyle {
+					                                       family "SANS"
+                                                             style "BOLD"
+					                                         size 60
+				                                          }
+			                                            }
+		                                             }
+                                     
+                                                ]
+                                             }
+                                        Transform { 
+                                            translation 120 0 0 
+                                         #  rotation 0 0 1 1.57
+                                            children [ 
+                                                DEF kVector Arrow {
+                                                    center 10 0 0
+                                                    rotation 0 1 0 -1.85
+                                                 }
+                                             ]
+                                         }
+                                      ]
+                                  }
+                            }
+
+#								DEF WidgetTransform2 Transform {
+#									scale 20 20 20
+#									translation 0 -57 130
+#									children [
+#										DEF phiWidget WheelWidget {
+#														minValue -90
+#														maxValue 90
+#														value 0
+#														maxRotations 3
+#										}
+#									]
+#								}
+#								DEF WidgetTransform3 Transform {
+#									scale 20 20 20
+#									translation 25 -57 130
+#									children [
+#										DEF thetaWidget WheelWidget {
+#														minValue -90
+#														maxValue 90
+#														value 0
+#														maxRotations 3
+#										}
+#									]
+#								}	
+                               ]
+						    }
+					]
+				}
+			]
+		}
+	]
+}
+
+
+
+
+#DEF NavPanel NavigationPanel {
+#	views [ -0.203 -0.305 0  0 0 -0.198 ]
+
+#	children [
+#		Transform {
+#			#scale 100 100 100
+#			children [
+#				AllBut {}
+
+#				Transform {
+#					scale .1 .1 .1
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .2 .2 .2
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .3 .3 .3
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .4 .4 .4
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .5 .5 .5
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .6 .6 .6
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .7 .7 .7
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .8 .8 .8
+#					children AllBut {}
+#				}
+
+#				Transform {
+#					scale .9 .9 .9
+#					children AllBut {}
+#				}
+#				Transform {
+#					scale 1.1 1.1 1.1
+#					children AllBut {}
+#				}
+
+#			#	PointLight {
+#			#		location .5 .5 .5
+#			#		color 0 1 0
+#			#		intensity 0.3
+#			#	}
+
+#			#	DirectionalLight {
+#			#		direction -1 -1 -1
+#			#		intensity 1
+#			#		color 1 0 0
+#			#	}
+#			]
+#		}
+#	]
+#}
+
+
+#Axis{}
+
+#Transform {
+#	rotation 0 0 1 1.5708
+#	children Axis{}
+#}
+
+#Transform {
+#	rotation 0 1 0 -1.5708
+#	children Axis{}
+#}
+
+#Group {
+#	children [ 
+#		DEF PhiSensor CylinderSensor { maxAngle 3.14159265 minAngle -3.14159265 offset -1.5707963 }
+#		DEF PhiTrans Transform {
+#			rotation 0 1 0 -1.5707963
+#			children [
+#				DEF Trans4 Transform {
+#					translation 200 15 15
+#					children [
+#						Shape {
+#							geometry Box {
+#								size 10 10 10
+#							}
+#							appearance Appearance {
+#								material Material {
+#									diffuseColor 1 0 0
+#								}
+#							}
+#						}
+#					]
+#				}
+#			]
+#		}
+#	]
+#}
+
+
+#Group {
+#	children [
+#		DEF Trans6 Transform {
+#			rotation 0 1 0 -1.5707963
+#			children [
+#			Transform {
+#				rotation 1 0 0 1.5707963
+#				children [
+#				#DEF ThetaSensor CylinderSensor { maxAngle -1.570796 minAngle 1.570796 }
+#				DEF ThetaSensor CylinderSensor { maxAngle 3.14159265 minAngle -3.14159265 offset -1.5707963 }
+#				DEF ThetaTrans Transform {
+#					children [
+#						DEF Trans5 Transform {
+#							translation 200 -15 -15
+#							children [
+#								Shape {
+#									geometry Box {
+#										size 10 10 10
+#									}
+#									appearance Appearance {
+#										material Material {
+#											diffuseColor 0 0 1
+#										}
+#									}
+#								}
+#							]
+#						}
+#					]
+#				}]}
+#			]
+#		}
+#	]
+#}
+
+#ROUTE PhiSensor.rotation_changed TO PhiTrans.set_rotation
+#ROUTE ThetaSensor.rotation_changed TO ThetaTrans.set_rotation

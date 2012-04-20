@@ -1,0 +1,12 @@
+<wsl>
+  <Wavefront shpereWavelength="400.0" planeWavelength="600.0" animation="stop" planeanimation="Stop" SphereHideWidgets="Hide" PlaneHideWidgets="Hide" mode="Spherical Wave">
+    <view value="-0.36 -0.753 0.0 0.0 0.0 14.548" />
+  </Wavefront>
+  <script>
+    <actionPerformed param="shpereWavelength" value="600.0" timeStamp="5000" />
+    <actionPerformed param="shpereWavelength" value="800.0" timeStamp="5000" />
+    <actionPerformed param="shpereWavelength" value="600.0" timeStamp="5000" />
+    <actionPerformed param="shpereWavelength" value="400.0" timeStamp="5000" />
+    <scriptEnded timeStamp="20" />
+  </script>
+</wsl>

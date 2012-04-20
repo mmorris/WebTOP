@@ -1,0 +1,267 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+self.name='module';
+document.write(stdMenu(0,'Waves',4,true));
+document.write(moduleList(1,true));
+self.Color=4;
+</script>
+<p>&nbsp;
+<center><table width="95%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain id=tablemain>
+
+<p><big><font color="#800000"><big><b>Waves: Exercises</b> </big></font></big><br>
+<p>
+<a href="#Wave_1">Exercise 1:
+    Interference of Two In-Phase Point Sources: <i>d</i> = 2 <FONT face="Symbol">l</FONT></a><br>
+    <a href="#Wave_2">Exercise 2: 
+    Interference of Two In-Phase Point Sources: <i>d</i> = 3 <FONT face="Symbol">l</FONT></a><br>
+    <a href="#Wave_3">Exercise 3: 
+    Interference of Two In-Phase Point Sources: <i>d</i> = 4 <FONT face="Symbol">l</FONT></a><br>
+    <a href="#Wave_4">Exercise 4: 
+    Interference of Two Point Sources Out of Phase by 180 Degrees: <i>d</i> = 
+    2 <FONT face="Symbol">l</FONT></a><br>
+    <a href="#Wave_5">Exercise 5: 
+    Interference of Three In-Phase Point Sources: <i>d</i> = 2 <FONT face="Symbol">l</FONT></a><br>
+    <a href="#Wave_6">Exercise 6: 
+    Direction of Propagation of a Linear Wave</a><br>
+    <a href="#Wave_7">Exercise 7:
+    Superposition of Two Linear Waves Traveling in Different Directions</a><br>
+    <a href="#Wave_8">Exercise 8: 
+    Beats</a><br>
+    <a href="#Wave_9">Exercise 9: 
+    One Point Source Plus One Linear Source </a> </p>
+<p>
+  <hr><p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_1"></a>Exercise 
+    1:</b>&nbsp; Interference of Two In-Phase Point Sources: <i>d</i> = 2<font face=symbol>l</font></font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Select the overhead point of view. Use the appropriate 
+    keyboard entry boxes in the Console to set the parameter values of Point Source 
+    1 to: Amplitude = 6, Wavelength = 8, Phase = 0, X = –50, Y = 8. From the Select 
+    Source menu, select Point Source 2. Use the appropriate keyboard entry boxes 
+    in the Console to set its parameter values to: Amplitude = 6. Wavelength = 
+    8, Phase = 0, X = –50, Y = –8. Click on the Hide Widgets button. </font><br>
+ <font face="Arial, Helvetica, sans-serif">(a) 
+    For observation points far from the source, the intensity of the disturbance 
+    is maximum at those angles, call them <font face=symbol>q</font><i><sub>m</sub></i>, that fulfill the relation</font></p>
+
+ <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">  <tr>    <td width="80%">
+ <p align="center"><font face="Arial, Helvetica, sans-serif"><i>d </i>sin <font face=symbol>q</font><i><sub>m </sub></i>&nbsp;= <i>m</i><font face=symbol>l</font>,</td>
+    <td width="20%"><p align="right">(1)</td>
+  </tr></table></center></div>
+
+  <p><font face="Arial, Helvetica, sans-serif">where 
+    <i>d</i> is the distance between the sources, <font face=Symbol>l</font> is the wavelength of the waves, and <i>m</i> (an integer) 
+    is called the <u>order</u> of the maximum. For the present simulation, find 
+    the order, <i>m</i>, and the angular position, <font face=symbol>q</font><i><sub>m </sub></i>, of each of the five maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    For observation points far from the source, the intensity of the disturbance 
+    is minimum at those angles, call them <font face=symbol>q</font><i><sub>m</sub></i>, that fulfill the relation</font></p>
+
+ <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%"><tr><td width="80%"><center>
+<font face="Arial, Helvetica, sans-serif"><i>d </i>sin <font face=symbol>q</font><i><sub>m </sub></i>&nbsp;= (<i>m </i>+ ½) <font face=symbol>l</font>, 
+</center></td><td width="20%"><p align="right">(2)</td>
+  </tr></table></center></div>
+
+  <p><font face="Arial, Helvetica, sans-serif">where 
+    <i>m</i> is an integer. For the present simulation, find the <i>m</i> value 
+    and angular position, <font face=symbol>q</font><i><sub></sub></i><i><sub>m </sub></i>, of each of the four minima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(c) Click on 
+    the animation button on the Console in order to choose 
+    the Animation mode. Click on the Play button to see the waves move outwards. 
+    Click on the Stop button before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_2"></a>Exercise 
+    2:</b>&nbsp; Interference of Two In-Phase Point Sources: <i>d</i> = 3<font face=symbol>l</font></font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Use 
+    the Y keyboard entry box to change the y-coordinate of Point Source 2 from 
+    –8 to –12 . From the Select Source menu, select Point Source 1. Use the Y 
+    keyboard entry box to change its value to from 8 to 12. Click on the Hide 
+    Widgets button. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    For the present simulation, find the order, <i>m</i>, and angular position, 
+    <font face=symbol>q</font><i><sub>m </sub></i>, of each of the seven maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    For the present simulation, find the <i>m</i> value and angular position, 
+    <font face=symbol>q</font><i><sub>m </sub></i>, of each of the six minima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90. Choose the animation mode and click on the Play
+  button to see the 
+    waves move outwards. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(c) 
+    Click on the Stop button before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_3"></a>Exercise 
+    3:</b>&nbsp; Interference of Two In-Phase Point Sources: <i>d</i> = 4<font face=symbol>l</font></font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Use 
+    the Y keyboard entry box to change the y-coordinate of Point Source 1 from 
+    12 to 16. From the Select Source menu, select Point Source 2. Use the Y keyboard 
+    entry box to change its y value to from –12 to –16. Click on the Hide Widgets 
+    button. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    For the present simulation, find the order, <i>m</i>, and angular position, 
+    <font face=symbol>q</font><i><sub>m </sub></i>, of each of the nine maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    For the present simulation, find the <i>m</i> value and angular position, 
+    <font face=symbol>q</font><i><sub>m </sub></i>, of each of the eight minima in the angular interval 
+    –90 <u>&lt;</u> <font face=Symbol>q <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(c) Choose the animation mode and click on the Play button to see the waves move outwards. Click on the Stop button 
+    before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_4"></a>Exercise 
+    4:</b>&nbsp; Interference of Two Point Sources Out of Phase by 180 Degrees: 
+    <i>d</i> = 2<font face=symbol>l</font></font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Use 
+    the appropriate keyboard entry boxes in the Console to set the parameter values 
+    of Point Source 1 to: Amplitude = 6, Wavelength = 8, Phase = 0, X = –50, Y 
+    = 8. From the Select Source menu, select Point Source 2. Use the appropriate 
+    keyboard entry boxes in the Console to set its parameter values to: Amplitude 
+    = 6. Wavelength = 8, Phase = 180, X = –50, Y = –8. Click on the Hide Widgets 
+    button. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    For observation points far from the source, the intensity of the disturbance 
+    is maximum at certain angles, call them <font face=symbol>q</font><sub><i>m</i></sub>.
+  If <i>d</i> is the distance between the sources, <font face=symbol>l</font> is the wavelength of the waves, and <i>m</i> (an integer) 
+    is called the <u>order</u> of the maximum, what equation can be used to
+  determine the position of the various maxima? (Is it equation 1 or 2?) For the present simulation, find 
+    the order and angular position, <font face=symbol>q</font><i><sub>m </sub></i>, of each of the four maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    For observation points far from the source, the intensity of the disturbance 
+    is minimum at those angles, call them <font face=symbol>q</font><sub><i>m</i></sub>.&nbsp;
+  For the present simulation, find the <i>m</i> value 
+    and angular position, <font face=symbol>q</font><i><sub>m </sub></i>, of each of the five minima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(c) Choose the animation mode and click on the Play
+  button to see the waves move outwards. Click on the Stop 
+    button before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_5"></a>Exercise 
+    5:</b>&nbsp; Interference of Three In-Phase Point Sources: <i>d</i> = 2<font face=symbol>l</font></font></p>
+  <p><font face="Arial, Helvetica, sans-serif">In 
+    this exercise use an overhead view, and use the appropriate keyboard entry 
+    boxes in the Console to set the parameter values of Point Source 1 to: Amplitude 
+    = 6, Wavelength = 8, Phase = 0, X = –50, Y = 16. From the Select Source menu, 
+    select Point Source 2. Use the appropriate keyboard entry boxes in the Console 
+    to set its parameter values to: Amplitude = 6. Wavelength = 8, Phase = 0, 
+    X = –50, Y = 0. From the Add Source menu, choose Point, click on the Add button, 
+    and use the appropriate keyboard entry boxes in the Console to set the new 
+    source’s parameter values to: Amplitude = 6. Wavelength = 8, Phase = 0, X 
+    = –50, Y = –16. Click on the Hide Widgets button.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    For observation points far from the source, the intensity of the disturbance 
+    has&nbsp; “major” maxima at those angles, call them <font face=symbol>q</font><i><sub>m</sub></i>, that fulfill the relation</font></p>
+
+ <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">  <tr>    <td width="80%">
+ <p align="center"><font face="Arial, Helvetica, sans-serif"><i>d </i>sin <font face=symbol>q</font><i><sub>m </sub></i>&nbsp;= <i>m</i><font face=symbol>l</font>,</td>
+    <td width="20%"><p align="right">(5)</td>
+  </tr></table></center></div>
+
+  <p><font face="Arial, Helvetica, sans-serif">where 
+    <i>d</i> is the distance between the sources, <font face=symbol>l</font> is the wavelength of the waves, and <i>m</i> (an integer) 
+    is called the <u>order</u> of the maximum. For the present simulation, find 
+    the order and angular position, <font face=symbol>q</font><i><sub>m </sub></i>, of each of the three major maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    For observation points far from the source, the intensity of the disturbance 
+    has “secondary” maxima at those angles, call them <font face=symbol>q</font><i><sub>m</sub></i>, that fulfill the relation</font></p>
+
+ <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%"><tr><td width="80%"><center>
+<font face="Arial, Helvetica, sans-serif"><i>d </i>sin <font face=symbol>q</font><i><sub>m </sub></i>&nbsp;= (<i>m </i>+ ½) <font face=symbol>l</font>, 
+</center></td><td width="20%"><p align="right">(6)</td>
+  </tr></table></center></div>
+
+  <p><font face="Arial, Helvetica, sans-serif">where 
+    <i>m</i> is an integer. For the present simulation, find the <i>m</i> value 
+    and angular position, <font face=symbol>q</font><i><sub>m</sub></i>, of each of the four minor maxima in the angular interval 
+    –90 <u>&lt;</u> <font face=symbol>q</font> <u>&lt; </u>90.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(c) Choose the animation mode and click on the Play
+  button to see the waves move outwards. 
+    Click on the Stop button before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_6"></a>Exercise 
+    6: </b>&nbsp;Direction of Propagation of a Linear Wave</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Click 
+    on the Remove button three times to remove the point sources of the last exercise. 
+    Use the Add Source menu to add a linear source whose parameter values are: 
+    Amplitude = 4, Wavelength = 15, Phase = 0, and Angle = 0 degrees. Rotate the 
+    “water” surface up a little, so that you no longer have an overhead view.
+  Choose the animation mode and click on the Play button to see the waves move. 
+    Change the value of the Angle variable to 45 degrees, then 90 degrees, then 
+    135 degrees, … , and then 315 degrees. In each case watch the wave long enough 
+    so that you understand the direction the wave is traveling, and what the wavelength 
+    of each wave is. Click on the Stop button before proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p>
+<font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_7"></a>Exercise 7:</b>&nbsp; Superposition of Two Linear Waves Traveling in Different Directions</font>
+  <p><font face="Arial, Helvetica, sans-serif">Click 
+    on the Remove button to remove the linear wave of the previous exercise. Add 
+    a linear wave of Amplitude 4, Wavelength 20, Phase 0, and Angle 45 degrees. 
+    Add a linear wave of Amplitude 4, Wavelength 20, Phase 0, and Angle 315 degrees. 
+    Rotate the surface so that you have an overhead view. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    In what direction will the resultant wave (the superposition of the two linear 
+    waves) travel? To verify this, choose the animation mode and click on the Play
+  button.</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    What is the wavelength of the resultant wave?&nbsp; Click on the Stop button before 
+    proceeding to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_8"></a>Exercise 
+    8:</b>&nbsp; Beats</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">Click 
+    on the Remove button twice to remove the sources of the last exercise.&nbsp; 
+    Add a linear wave whose amplitude is 3.0, wavelength is 6.0, initial phase 
+    is 0, and angle is 0. Add a second linear wave that is identical to the first 
+    one, except that its wavelength is 6.75. Choose the Animation mode, and click 
+    on Play. You should be able to identify traveling wave packets by looking 
+    at the edge of the water surface. Click on the Stop button before proceeding 
+    to the next exercise.</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+  
+  <p><font face="Arial, Helvetica, sans-serif" color=#800000><b><a name="Wave_9"></a>Exercise 
+    9</b>&nbsp; One Point Source Plus One Linear Source</font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(a) 
+    Click on the Remove button twice to remove the line sources of the last exercise.
+  Click on the second Viewpoint icon to get an overhead view. Add a linear source whose 
+    parameters are: Amplitude 1.5, Wavelength 10, Phase 0, and Angle 0. Add a 
+    point source whose parameters values are: Amplitude = 10, Wavelength = 10, 
+    Phase = 0, X = 0, Y = 0. Choose the animation mode and click on the Play button. </font></p>
+  <p><font face="Arial, Helvetica, sans-serif">(b) 
+    Click on the Stop button. The pull-down menu in the upper right hand corner 
+    of the module allows you to sample the disturbance at a higher or lower resolution 
+    than the default value, which is called Medium. Change the resolution to Very 
+    Smooth.&nbsp; Is this interference pattern what you expected? Why is the disturbance 
+    for observation positions on the negative x- axis different from that on the 
+    positive x-axis?</font><a href="javascript:history.go(-1)"><img src="../images/back.gif" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a> </p>
+  <hr>
+
+</td></tr></table></center>
+
+
+</body>
+
+</html>

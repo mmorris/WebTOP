@@ -1,0 +1,100 @@
+/**
+ * SamplePanel.java 
+ * This class creates the JPanel object that corresponds to the sample stick.  Event Handling methods
+ * for Sample Stick NumberBox events are also contained in this class.
+ * Updated by: Jeremy Davis July 3, 2008
+ */
+
+package org.webtop.module.waves;
+
+import javax.swing.*; 
+import java.awt.event.*; 
+
+import org.webtop.wsl.client.WSLPlayer; 
+
+import org.sdl.math.FPRound; 
+import org.sdl.gui.numberbox.*; 
+
+
+
+public class SamplePanel extends WidgetPanel implements NumberBox.Listener {
+
+	private final JLabel value; 
+	private final FloatBox x = makePositionBox(), y = makePositionBox(); 
+	private SamplingStick stick; 
+	
+	public SamplePanel(WSLPlayer player){
+		super(player); 
+		
+		
+		//Old module used default FlowLayout...yeah that's not going to work here [JD]
+		add( new JLabel("x:", JLabel.RIGHT)); 
+		add(x); 
+		x.addNumberListener(this); 
+		add(new JLabel("y:", JLabel.RIGHT)); 
+		add(y);
+		y.addNumberListener(this); 
+		add(new JLabel("value:", JLabel.RIGHT)); 
+		add(value=new JLabel("-0.000e-4")); 
+	}
+	
+	
+	public void show(SamplingStick s){
+		stick = s; 
+		if(s==null){
+			x.setEnabled(false); 
+			y.setEnabled(false); 
+			value.setText(null); 
+		}
+		else{
+			x.setEnabled(true); 
+			y.setEnabled(true); 
+			setXY(s.getX(), s.getY()); 
+			s.query(); 
+		}
+	}
+	
+	public void setX(float X){
+		x.silence(); 
+		x.setSigValue(X, SIG_DIGITS);
+	}
+	
+	public void setY(float Y){
+		y.silence(); 
+		y.setSigValue(Y, SIG_DIGITS); 
+	}
+	
+	public void setXY(float X, float Y){
+		setX(X); 
+		setY(Y); 
+	}
+	
+	public void setValue(float val){
+		value.setText(String.valueOf(FPRound.toSigVal(val, SIG_DIGITS)));
+	}
+	
+	//The following 3 methods implement NumberBox.Listener
+	public void numChanged(NumberBox source, Number newVal){
+		float f = newVal.floatValue(); 
+		String param; 
+		
+		if(source == x){
+			stick.setX(f, true); 
+			param = "x"; 
+		}
+		else if(source == y){
+			stick.setY(f, true); 
+			param = "y";
+		}
+		else{
+			System.err.println("SamplePanel::Unexpected numChanged from:: " + source);
+		}
+	}
+	//There should eventually be input error notification, but at the moment there's 
+	//no convenient mechanism for that.
+	public void invalidEntry(NumberBox source, Number badVal){
+	}
+	//bounds are never changed 
+	public void boundsForcedChange(NumberBox source, Number val){
+	}
+}

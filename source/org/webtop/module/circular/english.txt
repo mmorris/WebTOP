@@ -1,0 +1,21 @@
+diameter_dragger_hlp,Use these red cones to adjust the diameter of the aperture.
+screen_dragger_hlp,Use these red cones to adjust the distance of the observation screen from the slit.
+wavelength_wheel_hlp,Spin the wheel to change the wavelength of the light (clockwise for longer wavelength).
+diameter_dragger_err,The aperture must have a non-negative diameter of no more than a millimeter.
+screen_dragger_err,The screen distance must be between 20 and 200 mm.
+wavelength_wheel_err,The wavelength must be visible (400-700 nm).
+welcome_msg,Welcome to WebTOP - Fresnel Diffraction (Circular Aperture) Module.
+wavelength_label,Wavelength:
+nm_label,nm
+diameter_label,Diameter:
+mm_label,mm
+z_label,Z:
+fresnelNumber_label,Fresnel Number:
+obstacle_label, Obstacle 
+aperture_label, Aperture
+reset_label,Reset
+hide_label, Hide
+show_label, Show
+widgets_label, Widgets
+p,\u03C1
+intensity,; intensity

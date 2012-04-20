@@ -1,0 +1,60 @@
+/**
+ * PluckedSource.java
+ * This class is an extension of a SingleWaveSource.  It defines  the Plucked Source widget of the Pool. 
+ * Updated by: Jeremy Davis July 3, 2008
+ */
+
+package org.webtop.module.waves;
+
+import org.web3d.x3d.sai.*; 
+//import org.web3d.sai.*; 
+
+import org.webtop.component.*; 
+import org.webtop.util.WTMath;
+import org.webtop.wsl.client.*;
+import org.webtop.wsl.event.*; 
+
+import org.sdl.math.*;
+
+public class PluckedSource extends SingleWaveSource {
+
+	Complex wivt; 
+	
+	public PluckedSource(Engine e, WidgetsPanel widgetPanel, float A, float W, float x, float y){
+		super(e, widgetPanel, A, W, x, y); 
+		wivt = new Complex(); 
+		createX3DNode(); 
+		
+		System.out.println(getValue(0,0,0)); 
+	}
+	
+	public float getValue(float x, float y, float t) {
+		t-=T;
+		
+		double one = Math.pow(x-getX(), 2) + Math.pow(y-getY(), 2) + width*width - t*t;
+		
+		return (float) amplitude*width*width*(float)Math.sqrt(width*width+t*t)*(float)Math.pow(one*one+4*width*width*t*t,-.75f)*(float)Math.cos(Math.atan2(t,width)-(1.5f)*Math.atan2(2*width*t,one));
+	}
+	
+	protected void createX3DNode(){
+		String x3d = "RadialWidget2 { amplitude " + amplitude + "\n wavelength" + 8 + "\n phase" +
+		10 + "\n x " + X + "\n y " + Y + "} \n";
+		
+		create(x3d);  
+		
+		set_position = (SFVec3f) engine.getSAI().getInputField(getNode(), "set_position"); 
+		
+		engine.getSAI().getOutputField(getNode(), "position_changed", this, "position_changed"); 
+		engine.getSAI().getOutputField(getNode(), "mouseOverPosition", this, "mouseOverPosition");
+	}
+	
+	protected String getNodeName(){
+		return "<RadialWidget>"; 
+	}
+	
+	public String toString(){
+		return "PluckedSource(Amplitude = " + amplitude + ", Width " + width + " , X = " + X + 
+		" , Y = " + Y + ")";
+	}
+
+}

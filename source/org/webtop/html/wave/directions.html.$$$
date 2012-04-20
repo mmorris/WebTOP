@@ -1,0 +1,147 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<title>WebTOP Controls-Waves Simulation</title>
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+self.name='module';
+document.write(stdMenu(0,'Waves',1,true));
+document.write(moduleList(1,true));
+</script>
+
+<!div class=moduletext id=vrmltext>
+<p>&nbsp;
+<p>&nbsp;
+
+<center><table width="95%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+  <h1 align="center"><font color="#800000"><a name="top"></a>Waves Simulation Directions<br>
+  </font></h1>
+  <p>Under normal operation, your WebTOP window should look like the following:</p>
+  <p align="center"><img border="0" src="images/controls1.jpg" width="565" height="441"> </p>
+  <p>The WebTOP window has four parts. The top portion is the active WebTOP scene. 
+  The second portion is the VRML Navigation controls.
+  The third portion, the console, contains a message line that provides help on the operation of the Widgets and keyboard entry boxes.
+  The fourth portion is the recording panel that allows you to record and replay WebTOP sessions. You may scroll down to read on, or 
+  select the appropriate link from the following items:</p>
+  <div align="center">
+    <table border="0" cellpadding="0" cellspacing="0" width="80%">
+      <tr>
+        <td align="center" class=tablemain><a href="#Module">How to Change
+          Parameters</a></td>
+        <td align="center" class=tablemain><a href="../dashboard/manipulate.html">How to Manipulate the Scene</a></td>
+        <td align="center" class=tablemain><A href="../dashboard/record.html">How to Record Sessions</A></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <p><a name="Module"><font color="#800000"><strong><big>How To Change Parameters</big></strong></font></a></p>
+  <p>When you start the module, you should see a figure similar to this:</p>
+  <p align="center"><img border="0" src="images/controls2.jpg"></p>
+  <p>The parameters that you can change are the <font color="#0000FF">number of sources</font>,
+  the <font color="#0000FF">wavelength of the wave produced by each of the sources</font>,
+  the <font color="#0000FF">phase of the wave produced by each of the sources </font>and the position of
+  <font color="#0000FF">each of the sources</font>. These parameters can be changed
+  by manipulating
+  the provided <font color="#0000FF">widgets </font>and by using the WebTOP
+  console.&nbsp;The console also allows you to hide/show the widgets and the
+  Grid. You may view the animation is <FONT color="#0000FF">Static</FONT> mode
+  (the default) and use the forward '&gt;' and backward '&lt;' buttons to step forward or backward in time or <FONT
+  color="#0000FF">Animation</FONT> mode.</p>
+  <p><BIG><FONT color="#008040"><B>Module</B></FONT></BIG><strong>
+  </strong> <B><FONT color="#008040"><BIG>Widget</BIG></FONT></B><BIG><FONT
+  color="#008040"><B>s:<br>
+  </B></FONT></BIG> This module includes two types of
+  widgets, for point sources and for line sources:</p>
+  <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="75%">
+    <tr>
+      <td width="50%" align="center"><img border="0" src="images/index.18.jpg" width="268" height="244"></td>
+      <td width="50%" align="center"><img border="0" src="images/index.17.jpg" width="200" height="264"></td>
+    </tr>
+    <tr>
+      <td width="50%" align="center"><strong>Point Source Widgets</strong></td>
+      <td width="50%" align="center"><strong>Line Source Widgets</strong></td>
+    </tr>
+  </table>
+  </center></div>
+  <p>To change a parameter, you need to position your cursor over the proper
+  widget. Labels on the widget figures, shown above, identify each of the widgets. Once you have placed the cursor over the widget, the cursor changes shape.
+If you click on the left mouse button, a message explaining the operation
+of the widget appears at the help portion of the module console.</p>
+  <p><BIG><FONT color="#008040"><B>Selecting a Widget:</B></FONT></BIG><strong><br>
+  </strong>Position the cursor over a source to activate its widgets. If this
+  fails to work, use the WebTOP controls and select the source from the provided
+  pull down menu. You may also need to toggle the Show Widgets button.&nbsp; <FONT
+  color="#0000FF"><B>We advise that you manipulate the Widgets while the module
+  is in static mode.</B></FONT> You might need to use the forward '&gt;' and
+  backward '&lt;' buttons to access some of the widgets.</p>
+  <p><BIG><FONT color="#008040"><B>Changing the Wave Amplitude:</B></FONT></BIG><strong><br>
+  </strong>Once you select the widget, drag the cursor up to increase the
+  amplitude and down to decrease it. The operation of this widget is the same
+  for both types of sources.&nbsp;</p>
+  <p><FONT color="#008040"><B><BIG>Changing</BIG></B></FONT><B><FONT
+  color="#008040"><BIG> the Phase of the Wave:</BIG></FONT></B><strong><br>
+  </strong>For point sources, once&nbsp; you select the widget, drag the cursor
+  down to increase the phase and up to decrease it. Allowable phase values are
+  from 0 to 180 degrees.&nbsp;<br>
+  For line sources, once&nbsp; you select the widget, drag the cursor outward to
+  increase the phase and inward to decrease it.&nbsp;</p>
+  <p><FONT color="#008040"><B><BIG>Changing</BIG></B></FONT><BIG><FONT
+  color="#008040"><B> the Wavelength of the Source:</B></FONT></BIG><strong><br>
+  </strong>For the point source, once you select the widget, drag the cursor
+  outward to increase the wavelength and towards the center of the source to
+  decrease it.<br>
+  For line sources, drag the arrow outward (from the widget controls) to
+  increase the wavelength and inward to decrease it.</p>
+  <p><BIG><B><FONT color="#008040">Chang</FONT></B><FONT color="#008040"><B>ing the Position of the Source:</B></FONT></BIG><strong><br>
+  </strong>This widget is available only for point sources. Once you select the
+  widget, drag the cursor towards the position you want to move the source to.</p>
+  <p><BIG><B><FONT color="#008040">Changin</FONT></B><FONT color="#008040"><B>g the Angle of the Source:</B></FONT></BIG><strong><br>
+  </strong>This widget is available only for line sources. Once you select the
+  widget, rotate it left of right to get to the desired angle.</p>
+  <p><BIG><B><FONT color="#008040">Usin</FONT></B><FONT color="#008040"><B>g the
+  WebTOP Console:</BIG></B></FONT><strong><br>
+  </strong>You may use the WebTOP console to change source parameters and to
+  control the scene. You may change the parameters of a particular source by
+  selecting the source (Select Source pull down menu) and by typing the values in the &quot;Input
+  Boxes&quot;. You need to press the enter key after you change each of the
+  parameters. As shown in the following Figure, the parameters input boxes are
+  available at the bottom of the control panel just above the context sensitive
+  help. Note that the panel is context sensitive; the parameters shown are those
+  corresponding to the last source selected.</p>
+  <div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="50%">
+    <tr>
+      <td width="100%"><p align="center"><img border="0" src="images/index.7.gif" width="705" height="113"></td>
+    </tr>
+    <tr>
+      <td width="100%"><p align="center"><strong>Waves Module Console</strong></td>
+    </tr>
+  </table>
+  </center></div></center>
+<p align="left"><BIG><B><FONT color="#008040">Linea</FONT></B><FONT
+color="#008040"><B>r Layouts:</B></FONT></BIG><STRONG><br>
+</STRONG>When using Line Sources the module allows you to position the Line
+Source widgets in four possible layouts. These layouts were chosen to help you
+manipulate the widgets easier. You may select the layout by pressing the number
+corresponding to the layout. </p>
+
+<center><hr>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</td></tr></table>
+</body>
+</html>

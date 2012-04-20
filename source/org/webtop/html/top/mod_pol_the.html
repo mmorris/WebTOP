@@ -1,0 +1,72 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<TITLE>The Optics Project - Modules - Polarization - Theory</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<CENTER>
+<B><U><FONT SIZE=5>Theory of Polarization</P></B></U>
+</FONT>
+</CENTER>
+<FONT SIZE=4>
+<B><U>1. Description</B></U><BR><BR>
+</FONT>
+<FONT SIZE=4>
+<P>Consider a monochromatic plane wave of wavelength <IMG SRC="figs/lambda.jpg" ALIGN=TOP width="17" height="16">
+ traveling in the positive z-direction.  If the field is completely polarized, then it is 
+either linearly polarized, circularly polarized, or elliptically polarized.  In this module
+ the user can do two different type of activities.</P>
+</P>
+<P>First, the user can create any type of completely polarized light by selecting values 
+for (a) the amplitude of the x-component, call it E<SUB>ox</SUB>
+, of the initial electric field vector, (b) the amplitude of the 
+y-component, call it E<SUB>oy</SUB>, 
+of the initial electric field vector, (c) the phase difference between these two 
+components, and (d) the wavelength of the light. The user can then see a set of electric 
+field vectors at various points on the positive z-axis, and watch the wave travel across 
+the computer screen.</P>
+<P>Secondly, the user can insert a filter into the path of the propagating electric field, 
+which was just created.  Currently two types of filters are available: linear polarizers 
+and retarders (wave plates).</P>
+<B><U><P>2.  Calculations</P>
+</B></U>
+<OL TYPE="a">
+<LI>Completely Polarized Light</LI>
+<P>The electric field vector of any completely polarized monochromatic plane wave 
+traveling in the positive z-direction can be written as </P>
+<P><IMG SRC="figs/polarization/Image1.gif" WIDTH=428 HEIGHT=33 ALIGN=CENTER>.</P>
+<P>Here E<SUB>ox</SUB> is the amplitude of the 
+x-component, 
+E<SUB>oy</SUB> is the amplitude 
+of the y-component, <FONT FACE="Symbol">&#100;</FONT>
+is the phase difference between the two components, <IMG SRC="figs/polarization/Image4.gif" WIDTH=80 
+HEIGHT=28 ALIGN=CENTER> is the wave number, and <IMG SRC="figs/polarization/Image5.gif" WIDTH=117 HEIGHT=26 
+ALIGN=CENTER> is its angular frequency.</P>
+<LI>Filters</LI></OL>
+<P>In order to calculate the effect that a filter has on the electric field which is 
+incident upon it, we used the Jones vector/Jones matrix approach.  In this approach, the 
+electric field vector incident upon the filter is represented by a two component column 
+vector (its Jones vector).  The filter is represented by a 2 x 2 matrix (its Jones matrix).
+ The two component column vector which represents the electric field emerging from the 
+other side of the filter (its Jones vector) is obtained by  multiplying the Jones matrix 
+for the filter by the Jones vector of the incident field.</P>
+<P>For a polarizer filter the important parameter is the angle that the transmission axis of the polarizer makes with the positive x-axis (or positive y-axis).  For a wave plate the important parameters are the number of waves of optical path length difference it provides (between the x- and y-components of the field) and the direction that the fast axis of the wave plate makes with respect to the positive x-axis (or positive y-axis).</P>
+</FONT>
+<CENTER>
+<IMG SRC="figs/roygbiv.gif" WIDTH=450><BR><BR><BR>
+<FONT SIZE=2 FACE="helvetica, arial">
+<P>
+Created by Srihari Angaluri 
+and Kiril Vidimce<BR>
+Send comments to <A  HREF="mailto:webtop@webtop.org">comments@webtop.org</A>
+<BR>
+</P>
+</FONT>
+</CENTER>
+<!-- <!--#include virtual="/secure-ssi/counter.html"-->
+</BODY>
+</HTML>

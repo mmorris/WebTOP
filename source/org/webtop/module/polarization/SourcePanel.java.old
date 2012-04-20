@@ -1,0 +1,221 @@
+package webtop.polarization;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+
+import vrml.external.field.*;
+
+import webtop.component.*;
+import webtop.util.*;
+import webtop.wsl.client.*;
+import webtop.wsl.event.*;
+
+import sdl.gui.numberbox.*;
+import sdl.math.FPRound;
+
+public class SourcePanel extends Panel
+		implements FolderPanel.Listener, WSLPlayerListener, NumberBox.Listener {
+	private Polarization applet;
+	private Engine engine;
+	private WSLPlayer wslPlayer;
+
+	private FloatBox Wavelength;
+	private FloatBox Ex;
+	private FloatBox Ey;
+	private FloatBox Epsilon;
+	private StatusBar InitialIntensityValue;
+
+	private Panel polarized;
+	private Panel unpolarized;
+
+	private FolderPanel folder;
+	private boolean initialized = false;
+
+	private EventInSFFloat WavelengthEIn;
+	private EventInSFFloat XAMPEIn;
+	private EventInSFFloat YAMPEIn;
+	private EventInSFFloat PhaseEIn;
+
+	public SourcePanel(Polarization applet_) {
+		applet = applet_;
+
+		setLayout(new VerticalLayout());
+
+		polarized = new Panel(new FlowLayout(FlowLayout.CENTER,2,0));
+
+		polarized.add(new Label("Wavelength:", Label.RIGHT));
+
+		Wavelength = new FloatBox(400,700,550,4);
+		Wavelength.addNumberListener(this);
+		polarized.add(Wavelength);
+
+		polarized.add(new Label("nm"));
+		polarized.add(new Label("E0x:", Label.RIGHT));
+
+		Ex = new FloatBox(0,1,1,3);
+		Ex.addNumberListener(this);
+		polarized.add(Ex);
+
+		polarized.add(new Label(" E0y:", Label.RIGHT));
+
+		Ey = new FloatBox(0,1,1,3);
+		Ey.addNumberListener(this);
+		polarized.add(Ey);
+
+		polarized.add(new Label(" Phase Diff.:", Label.RIGHT));
+
+		Epsilon = new FloatBox(0,360,90,3);
+		Epsilon.addNumberListener(this);
+		polarized.add(Epsilon);
+
+		polarized.add(new Label("degrees"));
+
+		polarized.add(new Label("Initial Intensity:", Label.RIGHT));
+		InitialIntensityValue = new StatusBar();
+		Dimension d = new Dimension(50, 20);
+		InitialIntensityValue.setMinimumSize(d);
+		InitialIntensityValue.setPreferredSize(d);
+		polarized.add(InitialIntensityValue);
+
+		unpolarized = new Panel();
+		unpolarized.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+		unpolarized.add(new Label("Initial Intensity:", Label.RIGHT));
+		StatusBar sb = new StatusBar("1");
+		d = new Dimension(50, 20);
+		sb.setMinimumSize(d);
+		sb.setPreferredSize(d);
+		unpolarized.add(sb);
+		//unpolarized.add(new Label("No parameters for unpolarized light source."));
+
+		folder = new FolderPanel();
+		folder.addFolder("Polarized", polarized);
+		folder.addFolder("Unpolarized", unpolarized);
+		folder.showFolder("Polarized");
+		folder.setPreferredSize(new Dimension(applet.getSize().width-8, 60));
+		add(folder);
+		folder.addListener(this);
+
+		wslPlayer = applet.getWSLPlayer();
+		if(wslPlayer!=null)
+			wslPlayer.addListener(this);
+
+		initialized = true;
+	}
+
+	//The current source's panel is not (necessarily) removed when a reset occurs.	Needs to be fixed.	[Davis]
+	public void reset() {
+		Wavelength.setValue(Engine.DEF_WAVELENGTH);
+		Ex.setValue(Engine.DEF_XAMP);
+		Ey.setValue(Engine.DEF_YAMP);
+		Epsilon.setValue(90);
+		folder.showFolder("Polarized");
+	}
+
+	public void eaiSetup(webtop.vrml.EAI eai) {
+		WavelengthEIn = (EventInSFFloat) eai.getEI("WavelengthWidget","set_value");
+		XAMPEIn = (EventInSFFloat) eai.getEI("XAMPDragger","set_position");
+		YAMPEIn = (EventInSFFloat) eai.getEI("YAMPDragger","set_position");
+		PhaseEIn = (EventInSFFloat) eai.getEI("PhaseDragger","set_phaseDifference");
+	}
+
+	public void setEngine(Engine e) {
+		engine = e;
+	}
+
+	public void setEx(float x) {
+		Ex.setFixValue(x,3);
+	}
+
+	public void setEy(float y) {
+		Ey.setFixValue(y,3);
+	}
+
+	public void setWavelength(float w) {
+		Wavelength.setFixValue(w,3);
+	}
+
+	public void setEpsilon(float e) {
+		Epsilon.setFixValue(WTMath.toDegs(e),3);
+	}
+
+	public void setInitialIntensity(float intensity) {
+		InitialIntensityValue.setText(String.valueOf(FPRound.toFixVal(intensity,3)));
+	}
+
+	public void setPolarized(boolean polarized) {
+		if(polarized) folder.showFolder("Polarized");
+		else folder.showFolder("Unpolarized");
+	}
+
+	public void folderChanged(FolderPanel fp,int which) {
+		if(wslPlayer.isPlaying()) return;
+
+		switch(which) {
+		case 0:		//Polarized
+			engine.setPolarized(true);
+			if(wslPlayer!=null)
+				wslPlayer.recordActionPerformed("sourceType", "polarized");
+			break;
+		case 1:
+			engine.setPolarized(false);
+			engine.removeWavePlates();		//wave plates in unpolarized mode not supported
+			if(wslPlayer!=null)
+				wslPlayer.recordActionPerformed("sourceType", "unpolarized");
+			break;
+		}
+	}
+
+	public void numChanged(NumberBox src, Number newVal){
+		if(wslPlayer.isPlaying()) return;
+
+		if(applet.getEventManager().isWidgetActive()) return;
+
+		applet.resetStatus();
+
+		float f=newVal.floatValue();
+
+		if(src==Wavelength) {
+			engine.setWavelength(f);
+			WavelengthEIn.setValue(f);
+			wslPlayer.recordActionPerformed("wavelength",
+																			String.valueOf(f));
+		} else if(src==Ex) {
+			engine.setEx(f);
+			XAMPEIn.setValue(f);
+			wslPlayer.recordActionPerformed("amplitudex",
+																			String.valueOf(f));
+		} else if(src==Ey) {
+			engine.setEy(f);
+			YAMPEIn.setValue(f);
+			wslPlayer.recordActionPerformed("amplitudey",
+																			String.valueOf(f));
+		} else if(src==Epsilon) {
+			f=WTMath.toRads(f);
+			engine.setEpsilon(f);
+			PhaseEIn.setValue(f);
+			wslPlayer.recordActionPerformed("phaseDifference",
+																			String.valueOf(f));
+		}
+	}
+
+	public void invalidEntry(NumberBox src, Number badVal) {
+		if(src == Wavelength)
+			applet.setWarningText("Wavelength must be between 400 and 700 nm.");
+		else if(src == Ex)
+			applet.setWarningText("E0x must be between 0 and 1.");
+		else if(src == Ey)
+			applet.setWarningText("E0y must be between 0 and 1.");
+		else if(src == Epsilon)
+			applet.setWarningText("Phase Difference must be between 0 and 360 degrees.");
+	}
+
+	public void boundsForcedChange(NumberBox src, Number oldVal) {}
+
+	public void playerStateChanged(WSLPlayerEvent event) {
+		switch(event.getID()) {
+		case WSLPlayerEvent.PLAYER_STARTED: folder.setEnabled(false); break;
+		case WSLPlayerEvent.PLAYER_STOPPED: folder.setEnabled(true); break;
+		}
+	}
+}

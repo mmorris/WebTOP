@@ -1,0 +1,734 @@
+#X3D V3.0 utf8
+#Michelson.x3dv
+
+PROFILE Immersive
+
+
+EXTERNPROTO RotationWidget [
+    initializeOnly SFFloat angle
+    inputOnly SFFloat set_angle
+    outputOnly SFFloat angle_changed
+    outputOnly SFRotation rotation_changed
+    initializeOnly SFFloat minAngle
+    inputOnly SFFloat set_minAngle
+    initializeOnly SFFloat maxAngle
+    inputOnly SFFloat set_maxAngle
+    outputOnly SFBool isActive_out
+    outputOnly SFBool isOver_out
+    inputOnly SFBool set_isActive
+    inputOnly SFBool set_isOver
+    inputOutput SFBool enabled
+    initializeOnly MFNode normalGeometry
+    initializeOnly MFNode overGeometry
+    initializeOnly MFNode activeGeometry
+    outputOnly SFBool initialized
+] 
+"x3dlib/Widgets.x3dv#RotationWidget"
+EXTERNPROTO WheelWidget [
+    initializeOnly SFFloat value
+    inputOnly SFFloat set_value
+    outputOnly SFFloat value_changed
+    initializeOnly SFFloat minValue
+    inputOnly SFFloat set_minValue
+    initializeOnly SFFloat maxValue
+    inputOnly SFFloat set_maxValue
+    initializeOnly SFFloat maxRotations
+    inputOnly SFFloat set_maxRotations
+    outputOnly SFBool isActive_out
+    outputOnly SFBool isOver_out
+    inputOnly SFBool set_isActive
+    inputOutput SFBool enabled
+    inputOutput SFNode material
+    inputOutput SFNode activeMaterial
+    initializeOnly SFString debugName
+    outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+###############################################
+#########Begin Navigation Panel Imports########
+###############################################
+EXTERNPROTO NavLight[ 
+	inputOutput SFFloat ambientIntensity
+	inputOutput SFFloat intensity
+	inputOutput SFColor color
+	inputOutput SFVec3f attenuation
+	inputOutput SFBool headlight
+	inputOutput MFFloat avatarSize
+	inputOutput SFFloat navigationSpeed
+	inputOutput MFString navigationType
+	inputOutput SFFloat visibilityLimit 
+]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+###########################################################
+##################End Navigation Panel Imports#############
+###########################################################
+
+
+NavLight { navigationType "NONE" }
+NavigationInfo {
+	type "NONE"
+}
+############################################################################
+# Transform A-----+
+#                 +---Screen A (HighRes)
+#                 +---Screen B (LowRes)
+#                 +---Transform B---+
+#                 |                 *---Line A
+#                 +---Transform C-----+
+#                                     *---Backdrop
+# Transfrom D-----+
+#                 *---TranslateDragger A
+# +---Beam Splitter (ShinySurface Proto)
+# +---Compensation Plate (ShinySurface Proto)
+# +---Mirror A (Movable) (Mirror Proto)
+# *---Mirror B (Tiltable) (Mirror Proto)
+#
+############################################################################
+
+##################################
+# Transform A                    #
+###################################
+#NavPanel Setup NavLight { navigationType "NONE" }  
+
+DEF NavPanel NavigationPanel {
+	views [	
+        -0.131 7.395E-5 0.0 -1.788E-7 0.4 -7.137
+		#0 0 0 0 0 -10
+		-.2 0 0 0 0 -10 
+	]
+	#views[ 
+	#-.50 0 999999 0 -19.5 -180
+	# -.75 100 -150 0 -25 -230
+	# 0 0 0 0 0 -150
+	# ]
+	 
+	translation_speed 10
+	
+	children [
+	
+	
+		DEF  ObservationScreen Group {
+			children [
+				DEF	IFSQuads_TS TouchSensor {
+					enabled  FALSE  #get access to this in the java code and set back to TRUE...to fix thread null error maybe?
+				}
+				DEF IFSImageMover Transform {
+					rotation 1 0 0 -1.5707963267949
+					#rotation 0 1 0 -1.5707963267949
+					#rotation 0 0 1 -1.5707963267949
+					translation -15 0 0  #make first the top-left quadrant
+					scale .03 .03 .03
+					children [
+						DEF IFSSwitch Switch {
+							whichChoice	0
+							choice [
+								Group {
+									children [
+										DEF IFSQuad1 Shape {
+											appearance Appearance { 
+												material Material {
+													#emissiveColor 1 1 1
+												}
+											}
+											geometry DEF IFSImageHigh IndexedFaceSet{
+												color Color	{}
+												coord Coordinate {}
+												coordIndex []
+												colorPerVertex FALSE
+												solid FALSE
+											}
+										}
+										Transform {
+											rotation 1 0 0 3.14159265358979
+											children USE IFSQuad1
+										}
+									]
+								}#end Group1
+								Group {
+									children [
+										DEF IFSQuad2 Shape {
+											appearance Appearance { 
+												material Material {
+													#emissiveColor 1 1 1
+												}
+											}
+											geometry DEF IFSImageLow IndexedFaceSet{
+												color Color	{}
+												coord Coordinate {}
+												coordIndex []
+												colorPerVertex FALSE
+												solid FALSE
+											}
+										}
+										Transform {
+											rotation 1 0 0 3.14159265358979
+											children USE IFSQuad2
+										}
+									]
+								}#end Group2
+							]#end IFSSwitch children
+						}#end IFSSwitch
+					]#end IFSImage children
+				}#end IFSImageMover
+				
+				##################################
+				# Transform B                    #
+				##################################
+				Transform { # Transform B
+					#translation 0 -5.25 0
+					translation 0 15.75 0
+					scale 1 6 1
+					#scale .02 .02 .02
+					#rotation 1 0 0 3.14159265
+					children [
+						DEF LINE_SET_TRANSFORM Transform {
+							children [
+								##################################
+								# IndexedLineSet for Line        #
+								##################################
+								Shape { # Line A
+									geometry DEF ilsNode IndexedLineSet {
+										coord DEF ils_coordinateNode Coordinate { point [ 5 0 0 ] }
+										colorPerVertex FALSE
+										coordIndex [  ]
+									} # geometry
+									appearance Appearance {
+										material Material {
+											emissiveColor 1 1 1
+											diffuseColor  1 1 1
+											specularColor 1 1 1
+										} # material
+									} # appearance
+								} # end Shape(Line A)
+								##################################
+							]
+						} # end of LINE_SET_TRANSFORM
+					]
+				} # end Transform (Transform B)
+				
+				##################################
+				# Transform C                    #
+				##################################
+				Transform { # Transform C
+					translation 0 0 -0.78
+					#rotation 0 0 1 3.14159256535
+					children [
+						
+						##################################
+						# Backdrop                       #
+						##################################
+						Shape { # Backdrop
+							geometry Box {
+								size 29.25 29.25 0.75
+							} # end geometry
+							appearance Appearance {
+								material Material {
+									diffuseColor  0.4 0.4 0.4
+									specularColor 0.4 0.4 0.4
+									#ambientColor  0.4 0.4 0.4
+								} # material
+							} # appearance
+						} # end Shape(Backdrop)
+						##################################
+					]
+				} # end of Transform C
+				
+				#Axis and associated labels
+				Transform { # Transform Z
+					translation 0 0 0.05
+					children [
+						
+						##################################
+						# Axis for Screen                #
+						##################################
+						DEF AxisToggle Switch {
+							choice [
+								Group {
+									children [
+										Shape { # Axis
+											geometry IndexedLineSet {
+												coord Coordinate { 
+													point [ 
+													-15 0 0, 15 0 0, 0 15 0, 0 -15 0,
+													-15 0.75 0, -15 -0.75 0, 15 0.75 0, 15 -0.75 0
+													-12 0.75 0, -12 -0.75 0, 12 0.75 0, 12 -0.75 0
+													-9 0.75 0, -9 -0.75 0, 9 0.75 0, 9 -0.75 0
+													-6 0.75 0, -6 -0.75 0, 6 0.75 0, 6 -0.75 0
+													-3 0.75 0, -3 -0.75 0, 3 0.75 0, 3 -0.75 0
+												] }
+												colorPerVertex FALSE
+												coordIndex [ 
+												0 1 -1  # Horizontal Axis
+													2 3 -1             # Vertical Axis
+													4 5 -1 6 7 -1      # tick 15
+													8 9 -1 10 11 -1    # tick 12
+													12 13 -1 14 15 -1  # tick 9
+													16 17 -1 18 19 -1  # tick 6
+													20 21 -1 22 23 -1  # tick 3
+												]
+											} # geometry
+											appearance Appearance {
+												material Material {
+													emissiveColor 1 1 1
+													diffuseColor  1 1 1
+													specularColor 1 1 1
+												} # material
+											} # appearance
+										} # end Shape(Line A)
+
+
+
+										Transform {
+											translation 15 0 0
+											scale 2 2 2
+											children [
+												Shape {
+													# appearance Appearance { material Material { diffuseColor 1 1 0 } }
+													appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+													geometry Text {
+														string "-15cm"
+														fontStyle FontStyle {
+															family "SANS"
+															size 1
+														}
+													}
+												}
+											]
+										}
+
+										Transform {
+											translation -19.5 0 0
+											#scale 2 2 2
+											children [
+												Shape {
+													# appearance Appearance { material Material { diffuseColor 1 1 0 } }
+													appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+													geometry Text {
+														string "15cm"
+														fontStyle FontStyle {
+															family "SANS"
+															size 2
+														}
+													}
+												}
+											]
+										}
+
+
+
+
+									]
+								} # Transform
+							]
+							whichChoice 0
+						}
+						
+						##################################
+					]
+				} # end of Transform Z
+
+			]#end ObservationScreen children
+		}#end ObservationScreen
+		
+		
+		
+		##################################
+		# Floor                          #
+		##################################
+		Transform {
+			translation -2.5 -1.75 56.75
+			scale 2 2 2
+			children [
+				Shape {
+					geometry Box {
+						size 7.5 0.125 7.25
+					}
+					appearance Appearance {
+						material Material {
+							emissiveColor  0.1 0.4 0.4
+						} # material
+					} # appearance
+				}
+			]
+		}
+		
+		#		##################################
+		#		# Beam Splitter                  #
+		#		##################################
+		#		Shiny_Surface {
+		#			ss_position 0 -1.75 5
+		#		}
+		#		##################################
+		#
+		#		##################################
+		#		# Compensation Plate             #
+		#		##################################
+		#		Shiny_Surface {
+		#			ss_position -2.5 -1.75 5
+		#		}
+		#		##################################
+		#
+		#		##################################
+		#		# Movable Mirror                 #
+		#		##################################
+		#		Mirror {
+		#			m_position 0 -1.75 10
+		#			m_rotation 0 1 0 -3.1415926
+		#		}
+		#
+		#		##################################
+		#		# Tiltable Mirror                #
+		#		##################################
+		#		Mirror {
+		#			m_position -5 -1.75 5
+		#			m_rotation 0 1 0 1.5707963
+		#		}
+		#		################################
+		
+		Transform{
+			children [
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0 0 0
+							specularColor .902 .902 .902
+							emissiveColor 0 0 0
+							ambientIntensity 0
+							shininess .031
+							transparency .9
+						}
+					}
+					geometry Rectangle2D {
+						size 2 2
+					}
+				}
+			]
+		}
+		
+		
+		###############################
+		# Mirrors					  #
+		###############################
+		
+		Transform{
+			translation 0 0 62.85
+			children [	
+				Shape{
+					appearance Appearance {
+						material Material {
+							diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Box{
+						size 3 3 .5
+						solid FALSE
+					}
+				}
+			]
+		}
+		
+		Transform{
+			translation 0 0 62.55
+			rotation 1 0 0 1.5707963
+			children [
+				Shape{
+					appearance Appearance {
+						material Material {
+							diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Cylinder{
+						height 0.5
+						radius 1.5
+					}
+				}
+			]
+		}
+		
+		Transform{
+			rotation 0 1 0 1.5707963
+			translation -9 0 54.85
+			children [	
+				Shape{
+					appearance Appearance {
+						material Material {
+							diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Box{
+						size 3 3 .5
+						solid FALSE
+					}
+				}
+			]
+		}
+		
+		Transform{
+			translation -8.7 0 54.85
+			rotation 0 0 1 1.5707963
+			#rotation 0 1 0 -1.5707963
+			children [
+				Shape{
+					appearance Appearance {
+						material Material {
+							diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Cylinder{
+						height 0.5
+						radius 1.5
+					}
+				}
+			]
+		}
+		
+		
+		################################
+		# Beam Splitters               #
+		################################
+		Transform{
+			translation 0 0 54.85
+			rotation 0 1 0 0.78539815
+			children [	
+				Shape{
+					appearance Appearance {
+						material Material {
+							transparency 0.6
+							#diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Box{
+						size 3 3 .25
+						solid FALSE
+					}
+				}
+			]
+		}
+		
+		Transform{
+			translation -4 0 54.85
+			rotation 0 1 0 0.78539815
+			children [	
+				Shape{
+					appearance Appearance {
+						material Material {
+							transparency 0.6
+							#diffuseColor  0.5 0.5 0.5
+						} # material
+					} # appearance
+					geometry Box{
+						size 3 3 .25
+						solid FALSE
+					}
+				}
+			]
+		}
+		
+		
+		################################
+		# Wheel (Widgets Switch)       #
+		################################
+		DEF WidgetsToggle Switch {
+			choice [
+				Group {
+					children [
+						Transform {
+							translation 10 -1.75 55
+							#rotation 1 0 0 1.5707963
+							scale 2 2 2
+							children
+							DEF WavelengthWheel WheelWidget {
+								value 550
+								maxValue 700
+								minValue 400
+							}
+						}
+						
+						Transform {
+							translation 0 0 63.15
+							#This wheel decreases with clockwise spins.
+							#rotation 1 0 0 -1.5707963267948966
+							scale 2 2 2
+							children DEF PathDiffWheel WheelWidget {
+								value 0.005
+								minValue -0.02
+								maxValue 0.02
+								maxRotations 40
+							}
+						}
+						Transform {
+							translation -7 -1.375 55
+							#rotation -1 1 1 2.1 
+							rotation 0 1 0 -1.5707963
+							scale 2 2 2
+							children [
+								DEF PhiTrackWidget RotationWidget {
+									minAngle 0.5235987756
+									maxAngle 2.617993878
+									angle 1.570796326
+									normalGeometry Transform {
+										translation 2 0 0
+										children Shape {
+											appearance Appearance {
+												material Material {
+													diffuseColor 0 0 0
+													specularColor .682 .431 .455
+													emissiveColor .424 .173 .18
+													ambientIntensity 0
+													shininess .055
+												}
+											}
+											geometry Sphere { radius .2 }
+										}
+									}
+									activeGeometry Transform {
+										translation 2 0 0
+										children Shape {
+											appearance Appearance {
+												material Material {
+													diffuseColor 0 0 0
+													specularColor .902 .902 .902
+													emissiveColor 1 0 0
+													ambientIntensity 0
+													shininess .031
+												}
+											}
+											geometry Sphere {
+												radius .2
+											}
+										}
+									}
+								}
+								#					Shape {
+								#						appearance Appearance {
+								#							material Material {
+								#								diffuseColor .02 .5 .12
+								#								specularColor .76 .76 .76
+								#								emissiveColor 0 .16 0
+								#								ambientIntensity 0
+								#								shininess .15
+								#								transparency .31
+								#							}
+								#						}
+								#						geometry DEF PhiBallTrack Extrusion {
+								#							scale .07 .07
+								#						}
+								#					}
+							]
+						}
+					]
+				}
+			]
+			whichChoice 0
+		} # widget 3 switch
+		################################
+		
+		
+		Transform {
+			translation 5.5 -1.5 55
+			#           rotation 0 1 0  1.5707963
+			
+			#scale  .0075 .0125 .0125
+			scale  .020 .0250 .0250
+			children [
+				Inline {
+					url "x3dlib/Wave.x3dv"
+					# bboxSize 3 3.00009 14
+					# bboxCenter 0 2.5034e-05 -4
+				}
+			]
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+	]  #end NavPanel children
+} # end NavPanel
+	
+	
+#	PROTO HalfTorus [         
+#		initializeOnly SFVec3f    torusTranslation  0 0 0    
+#		initializeOnly SFRotation torusRotation     0.577 0.577 -0.577 2.09
+#		initializeOnly SFVec3f    torusScale        1.0 1.0 1.0
+#		initializeOnly SFNode     torusMaterial     Material {
+#			diffuseColor .02 .5 .12
+#			specularColor .76 .76 .76
+#			emissiveColor 0 .16 0
+#			ambientIntensity 0
+#			shininess .15
+#			transparency .31
+#		}
+#	]
+#	{
+#	 Transform {
+#			translation 0 -2 0
+#			children [
+#				Shape {
+#				  geometry Text {
+#					solid FALSE
+#					string [ "Hello" "world!" ]
+#					fontStyle FontStyle {
+#					  justify [ "MIDDLE" "MIDDLE"  ] 
+#					}
+#				  }
+#				  appearance Appearance {
+#					material Material {
+#					  diffuseColor 0.1 0.5 1
+#					}
+#				  }
+#				}
+#			]
+#		  }
+#}

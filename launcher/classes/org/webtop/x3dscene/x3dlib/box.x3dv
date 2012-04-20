@@ -1,0 +1,15 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+Transform {
+    scale 1000 1000 1000
+    translation 0 0 -100
+    children [
+        Inline {
+            url "BoundingBox.x3dv"
+            bboxSize 1000 1000 1000
+            bboxCenter 0 0 -600
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+package webtop.michelson;
+
+import java.applet.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
+import vrml.external.field.*;
+
+import webtop.wsl.client.*;
+import webtop.wsl.script.WSLNode;
+import webtop.wsl.event.*;
+
+import webtop.component.RecursiveListener;
+import webtop.util.*;
+import webtop.vrml.*;
+import webtop.vrml.widget.NavigationPanel;
+import webtop.util.script.NavigationPanelScripter;
+
+public class Michelson extends Applet implements WSLModule,EAI.InvalidEventListener {
+	private EAI world;
+	private Engine engine;
+
+	//Remove once WAppletized:
+	private NavigationPanelScripter nps;
+
+	public void init() {
+		super.init();
+		setBackground(Color.darkGray);
+	}
+
+	public void start() {
+		world=new EAI(this,this);
+
+		engine=new Engine(this);
+		add(engine);
+
+		NavigationPanel navPanel=new NavigationPanel(world,world.getNode("NavPanel"),(short)0,"Changes viewpoints.");
+		new RecursiveListener(this,new ViewpointReader(navPanel,KeyEvent.VK_F12,KeyEvent.SHIFT_MASK)).setup();
+		new RecursiveListener(this,new ViewpointReset(navPanel,KeyEvent.VK_F12,0)).setup();
+		nps=new NavigationPanelScripter(navPanel,engine.getWSLPlayer());
+
+		if(!engine.getWSLPlayer().loadParameter(this)) engine.evaluate();
+		EAI.disableDraw(world.getEI("IntroductionToggle","set_whichChoice"));
+	}
+
+	public void invalidEvent(String node,String event) {
+		//Disable the module if there are VRML problems
+		setEnabled(false);
+	}
+
+	public EAI getEAI() {return world;}
+
+	public String getWSLModuleName() {return "michelson";}
+
+	public WSLNode toWSLNode() {
+		final WSLNode node=engine.toWSLNode();
+		nps.addTo(node);
+		return node;
+	}
+}

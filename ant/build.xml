@@ -1,0 +1,719 @@
+<!-- build.xml -->
+<!-- Description: Ant build script for xj3d WebTOP -->
+<!-- Author: Brian Thomas -->
+
+
+<!-- todo:make basedir absolute so compiles can be made from any directory -->
+<project name="webtop" default="all" basedir="..">
+  <!-- Import to build installers -->
+  <import file="installers.xml"/>
+
+  <!-- Import to upload webstart -->
+  <import file="webstartftp.xml"/>
+
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  
+  <!-- Allows us to use the IzPack Ant task -->
+  <taskdef name="IzPack" classpath="${basedir}/lib/standalone-compiler.jar"
+         classname="com.izforge.izpack.ant.IzPackTask"/>
+		 
+  <delete dir="${basedir}/temp"/>
+  <delete dir="${basedir}/classes"/>
+		
+  <target name="init" description="Initialize the required settings">
+	
+		<tstamp/>	
+    <echo message="Java Version: ${ant.java.version}" />	
+    <property environment="env"/>
+    <echo message="Architecture Identified: ${os.arch}" />
+
+		<mkdir dir="${basedir}/classes"/>
+		<copy todir="${basedir}/classes/org/webtop/x3dscene/">
+			<fileset dir="${basedir}/source/org/webtop/x3dscene"/>
+		</copy>
+		<copy todir="${basedir}/classes/org/webtop/wsl/client/images">
+		  <fileset dir="${basedir}/source/org/webtop/wsl/client/images"/>
+		</copy>
+
+                <property name="runarg0" value="-Xmx768m"/>
+ 	        <property name="runarg1" value="-Dsun.java2d.noddraw=true"/>
+		
+		<condition property="runarg2" value="-Djava.library.path=${basedir}/libnative/amd64"
+			 else="-Djava.library.path=${basedir}/libnative">
+		  <os arch="amd64"/>	
+  		</condition>
+		<echo message="java.library.path: ${runarg2}"/>
+
+		<property name="runnice" value="-nice"/>
+    <property name="ant.build.javac.target" value="1.5"/>
+		<property name="jardir" value="${basedir}/jars"/>
+		<property name="libdir" value="${basedir}/lib"/>
+		<property name="xj3d.version" value="2.0.0"/>
+		<property name="j3d.version" value="0.9.0"/>
+		<property name="gnu-regexp.version" value="1.0.8"/>
+		<property name="gt2.version" value="2.2"/>
+
+		<path id="build.classpath">
+			<fileset dir="${jardir}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${libdir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
+		<!--MAKE THIS SANE!!!!/-->
+		<pathconvert property="libs.project" pathsep=" ">
+      <mapper>
+        <chainedmapper>
+
+          <!-- remove absolute path -->
+          <flattenmapper />
+
+          <!-- add lib/ prefix -->
+          <globmapper from="*" to="lib/*" />
+        </chainedmapper>
+     </mapper>
+
+      <path>
+
+        <fileset dir="${libdir}">
+          <include name="*.jar" />
+        </fileset>
+      </path>
+    </pathconvert>
+    
+    <pathconvert property="jars.project" pathsep=" ">
+      <mapper>
+        <chainedmapper>
+
+          <!-- remove absolute path -->
+          <flattenmapper />
+
+          <!-- add lib/ prefix -->
+          <globmapper from="*" to="jars/*" />
+        </chainedmapper>
+     </mapper>
+
+      <path>
+
+        <fileset dir="${jardir}">
+          <include name="*.jar" />
+        </fileset>
+      </path>
+    </pathconvert>
+		
+	</target>
+
+	<!-- Build/jar targets for the core WebTOP trees -->
+	<target name="wtcore" depends="init" description="Build the org.webtop.component, util, and x3d trees.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/component/"/>
+			<include name="org/webtop/util/"/>
+			<include name="org/webtop/x3d/" />
+			<include name="org/webtop/wsl/" />
+    </javac>
+	</target>
+	
+	<target name="jar_wtcore" depends="wtcore" description="Build and jar the org.webtop.component, util, and x3d trees.">
+	   <jar destfile="${basedir}/jars/webtop_component.jar" basedir="${basedir}/classes">
+	       <include name="org/webtop/component/"/>
+	   </jar>
+	   <jar destfile="${basedir}/jars/webtop_util.jar" basedir="${basedir}/classes">
+	       <include name="org/webtop/util/"/>
+	   </jar>
+	   <jar destfile="${basedir}/jars/webtop_x3d.jar" basedir="${basedir}/classes">
+	       <include name="org/webtop/x3d/"/>
+	   </jar>
+	   <jar destfile="${basedir}/jars/webtop_x3dlib.jar" basedir="${basedir}/classes">
+	       <include name="org/webtop/x3dscene/"/>
+	   </jar>
+	   <jar destfile="${basedir}/jars/webtop_wsl.jar" basedir="${basedir}/classes">
+	       <include name="org/webtop/wsl/" />
+	   </jar>
+		 <jar destfile="${basedir}/jars/webtop_html.jar" basedir="${basedir}/source">
+				 <include name="org/webtop/html/" />
+		 </jar>
+	</target>
+	
+	<!-- Build/jar targets for the org.sdl tree  -->
+	<target name="sdl" depends="init" description="Build the org.sdl tree.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/sdl/**"/>
+		</javac>
+	</target>	
+	
+	<target name="jar_sdl" depends="sdl" description="Build and jar the org.sdl tree.">
+	   <jar destfile="${basedir}/jars/sdl.jar" basedir="${basedir}/classes">
+	       <include name="org/sdl/"/>
+	   </jar>
+	</target>
+	
+	<target name="circular" depends="init" description="Build the circular module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/circular/*"/>
+		</javac>
+	</target>
+
+	<target name="fabryperot" depends="init" description="Build the fabryperot module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/fabryperot/*"/>
+		</javac>
+	</target>
+
+	<target name="geometrical" depends="init" description="Build the geometrical module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/geometrical/*"/>
+		</javac>
+	</target>
+
+	<target name="grating" depends="init" description="Build the grating module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/grating/*"/>
+		</javac>
+	</target>
+	
+	<target name="laser" depends="init" description="Build the laser module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/laser/*"/>
+		</javac>
+	</target>
+
+	<target name="michelson" depends="init" description="Build the michelson module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/michelson/*"/>
+		</javac>
+	</target>
+
+	<target name="nslit" depends="init" description="Build the nslit module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/nslit/*"/>
+		</javac>
+	</target>
+
+	<target name="photoelectric" depends="init" description="Build the Photoelectric module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/photoelectric/*"/>
+		</javac>
+	</target>
+
+	<target name="polarization" depends="init" description="Build the polarization module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/polarization/*"/>
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+	</target>
+
+	<target name="rayleigh" depends="init" description="Build the rayleigh module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/rayleigh/*"/>
+		</javac>
+	</target>
+
+	<target name="singleslit" depends="init" description="Build the single slit module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/singleslit/*"/>
+		</javac>
+	</target>
+
+	<target name="test" depends="init" description="Build the test module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/test/*"/>
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+		<copy todir="${basedir}/classes/org/webtop/module/test/">
+			<fileset dir="${basedir}/source/org/webtop/module/test/resources/">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="rectangularslit" depends="init" description="Build the rectangularslit module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/rectangularslit/*"/>
+		</javac>
+	</target>
+	
+	<target name="testloader" depends="init" description="Build the testloader module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/testloader/*"/>
+		</javac>
+		<copy todir="${basedir}/classes/org/webtop/module/testloader/">
+			<fileset dir="${basedir}/source/org/webtop/module/testloader/resources/">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="testmodule" depends="init" description="Build the test module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/testmodule/*"/>
+		</javac>
+	</target>
+	
+	<target name="twomedia" depends="init" description="Build the twomedia module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/twomedia/*"/>
+		</javac>
+	</target>
+	
+	<target name="twoslitphoton" depends="init" description="Build the twoslitphoton module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/twoslitphoton/*"/>
+		</javac>
+	</target>
+
+	<target name="threemedia" depends="init" description="Build the threemedia module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/threemedia/*"/>
+		</javac>
+	</target>
+
+	<target name="wavefront" depends="init" description="Build the WaveFront module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/wavefront/*"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="waves" depends="init" description="Build the Waves module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/waves/*"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+
+	<target name="wavestest" depends="init" description="Build the Waves Testing module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/wavestest/*"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
+	</target>
+	
+
+	<target name="saidemo" depends="init" description="Build a sample program.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="*.java"/>
+		</javac>
+	</target>
+	
+	<target name="egridtest" depends="init" description="Build elevation grid test program.">
+		<javac srcdir="${basedir}/source/org/webtop/" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="EGridTest.java"/>
+		</javac>
+	</target>
+			
+	<target name="egridtest4" depends="init" description="Build animated elevation grid test program.">
+		<javac srcdir="${basedir}/source/org/webtop/" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="EGridTest4.java"/>
+		</javac>
+		<copy todir="${basedir}/classes/org/webtop/">
+			<fileset dir="${basedir}/source/org/webtop/resources/">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="donothing" depends="init" description="Build the donothing.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/donothing/*"/>
+		</javac>
+	</target>
+	
+	<!-- Build the training module --> 
+	<target name="training" depends="init" description="Build the training module.">
+		<javac srcdir="${basedir}/source" destdir="${basedir}/classes" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="org/webtop/module/training/*"/>
+		</javac>
+	</target>
+	
+	<target name="run_training" depends="training" description="Compile and run training module.">
+		<java classname="org.webtop.module.training.SaiTutorial" fork="true" dir="${basedir}/classes/org/webtop/module/training/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+ 
+	
+	<target name="run_donothing" depends="donothing" description="Compile and run donothing module.">
+		<java classname="org.webtop.module.donothing.Donothing" fork="true" dir="${basedir}/classes/org/webtop/module/donothing/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_circular" depends="circular" description="Compile and run circular module.">
+		<java classname="org.webtop.module.circular.Circular" fork="true" dir="${basedir}/classes/org/webtop/module/circular/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_fabryperot" depends="fabryperot" description="Compile and run fabryperot module.">
+		<java classname="org.webtop.module.fabryperot.FabryPerot" fork="true" dir="${basedir}/classes/org/webtop/module/fabryperot/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_geometrical" depends="geometrical" description="Compile and run geometrical module.">
+		<java classname="org.webtop.module.geometrical.Geometrical" fork="true" dir="${basedir}/classes/org/webtop/module/geometrical/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_grating" depends="grating" description="Compile and run grating module.">
+		<java classname="org.webtop.module.grating.Grating" fork="true" dir="${basedir}/classes/org/webtop/module/grating/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run_laser" depends="laser" description="Compile and run laser module.">
+		<java classname="org.webtop.module.laser.Laser" fork="true" dir="${basedir}/classes/org/webtop/module/laser/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_michelson" depends="michelson" description="Compile and run michelson module.">
+		<java classname="org.webtop.module.michelson.Michelson" fork="true" dir="${basedir}/classes/org/webtop/module/michelson/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_nslit" depends="nslit" description="Compile and run nslit module.">
+		<java classname="org.webtop.module.nslit.NSlit" fork="true" dir="${basedir}/classes/org/webtop/module/nslit/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_photoelectric" depends="photoelectric" description="Compile and run Photoelectric module.">
+		<java classname="org.webtop.module.photoelectric.Photoelectric" fork="true" dir="${basedir}/classes/org/webtop/module/photoelectric/">
+			<jvmarg value="${runarg0}"/>
+			<jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_singleslit" depends="singleslit" description="Compile and run single slit module.">
+		<java classname="org.webtop.module.singleslit.SingleSlit" fork="true" dir="${basedir}/classes/org/webtop/module/singleslit/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_test" depends="test" description="Compile and run test module.">
+		<java classname="org.webtop.module.test.SimpleSAIDemo" fork="true" dir="${basedir}/classes/org/webtop/module/test/">
+		      <jvmarg value="${runarg0}"/>
+		      <jvmarg value="${runarg1}"/>
+		      <jvmarg value="${runarg2}"/>
+		
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_polarization" depends="polarization" description="Compile and run polarization module.">
+		<java classname="org.webtop.module.polarization.Polarization" fork="true" dir="${basedir}/classes/org/webtop/module/polarization/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_rayleigh" depends="rayleigh" description="Compile and run the rayleigh module.">
+		<java classname="org.webtop.module.rayleigh.Rayleigh" fork="true" 
+		dir="${basedir}/classes/org/webtop/module/rayleigh/">
+		      <jvmarg value="${runarg0}"/>
+		      <jvmarg value="${runarg1}"/>
+		      <jvmarg value="${runarg2}"/>
+		
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_rectangularslit" depends="rectangularslit" description="Compile and run rectangularslit module.">
+		<java classname="org.webtop.module.rectangularslit.RectangularSlit" fork="true" dir="${basedir}/classes/org/webtop/module/rectangularslit/">
+		      <jvmarg value="${runarg0}"/>
+		      <jvmarg value="${runarg1}"/>
+		      <jvmarg value="${runarg2}"/>
+		
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run_testloader" depends="testloader" description="Compile and run Test Loader dummy module.">
+		<java classname="org.webtop.module.testloader.TestLoader" fork="true" dir="${basedir}/classes/org/webtop/module/testloader/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_testmodule" depends="testmodule" description="Compile and run test module.">
+		<java classname="org.webtop.module.testmodule.TestModule" fork="true" dir="${basedir}/classes/org/webtop/module/testmodule/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_twomedia" depends="twomedia" description="Compile and run twomedia module.">
+		<java classname="org.webtop.module.twomedia.TwoMedia" fork="true" dir="${basedir}/classes/org/webtop/module/twomedia/">
+			<jvmarg value="${runarg0}"/>
+			<jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="run_twoslitphoton" depends="twoslitphoton" description="Compile and run twoslitphoton module.">
+		<java classname="org.webtop.module.twoslitphoton.TwoSlitPhoton" fork="true" dir="${basedir}/classes/org/webtop/module/twoslitphoton/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_threemedia" depends="threemedia" description="Compile and run threemedia module.">
+		<java classname="org.webtop.module.threemedia.ThreeMedia" fork="true" dir="${basedir}/classes/org/webtop/module/threemedia/">
+			<jvmarg value="${runarg0}"/>
+			<jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<arg value="-nice"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_wavefront" depends="wavefront" description="Compile and run WaveFront module.">
+		<java classname="org.webtop.module.wavefront.WaveFront" fork="true" dir="${basedir}/classes/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>			
+		</java>
+	</target>
+
+	<target name="run_waves" depends="waves" description="Compile and run the Waves module.">
+		<java classname="org.webtop.module.waves.Waves" fork="true" dir="${basedir}/classes/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>			
+		</java>
+	</target>
+
+	<target name="run_wavestest" depends="wavestest" description="Compile and run the Waves Testing module.">
+		<java classname="org.webtop.module.wavestest.WavesTest" fork="true" dir="${basedir}/classes/">
+			<jvmarg value="${runarg0}"/>
+		    <jvmarg value="${runarg1}"/>
+		    <jvmarg value="${runarg2}"/>
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>			
+		</java>
+	</target>
+
+
+	<target name="run_saidemo" depends="saidemo" description="Compile and run saidemo.">
+		<jvmarg value="${runarg0}"/>
+	    <jvmarg value="${runarg1}"/>
+	    <jvmarg value="${runarg2}"/>
+		<java classname="SimpleSAIDemo" fork="true">
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_egridtest" depends="egridtest" description="Compile and run elevation grid test.">
+		<jvmarg value="${runarg0}"/>
+	    <jvmarg value="${runarg1}"/>
+	    <jvmarg value="${runarg2}"/>
+		<java classname="org.webtop.EGridTest" fork="true">
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="run_egridtest4" depends="egridtest4" description="Compile and run animated elevation grid test.">
+		<jvmarg value="${runarg0}"/>
+	    <jvmarg value="${runarg1}"/>
+	    <jvmarg value="${runarg2}"/>
+		<java classname="org.webtop.EGridTest4" fork="true">
+			<classpath>
+				<pathelement location="${basedir}/classes/"/>
+				<path refid="build.classpath"/>
+			</classpath>
+		</java>
+	</target>
+	
+	
+	<target name="jar_launcher" depends="jar_wtcore, jar_sdl, circular, fabryperot, geometrical, grating, laser, michelson, nslit, photoelectric, polarization, rayleigh, singleslit, rectangularslit, twomedia, threemedia, wavefront, waves" description="Jar the Launcher.">
+		<javac srcdir="${basedir}/launcher" destdir="${basedir}/launcher" debug="on">
+			<classpath refid="build.classpath"/>
+			<include name="*.java"/>
+		</javac>
+		
+		<copy todir="${basedir}/launcher/classes">
+			<fileset dir="${basedir}/classes"/>
+		</copy>
+		<copy todir="${basedir}/launcher/jars">
+			<fileset dir="${basedir}/jars"/>
+		</copy>
+		<copy todir="${basedir}/launcher/lib">
+			<fileset dir="${basedir}/lib"/>
+		</copy>
+		<copy todir="${basedir}/launcher/libnative">
+			<fileset dir="${basedir}/libnative"/>
+		</copy>
+		
+		<jar destfile="${basedir}/launcher/WebTop.jar" basedir="${basedir}/launcher"
+		 includes="**/*.class" excludes="${basedir}/launcher/classes/**">
+			<manifest>
+				<attribute name="Main-Class" value="Launcher"/>
+			</manifest>
+		</jar>
+		
+		<delete>
+			<fileset dir="." excludes = "**/classes/" includes="**/*.class"/>
+		</delete>
+
+	</target>
+	
+	<target name="jar_installer" depends="jar_launcher" description="Create the installer jar">
+		<mkdir dir="${basedir}/launcher/scripts"/>
+		<IzPack input="${basedir}/ant/install.xml"
+        output="${basedir}/WebTop-installer.jar"
+        installerType="standard"
+        basedir="${basedir}/ant/"/>
+	</target>
+
+
+</project>

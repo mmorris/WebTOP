@@ -1,0 +1,671 @@
+#X3D V3.0 utf8
+#RectangularSlit.x3dv
+
+PROFILE Immersive
+
+EXTERNPROTO	XYDragWidget [ inputOutput SFVec3f translation
+										 inputOutput SFRotation rotation
+
+										 initializeOnly SFVec2f position
+										 inputOnly SFVec2f set_position
+										 outputOnly SFVec2f position_changed
+										 outputOnly SFVec2f inversePosition_out
+
+										 #If(in a given dimension) minPosition > maxPosition,
+										 #the widget's motion is unrestricted in that dimension.
+										 initializeOnly SFVec2f minPosition
+										 inputOnly SFVec2f set_minPosition
+										 initializeOnly SFVec2f maxPosition
+										 inputOnly SFVec2f set_maxPosition
+
+										initializeOnly SFVec2f value					#Only used if positionAsValue FALSE
+
+										inputOnly SFVec2f set_value
+										outputOnly SFVec2f value_changed
+
+										initializeOnly SFVec2f minValue
+										inputOnly SFVec2f set_minValue
+										initializeOnly SFVec2f maxValue
+										inputOnly SFVec2f set_maxValue
+
+										#If this is TRUE (the default), the min/maxValue initializeOnlys
+										#are ignored and 'position' and 'value' are equivalent.
+										#(This could probably have a better name.)
+										initializeOnly SFBool positionAsValue
+
+										 outputOnly SFBool isOver_out
+										 outputOnly SFBool isActive_out
+										 inputOnly SFBool set_isActive
+
+										 inputOutput SFBool enabled
+
+										 inputOutput MFNode geometry
+										 inputOutput MFNode activeGeometry
+										 initializeOnly SFString debugName
+										 outputOnly SFBool initialized]
+"x3dlib/Widgets.x3dv#XYDragWidget"	#end of EXTERNPROTO XYDragWidget
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#Red2ConeXDragger"
+										 
+EXTERNPROTO WheelWidget [
+    inputOutput SFVec3f translation
+    inputOutput SFRotation rotation
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput SFNode material
+	inputOutput SFNode activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+
+EXTERNPROTO CylinderXDragger [
+	inputOutput SFVec3f cylScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#CylinderXDragger"
+
+EXTERNPROTO RectangularApertureScreen [
+	#Gernalized initializeOnlys.  Need to get back to implementing these later.
+	#  Would need scripting to properly size all of the screen parts.
+	inputOutput SFVec3f translation 		 #translation for entire screen
+	initializeOnly SFVec2f aperture_dim 		 #dimensions of the aperture opening.  NEEDED BY JAVA
+	inputOnly	SFVec2f	set_ap_dim			 #to set aperture dimensions
+	inputOutput SFVec3f scale              #overall scale of the entire screen
+	initializeOnly SFFloat transparency  		 #transparency of all parts of the screen
+	inputOnly	SFFloat	set_transparency		 	 #to set screen transparency
+	outputOnly SFFloat transparency_changed
+
+	#Non-gernalized initializeOnlys
+	inputOnly	SFVec3f	trans_changed
+	initializeOnly SFVec3f top_size 
+	inputOutput SFVec3f top_scale 
+	initializeOnly SFVec3f right_size 
+	inputOutput SFVec3f right_scale 
+	#Material attributes for screen
+	inputOutput SFFloat ambientIntesity 
+	inputOutput SFColor specularColor 
+	inputOutput SFColor diffuseColor 
+	initializeOnly SFFloat minTransparency 
+	initializeOnly SFFloat maxTransparency 
+]
+"x3dlib/Screens.x3dv#RectangularApertureScreen"
+
+
+
+
+################################
+### End External Prototypes  ###
+################################
+
+###############################
+#### Navigation Panel       ###
+###############################
+
+
+
+
+
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+################################
+### End Navigation Panel     ###
+################################
+
+################################
+### Observation screen       ###
+################################
+
+
+PROTO ScreenBackdropWLabels [
+	#positioning
+	initializeOnly SFFloat position 0
+	initializeOnly SFFloat minPosition 0     #scalable percentage of -Z movement
+	initializeOnly SFFloat maxPosition 100	#""
+	inputOnly	SFFloat	set_position
+	outputOnly SFFloat position_changed	   #for reporting position change as a percentage of total range
+	initializeOnly SFVec3f translation 0 0 -500
+	outputOnly SFVec3f translation_changed   #for reporting actual translation change
+	#mouse info
+]
+{
+	DEF ScreenMover Transform {
+		translation	IS translation
+		children [
+			DEF	Labels Group {
+				children [
+					Transform {
+						translation -520 0 0
+						children [
+							Shape {
+								appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+								geometry DEF Neg_X_Label Text {
+									#string "-10 mm (X)"
+									fontStyle FontStyle {
+										justify	"END"
+										family "SANS"
+										size 60
+									}
+								}
+							}
+						]
+					}
+					Transform {
+						translation 520 0 0
+						children [
+							Shape {
+								appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+								geometry DEF Pos_X_Label Text {
+								#string "10 mm (X)"
+								fontStyle FontStyle {
+									justify	"BEGIN"
+									family "SANS"
+									size 60
+									}
+								}
+							}
+						]
+					}
+					#Y-axis labels
+					Transform {
+						translation 0 550 0
+						children [
+							Shape {					
+								appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+								geometry DEF Pos_Y_Label Text {
+									#string "10 mm (Y)"
+									fontStyle FontStyle {
+										justify "MIDDLE"
+										family "SANS"
+										size 60
+									}
+								}
+							}
+						]
+					}
+					Transform {
+						translation 0 -550 0
+						children [
+							Shape {				
+								appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+								geometry DEF Neg_Y_Label Text {
+									#string "-10 mm (Y)"
+									fontStyle FontStyle {
+										justify "MIDDLE"
+										family "SANS"
+										size 60
+									}
+								}
+							}
+						]
+					}
+				]#end Labels children
+			}#end Labels
+
+			
+
+			DEF ObservationBackdrop Shape {
+				appearance Appearance {
+					material Material { diffuseColor 1 1 0 }
+				}
+				geometry IndexedFaceSet {
+					coord Coordinate {
+						point [
+							500 -500 -10,
+							-500 -500 -10,
+							-500  500 -10,
+							500  500 -10,
+							500 -500   0,
+							-500 -500   0,
+							-500  500   0,
+							500  500   0,
+						]
+					}
+					coordIndex [
+						0, 1, 2, 3, -1, # back
+						1, 5, 6, 2, -1, # left
+						0, 3, 7, 4, -1, # right
+						3, 2, 6, 7, -1, # top
+						0, 4, 5, 1, -1, # bottom
+					]
+				}
+			}#end ObservationBackdrop
+		]#end ScreenMover children
+	}#end ScreenMover
+
+	DEF	Observation_WORKER Script {
+		#positioning
+		initializeOnly SFFloat pos IS position
+		inputOnly	SFFloat	pos_in IS set_position
+		outputOnly SFFloat pos_out IS	position_changed
+		outputOnly SFVec3f translation_out 
+		outputOnly SFVec3f trans_changed IS translation_changed
+		url	"ecmascript:
+		function initialize() {
+		}
+		function pos_in(value, time) {
+			//dragger is feeding pos_in values of range [0, 100]
+			//need values of [0, 1000].
+			pos = value; 
+			pos_out = value;
+			translation_out[2] = -value * 10;
+			trans_changed[2] = translation_out[2];
+		}
+		"
+	}#end Observation_WORKER
+	ROUTE Observation_WORKER.translation_out TO	ScreenMover.set_translation
+}
+################################
+### End Observation screen   ###
+################################
+#DEF MainVP Viewpoint {
+#    description "Main View"
+#    position 0 0 2000
+#}
+
+#NavigationInfo {
+#	speed 50
+#}
+		NavLight { navigationType "NONE" }
+
+		NavigationInfo {
+			type "NONE"
+		}
+
+		DEF NavPanel NavigationPanel {
+		
+		#add additional views below
+		views [ 0 0 0 0 0 -90 
+				-.45 -.675 0 0 0 -90
+				0 0 0 0 -10 -50 
+				0 0 0 0 0 -10]
+		children[
+		Group {
+			children [
+				### Big Bounding Box ###
+				Transform {
+				    translation 0 0 -500
+					scale 1000 1000 1000
+					children [
+						Inline {
+							url	"x3dlib/BoundingBox.x3dv"
+							bboxSize	1000 1000 1000
+							bboxCenter	0 0 -1000
+						}	
+					]
+				}
+				### End Big Bounding Box ###
+
+				### Aperture Screen ###
+				DEF	ApertureScreen RectangularApertureScreen {
+					minTransparency	0.7 #Was 0.9..Screen needed to be darker [JD]
+					maxTransparency	1
+				}
+				### End Aperture Screeen ### 
+
+				### Widget Hiding Switch
+				DEF	WidgetsSwitch Switch {
+					whichChoice	0
+					choice
+					Group {
+						children [
+							### Aperture Opening Control ###
+							DEF	ApertureWidget XYDragWidget {
+								enabled	TRUE
+								#The min/maxPositions are apparently relative to the initial translation of the dragger,
+								# which accounts for the odd min/max positions.
+								minPosition -100 -400
+								maxPosition	400 100
+								translation	100 -100 0
+								geometry Transform {
+									children Shape {
+									geometry DEF SizeBox Box { size 25 25 25 }
+									appearance Appearance { material Material { diffuseColor 0 0 1 } }
+									}
+								}
+								activeGeometry Transform {
+									children Shape {
+									geometry USE SizeBox
+									appearance Appearance { material Material { diffuseColor .8 0 0 } }
+									}
+								}
+								debugName "ApertureOpening.dragger"
+							}
+							### End Aperture Opening Control
+							### Aperture Screen Transparency Control ###
+							Transform {
+							    rotation 0 1 0 3.14159265358979
+							    translation 500 -500 0
+							    children
+				    	   		  DEF TransparencyWidget CylinderXDragger {
+				    	       	  		cylScale 30 30 30
+				    	    			rotation 0 0 1 1.5707963267948
+				    	      			minPosition 0
+				        				maxPosition 1000
+				           				minValue 0
+				        				maxValue 1
+				        				value 0
+				        				positionAsValue FALSE
+				    	    			enabled TRUE
+				    	    			debugName "ObservationScreen.transparency"
+				    			}
+							}
+							### End Transparency Control ###
+							### Observation Screen Dragger ###
+							Transform {
+								translation 0 500 0
+								rotation -1 1 1 2.1		#a vector (X,Y,Z) without -> (-Y,Z,-X) with
+								scale 10 10 10		#To turn Java's mm into this coordinate system
+								children [
+					
+									DEF ZDistWidget Red2ConeXDragger {
+										coneScale 2.5 2.5 2.5		#This only has to do part of the work.
+										minPosition 50
+										maxPosition 100
+										position 50
+										enabled	TRUE
+									}
+								]
+							}
+							### End Observation Screen Dragger ###
+							### Wavelength Wheel ###
+							Transform {
+								translation -390 -390 220
+								scale 75 75 75
+								children DEF WavelengthWidget WheelWidget { }
+							}
+							### End Wavelength Wheel ###
+
+							### Incoming Wave Icon ###	 #X3D has issues
+#							Transform {
+#								translation 0 50 300
+#								rotation 0 1 0  1.5707963
+#								children Inline { url "../../x3dlib/Wave.x3dv" }
+#							}
+							### End Incoming Wave Icon ###
+						]#end of switch group children
+					}#end of switch group
+				}#end of widgets switch
+
+				### Observation Screen and Backdrop ###
+				DEF	ObservationScreenMover Transform {
+					children [
+						### Observation Screen Backdrop ###
+						DEF	ScreenBackdrop ScreenBackdropWLabels	{
+							translation	0 0 0
+						}
+						### End Screen Backdrop
+
+						### Actual Observation Screen Surface ###
+						### NOTE:  This code is reusable and should probably  ###
+						### be put in a library and included via INLINE.      ###
+				
+						DEF	ObservationScreen Group {
+							children [
+								DEF	IFSQuads_TS TouchSensor {
+									enabled	TRUE
+								}
+								DEF IFSImageMover Transform {
+									rotation 1 0 0 1.5707963267949
+									translation	0 0 0  #make first the top-left quadrant
+									#scale 100 100 100
+									children [
+										DEF	IFSSwitch Switch {
+											whichChoice	0
+											choice [
+												Group {
+													children [
+														DEF IFSQuad1 Shape {
+															appearance Appearance { 
+																material Material {
+																	#emissiveColor 1 1 1
+																}
+															}
+															geometry DEF IFSImageHigh IndexedFaceSet{
+																color Color	{}
+																coord Coordinate {}
+																coordIndex []
+																colorPerVertex FALSE
+																solid FALSE
+															}
+														}
+														Transform {
+															rotation 0 1 0 3.14159265358979
+															children USE IFSQuad1
+														}
+														Transform {
+															rotation 0 0 1 3.14159265358979
+															children USE IFSQuad1
+														}
+														Transform {
+															rotation 1 0 0 3.14159265358979
+															children USE IFSQuad1
+														}
+#														DEF Intensity Shape {
+#															appearance Appearance { 
+#																material Material {
+#																	diffuseColor 1 1 1
+#																	emissiveColor 1 1 1
+#																}
+#															}
+#															geometry DEF egrid ElevationGrid{
+#																color Color	{}
+#																colorPerVertex FALSE
+#																solid TRUE
+#																height []
+#																xDimension 150
+#																zDimension 150
+#																xSpacing 3.3333333
+#																zSpacing 3.3333333
+#															}
+#														}
+													]
+												}#end Group1
+												Group {
+													children [
+														DEF IFSQuad2 Shape {
+															appearance Appearance { 
+																material Material {
+																	#emissiveColor 1 1 1
+																}
+															}
+															geometry DEF IFSImageLow IndexedFaceSet{
+																color Color	{}
+																coord Coordinate {}
+																coordIndex []
+																colorPerVertex FALSE
+																solid FALSE
+															}
+														}
+														Transform {
+															rotation 0 1 0 3.14159265358979
+															children USE IFSQuad2
+														}
+														Transform {
+															rotation 0 0 1 3.14159265358979
+															children USE IFSQuad2
+														}
+														Transform {
+															rotation 1 0 0 3.14159265358979
+															children USE IFSQuad2
+														}
+													]
+												}#end Group2
+												Group {
+													children [
+														Transform {
+															translation	0 0 -500
+															children [
+														DEF	IntensityImage Shape {
+															appearance Appearance {
+																material Material {}
+															}
+															geometry ElevationGrid {
+																
+																colorPerVertex FALSE
+																color Color	{
+																	color 0.6 0.6 0.6
+																}
+																height []
+															}
+														}
+														#Since it's 3D, can't do quads; have to do halves
+														Transform {
+															translation	0 0 1000
+															rotation 0 1 0 3.14159265358979
+															children USE IntensityImage
+														}
+													]
+													}
+													]
+												}
+											]#end IFSSwitch children
+										}#end IFSSwitch
+									]#end IFSImage children
+								}
+							]
+						}#end ObservationScreenMover
+					]
+				}
+				### End Observation Screen and Backdrop ###
+				
+				DEF SYNC_SCREEN Script {
+					inputOnly	   SFFloat zdrag_in
+					inputOnly	   SFVec3f translation_in    #from ScreenBackdrop
+					outputOnly     SFVec3f translation_out   #to ObservationScreenMover
+					outputOnly     SFFloat transparency_out  #to ApertureScreen
+					url	"ecmascript:
+					function zdrag_in(value, time) {
+						//Browser.print('zdrag= ' + value + '\n');
+						translation_out[2] = -value*10;
+					}
+					function translation_in(value, time) {translation_out = translation_in;}
+					"
+				}
+			]#end of major display group
+			ROUTE ApertureWidget.position_changed TO ApertureScreen.set_ap_dim
+			ROUTE TransparencyWidget.value_changed	TO ApertureScreen.set_transparency
+			ROUTE ZDistWidget.position_changed TO	SYNC_SCREEN.zdrag_in
+			ROUTE SYNC_SCREEN.translation_out TO ObservationScreenMover.set_translation
+		}
+
+		]
+		}
+
+

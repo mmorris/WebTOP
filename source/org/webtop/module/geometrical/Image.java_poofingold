@@ -1,0 +1,191 @@
+package webtop.geometrical;
+
+import vrml.external.field.*;
+import webtop.util.*;
+import webtop.util.output.*;
+
+class Image
+{
+	/*public static final float[]
+		RED = new float[] {1,0,0},
+		WHITE = new float[] {1,1,1},
+		BLUE = new float[] {0,0,1},
+		GREEN = new float[] {0,1,0},
+		TEAL = new float[] {0,1,1},
+		YELLOW = new float[] {1,1,0};*/
+
+	private EventInMFVec3f pointCoords;
+	private EventInSFFloat set_X;
+	private EventInSFFloat set_Y;
+	private EventInSFFloat set_Z;
+	//private EventInMFColor pointColors;
+	
+	
+	private static final int RES = 15;
+	private float X_size=13;
+	//private float Y_size=14;
+	private float Y_size=13;
+	private int X_res=(int)X_size*RES;
+	private int Y_res=(int)Y_size*RES;
+	private static final boolean COLOR_PER_VERTEX=true;
+	private IFSScreen ifs;
+	private float gridUnit;
+	private float XOrigin;
+	private float YOrigin;
+
+	
+	// for coloring
+	float[] target;
+	final float[][] colors=new float[X_res*Y_res][3];
+	final float[] intensities=new float[X_res*Y_res];
+
+	private Geometrical applet;
+	public Image(Geometrical main) {
+		applet=main;
+
+		//pointCoords = (EventInMFVec3f) main.getEAI().getEI("ImagePoints","point");
+		
+		set_X = (EventInSFFloat) main.getEAI().getEI("IFSMover","translation_in_x");
+		set_Y = (EventInSFFloat) main.getEAI().getEI("IFSMover","translation_in_y");
+		set_Z = (EventInSFFloat) main.getEAI().getEI("IFSMover","translation_in_z");
+		
+		ifs=new IFSScreen(main.getEAI(),main.getEAI().getNode("IFS"),new int[][] {},X_size,Y_size);
+	  ifs.setResolution(X_res,Y_res);
+		ifs.setup();
+		
+		//pointColors = (EventInMFColor) main.getEAI().getEI("IMAGE_COLOR","color");
+	}
+	
+
+	private int processes;		//watcher of wastefulness
+	public void process(RayList rays,int count) {
+		float[][] imgpts = new float[count][]/*,colors = new float[pointsHaveHit][]*/;
+
+		//peter
+		//float[][] imgpts = new float[count][],colors = new float[count][];
+		
+
+		//for(int i=0;i<X_res;++i)
+		//	for(int j=0;j<Y_res;++j)
+		//		colors[X_res*i+j]=new float[] {0,0,.25f};
+		
+		
+
+		for(int i=0;i<X_res*Y_res;++i)
+			intensities[i]=0;
+		
+		
+		gridUnit = X_size/X_res;
+		XOrigin = X_size/2;
+		YOrigin = -Y_size/2;
+		
+		int xCoord, yCoord;
+		
+		rays=rays.next;		//the first ray is a dummy head for the list
+		
+		set_X.setValue(-X_size/2);
+		set_Y.setValue(-Y_size/2);
+		set_Z.setValue(rays.z/OpticalElement.POSITION_SCALE-0.1f);
+		
+		int i=0;
+		for(i=0;rays!=null;rays=rays.next,i++) {
+			//imgpts[i]=new float[] {rays.x,rays.y,rays.z/OpticalElement.POSITION_SCALE};			
+			
+			xCoord = (int)((XOrigin-rays.x)/gridUnit);
+			yCoord = (int)((YOrigin+rays.y)/gridUnit);
+			
+			//System.out.println("xres: " + X_res + " yres: " + Y_res);
+			//System.out.println("x: " + xCoord + " y: " + yCoord);
+			
+			if (Math.abs(xCoord)<(X_res) && Math.abs(yCoord)<(Y_res)) {
+			
+				for (int j = -3; j <= 3; j++) {
+					for (int k = -3; k <= 3; k++) {
+							lightUp(intensities, xCoord, yCoord, j, k, getIntensity(j,k));
+					}
+				}
+				
+			}
+			
+			//else {
+			//	System.out.println("x: " + xCoord + " y: " + yCoord);
+			//}
+			
+			/*
+			Assign to colors array here...
+			if(rays.p<=...) colors[i]=...;
+			Et cetera.
+			*/
+
+			//peter
+			//colors[i]=new float[] {1,1,1};
+		}
+		//pointCoords.setValue(imgpts);
+		//setColors(RES);
+		colorScreen(intensities,colors);
+		ifs.setColor(colors);
+		
+		
+
+		//System.arraycopy(colors,0,colors2,0,pointsHaveHit);
+		//pointColors.setValue(colors2);
+
+		//pointColors.setValue(colors);
+
+		//DebugPrinter.once();
+		//DebugPrinter.println("image #"+ ++processes + ": "+count+'/'+applet.getRaysCast());
+	}
+	
+	/*
+	private void lightUp(float[][] colors, int xCoord, int yCoord, int xOffset, int yOffset, float intensity) {
+		if (Math.abs(xCoord+xOffset)<(X_res) && Math.abs(yCoord+yOffset)<(Y_res)) {
+			for (int k=0; k<3; k++) {
+				if (colors[X_res*(xCoord+xOffset)+(yCoord+yOffset)][k]<(1-intensity))
+					colors[X_res*(xCoord+xOffset)+(yCoord+yOffset)][k]+=intensity;
+				else
+					colors[X_res*(xCoord+xOffset)+(yCoord+yOffset)][k]=1;
+			}
+		}
+	}
+	*/
+	
+	private void lightUp(float[] intensities, int xCoord, int yCoord, int xOffset, int yOffset, float intensity) {
+		if (Math.abs(X_res*(xCoord+xOffset)+(yCoord+yOffset))<=X_res*Y_res && X_res*(xCoord+xOffset)+(yCoord+yOffset)>=0) {
+		//if ((Math.abs(xCoord)+Math.abs(xOffset))<(X_res) && (Math.abs(yCoord)+Math.abs(yOffset))<(Y_res)) {
+				if (intensities[X_res*(xCoord+xOffset)+(yCoord+yOffset)]<(1-intensity))
+					intensities[X_res*(xCoord+xOffset)+(yCoord+yOffset)]+=intensity;
+				else
+					intensities[X_res*(xCoord+xOffset)+(yCoord+yOffset)]=1;
+			//System.out.println("[" + target[0] + "," + target[1] + "," + target[2] + "]");
+		}
+	}
+	
+	private void colorScreen(float[] intensities,float[][] colors) {
+		for (int u=0; u<X_res; u++) {
+			for (int v=0; v<Y_res; v++) {
+				target = colors[X_res*u+v];
+				WTMath.hls2rgb(target,70,intensities[X_res*u+v],1f);
+				//colors[X_res*u+v]=target;
+			}
+		}
+	}
+	
+	private float getIntensity(int x, int y) {
+		//return (float) ( Math.pow((1/(Math.sqrt(2*Math.PI)*2.5)),2) * Math.exp(-(x*x+y*y)/(2.5)) );
+		return (float) ( .5 * Math.exp(-(x*x+y*y)/(1)) );
+	}
+	
+	public void setIFSSize(float width, float height) {
+		X_size = width;
+		Y_size = height;
+		X_res = (int)width*RES;
+		Y_res = (int)height*RES;
+		ifs.setResolution(X_res,Y_res);
+		ifs.setWidth(X_size);
+		ifs.setHeight(Y_size);
+		set_X.setValue(-X_size/2);
+		set_Y.setValue(-Y_size/2);
+		ifs.setup();
+	}
+	
+}

@@ -1,0 +1,196 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<title>WebTOP Controls-Polarization</title>
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+
+
+<center><table width="95%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+  <h1 align="center"><font color="#800000"><a name="top"></a>Polarization: Directions</font></h1>
+
+  <p>Under normal operation, your WebTOP window should look like the following:</p>
+  <p align="center"><img border="0" src="images/controlsm.jpg" width="485" height="440"></p>
+  <p>The WebTOP window has four parts. The top portion is the active WebTOP scene. 
+  The second portion is the VRML Navigation controls.
+  The third portion, the console, contains a message line that provides help on the operation of the Widgets and keyboard entry boxes.
+  The fourth portion is the recording panel that allows you to record and replay WebTOP sessions. You may scroll down to read on, or 
+  select the appropriate link from the following items:</p>
+  <div align="center">
+    <center>
+    <table border="0" cellpadding="0" cellspacing="0" width="80%">
+      <tr>
+        <td align="center" class=tablemain><a href="#Module">How to Change
+          Parameters</a></td>
+        <td align="center" class=tablemain><a href="../dashboard/manipulate.html">How to Manipulate the Scene</a></td>
+        <td align="center" class=tablemain><A
+        href="../dashboard/record.html">How to Record Sessions</A></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  <hr>
+  <p><a name="Module"><font color="#800000"><strong><big>How To Change
+  Parameters</big></strong></font></a></p>
+  <p>During normal operation of the module, you should see a figure similar to this:</p>
+  <p align="center"><img border="0" src="images/scenem.jpg" width="514" height="326"><img border="0" src="images/scenem2.gif" width="61" height="326"></p>
+  <p>In this module you can change the properties of the incident light and you 
+can <font color="#0000FF"> add</font> <font color="#0000FF">  polarizers</font> and/or
+  <font color="#0000FF"> waveplates</font> . The parameters that you can change 
+are the <font color="#0000FF"> position</font> of the polarizer/wave-plate along the z axis, the
+  <font color="#0000FF"> direction</font> 
+of the polarizer/waveplate <font color="#0000FF"> transmission axis (TA)</font>/<font color="#0000FF">fast
+  axis</font>, the <font color="#0000FF"> wavelength</font> 
+of the light, the <font color="#0000FF"> magnitudes</font> of the x and y components of the electric field
+  (<font color="#0000FF">E0x</font> and <font color="#0000FF">E0y</font>), the <font color="#0000FF"> initial phase difference</font> between Ex and Ey and the
+  <font color="#0000FF"> 
+thickness</font> of the wave-plate (in units of wavelength). These parameters can 
+be changed by&nbsp; manipulating the <font color="#0000FF"> widgets</font> in the scene or by using the
+  <font color="#0000FF"> Controls & 
+Parameters Panel</font> to type in new values for them. Adding or removing polarizers/wave plates and changing the initial
+polarization of the light (choosing between polarized or unpolarized
+light) are also done by using the Controls at the WebTOP Console.</p>
+  <p>
+This module includes six types of widgets:  a double-cone , a wheel, a
+slider, a thickness, a bar, and phase difference.
+
+  The widgets are shown in the following Figures:</p>
+  <div align="center">
+    <center>
+    <table border="1" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/cone.jpg" width="41" height="21"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/wheel.jpg" width="61" height="41"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/slider.jpg" width="20" height="36"></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><strong>Double-Cone Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Wheel Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Slider Widget</strong></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/thickness.jpg" WIDTH="46" HEIGHT="32"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/ta2.jpg" width="40" height="36"></td>
+        <td width="33.3%" align="center" class=tablemain><img border="0" src="images/phase.jpg" width="124" height="107"></td>
+      </tr>
+      <tr>
+        <td width="33.3%" align="center" class=tablemain><strong>Thickness Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Bar Widget</strong></td>
+        <td width="33.3%" align="center" class=tablemain><strong>Phase Difference Widget</strong></td>
+      </tr>
+    </table>
+    </center>
+  </div>
+  <p>To change a parameter, you need to position your cursor over the proper
+  widget. Labels on the module figure, shown above, identify the function of each of the
+  widgets. Once you have placed the cursor over the widget, the cursor changes shape.
+If you click on the left mouse button, a message explaining the operation
+of the widget appears at the help portion of the WebTOP console.</p>
+  <p>Note that the wave becomes static when the widget is engaged. The animation is restored after you release the widget. Note also that
+  while changing a parameter with a widget, the corresponding value is updated in the corresponding input box.</p>
+  <p><strong>Changing a Parameter with the Double-Cone Widget:<br>
+  </strong>This widget can be used to change the z-position of a polarizer or a
+  wave-plate. The widget is not visible until you position your cursor over the
+  polarizer/wave-plate. Once you select the widget, drag the cursor in the
+  direction that will produce the desired change along the wave path. You will
+  notice that while the change is occurring, the widget becomes highlighted and
+  the wave becomes static. Once you release the mouse button, a wave pattern
+  reflecting the new value of the position is observed.</p>
+  <p><strong>Changing a Parameter with the Wheel Widget:<br>
+  </strong>Once you select the wheel, drag and rotate the cursor to the left if you want to
+  decrease the wavelength or the right if you want to increase it. Note that the
+  color of the wave is not representative of the wavelength of the light used. You may need&nbsp; to repeat dragging in the same
+  direction until you obtain the desired wavelength.</p>
+  <p><strong>Changing a Parameter with the Slider Widget:<br>
+  </strong>The slider can be used to change E0x or E0y. Select the desired
+  slider and move it along the axis until you obtain the desired value.</p>
+  <p><strong>Changing a Parameter with the Thickness Widget:<br>
+  </strong>The thickness widget is available only for waveplates. You select it
+  by positioning your cursor over one of the two square boxes. The changes occur
+  when you move the cursor along the z-axis in the direction of the desired
+  change. </p>
+  <p><strong>Changing a Parameter with the Bar Widget:<br>
+  </strong>You select the bar widget by positioning the cursor over the
+  cylinders at either end of the bar. Moving the bar allows you to rotate the
+  polarizer/wave-plate relative to the z-axis.</p>
+  <p><strong>Changing a Parameter with the Phase-Difference Widget:<br>
+  </strong>This widget allows you to change the phase difference between the two
+  electric field components of the incident wave. Select the double-cone on the phase difference widget and move it
+  either forward or backward along the direction of the wave path.</p>
+  <p><strong>Changing Parameter With the Controls &amp; Parameters Panel:<br>
+  </strong>The Controls and Parameters Panel provides two interfaces:  one for
+polarized light and one for unpolarized light. You may switch between them by clicking on the appropriate Tab. In either interface, you may change the parameters by typing the values in the &quot;Input
+  Boxes&quot; then pressing the &quot;Enter&quot; key. A <font color="#0000FF">selection
+  box</font> allows you to select whether you would like to add a polarizer or a
+  wave-plate. Press the <font color="#0000FF">Add</font> button to add the
+  selected device. Note that the device is added at the arbitrary value, z=2.
+  You can move it by using the double cone widget or typing the new value for z
+  in the input box. You may remove a device by selecting it then pressing the <font color="#0000FF">Remove</font>
+  button. The button right of the Add button (<font color="#0000FF">Composite</font>/<font color="#0000FF">All</font>/<font color="#0000FF">None</font>/<font color="#0000FF">x
+  Only</font>/<font color="#0000FF">y Only</font>/<font color="#0000FF">x and y</font>)
+  allows you to select the component of the wave you want to visualize. For
+  instance, you can view the composite wave, the x and y components, the
+  composite along with the x and y components, the x component, the y-component,
+  and none of the wave. The <font color="#0000FF">History</font> buttons allows
+  you to see the paths traveled by the tip of the electric field vector in the
+  planes z=0 and z=20. You may
+  hide all widgets and display them again by using the <font color="#0000FF">Hide
+  Widgets</font>/<font color="#0000FF">Show Widgets</font> button. The <font color="#0000FF">Stop</font>/<font color="#0000FF">Play</font>
+  button allows you stop and restart the simulation. <font color="#FF0000">It is
+  recommended that you press Stop the simulation before exiting or moving to
+  another page</font>.</p>
+  <p>The following figures show different setting of the Controls &amp;
+  Parameters Panel:</p>
+  <div align="center">
+    <center>
+    <table border="0" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="100%" class=tablemain><img border="0" src="images/polarized.jpg" width="644" height="139"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>Controls &amp; Parameters Panel: Polarized light is
+          selected. The device that can be added under this configuration is a
+          Polarizer. You can add several polarizers.</td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>
+          <p align="center"><img border="0" src="images/unpolarized.jpg" width="642" height="142"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>Controls &amp; Parameters Panel: Unpolarized light is
+          selected. The device that can be added under this configuration is a
+          Polarizer. You cannot add a waveplate when the incident light is
+          unpolarized.</td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>
+          <p align="center"><img border="0" src="images/waveplate.jpg" width="640" height="143"></td>
+      </tr>
+    </center>
+      <tr>
+        <td width="100%" class=tablemain>
+          <p align="left">Controls &amp; Parameters Panel: Polarized light is
+          selected. The device that can be added under this configuration is a
+          waveplate.</td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <p>&nbsp;</p>
+</td></tr></table></center>
+
+</body>
+
+</html>

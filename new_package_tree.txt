@@ -1,0 +1,47 @@
+This file gives my thoughts for a new package tree for WebTOP libraries.
+If we really plan to make this an open source project, we should follow
+the convention of other Java open source projects and package our
+libraries under the "org" root package.  Since we would be repackaging
+anyway, I also propose the following more organized and modularized 
+package tree.  This may also help when multiple programmers are developing
+modules simultaneously.
+--Paul Cleveland
+
+Updated August 2, 2006
+
+Possible New WebTOP Package Tree.
+
+Key:
+<SymbolicName>
+[ClassName]
+
+org
+  |
+  |--sdl
+  |
+  |--webtop
+       |
+       |--util
+       |  |
+       |  |--script
+       |
+       |--wsl
+       |
+       |--x3d
+       |
+       |--x3dlib
+       |
+       |--component
+       |
+       |--module
+            |
+            |--<modulename>
+                  |
+                  |--[<ModuleName>]
+                  |
+                  |--[<SupportClass1>]
+                  |
+                  .
+                  .
+                  .
+                  |--[<SupportClassN>]

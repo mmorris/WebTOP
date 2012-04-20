@@ -1,0 +1,585 @@
+#VRML V2.0 utf8
+
+# -------------------------------------------------------------------
+# PROTOs that are part of Chi's NavigationPanel [v3.01]
+# -------------------------------------------------------------------
+
+#A prototype for the viewpoint objects
+
+EXTERNPROTO RotationWidget [
+	field SFFloat angle
+	eventIn SFFloat set_angle
+	eventOut SFFloat angle_changed
+	eventOut SFRotation rotation_changed
+	field SFFloat minAngle
+	eventIn SFFloat set_minAngle
+	field SFFloat maxAngle
+	eventIn SFFloat set_maxAngle
+	eventOut SFBool isActive_out
+	eventOut SFBool isOver_out
+	eventIn SFBool set_isActive
+	eventIn SFBool set_isOver
+	exposedField SFBool enabled
+	field MFNode normalGeometry
+	field MFNode overGeometry
+	field MFNode activeGeometry
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#RotationWidget"
+EXTERNPROTO WheelWidget [
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFFloat maxRotations
+	eventIn SFFloat set_maxRotations
+	eventOut SFBool isActive_out
+	eventOut SFBool isOver_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	exposedField SFNode material
+	exposedField SFNode activeMaterial
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#WheelWidget"
+
+PROTO Shiny_Surface [ field SFVec3f     ss_position 0 0 0
+											field SFRotation  ss_rotation 0 1 0 0.785
+											field SFFloat     ss_transparency 0.3 ] {
+											# field SFFloat     ss_transparency 0.75 ] {
+		Transform {
+			translation IS ss_position
+			rotation IS ss_rotation
+			children [
+						Shape {
+								geometry Box { size 1.5 1.5 0.15 }
+								appearance Appearance {
+											material Material {
+													transparency IS ss_transparency
+													ambientIntensity 1
+													shininess 1
+													diffuseColor 0.8 0.8 0.8
+											} # material
+								} # appearance
+						} # Shape
+			]
+		} # end Transform
+}
+PROTO Shiny_Surface2 [ field SFVec3f     ss_position 0 0 0
+											field SFRotation  ss_rotation 0 1 0 0.785
+											field SFFloat     ss_transparency 0.4 ] {
+											# field SFFloat     ss_transparency 0.75 ] {
+		Transform {
+			translation IS ss_position
+			rotation IS ss_rotation
+			children [
+						Shape {
+								geometry Box { size 1 1 0.1 }
+								appearance Appearance {
+											material Material {
+													transparency IS ss_transparency
+													ambientIntensity 1
+													shininess 1
+													diffuseColor 0.6 0.6 0.6
+					specularColor 0.6 0.6 0.6
+											} # material
+								} # appearance
+						} # Shape
+			]
+		} # end Transform
+}
+###################################
+
+
+###################################
+# Proto: Mirror
+# Description This protoype is for the mirror
+###################################
+PROTO Mirror [ field SFVec3f m_position 0 0 0
+							field SFRotation m_rotation 0 0 0 0 ]
+{
+	Transform {
+		translation IS m_position
+		rotation IS m_rotation
+		scale 1.5 1.5 1.5
+		children [
+			Shiny_Surface2 {
+				ss_position 0 0 0
+				ss_rotation 0 0 0 0
+				ss_transparency 0
+			}
+
+			Transform {
+				translation 0 0 0.125
+				rotation 1 0 0 1.5707963
+				children [
+					Shape {
+						geometry Cylinder {
+							radius 0.5
+							height 0.1
+							bottom TRUE
+							top TRUE
+							side TRUE
+						}
+						appearance Appearance {
+							material Material {
+								ambientIntensity 0.4
+								diffuseColor 0.6 0.6 0.6
+								specularColor 0.4 0.4 0.4
+							}
+						}
+					} # Shape
+					SpotLight {
+						location 0 5 0
+						direction 0 -7.5 0
+						beamWidth 5
+					}
+				]
+			}
+		]
+	}
+}
+###################################
+                                        
+
+
+		############################################################################
+		# Transform A-----+
+		#                 +---Screen A
+		#                 +---Transform B---+
+		#                 |                 *---Line A
+		#                 +---Transform C-----+
+		#                                     *---Screen B
+		# Transfrom D-----+
+		#                 *---TranslateDragger A
+		# +---Beam Splitter (ShinySurface Proto)
+		# +---Compensation Plate (ShinySurface Proto)
+		# +---Mirror A (Movable) (Mirror Proto)
+		# *---Mirror B (Tiltable) (Mirror Proto)
+		#
+		############################################################################
+
+		##################################
+		# Transform A                    #
+		##################################
+		DEF ScreenHolder Transform {
+			translation 0 0 -20
+			#rotation 1 0 0 -3.14159265
+			scale 0.5 0.5 0.5
+			children [
+				DEF TS TouchSensor {}
+				##################################
+				# IndexedFaceSet for Screen      #
+				##################################
+				DEF TopHalf Shape { # Screen A
+					geometry DEF ifsNode IndexedFaceSet {
+						coord DEF ifs_coordinateNode Coordinate { point [ ] }
+						color DEF ifs_colorNode Color { color [ 1 1 1 ] }
+						colorPerVertex TRUE
+						coordIndex []
+						solid FALSE
+					}
+				}
+				#Bottom is always same as top
+				Transform {
+					rotation 1 0 0 3.1415926535
+					children USE TopHalf
+				}
+
+				##################################
+				# Transform B                    #
+				##################################
+				Transform { # Transform B
+					#translation 0 -5.25 0
+					translation 0 15.75 0
+					scale 1 6 1
+					#rotation 1 0 0 3.14159265
+					children [
+						DEF LINE_SET_TRANSFORM Transform {
+							children [
+								##################################
+								# IndexedLineSet for Line        #
+								##################################
+								Shape { # Line A
+									geometry DEF ilsNode IndexedLineSet {
+										coord DEF ils_coordinateNode Coordinate { point [ 5 0 0 ] }
+										colorPerVertex FALSE
+										coordIndex [ 1 ]
+									} # geometry
+									appearance Appearance {
+										material Material {
+											emissiveColor 1 1 1
+											diffuseColor  1 1 1
+											specularColor 1 1 1
+										} # material
+									} # appearance
+								} # end Shape(Line A)
+								##################################
+							]
+						} # end of LINE_SET_TRANSFORM
+					]
+				} # end Transform (Transform B)
+
+				##################################
+				# Transform C                    #
+				##################################
+				Transform { # Transform C
+					translation 0 0 -0.78
+					children [
+
+						##################################
+						# Box for Screen                 #
+						##################################
+						Shape { # Screen B
+							geometry Box {
+								size 29.25 29.25 0.75
+							} # end geometry
+							appearance Appearance {
+								material Material {
+									diffuseColor  0.4 0.4 0.4
+									specularColor 0.4 0.4 0.4
+									#ambientColor  0.4 0.4 0.4
+								} # material
+							} # appearance
+						} # end Shape(Screen B)
+						##################################
+					]
+				} # end of Transform C
+
+				#Axis and associated labels
+				Transform { # Transform Z
+					translation 0 0 0.05
+					children [
+
+						##################################
+						# Axis for Screen                #
+						##################################
+						DEF AxisToggle Switch {
+							choice [
+								Group {
+									children [
+										Shape { # Axis
+											geometry IndexedLineSet {
+												coord Coordinate { point [ -15 0 0, 15 0 0, 0 15 0, 0 -15 0,
+														-15 0.75 0, -15 -0.75 0, 15 0.75 0, 15 -0.75 0
+														-12 0.75 0, -12 -0.75 0, 12 0.75 0, 12 -0.75 0
+														-9 0.75 0, -9 -0.75 0, 9 0.75 0, 9 -0.75 0
+														-6 0.75 0, -6 -0.75 0, 6 0.75 0, 6 -0.75 0
+														-3 0.75 0, -3 -0.75 0, 3 0.75 0, 3 -0.75 0
+													] }
+												colorPerVertex FALSE
+												coordIndex [ 0 1 -1  # Horizontal Axis
+													2 3 -1             # Vertical Axis
+													4 5 -1 6 7 -1      # tick 15
+													8 9 -1 10 11 -1    # tick 12
+													12 13 -1 14 15 -1  # tick 9
+													16 17 -1 18 19 -1  # tick 6
+													20 21 -1 22 23 -1  # tick 3
+												]
+											} # geometry
+											appearance Appearance {
+												material Material {
+													emissiveColor 1 1 1
+													diffuseColor  1 1 1
+													specularColor 1 1 1
+												} # material
+											} # appearance
+										} # end Shape(Line A)
+										Transform {
+											#translation 4.5 1 0
+											#rotation 1 0 0 3.14159265
+											translation 13.5 -3 0
+											scale 3 3 3
+											children [
+												Shape {
+													geometry Text {
+														string "15cm"
+													}
+													appearance Appearance {
+														material Material {
+															emissiveColor 1 1 1
+															diffuseColor  1 1 1
+															specularColor 1 1 1
+														}
+													}
+												}
+											]
+										} # Transform
+
+										Transform {
+											#translation -6.5 1 0
+											#rotation 1 0 0 3.14159265
+											translation -19.5 -3 0
+											scale 3 3 3
+											children [
+												Shape {
+													geometry Text {
+														string "-15cm"
+													}
+													appearance Appearance {
+														material Material {
+															emissiveColor 1 1 1
+															diffuseColor  1 1 1
+															specularColor 1 1 1
+														}
+													}
+												}
+											]
+										} # Shape
+									]
+								} # Transform
+							]
+							whichChoice 0
+						}
+
+						##################################
+					]
+				} # end of Transform Z
+			]
+		} # end Transform (Transform A)
+
+		##################################
+		# Floor                          #
+		##################################
+		Transform {
+			translation -2.5 -2.5 6.75
+			children [
+				Shape {
+					geometry Box {
+						size 7.5 0.125 7.25
+					}
+					appearance Appearance {
+						material Material {
+							emissiveColor  0.1 0.4 0.4
+						} # material
+					} # appearance
+				}
+			]
+		}
+
+		##################################
+		# Beam Splitter                  #
+		##################################
+		Shiny_Surface {
+			ss_position 0 -1.75 5
+		}
+		##################################
+
+		##################################
+		# Compensation Plate             #
+		##################################
+		Shiny_Surface {
+			ss_position -2.5 -1.75 5
+		}
+		##################################
+
+		##################################
+		# Movable Mirror                 #
+		##################################
+		Mirror {
+			m_position 0 -1.75 10
+			m_rotation 0 1 0 -3.1415926
+		}
+
+		##################################
+		# Tiltable Mirror                #
+		##################################
+		Mirror {
+			m_position -5 -1.75 5
+			m_rotation 0 1 0 1.5707963
+		}
+		################################
+
+		################################
+		# Wheel (Widgets Switch)       #
+		################################
+		DEF WidgetsToggle Switch {
+			choice [
+				Group {
+                    children [
+                        Transform {
+					        translation 5 -2.5 5
+					        rotation 1 0 0 1.5707963
+					        scale 0.8 0.8 0.8
+					        children
+					        DEF WavelengthWheel WheelWidget {
+						        value 550
+						        maxValue 700
+						        minValue 400
+					        }
+				        }
+                        Transform {
+					        translation -5 -1.25 5
+					        #This is ancient; who knows what rotation it needs.
+					        #rotation 1 0 0 3.14159265
+					        scale 0.5 0.5 0.5
+					        children
+					        DEF PhiWheel WheelWidget {
+						        value 0
+						        maxValue 1
+						        minValue -1
+						        maxRotations 4
+					        }
+				        }
+                        Transform {
+					        translation 0 -1.75 10.15
+					        #This wheel decreases with clockwise spins.
+					        rotation 1 0 0 -1.5707963267948966
+					        scale 0.8 0.8 0.8
+					        children DEF PathDiffWheel WheelWidget {
+						        value 0.005
+						        minValue -0.02
+						        maxValue 0.02
+						        maxRotations 40
+					        }
+				        }
+                    ]
+                }
+			]
+			whichChoice 0
+		} # widget 3 switch
+		################################
+
+
+		Transform {
+			translation 3 -2.25 5
+			#           rotation 0 1 0  1.5707963
+
+			scale  .0075 .0125 .0125
+			children [
+				Inline {
+					url "../vrmllib/Wave.wrl"
+					# bboxSize 3 3.00009 14
+					# bboxCenter 0 2.5034e-05 -4
+				}
+			]
+		}
+
+#		DEF SCALE_TRANSLATE_SENSOR Script {
+#			eventIn  SFVec3f translation_in
+#			eventOut SFVec3f screen_translation_out
+#			eventOut SFVec3f screen_mesh_translation_out
+
+#			url "vrmlscript:
+#			function initialize()
+#			{
+#				screen_translation_out      = new SFVec3f(0, 0, -1);
+#				screen_mesh_translation_out = new SFVec3f(.5, .5, .5);
+#			}
+
+#			function translation_in(value, time)
+#			{
+#				zCurrent = .5*value[0] ;
+
+#				screen_translation_out[2] = zCurrent;
+#				screen_mesh_translation_out[1] = 150;
+#				screen_mesh_translation_out[2] = zCurrent;
+#			}"
+#		}
+
+#		DEF RESIZE_SENSOR Script {
+#			eventIn  SFVec3f translation_in
+#			eventOut SFVec3f screen_translation_out
+#			eventOut SFVec3f screen_mesh_translation_out
+
+#			url "vrmlscript:
+#			function initialize()
+#			{
+#				screen_translation_out      = new SFVec3f(0, 0, -1);
+#				screen_mesh_translation_out = new SFVec3f(.5, .5, .5);
+#			}
+
+#			function translation_in(value, time)
+#			{
+#				zCurrent = value[0]/2.825;
+
+#				screen_translation_out[1] = zCurrent;
+#				screen_mesh_translation_out[1] = 150;
+#				screen_mesh_translation_out[2] = zCurrent;
+#			}"
+#		}
+
+		DEF PhiTrackToggle Switch {
+			whichChoice 0
+			choice Transform {
+				translation -5 -2.125 5
+				rotation -1 1 1 2.1
+				children [
+					DEF PhiTrackWidget RotationWidget {
+						minAngle 0.5235987756
+						maxAngle 2.617993878
+						angle 1.5707963268
+						normalGeometry Transform {
+							translation 2 0 0
+							children Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 0 0 0
+										specularColor .682 .431 .455
+										emissiveColor .424 .173 .18
+										ambientIntensity 0
+										shininess .055
+									}
+								}
+								geometry Sphere { radius .2 }
+							}
+						}
+						activeGeometry Transform {
+							translation 2 0 0
+							children Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 0 0 0
+										specularColor .902 .902 .902
+										emissiveColor 1 0 0
+										ambientIntensity 0
+										shininess .031
+									}
+								}
+								geometry Sphere {
+									radius .2
+								}
+							}
+						}
+					}
+					Shape {
+						appearance Appearance {
+							material Material {
+								diffuseColor .02 .5 .12
+								specularColor .76 .76 .76
+								emissiveColor 0 .16 0
+								ambientIntensity 0
+								shininess .15
+								transparency .31
+							}
+						}
+#						geometry DEF PhiBallTrack Extrusion {
+#							scale .07 .07
+#						}
+					}
+				]
+			}
+		}
+#		DEF PBTScript Script {
+#			field SFFloat arcStart 0.5235987756
+#			field SFFloat arcEnd 2.617993878
+#			field SFFloat radius 2
+#			field SFInt32 res 12
+
+#			eventOut MFVec3f spine_out
+#			url "javascript:
+#				function initialize() {
+#					var i,theta;
+#					for(i=0;i<=res;i++) {
+#						theta=arcStart+(arcEnd-arcStart)*i/res;
+#						spine_out[i].x=-Math.cos(theta)*radius;
+#						spine_out[i].y=Math.sin(theta)*radius;
+#					}
+#				}"
+#		}
+
+#ROUTE PBTScript.spine_out TO PhiBallTrack.set_spine

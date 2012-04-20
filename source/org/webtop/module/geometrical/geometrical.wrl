@@ -1,0 +1,1948 @@
+EXTERNPROTO TwoXColorCone [
+	exposedField SFNode material
+	exposedField SFVec3f coneScale ]
+"../vrmllib/Widgets.wrl#TwoXColorCone"
+
+EXTERNPROTO RedConeXDragger [
+	exposedField SFVec3f coneScale
+	exposedField SFVec3f translation
+	exposedField SFRotation rotation
+	field SFFloat position
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition
+	eventIn SFFloat set_minPosition
+	field SFFloat maxPosition
+	eventIn SFFloat set_maxPosition
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFBool positionAsValue
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#RedConeXDragger"
+
+EXTERNPROTO CylinderXDragger [
+	exposedField SFVec3f cylScale
+	exposedField SFVec3f translation
+	exposedField SFRotation rotation
+	field SFFloat position
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition
+	eventIn SFFloat set_minPosition
+	field SFFloat maxPosition
+	eventIn SFFloat set_maxPosition
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFBool positionAsValue
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#CylinderXDragger"
+
+EXTERNPROTO WheelWidget [
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFFloat maxRotations
+	eventIn SFFloat set_maxRotations
+	eventOut SFBool isActive_out
+	eventOut SFBool isOver_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	exposedField SFNode material
+	exposedField SFNode activeMaterial
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"../vrmllib/Widgets.wrl#WheelWidget"
+
+PROTO FocusCone [ field SFFloat radius 1
+	field SFInt32 resolution 32
+	field SFFloat focus 1
+	eventIn SFFloat set_radius
+	eventIn SFInt32 set_resolution
+	eventIn SFFloat set_focus ]
+{
+	DEF TheCone Extrusion {
+		#		spine [ 0 0 0, 0 1 0 ]
+		scale [ 1 1, 0 0 ]
+		solid FALSE
+		beginCap FALSE
+	}
+	DEF Worker Script {
+		field SFFloat r IS radius
+		field SFInt32 res IS resolution
+		field SFFloat f IS focus
+		eventIn SFFloat nuRad IS set_radius
+		eventIn SFInt32 nuRes IS set_resolution
+		eventIn SFFloat nuFoc IS set_focus
+		eventOut MFVec2f theCrossSection
+		eventOut MFVec3f theFocus
+		url "javascript:
+		function initialize() {
+			nuRes(res,null);
+			nuRad(r,null);
+			nuFoc(f,null);
+		}
+		function nuRes(value,time) {
+			res=Math.max(value,2);
+			calculateCross();
+		}
+		function nuRad(value,time) {
+			r=Math.max(value,0);
+			calculateCross();
+		}
+		function calculateCross() {
+			theCrossSection=new MFVec2f();
+			for(i=0;i<res;i++) {
+				angle=i/(res-1)*Math.PI;
+				theCrossSection[i]=new SFVec2f(r*Math.cos(angle),r*Math.sin(angle));
+				theCrossSection[i+res]=theCrossSection[i].multiply(-1);
+			}
+		}
+		function nuFoc(value,time) {
+			f=Math.max(value,0);
+			theFocus=new MFVec3f();
+			theFocus[0]=new SFVec3f(0,0,0);
+			theFocus[1]=new SFVec3f(0,f,0);
+		}
+		"
+	}
+	ROUTE Worker.theCrossSection TO TheCone.set_crossSection
+	ROUTE Worker.theFocus TO TheCone.set_spine
+	# ROUTE Worker.theRadius TO TheCone.set_radius
+}
+
+# This is taken from shapes.wrl and should not be modified.
+EXTERNPROTO ConvexLens [
+	field SFFloat radius
+	field SFFloat radiusOfCurvature
+	field SFInt32 resolution
+	field SFInt32 depthResolution
+	eventIn SFFloat set_radius
+	eventIn SFFloat set_radiusOfCurvature
+	eventIn SFInt32 set_resolution
+	eventIn SFInt32 set_depthResolution
+]
+"../vrmllib/Shapes.wrl#ConvexLens"
+EXTERNPROTO ConcaveLens [
+	field SFFloat radius
+	field SFFloat radiusOfCurvature
+	field SFFloat thickness
+	field SFInt32 resolution
+	field SFInt32 depthResolution
+	eventIn SFFloat set_radius
+	eventIn SFFloat set_radiusOfCurvature
+	eventIn SFFloat set_thickness
+	eventIn SFInt32 set_resolution
+	eventIn SFInt32 set_depthResolution
+]
+"../vrmllib/Shapes.wrl#ConcaveLens"
+
+#These PROTOs need to 'start' with their widgets visible; this causes Blaxxun
+#to consider them real enough to initialize, and good things happen with
+#neither user's intervention nor race condition with Java.
+
+PROTO Lens [
+	exposedField SFBool enabled TRUE	 #peter
+
+	field				SFNode	lensGeometry NULL
+	field				SFRotation focusRotation 0 1 0 0		#Use PI/2 for diverging
+
+	field				SFFloat position 10
+	eventIn			SFFloat set_position
+	eventOut		SFFloat position_changed
+	field				SFFloat minPosition 0.25
+	field				SFFloat maxPosition 50
+
+	field				SFFloat radius 2.5
+	eventIn			SFFloat set_radius
+	eventOut		SFFloat radius_changed
+	field				SFFloat minRadius 0
+	field				SFFloat maxRadius 5
+
+	field				SFFloat focalLength 5				#scaled by 0.25 because it has to mesh with positions
+	eventIn			SFFloat set_focalLength
+	eventOut		SFFloat focalLength_changed
+	field				SFFloat minFocalLength 0.25
+	field				SFFloat maxFocalLength 25
+
+	field				SFVec3f scaleWidgets 0.4 0.4 0.4
+	eventIn			SFBool	set_widgetsVisible
+	eventOut		SFBool	isOver_out
+	eventOut		SFBool	underDrag_out
+
+	eventOut SFBool initialized
+]
+{
+	#This is an (unfortunately) Blaxxun-required copy from Widgets.wrl (v0.8.2).  Don't refer to it!
+	#The Widgets.wrl version should be used everywhere (as an EXTERNPROTO where possible).
+	PROTO XDragWidget [ exposedField SFVec3f translation 0 0 0
+											exposedField SFRotation rotation 0 0 1 0
+
+											field SFFloat position 0
+											eventIn SFFloat set_position
+											eventOut SFFloat position_changed
+
+											field SFFloat minPosition 0				#If minPosition > maxPosition, all values allowed
+											eventIn SFFloat set_minPosition
+											field SFFloat maxPosition 1
+											eventIn SFFloat set_maxPosition
+
+											field SFFloat value 0							#Only used if positionAsValue FALSE
+											eventIn SFFloat set_value
+											eventOut SFFloat value_changed
+
+											field SFFloat minValue 0
+											eventIn SFFloat set_minValue
+											field SFFloat maxValue 1
+											eventIn SFFloat set_maxValue
+
+											#If this is TRUE (the default), the min/maxValue fields
+											#are ignored and 'position' and 'value' are equivalent.
+											#(This could probably have a better name.)
+											field SFBool positionAsValue TRUE
+
+											eventOut SFBool isOver_out
+											eventOut SFBool isActive_out
+											eventIn SFBool set_isActive
+
+											exposedField SFBool enabled TRUE
+
+											exposedField MFNode geometry []
+											exposedField MFNode activeGeometry []
+											field SFString debugName "<unnamed>"
+											eventOut SFBool initialized ]
+	{
+		Transform {
+			translation IS translation
+			rotation IS rotation
+			children [
+				TouchSensor {
+					isOver IS isOver_out
+					enabled IS enabled
+				}
+				DEF PS PlaneSensor {
+					isActive IS isActive_out
+					enabled IS enabled
+				}
+				DEF GeometryTransform Transform {
+					children DEF GeometrySwitch Switch {
+						whichChoice 0
+						choice [ Group { children IS geometry }
+										 Group { children IS activeGeometry } ]
+					}
+				}
+			]
+		}
+		DEF Worker Script {
+			field		SFFloat pos IS position
+			eventIn SFFloat pos_in IS set_position
+			eventOut SFFloat pos_out IS position_changed
+
+			field		SFFloat minPos IS minPosition
+			field		SFFloat maxPos IS maxPosition
+			eventIn SFFloat set_minPosition IS set_minPosition
+			eventIn SFFloat set_maxPosition IS set_maxPosition
+
+			field SFFloat val IS value
+			eventIn SFFloat val_in IS set_value
+			eventOut SFFloat val_out IS value_changed
+
+			field		SFFloat minVal IS minValue
+			field		SFFloat maxVal IS maxValue
+			eventIn SFFloat set_minValue IS set_minValue
+			eventIn SFFloat set_maxValue IS set_maxValue
+
+			field SFBool ignoreLogical IS positionAsValue
+
+			eventIn SFVec3f ps_trans_in
+			eventIn SFVec3f ps_offset_in
+			field SFVec3f ps_offset 0 0 0
+
+			eventOut SFVec3f offset_out
+			eventOut SFVec2f maxPos_out
+			eventOut SFVec2f minPos_out
+
+			eventOut SFVec3f trans_out
+
+			eventIn SFBool active_in IS set_isActive
+			eventOut SFInt32 whichChoice_out
+			field SFBool active FALSE
+
+			field SFString name IS debugName
+
+			field SFBool inited TRUE				#temp: for compatibility
+			eventOut SFBool initialized IS initialized
+
+			url "javascript:
+			function initialize() {
+				name='XDragWidget('+name+')::';
+				//**/print(name+'initialize!');
+				if(ignoreLogical) pos_in(pos,0);
+				else val_in(val,0);
+
+				set_maxPosition(maxPos,0);
+				set_minPosition(minPos,0);
+
+				inited=true;
+				initialized=true;
+			}
+
+			function pos_in(value,time) {
+				//**/print(name+'pos_in('+value+')');
+				if(maxPos<minPos || value>=minPos && value<=maxPos) {
+					//If the user is dragging the widget, they will have imparted some
+					//'delta-pos' to it (equal to the PS's translation_out minus its
+					//offset, which is the translation it had at the start of the drag).
+					//We thus set the offset so that it plus the delta-pos gives the value
+					//parameter.  This has the effect of sliding the widget within the
+					//user's grasp without them letting go of it.
+					offset_out[0]=value-(active?pos-ps_offset[0]:0);
+					set_trans_internal(value);
+				} else print(/*'XDragWidget::'*/name+'pos_in: value '+value+' out of range ['+minPos+', '+maxPos+']');
+			}
+
+			function ps_trans_in(value,time) {set_trans_internal(value[0]);}
+			function ps_offset_in(value,time) {ps_offset=value;}
+
+			function set_trans_internal(value) {
+				pos=value;
+				trans_out[0]=pos;
+				if(inited) {
+					//**/print(name+'pos_out -> '+value);
+					pos_out=pos;
+					val_out=ignoreLogical?pos:xlate(minPos,maxPos,minVal,maxVal,pos);
+				}
+			}
+
+			function val_in(value,time) {
+				if(!ignoreLogical && (value<minVal && value<maxVal || value>minVal && value>maxVal))
+					print(/*'XDragWidget::'*/name+'val_in: value '+value+' out of range ['+minVal+', '+maxVal+']');
+				else pos_in(ignoreLogical?value:xlate(minVal,maxVal,minPos,maxPos,value),time);
+			}
+
+			function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+
+			function active_in(value,time) {whichChoice_out=(active=value)?1:0;}
+
+			//Setting the second values to 0 clamps the translation in the y
+			//direction, so motion occurs only in x.  We also adjust the current
+			//value if it's outside the new bounds.
+			function set_minPosition(value,time) {
+				//**/print(name+'set_min('+value+')');
+				var oldMin=minPos;
+				minPos_out=new SFVec2f(minPos=value,0);
+				if(ignoreLogical) {
+					if(maxPos>=minPos && pos<minPos) pos_in(minPos,time);
+				} else pos_in(xlate(oldMin,maxPos,minPos,maxPos,pos),time);
+			}
+			function set_maxPosition(value,time) {
+				//**/print(name+'set_max('+value+')');
+				var oldMax=maxPos;
+				maxPos_out=new SFVec2f(maxPos=value,0);
+				if(ignoreLogical) {
+					if(maxPos>=minPos && pos>maxPos) pos_in(maxPos,time);
+				} else pos_in(xlate(minPos,oldMax,minPos,maxPos,pos),time);
+			}
+			//There is no 'value' state, and as such these functions are very simple.
+			function set_minValue(value,time) {minVal=value;}
+			function set_maxValue(value,time) {maxVal=value;}"
+		}
+		ROUTE PS.translation_changed TO Worker.ps_trans_in
+		ROUTE PS.offset_changed TO Worker.ps_offset_in
+		ROUTE PS.isActive TO Worker.active_in
+		ROUTE Worker.whichChoice_out TO GeometrySwitch.whichChoice
+		ROUTE Worker.trans_out TO GeometryTransform.set_translation
+		ROUTE Worker.offset_out TO PS.set_offset
+		ROUTE Worker.maxPos_out TO PS.maxPosition
+		ROUTE Worker.minPos_out TO PS.minPosition
+	}
+
+	Transform {
+		#rotation 0 1 0 1.5707963267949
+		children [
+			DEF TS TouchSensor {
+				isOver IS isOver_out
+			}
+			DEF PosDraggerHolder Switch {
+				whichChoice 0
+				choice Transform {
+					rotation 0 1 0 -1.5708
+					children DEF PositionDragger RedConeXDragger {
+						coneScale IS scaleWidgets
+						minPosition IS minPosition
+						maxPosition IS maxPosition
+						position IS position
+						set_position IS set_position
+						position_changed IS position_changed
+						isActive_out IS underDrag_out
+						enabled IS enabled
+						debugName "Lens.position"
+					}
+				}
+			}
+			DEF LensTranslator Transform {
+				children [
+					DEF RadDraggerHolder Switch {
+						whichChoice 0
+						choice Transform {
+							rotation 0 1 0 3.141592653
+							children DEF RadiusDragger RedConeXDragger {
+								coneScale IS scaleWidgets
+								minPosition IS minRadius
+								maxPosition IS maxRadius		#This WAS temporary; is still needful
+								position IS radius
+								set_position IS set_radius
+								position_changed IS radius_changed
+								isActive_out IS underDrag_out
+								enabled IS enabled
+								debugName "Lens.radius"
+							}
+						}
+					}
+					DEF LensScaler Transform {
+						children Shape {
+							appearance Appearance {
+								material Material {
+									ambientIntensity		0.0650877
+									diffuseColor		0.0575819 0.0309427 0.29568
+									specularColor		0.797872 0.797872 0.797872
+									emissiveColor		0.239362 0.285461 0.319149
+									shininess		0.755319
+									#transparency		0.712766
+									#transparency		0.4 # used to be .2
+									transparency		0.7
+								}
+							}
+							geometry IS lensGeometry
+						}
+					}
+					DEF FocusDraggerHolder Switch {
+						whichChoice 0
+						choice Transform {
+							rotation IS focusRotation
+							children [
+								DEF FocusDragger XDragWidget {
+									rotation 0 1 0 -1.570796
+									#coneScale 1 1 1
+									minPosition IS minFocalLength #WAS radius
+									maxPosition IS maxFocalLength
+									position IS focalLength
+									set_position IS set_focalLength
+									position_changed IS focalLength_changed
+									isActive_out IS underDrag_out
+									enabled IS enabled
+									geometry TwoXColorCone {
+										material Material { diffuseColor 0.2 1.0 0.2 }
+										coneScale IS scaleWidgets
+									}
+									activeGeometry TwoXColorCone {
+										material Material { diffuseColor 0.1 1.0 0.1 emissiveColor 0.1 1.0 0.1 }
+										coneScale IS scaleWidgets
+									}
+									debugName "Lens.focus"
+								}
+							]
+						}
+					}
+					DEF FocusHolder Switch {
+						whichChoice 0
+						choice Transform {
+							rotation IS focusRotation
+							children Transform {
+								rotation 1 0 0 1.570796		#Needs to be inside futurely-asymmetric scaling above (? [Davis])
+								children Shape {
+									appearance Appearance {
+										material Material {
+											emissiveColor 1 0 0
+											transparency .8
+										}
+									}
+									geometry DEF TheCone FocusCone {
+										radius IS radius
+										resolution 20
+										focus IS focalLength
+									}
+								}
+							}
+						}
+					}
+				]
+			}
+		]
+	}
+	DEF TheForce TimeSensor { loop TRUE }  #This makes Blaxxun think something's happening
+	DEF Worker Script {
+		field SFFloat r IS radius
+		field SFFloat f IS focalLength
+		eventOut SFBool shutup
+
+		eventIn SFFloat set_pos
+		eventOut SFVec3f translation_changed
+
+		eventIn SFFloat set_r
+		#eventIn SFFloat set_f
+
+		field SFFloat maxR IS maxRadius
+		#eventOut SFFloat set_maxR
+		#eventOut SFFloat set_minF
+
+		eventOut SFVec3f lens_scale
+		eventOut SFVec3f posDragger_translation
+
+		eventOut SFBool ts_enabled
+		eventOut SFInt32 widgets_which
+
+		eventIn SFBool set_widgetsOn IS set_widgetsVisible
+
+		eventOut SFBool inited IS initialized
+
+		url "javascript:
+		function initialize() {
+			//**/print('ConvexLens::initialize!');
+			set_r(r,null);
+			//set_f(f,null);
+			inited=true;
+		}
+
+		function set_widgetsOn(value, time) {
+			ts_enabled=!value;
+			widgets_which=value?0:-1;
+		}
+
+		function set_pos(value, time) {
+			//**/print('ConvexLens::set_pos('+value+')');
+			translation_changed[2] = value;
+			shutup=false;
+		}
+
+		function set_r(value, time) {
+			lens_scale[0]=lens_scale[1]=lens_scale[2]=value;
+			posDragger_translation[1] = value;
+			//set_minF=value*2;
+		}
+		/*function set_f(value, time) {
+			set_maxR=Math.min(value/2,maxR);
+		}*/"
+	}
+	ROUTE PositionDragger.position_changed TO Worker.set_pos
+	ROUTE RadiusDragger.position_changed TO Worker.set_r
+	ROUTE RadiusDragger.position_changed TO TheCone.set_radius
+	ROUTE FocusDragger.position_changed TO TheCone.set_focus
+	#ROUTE FocusDragger.position_changed TO Worker.set_f
+	#ROUTE Worker.set_maxR TO RadiusDragger.set_maxPosition
+	#ROUTE Worker.set_minF TO FocusDragger.set_minPosition
+	ROUTE Worker.translation_changed TO LensTranslator.set_translation
+	ROUTE Worker.lens_scale TO LensScaler.set_scale
+	ROUTE Worker.posDragger_translation TO PositionDragger.set_translation
+	ROUTE Worker.ts_enabled TO TS.set_enabled
+	ROUTE Worker.widgets_which TO FocusHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO PosDraggerHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO RadDraggerHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO FocusDraggerHolder.set_whichChoice
+	ROUTE Worker.shutup TO TheForce.enabled
+}
+
+PROTO UnknownLens [
+	exposedField SFBool enabled TRUE	 #peter
+
+	field				SFNode	lensGeometry NULL
+	field				SFRotation focusRotation 0 1 0 0		#Use PI/2 for diverging
+
+	field				SFFloat position 10
+	eventIn			SFFloat set_position
+	eventOut		SFFloat position_changed
+	field				SFFloat minPosition 0.25
+	field				SFFloat maxPosition 50
+
+	field				SFFloat radius 2.5
+	eventIn			SFFloat set_radius
+	eventOut		SFFloat radius_changed
+	field				SFFloat minRadius 0
+	field				SFFloat maxRadius 5
+
+	#field				SFFloat focalLength 5				#scaled by 0.25 because it has to mesh with positions
+	#eventIn			SFFloat set_focalLength
+	#eventOut		SFFloat focalLength_changed
+	#field				SFFloat minFocalLength 0.25
+	#field				SFFloat maxFocalLength 25
+
+	field				SFVec3f scaleWidgets 0.4 0.4 0.4
+	eventIn			SFBool	set_widgetsVisible
+	eventOut		SFBool	isOver_out
+	eventOut		SFBool	underDrag_out
+
+	eventOut SFBool initialized
+]
+{
+	#This is an (unfortunately) Blaxxun-required copy from Widgets.wrl (v0.8.2).  Don't refer to it!
+	#The Widgets.wrl version should be used everywhere (as an EXTERNPROTO where possible).
+	PROTO XDragWidget [ exposedField SFVec3f translation 0 0 0
+											exposedField SFRotation rotation 0 0 1 0
+
+											field SFFloat position 0
+											eventIn SFFloat set_position
+											eventOut SFFloat position_changed
+
+											field SFFloat minPosition 0				#If minPosition > maxPosition, all values allowed
+											eventIn SFFloat set_minPosition
+											field SFFloat maxPosition 1
+											eventIn SFFloat set_maxPosition
+
+											field SFFloat value 0							#Only used if positionAsValue FALSE
+											eventIn SFFloat set_value
+											eventOut SFFloat value_changed
+
+											field SFFloat minValue 0
+											eventIn SFFloat set_minValue
+											field SFFloat maxValue 1
+											eventIn SFFloat set_maxValue
+
+											#If this is TRUE (the default), the min/maxValue fields
+											#are ignored and 'position' and 'value' are equivalent.
+											#(This could probably have a better name.)
+											field SFBool positionAsValue TRUE
+
+											eventOut SFBool isOver_out
+											eventOut SFBool isActive_out
+											eventIn SFBool set_isActive
+
+											exposedField SFBool enabled TRUE
+
+											exposedField MFNode geometry []
+											exposedField MFNode activeGeometry []
+											field SFString debugName "<unnamed>"
+											eventOut SFBool initialized ]
+	{
+		Transform {
+			translation IS translation
+			rotation IS rotation
+			children [
+				TouchSensor {
+					isOver IS isOver_out
+					enabled IS enabled
+				}
+				DEF PS PlaneSensor {
+					isActive IS isActive_out
+					enabled IS enabled
+				}
+				DEF GeometryTransform Transform {
+					children DEF GeometrySwitch Switch {
+						whichChoice 0
+						choice [ Group { children IS geometry }
+										 Group { children IS activeGeometry } ]
+					}
+				}
+			]
+		}
+		DEF Worker Script {
+			field		SFFloat pos IS position
+			eventIn SFFloat pos_in IS set_position
+			eventOut SFFloat pos_out IS position_changed
+
+			field		SFFloat minPos IS minPosition
+			field		SFFloat maxPos IS maxPosition
+			eventIn SFFloat set_minPosition IS set_minPosition
+			eventIn SFFloat set_maxPosition IS set_maxPosition
+
+			field SFFloat val IS value
+			eventIn SFFloat val_in IS set_value
+			eventOut SFFloat val_out IS value_changed
+
+			field		SFFloat minVal IS minValue
+			field		SFFloat maxVal IS maxValue
+			eventIn SFFloat set_minValue IS set_minValue
+			eventIn SFFloat set_maxValue IS set_maxValue
+
+			field SFBool ignoreLogical IS positionAsValue
+
+			eventIn SFVec3f ps_trans_in
+			eventIn SFVec3f ps_offset_in
+			field SFVec3f ps_offset 0 0 0
+
+			eventOut SFVec3f offset_out
+			eventOut SFVec2f maxPos_out
+			eventOut SFVec2f minPos_out
+
+			eventOut SFVec3f trans_out
+
+			eventIn SFBool active_in IS set_isActive
+			eventOut SFInt32 whichChoice_out
+			field SFBool active FALSE
+
+			field SFString name IS debugName
+
+			field SFBool inited TRUE				#temp: for compatibility
+			eventOut SFBool initialized IS initialized
+
+			url "javascript:
+			function initialize() {
+				name='XDragWidget('+name+')::';
+				//**/print(name+'initialize!');
+				if(ignoreLogical) pos_in(pos,0);
+				else val_in(val,0);
+
+				set_maxPosition(maxPos,0);
+				set_minPosition(minPos,0);
+
+				inited=true;
+				initialized=true;
+			}
+
+			function pos_in(value,time) {
+				//**/print(name+'pos_in('+value+')');
+				if(maxPos<minPos || value>=minPos && value<=maxPos) {
+					//If the user is dragging the widget, they will have imparted some
+					//'delta-pos' to it (equal to the PS's translation_out minus its
+					//offset, which is the translation it had at the start of the drag).
+					//We thus set the offset so that it plus the delta-pos gives the value
+					//parameter.  This has the effect of sliding the widget within the
+					//user's grasp without them letting go of it.
+					offset_out[0]=value-(active?pos-ps_offset[0]:0);
+					set_trans_internal(value);
+				} else print(/*'XDragWidget::'*/name+'pos_in: value '+value+' out of range ['+minPos+', '+maxPos+']');
+			}
+
+			function ps_trans_in(value,time) {set_trans_internal(value[0]);}
+			function ps_offset_in(value,time) {ps_offset=value;}
+
+			function set_trans_internal(value) {
+				pos=value;
+				trans_out[0]=pos;
+				if(inited) {
+					//**/print(name+'pos_out -> '+value);
+					pos_out=pos;
+					val_out=ignoreLogical?pos:xlate(minPos,maxPos,minVal,maxVal,pos);
+				}
+			}
+
+			function val_in(value,time) {
+				if(!ignoreLogical && (value<minVal && value<maxVal || value>minVal && value>maxVal))
+					print(/*'XDragWidget::'*/name+'val_in: value '+value+' out of range ['+minVal+', '+maxVal+']');
+				else pos_in(ignoreLogical?value:xlate(minVal,maxVal,minPos,maxPos,value),time);
+			}
+
+			function xlate(x1,x2,y1,y2,x) {return y1+(x-x1)/(x2-x1)*(y2-y1);}
+
+			function active_in(value,time) {whichChoice_out=(active=value)?1:0;}
+
+			//Setting the second values to 0 clamps the translation in the y
+			//direction, so motion occurs only in x.  We also adjust the current
+			//value if it's outside the new bounds.
+			function set_minPosition(value,time) {
+				//**/print(name+'set_min('+value+')');
+				var oldMin=minPos;
+				minPos_out=new SFVec2f(minPos=value,0);
+				if(ignoreLogical) {
+					if(maxPos>=minPos && pos<minPos) pos_in(minPos,time);
+				} else pos_in(xlate(oldMin,maxPos,minPos,maxPos,pos),time);
+			}
+			function set_maxPosition(value,time) {
+				//**/print(name+'set_max('+value+')');
+				var oldMax=maxPos;
+				maxPos_out=new SFVec2f(maxPos=value,0);
+				if(ignoreLogical) {
+					if(maxPos>=minPos && pos>maxPos) pos_in(maxPos,time);
+				} else pos_in(xlate(minPos,oldMax,minPos,maxPos,pos),time);
+			}
+			//There is no 'value' state, and as such these functions are very simple.
+			function set_minValue(value,time) {minVal=value;}
+			function set_maxValue(value,time) {maxVal=value;}"
+		}
+		ROUTE PS.translation_changed TO Worker.ps_trans_in
+		ROUTE PS.offset_changed TO Worker.ps_offset_in
+		ROUTE PS.isActive TO Worker.active_in
+		ROUTE Worker.whichChoice_out TO GeometrySwitch.whichChoice
+		ROUTE Worker.trans_out TO GeometryTransform.set_translation
+		ROUTE Worker.offset_out TO PS.set_offset
+		ROUTE Worker.maxPos_out TO PS.maxPosition
+		ROUTE Worker.minPos_out TO PS.minPosition
+	}
+
+	Transform {
+		#rotation 0 1 0 1.5707963267949
+		children [
+			DEF TS TouchSensor {
+				isOver IS isOver_out
+			}
+			DEF PosDraggerHolder Switch {
+				whichChoice 0
+				choice Transform {
+					rotation 0 1 0 -1.5708
+					children DEF PositionDragger RedConeXDragger {
+						coneScale IS scaleWidgets
+						minPosition IS minPosition
+						maxPosition IS maxPosition
+						position IS position
+						set_position IS set_position
+						position_changed IS position_changed
+						isActive_out IS underDrag_out
+						enabled IS enabled
+						debugName "Lens.position"
+					}
+				}
+			}
+			DEF LensTranslator Transform {
+				children [
+					DEF RadDraggerHolder Switch {
+						whichChoice 0
+						choice Transform {
+							rotation 0 1 0 3.141592653
+							children DEF RadiusDragger RedConeXDragger {
+								coneScale IS scaleWidgets
+								minPosition IS minRadius
+								maxPosition IS maxRadius		#This WAS temporary; is still needful
+								position IS radius
+								set_position IS set_radius
+								position_changed IS radius_changed
+								isActive_out IS underDrag_out
+								enabled IS enabled
+								debugName "Lens.radius"
+							}
+						}
+					}
+					DEF LensScaler Transform {
+						children Shape {
+							appearance Appearance {
+								material Material {
+									ambientIntensity		0.0650877
+									diffuseColor		0.0575819 0.0309427 0.29568
+									specularColor		0.797872 0.797872 0.797872
+									emissiveColor		0.239362 0.285461 0.319149
+									shininess		0.755319
+									#transparency		0.712766
+								#	transparency		0.4 # used to be .2
+									transparency		0.7 # used to be .2
+								}
+							}
+							geometry IS lensGeometry
+						}
+					}
+#					DEF FocusDraggerHolder Switch {
+#						whichChoice 0
+#						choice Transform {
+#							rotation IS focusRotation
+#							children [
+#								DEF FocusDragger XDragWidget {
+#									rotation 0 1 0 -1.570796
+#									#coneScale 1 1 1
+#									minPosition IS minFocalLength #WAS radius
+#									maxPosition IS maxFocalLength
+#									position IS focalLength
+#									set_position IS set_focalLength
+#									position_changed IS focalLength_changed
+#									isActive_out IS underDrag_out
+#									enabled IS enabled
+#									geometry TwoXColorCone {
+#										material Material { diffuseColor 0.2 1.0 0.2 }
+#										coneScale IS scaleWidgets
+#									}
+#									activeGeometry TwoXColorCone {
+#										material Material { diffuseColor 0.1 1.0 0.1 emissiveColor 0.1 1.0 0.1 }
+#										coneScale IS scaleWidgets
+#									}
+#									debugName "Lens.focus"
+#								}
+#							]
+#						}
+#					}
+#					DEF FocusHolder Switch {
+#						whichChoice 0
+#						choice Transform {
+#							rotation IS focusRotation
+#							children Transform {
+#								rotation 1 0 0 1.570796		#Needs to be inside futurely-asymmetric scaling above (? [Davis])
+#								children Shape {
+#									appearance Appearance {
+#										material Material {
+#											emissiveColor 1 0 0
+#											transparency .8
+#										}
+#									}
+#									geometry DEF TheCone FocusCone {
+#										radius IS radius
+#										resolution 20
+#										focus IS focalLength
+#									}
+#								}
+#							}
+#						}
+#					}
+				]
+			}
+		]
+	}
+	DEF TheForce TimeSensor { loop TRUE }  #This makes Blaxxun think something's happening
+	DEF Worker Script {
+		field SFFloat r IS radius
+		#field SFFloat f IS focalLength
+		eventOut SFBool shutup
+
+		eventIn SFFloat set_pos
+		eventOut SFVec3f translation_changed
+
+		eventIn SFFloat set_r
+		#eventIn SFFloat set_f
+
+		field SFFloat maxR IS maxRadius
+		#eventOut SFFloat set_maxR
+		#eventOut SFFloat set_minF
+
+		eventOut SFVec3f lens_scale
+		eventOut SFVec3f posDragger_translation
+
+		eventOut SFBool ts_enabled
+		eventOut SFInt32 widgets_which
+
+		eventIn SFBool set_widgetsOn IS set_widgetsVisible
+
+		eventOut SFBool inited IS initialized
+
+		url "javascript:
+		function initialize() {
+			//**/print('ConvexLens::initialize!');
+			set_r(r,null);
+			//set_f(f,null);
+			inited=true;
+		}
+
+		function set_widgetsOn(value, time) {
+			ts_enabled=!value;
+			widgets_which=value?0:-1;
+		}
+
+		function set_pos(value, time) {
+			//**/print('ConvexLens::set_pos('+value+')');
+			translation_changed[2] = value;
+			shutup=false;
+		}
+
+		function set_r(value, time) {
+			lens_scale[0]=lens_scale[1]=lens_scale[2]=value;
+			posDragger_translation[1] = value;
+			//set_minF=value*2;
+		}
+		/*function set_f(value, time) {
+			set_maxR=Math.min(value/2,maxR);
+		}*/"
+	}
+	ROUTE PositionDragger.position_changed TO Worker.set_pos
+	ROUTE RadiusDragger.position_changed TO Worker.set_r
+	#ROUTE RadiusDragger.position_changed TO TheCone.set_radius
+	#ROUTE FocusDragger.position_changed TO TheCone.set_focus
+	#ROUTE FocusDragger.position_changed TO Worker.set_f
+	#ROUTE Worker.set_maxR TO RadiusDragger.set_maxPosition
+	#ROUTE Worker.set_minF TO FocusDragger.set_minPosition
+	ROUTE Worker.translation_changed TO LensTranslator.set_translation
+	ROUTE Worker.lens_scale TO LensScaler.set_scale
+	ROUTE Worker.posDragger_translation TO PositionDragger.set_translation
+	ROUTE Worker.ts_enabled TO TS.set_enabled
+	#ROUTE Worker.widgets_which TO FocusHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO PosDraggerHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO RadDraggerHolder.set_whichChoice
+	#ROUTE Worker.widgets_which TO FocusDraggerHolder.set_whichChoice
+	ROUTE Worker.shutup TO TheForce.enabled
+}
+
+PROTO Stop [
+	exposedField SFBool enabled TRUE
+	exposedField MFVec3f coordPoint []
+	field				MFInt32 coordIndex []
+	eventIn			MFInt32 set_coordIndex
+
+	field				SFFloat position 10
+	eventIn			SFFloat set_position
+	eventOut		SFFloat position_changed
+	field				SFFloat minPosition 0.25
+	field				SFFloat maxPosition 50
+
+	field				SFFloat radius 2.5
+	eventIn			SFFloat set_radius
+	eventIn			SFFloat	set_minRadius
+	eventIn			SFFloat	set_maxRadius
+	eventOut		SFFloat radius_changed
+	field				SFFloat minRadius 0
+	field				SFFloat maxRadius 5
+
+	field				SFVec3f scaleWidgets 0.4 0.4 0.4
+
+	eventIn			SFBool	set_widgetsVisible
+	eventOut		SFBool	isOver_out
+	eventOut		SFBool underDrag_out
+
+	field SFNode texture NULL
+
+	eventOut SFBool initialized
+]
+{
+	Group {
+		children [
+			DEF TS TouchSensor { isOver IS isOver_out }
+
+			DEF PosDraggerHolder Switch {
+				whichChoice 0
+				choice DEF PositionDragger RedConeXDragger {
+					coneScale IS scaleWidgets
+					minPosition IS minPosition
+					maxPosition IS maxPosition
+					position IS position
+					translation 0 5 0
+					rotation 0 1 0 -1.5707963267948966   #this should work [Davis]
+					set_position IS set_position
+					position_changed IS position_changed
+					isActive_out IS underDrag_out
+					enabled IS enabled
+					debugName "Stop.position"
+				}
+			}
+			DEF ApertureTransform Transform {
+				rotation 0 1 0 3.141592653
+				children [
+					DEF RadDraggerHolder Switch {
+						whichChoice 0
+						choice DEF RadiusDragger RedConeXDragger {
+							positionAsValue	TRUE
+							coneScale IS scaleWidgets
+							minPosition IS minRadius
+							maxPosition IS maxRadius
+							position IS radius
+							translation 0 0 .2
+							set_position IS set_radius
+							set_minPosition	IS set_minRadius
+							set_maxPosition	IS set_maxRadius
+							position_changed IS radius_changed
+							isActive_out IS underDrag_out
+							enabled IS enabled
+							debugName "Stop.radius"
+						}
+					}
+					Shape {
+						appearance Appearance {
+							material Material {
+								diffuseColor 0.5 0.4 0.1
+							}
+							texture IS texture
+						}
+						geometry IndexedFaceSet {
+							coord Coordinate {
+								point IS coordPoint
+							}
+							solid FALSE
+							creaseAngle 0.5
+							coordIndex IS coordIndex
+							set_coordIndex IS set_coordIndex
+						}
+					}
+				]
+			}
+		]
+	}
+	DEF Worker Script {
+		eventIn SFFloat position_in
+		eventOut SFVec3f translation_changed
+
+		eventOut SFInt32 widgets_which
+		eventOut SFBool ts_enabled
+
+		eventIn SFBool set_widgetsOn IS set_widgetsVisible
+
+		eventOut SFBool inited IS initialized
+
+		url "javascript:
+		function initialize() {inited=true;}
+
+		function set_widgetsOn(value, time) {
+			ts_enabled=!value;
+			widgets_which=value?0:-1;
+		}
+
+		function position_in(value, time) {
+			//**/print('Stop::position_in('+value+')');
+			translation_changed[2] = value;
+		}"
+	}
+	ROUTE PositionDragger.position_changed TO Worker.position_in
+	ROUTE Worker.translation_changed TO ApertureTransform.set_translation
+	ROUTE Worker.widgets_which TO PosDraggerHolder.set_whichChoice
+	ROUTE Worker.widgets_which TO RadDraggerHolder.set_whichChoice
+	ROUTE Worker.ts_enabled TO TS.set_enabled
+}
+
+PROTO DonutStop [
+	exposedField SFBool enabled TRUE
+	exposedField MFVec3f coordPoint []
+	field				MFInt32 coordIndex []
+	eventIn			MFInt32 set_coordIndex
+
+	field				SFFloat position 10
+	eventIn			SFFloat set_position
+	eventOut		SFFloat position_changed
+	field				SFFloat minPosition 0.25
+	field				SFFloat maxPosition 50
+
+	field				SFFloat radius 2.5
+	eventIn			SFFloat set_radius
+	eventOut		SFFloat radius_changed
+	field				SFFloat minRadius 0
+	field				SFFloat maxRadius 5
+
+	field				SFFloat donutRadius 1
+	eventIn			SFFloat set_donutRadius
+	eventOut		SFFloat donutRadius_changed
+	field				SFFloat minDonutRadius 0
+	field				SFFloat maxDonutRadius 5
+
+	field				SFVec3f scaleWidgets 0.4 0.4 0.4
+
+	eventIn			SFBool	set_widgetsVisible
+	eventOut		SFBool	isOver_out
+	eventOut		SFBool	underDrag_out
+
+	field SFNode texture NULL
+
+	eventOut SFBool initialized
+]
+{
+	Group {
+		children [
+			DEF TS TouchSensor { isOver IS isOver_out }
+
+			DEF S Stop {
+				enabled IS enabled
+				coordPoint IS coordPoint
+				coordIndex IS coordIndex
+				set_coordIndex IS set_coordIndex
+				position IS position
+				set_position IS set_position
+				position_changed IS position_changed
+				minPosition IS minPosition
+				maxPosition IS maxPosition
+				radius IS radius
+				set_radius IS set_radius
+				radius_changed IS radius_changed
+				minRadius IS minRadius
+				maxRadius IS maxRadius
+				scaleWidgets IS scaleWidgets
+				set_widgetsVisible IS set_widgetsVisible
+				isOver_out IS isOver_out
+				underDrag_out IS underDrag_out
+				texture IS texture
+			}
+			DEF DiskTransform Transform {
+				rotation 1 0 0 1.5707963267949
+				children [
+					#A cylinder that matches the Stop's shape and material
+					DEF DiskScaleTransform Transform {
+						children Shape {
+							geometry Cylinder { radius 1 height .4 }
+							appearance Appearance { material Material { diffuseColor 0.5 0.4 0.1 } }
+						}
+					}
+
+					DEF DiskDraggerHolder Switch {
+						whichChoice 0
+						choice Transform {
+							rotation 0 1 0 2.3561944901923425
+							children DEF DiskDragger RedConeXDragger {
+								positionAsValue	TRUE
+								coneScale IS scaleWidgets
+								minPosition IS minDonutRadius
+								maxPosition IS maxDonutRadius
+								position IS donutRadius
+								translation 0 -.4 0
+								set_position IS set_donutRadius
+								position_changed IS donutRadius_changed
+								isActive_out IS underDrag_out
+								enabled IS enabled
+								debugName "Stop.disk"
+							}
+						}
+					}
+				]
+			}
+		]
+	}
+	DEF Worker Script {
+		field	SFFloat	dRad IS	donutRadius
+
+		eventIn SFFloat set_dRad
+		eventOut SFVec3f disk_scale
+
+		eventIn SFFloat set_pos
+		eventOut SFVec3f disk_pos
+
+		eventIn SFBool set_widgetsOn IS set_widgetsVisible
+		eventOut SFInt32 widgets_which
+
+		eventOut SFBool inited IS initialized
+		eventIn SFBool inner_init
+		field SFBool inner_inited FALSE
+		field SFBool outer_inited FALSE
+
+		eventOut SFBool	ts_enabled
+
+		url "javascript:
+		//Wait for both scripts to come alive before declaring success:
+		function initialize() {set_dRad(dRad,null); outer_inited=true; maybe_init();}
+		function inner_init(value,time) {inner_inited=true; maybe_init();}
+		function maybe_init() {if(outer_inited && inner_inited) inited=true;}
+		//Change the size of the disk
+		function set_dRad(value,time) {disk_scale=new SFVec3f(value,1,value);}
+		function set_pos(value,time) {disk_pos[2]=value;}
+		function set_widgetsOn(value, time) {ts_enabled=!value;widgets_which=value?0:-1;}"
+	}
+	ROUTE S.initialized TO Worker.inner_init
+	#Keep the disk within the aperture
+	ROUTE S.position_changed TO Worker.set_pos
+	ROUTE Worker.disk_pos TO DiskTransform.set_translation
+	#Manage the cylinder
+	ROUTE DiskDragger.position_changed TO Worker.set_dRad
+	ROUTE Worker.disk_scale TO DiskScaleTransform.set_scale
+	#The two draggers should not be able to pass each other
+	ROUTE S.radius_changed TO DiskDragger.set_maxPosition
+	ROUTE DiskDragger.position_changed TO S.set_minRadius
+	#And control the visibility of the disk dragger:
+	ROUTE Worker.widgets_which TO DiskDraggerHolder.set_whichChoice
+	ROUTE	Worker.ts_enabled TO TS.set_enabled
+}
+
+PROTO ObservationScreen [
+	field SFFloat position 20
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition 0.25
+	#exposedField SFFloat minPosition 0.25
+	field SFFloat maxPosition 50
+
+	field SFVec2f size 1 1
+	field SFVec2f minSize 0.2 0.2
+	field SFVec2f maxSize 25 50
+
+	eventIn SFVec2f set_size
+	eventOut SFVec2f size_changed
+
+	eventIn SFFloat	set_transparency
+	eventOut SFFloat transparency_changed
+
+	eventOut SFBool isOver_out
+	eventOut SFBool underDrag_out
+
+	field SFVec3f scaleWidgets 0.6 0.6 0.6
+	eventIn SFBool set_widgetsVisible
+	eventIn	SFBool set_textVisible
+
+	eventIn	SFBool set_rulerVisible
+	eventIn	MFInt32	set_rulerCoordIndex
+	eventIn	MFVec3f	set_rulerCoords
+	eventIn	SFVec3f	set_ruler_translation
+
+	eventOut SFVec3f mousePosition_out
+
+	exposedField SFBool enabled TRUE
+
+	eventOut SFBool initialized
+	eventIn SFFloat set_minPosition
+]
+{
+	#This is an (unfortunately) Blaxxun-required copy from Widgets.wrl.  Don't refer to it!
+	#The Widgets.wrl version should be used everywhere (as an EXTERNPROTO where possible).
+	PROTO XYDragWidget [ exposedField SFVec3f translation 0 0 0
+											 exposedField SFRotation rotation 0 0 1 0
+
+											 field SFVec2f position 0 0
+											 eventIn SFVec2f set_position
+											 eventOut SFVec2f position_changed
+											 eventOut SFVec2f inversePosition_out
+
+											 #If(in a given dimension) minPosition > maxPosition,
+											 #the widget's motion is unrestricted in that dimension.
+											 field SFVec2f minPosition 0 0
+											 eventIn SFVec2f set_minPosition
+											 field SFVec2f maxPosition 1 1
+											 eventIn SFVec2f set_maxPosition
+
+											 eventOut SFBool isOver_out
+											 eventOut SFBool isActive_out
+											 eventIn SFBool set_isActive
+
+											 exposedField SFBool enabled TRUE
+
+											 exposedField MFNode geometry []
+											 exposedField MFNode activeGeometry []
+											 field SFString debugName "<unnamed>"
+											 eventOut SFBool initialized ]
+	{
+		Transform {
+			rotation IS rotation
+			translation IS translation
+			children [
+				TouchSensor {
+					isOver IS isOver_out
+					enabled IS enabled
+				}
+				DEF PS PlaneSensor {
+					isActive IS isActive_out
+					enabled IS enabled
+				}
+				DEF GeometryTransform Transform {
+					children DEF GeometrySwitch Switch {
+						whichChoice 0
+						choice [ Group { children IS geometry }
+										 Group { children IS activeGeometry } ]
+					}
+				}
+			]
+		}
+		DEF Worker Script {
+			field		SFVec2f pos IS position
+			eventIn SFVec2f pos_in IS set_position
+			eventOut SFVec2f pos_out IS position_changed
+
+			eventIn SFVec3f ps_trans_in
+			eventIn SFVec3f ps_offset_in
+			field SFVec3f ps_offset 0 0 0
+
+			field		SFVec2f maxPos IS maxPosition
+			field		SFVec2f minPos IS minPosition
+			eventIn SFVec2f set_maxPosition IS set_maxPosition
+			eventIn SFVec2f set_minPosition IS set_minPosition
+
+			eventIn SFBool active_in IS set_isActive
+			eventOut SFInt32 whichChoice_out
+			field SFBool active FALSE
+
+			eventOut SFVec3f offset_out
+			eventOut SFVec2f maxPos_out
+			eventOut SFVec2f minPos_out
+
+			eventOut SFVec3f trans_out
+
+			field SFString name IS debugName
+
+			field SFBool inited TRUE				#temp: for compatibility
+			eventOut SFBool initialized IS initialized
+
+			url "javascript:
+			function initialize() {
+				name='XYDragWidget('+name+')::';
+				//**/print(name+'initialize!');
+				pos_in(pos,null);
+
+				set_maxPosition(maxPos,null);
+				set_minPosition(minPos,null);
+
+				inited=true;
+				initialized=true;
+			}
+
+			function vecString(vec2f) {return '<'+vec2f[0]+', '+vec2f[1]+'>';}
+
+			function pos_in(value,time) {
+				//**/print(name+'pos_in('+vecString(value)+')');
+				if((maxPos[0]<minPos[0] || value[0]>=minPos[0] && value[0]<=maxPos[0]) &&
+					 (maxPos[1]<minPos[1] || value[1]>=minPos[1] && value[1]<=maxPos[1])) {
+					//If the user is dragging the widget, they will have imparted some
+					//'delta-pos' to it (equal to the PS's translation_out minus its
+					//offset, which is the translation it had at the start of the drag).
+					//We thus set the offset so that it plus the delta-pos gives the value
+					//parameter.  This has the effect of sliding the widget within the
+					//user's grasp without them letting go of it.
+					//Vector-frobbing follows.
+					var offset=active?value.subtract(pos.subtract(new SFVec2f(ps_offset[0],ps_offset[1]))):value;
+					offset_out=new SFVec3f(offset[0],offset[1],0);
+					set_trans_internal(value);
+				} else print('XYDragWidget::pos_in: value '+vecString(value)+' out of range ['+vecString(minPos)+', '+vecString(maxPos)+']');
+			}
+
+			function ps_trans_in(value,time) {set_trans_internal(new SFVec2f(value[0],value[1]));}
+			function ps_offset_in(value,time) {ps_offset=value;}
+
+			function set_trans_internal(value) {
+				pos=value;
+				//Better to avoid multiple assignments to EventOuts
+				trans_out=new SFVec3f(pos[0],pos[1],0);
+				if(inited) {
+					//**/print(name+'pos_out -> '+vecString(value));
+					pos_out=pos;
+				}
+			}
+
+			function active_in(value,time) {whichChoice_out=(active=value)?1:0; }
+
+			//We adjust the current value if it's outside the new bounds.
+			function set_maxPosition(value,time) {
+				//**/print(name+'set_max('+vecString(value)+')');
+				maxPos_out=maxPos=value;
+				var adjust=false;
+				if(maxPos[0]>=minPos[0] && pos[0]>value[0]) {
+					pos[0]=value[0];
+					adjust=true;
+				}
+				if(maxPos[1]>=minPos[1] && pos[1]>value[1]) {
+					pos[1]=value[1];
+					adjust=true;
+				}
+				if(adjust) pos_in(pos);
+			}
+			function set_minPosition(value,time) {
+				//**/print(name+'set_min('+vecString(value)+')');
+				minPos_out=minPos=value;
+				var adjust=false;
+				if(maxPos[0]>=minPos[0] && pos[0]<value[0]) {
+					pos[0]=value[0];
+					adjust=true;
+				}
+				if(maxPos[1]>=minPos[1] && pos[1]<value[1]) {
+					pos[1]=value[1];
+					adjust=true;
+				}
+				if(adjust) pos_in(pos);
+			}"
+		}
+		ROUTE PS.translation_changed TO Worker.ps_trans_in
+		ROUTE PS.offset_changed TO Worker.ps_offset_in
+		ROUTE PS.isActive TO Worker.active_in
+		ROUTE Worker.whichChoice_out TO GeometrySwitch.whichChoice
+		ROUTE Worker.trans_out TO GeometryTransform.set_translation
+		ROUTE Worker.offset_out TO PS.set_offset
+		ROUTE Worker.maxPos_out TO PS.maxPosition
+		ROUTE Worker.minPos_out TO PS.minPosition
+	}
+
+	Group {
+		children [
+			DEF WidgetsHolder Switch {
+				whichChoice 0
+				choice Group {
+					children [
+						#The widgets attached to the screen, instead of moving it
+						DEF ScreenWidgetsTransform Transform {
+							children [
+								Transform {
+									scale .5 .5 .5			#We're attached to half a screen in each direction
+									children DEF SizeDragger XYDragWidget {
+										position IS size
+										minPosition IS minSize
+										maxPosition IS maxSize
+										set_position IS set_size
+										position_changed IS size_changed
+										isActive_out IS underDrag_out
+										enabled IS enabled
+										geometry Transform {
+											scale IS scaleWidgets
+											children Shape {
+												geometry DEF SizeBox Box { size 1.2 1.2 1.2 }
+												appearance Appearance { material Material { diffuseColor 0 0 .8 } }
+											}
+										}
+										activeGeometry Transform {
+											scale IS scaleWidgets
+											children Shape {
+												geometry USE SizeBox
+												appearance Appearance { material Material { diffuseColor 0 0 .8 } }
+											}
+										}
+										debugName "ObservationScreen.size"
+									}
+								}
+								DEF TransparencyDragger CylinderXDragger {
+									cylScale IS scaleWidgets
+									rotation 0 0 1 1.570796
+									minPosition 0
+									maxPosition 1
+									minValue 0
+									maxValue 1
+									value 0
+									positionAsValue FALSE
+									enabled IS enabled
+									debugName "ObservationScreen.transparency"
+								}
+							]
+						}
+						Transform {
+							rotation 0 1 0 -1.5708
+							children DEF PositionDragger RedConeXDragger{
+								coneScale IS scaleWidgets
+								position IS position
+								minPosition IS minPosition
+								set_minPosition	IS set_minPosition
+								maxPosition IS maxPosition
+								set_position IS set_position
+								position_changed IS position_changed
+								isActive_out IS underDrag_out
+								enabled IS enabled
+								debugName "ObservationScreen.position"
+							}
+						}
+					]
+				}
+			}
+			Group {
+				children [
+					DEF TS TouchSensor {
+						isOver IS isOver_out
+						hitPoint_changed IS mousePosition_out
+						enabled IS enabled
+					}
+					DEF	ImagePlaneTextHolder Transform {
+						children [
+							DEF	ImagePlaneTextSwitch Switch {
+								whichChoice -1
+								choice Transform {
+									translation	-.8 .4 -.3
+									rotation 0 1 0 3.14159265358979
+									children Shape {
+										appearance Appearance {
+											material Material {
+												ambientIntensity		1
+												diffuseColor		1 1 1
+												specularColor		1 1 1
+												emissiveColor		1 1 1
+												shininess		1
+												#transparency		0.712766
+												transparency		0 # used to be .2
+											}
+										}
+										geometry Text { string "Image Plane" }			
+									}
+								}
+							}
+						]
+					}
+					DEF	Ruler Transform {
+						children [
+							DEF	ReticleSwitch Switch {
+								whichChoice	-1
+								choice DEF RulerTransform Transform {
+									set_translation IS set_ruler_translation
+									rotation 0 0 0 0
+									children [
+									
+										Shape {
+											appearance Appearance {
+												material Material {
+													diffuseColor 1 1 1
+													emissiveColor 1 1 0
+												}
+											}
+											geometry DEF rulerILS IndexedLineSet {
+												set_coordIndex IS set_rulerCoordIndex
+												coord DEF rulerCoords Coordinate {
+													set_point IS set_rulerCoords
+													#point [-1 0 0, 1 0 0, -1 2 0, 1 2 0, -1 4 0, 1 4 0, -1 6 0, 1 6 0, -1 -2 0, 1 -2 0, -1 -4 0, 1 -4 0, -1 -6 0, 1 -6 0,
+													#	-.5 1 0, .5 1 0, -.5 3 0, .5 3 0, -.5 5 0, .5 5 0, -.5 -1 0, .5 -1 0, -.5 -3 0, .5 -3 0, -.5 -5 0, .5 -5 0]
+												}
+												#coordIndex [0 1 -1 2 3 -1 4 5 -1 6 7 -1 8 9 -1 10 11 -1 12 13 -1 14 15 -1 16 17 -1 18 19 -1 20 21 -1 22 23 -1 24 25 -1]
+											}
+										}
+
+										Transform {
+											translation	-2 -.4 0
+											scale 1.5 1.5 1.5
+											children Shape {
+												appearance Appearance {
+													material Material {
+														ambientIntensity		1
+														diffuseColor		1 1 0
+														specularColor		1 1 0
+														emissiveColor		1 1 0
+														shininess		1
+														#transparency		0.712766
+														transparency		0 # used to be .2
+													}
+												}
+												geometry Text { string "0" }	
+											}		
+										}
+
+									]
+								}
+							}
+						]
+					}
+					DEF ScreenTransform Transform {
+						children [
+							DEF OrangeSwitch Switch {
+								whichChoice 0
+								choice [
+									Shape {
+										geometry Box { size 1 1 .1 }
+										appearance Appearance{
+											#Old material:
+											#material DEF ScreenMaterial Material { diffuseColor .12 .12 0 }
+											material DEF ScreenMaterial Material {
+												diffuseColor .1 .25 .1
+												emissiveColor 0 0 .25
+											}
+										}
+									}
+									Shape {
+										geometry Box { size 1 1 .1 }
+										appearance Appearance{
+											material DEF OrangeMaterial Material {
+												diffuseColor 0 0 0
+												emissiveColor 1 .49 .11
+												specularColor .62 .549 .259
+												ambientIntensity 0
+												shininess .055
+											}
+										}
+										ROUTE	ScreenMaterial.transparency_changed TO OrangeMaterial.set_transparency
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+	DEF TheForce TimeSensor { loop TRUE }  #This makes Blaxxun think something's happening
+	DEF Worker Script {
+		eventOut SFBool inited IS initialized
+		eventOut SFBool shutup
+
+		field SFFloat height 0
+		field SFFloat width 0
+
+		eventIn SFFloat set_pos
+		eventIn SFVec2f set_size
+
+		field SFBool trans_set FALSE
+		#field SFFloat initTransparency 0
+
+		eventOut SFVec3f posDragger_translation
+		eventOut SFVec3f screenPosition
+		eventOut SFVec3f screenScale
+
+		eventIn SFBool set_widgetsOn IS set_widgetsVisible
+		eventOut SFInt32 widgetsChoice
+
+		eventIn	SFBool set_textOn IS set_textVisible
+		eventOut SFInt32 text_which
+
+		eventIn	SFBool set_rulerOn IS set_rulerVisible
+		eventOut SFInt32 ruler_which
+
+
+		eventIn SFFloat transparency_in	IS set_transparency
+		eventOut SFFloat transparency_out IS transparency_changed  # peter - new
+		#eventOut SFFloat transDragger_position
+		eventOut SFVec3f transDragger_translation
+		eventOut SFFloat transDragger_minPos
+		eventOut SFFloat transDragger_maxPos
+
+		eventOut SFInt32 orangeChoice
+
+		url "javascript:
+		function initialize(value, time) {
+			//**/print('ObservationScreen::initialize!');
+			// set the initial size of the screen -- the XYDragWidget should do this for us
+			//set_size(size);
+			inited=true;
+		}
+
+		function set_pos(value, time) {
+			//**/print('ObservationScreen::set_pos('+value+')');
+			screenPosition[2] = value;
+			shutup=false;
+		}
+		function set_size(value, time) {
+			//**/print('ObservationScreen::set_size('+value+') - was <'+new SFVec2f(width,height)+'>'+' trans_set: '+trans_set);
+			width = value[0];
+			height = value[1];
+			screenScale = new SFVec3f(width,height,1);
+			posDragger_translation[1] = height/2;
+			transDragger_translation[0]=-width/2;
+			transDragger_minPos=-(transDragger_maxPos=height/2);
+			//transDragger_position=((trans_set?transparency_out:initTransparency)-.5)*height;
+			//**/print('ObservationScreen::set_size('+value+'): done');
+		}
+		function set_widgetsOn(value, time) {widgetsChoice=value?0:-1;}
+		function set_textOn(value, time) {text_which=value?0:-1;}
+		function set_rulerOn(value, time) {ruler_which=value?0:-1;}
+		function transparency_in(value,time) {
+			if(new Date().getDate()%2==-1) {	//no fun and games on website (aw)
+				if(Math.random()<0.01) orangeChoice=1; else if(Math.random()<0.01) orangeChoice=0;
+			}
+			//**/print('ObservationScreen::transparency_in('+value+') - t_out: '+transparency_out+' trans_set: '+trans_set);
+			//Watch for the first real event
+			//if(value==(initTransparency-.5)*height) trans_set=true;
+			//if(trans_set) transparency_out=value/height+.5;
+			//else set_size(new SFVec2f(width,height),time);
+			if(trans_set) transparency_out=value; else {
+				trans_set=true;
+				set_size(new SFVec2f(width,height),time);
+			}
+		}"
+	}
+	ROUTE PositionDragger.position_changed TO Worker.set_pos
+	ROUTE SizeDragger.position_changed TO Worker.set_size
+	ROUTE Worker.screenPosition TO ScreenTransform.set_translation
+	ROUTE Worker.screenPosition	TO ImagePlaneTextHolder.set_translation
+	ROUTE Worker.screenPosition	TO Ruler.set_translation
+	ROUTE ScreenTransform.translation_changed TO ScreenWidgetsTransform.set_translation
+	ROUTE Worker.screenScale TO ScreenTransform.set_scale
+	ROUTE Worker.posDragger_translation TO PositionDragger.set_translation
+	ROUTE Worker.widgetsChoice TO WidgetsHolder.set_whichChoice
+	ROUTE Worker.text_which	TO ImagePlaneTextSwitch.set_whichChoice
+	ROUTE Worker.ruler_which TO	ReticleSwitch.set_whichChoice
+	ROUTE TransparencyDragger.value_changed TO Worker.transparency_in
+	ROUTE Worker.transparency_out TO ScreenMaterial.set_transparency
+	#ROUTE Worker.transDragger_position TO TransparencyDragger.set_position
+	ROUTE Worker.transDragger_translation TO TransparencyDragger.set_translation
+	ROUTE Worker.transparency_out TO TransparencyDragger.set_value
+	ROUTE Worker.transDragger_minPos TO TransparencyDragger.set_minPosition
+	ROUTE Worker.transDragger_maxPos TO TransparencyDragger.set_maxPosition
+	#Is this needed? [Davis]
+	#ROUTE Worker.inited TO PositionDragger.set_enabled
+	ROUTE Worker.shutup TO TheForce.enabled
+
+	ROUTE Worker.orangeChoice TO OrangeSwitch.set_whichChoice
+
+}
+
+NavLight {
+	attenuation 1 0 0
+	navigationType "NONE"
+}
+
+DEF NavPanel NavigationPanel {
+	translation_speed 2
+	#This was to give the user something to do that wasn't destructive; no longer needed (we think)
+	#visible FALSE
+	views [
+		-0.208 2.414 0  15.986  5.596 -76.98
+		-0.1   2.521 0  14.749 -5.138 -67.044
+		-0.1   2.305 0  15.931  5.596 -76.98
+		-0.154 1.817 0  15.821  5.541 -76.98
+		-0.045 0.0165 0.0 0.0722 -3.159 5.131
+	]
+
+	children [
+		#The floor
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor .16 .16 .3
+					specularColor .49 .49 .49
+					emissiveColor .16 .16 .3
+					ambientIntensity 0
+					shininess .1
+					transparency .6
+				}
+			}
+			geometry Box { size 25 0.1 200 }
+		}
+		#Most everything else (with origin shifted to end of table)
+		Transform {
+			translation 0 0 -100
+			scale 4 4 4
+			children [
+				DEF ClickBelow Switch {
+					whichChoice -1   #We don't seem to need this anymore
+					choice Billboard {
+						axisOfRotation 0 0 0
+						children Shape {
+							appearance Appearance { material Material { diffuseColor .4 0 .6 } }
+							geometry Text {
+								string "Click red button below to start"
+								fontStyle FontStyle { size 1.7 }
+							}
+						}
+					}
+				}
+
+				DEF Bench Group {}		#Will hold optical elements
+
+				#Background { # Gray ramped sky
+				#		skyColor [ 0 0 0, 1.0 1.0 1.0 ]
+				#		skyAngle 1.6
+				#		groundColor [ 1 1 1, 0.8 0.8 0.8, 0.2 0.2 0.2 ]
+				#		groundAngle [ 1.2, 1.5707963 ]
+				#}
+
+				DEF SourceSwitch Switch {
+					whichChoice 0
+					choice [
+						Group {
+							children [
+								DEF SourceSpinner Transform {
+									children [
+
+										Shape {
+											geometry PointSet {
+												coord DEF SourcePoints Coordinate {}
+												color DEF SourceColors Color	{}
+											}
+										}
+
+										Group {
+											children [
+												DEF ScreenTS TouchSensor {
+													enabled TRUE
+												}
+												DEF ScreenTransform Transform {
+													children Shape {
+														geometry Box {
+															size 1 1 .1
+														}
+														appearance Appearance{
+															material Material {
+																diffuseColor .12 .12 0
+																transparency		1.0
+															}
+														}
+													}
+												}
+												DEF BoxScaler Script {
+													eventIn SFVec2f scale_in
+													eventIn SFFloat translation_in_y
+													eventIn SFFloat translation_in_x
+													eventOut SFVec3f scale
+													eventOut SFVec3f translation
+													url "javascript:
+
+													function scale_in(value, time){
+														scale[0] = value[0];
+														scale[1] = value[1];
+														scale[2] = 1;
+													}
+
+													function translation_in_y(value, time){
+														translation[1]=value;
+													}
+
+													function translation_in_x(value, time){
+														translation[0]=value;
+													}
+													"
+												}
+											]
+											ROUTE BoxScaler.scale TO ScreenTransform.scale
+											ROUTE BoxScaler.translation TO ScreenTransform.translation
+										}
+									]
+								}
+								Transform {
+									rotation 0 0 1 1.5707963267949
+									translation -6.25 0 0
+									children DEF WheelSwitch Switch {
+										choice DEF SourceWheel WheelWidget {
+											enabled TRUE
+											maxRotations 1
+											maxValue 1.5707963267949
+											minValue -1.570796326794
+											value 0
+											debugName "source spinner"
+										}
+									}
+								}
+
+								DEF ChangeAxis Script {
+									eventIn SFFloat rot_in
+									eventOut SFRotation rot_out
+									url "javascript:
+									function rot_in(value, time){
+										rot_out[0] = 1;
+										rot_out[1] = 0;
+										rot_out[2] = 0;
+										rot_out[3] = value;
+									}
+									"
+								}
+							]
+							ROUTE SourceWheel.value_changed TO ChangeAxis.rot_in
+							ROUTE ChangeAxis.rot_out TO SourceSpinner.rotation
+						}
+					]
+				}
+
+				Transform {
+					#translation 0 0 -0.1
+					translation 0 0 -.3
+					children Shape {
+						geometry DEF PointSet {
+							coord DEF ImagePoints Coordinate {}
+							color DEF ImageColors Color	{}
+						}
+
+						#To test additive alpha blending
+# 						appearance Appearance {
+# 							material Material {
+# 								emissiveColor 1 1 0
+# #								transparency 0.97
+# 								transparency 0
+# 							}
+# 						}
+					}
+				}
+				Transform {
+					#translation 0 0 -0.1
+					translation 0 0 -.3
+					children Shape {
+						geometry PointSet {
+							coord DEF ImagePoints2 Coordinate {}
+							color DEF ImageColors2 Color	{}
+						}
+					}
+				}
+				Transform {
+					#translation 0 0 -0.1
+					translation 0 0 -.3
+					children Shape {
+						geometry PointSet {
+							coord DEF ImagePoints3 Coordinate {}
+							color DEF ImageColors3 Color	{}
+						}
+					}
+				}
+				Transform {
+					#translation 0 0 -0.1
+					translation 0 0 .3
+					children Shape {
+						geometry PointSet {
+							coord DEF ImagePoints4 Coordinate {}
+							color DEF ImageColors4 Color	{}
+						}
+					}
+				}
+				Transform {
+					#translation 0 0 -0.1
+					translation 0 0 -.3
+					children Shape {
+						geometry PointSet {
+							coord DEF ImagePoints5 Coordinate {}
+							color DEF ImageColors5 Color	{}
+						}
+					}
+				}
+			]
+		}
+	]
+}

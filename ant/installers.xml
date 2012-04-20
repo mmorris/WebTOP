@@ -1,0 +1,262 @@
+<project name="installers" default="build">
+
+  <macrodef name="unsignjar">
+	
+    <attribute name="jar"/>
+    	
+    <sequential>
+	<!-- Remove any existing signatures from a JAR file. -->
+	<tempfile prefix="unsignjar" destdir="${java.io.tmpdir}" property="temp.file"/>
+        <echo message="Removing signatures from JAR: @{jar}"/>
+        <mkdir dir="${temp.file}"/>
+	        
+        <unjar src="@{jar}" dest="${temp.file}">
+            <patternset>
+                <include name="**"/>
+                <exclude name="META-INF/*.SF"/>
+                <exclude name="META-INF/*.DSA"/>
+                <exclude name="META-INF/*.RSA"/>
+            </patternset>
+        </unjar>
+	        
+        <delete file="@{jar}" failonerror="true"/>
+	        
+        <!-- Touch it in case the file didn't have a manifest.
+             Otherwise the JAR task below will fail if the manifest 
+	     file doesn't exist. -->
+        <mkdir dir="${temp.file}/META-INF"/>
+        <touch file="${temp.file}/META-INF/MANIFEST.MF"/>
+	        
+        <jar destfile="@{jar}" 
+            basedir="${temp.file}" 
+            includes="**" 
+            manifest="${temp.file}/META-INF/MANIFEST.MF"/>
+	        
+        <delete dir="${temp.file}" failonerror="true"/>
+    </sequential>
+</macrodef> 
+  
+  <target name="init_installer" depends="jar_wtcore,jar_sdl" description="Make sure everything gets rejarred.">
+  </target>
+  
+  <target name="init_webstart" depends="init_installer" description="Clear Webstart directory to cleanse.">
+  </target>
+
+  <target name="rejar_lib" depends="init" description="Rejar stuff in /jars to make stuff more manageable for install.">
+    <unjar dest ="${basedir}/temp/unjar/" overwrite="true">
+      <fileset dir="${basedir}/lib/">
+	<include name="*.jar"/>
+      </fileset>
+    </unjar>
+    <deltree dir="${basedir}/temp/unjar/META-INF"/>
+    <mkdir dir="${basedir}/temp/jarlib/"/>
+    <jar destfile="${basedir}/temp/jarlib/libs.jar" basedir="${basedir}/temp/unjar/"/>
+  </target>
+  
+  <target name="jar_libnative" depends="init" description="Jar stuff in /libnative.">
+    <mkdir dir="${basedir}/temp/jarlib/"/>
+    <jar destfile="${basedir}/temp/jarlib/libnative.jar" basedir="${basedir}/libnative/"/>
+  </target>
+  
+  
+  <target name="jar_modules" depends="jar_grating, jar_threemedia, jar_wavefront, jar_circular, jar_twomedia,  jar_rectangularslit, jar_singleslit, jar_photoelectric, jar_rayleigh, jar_nslit" description="Jar all modules.">
+  </target>
+  
+  <target name="jar_wavefront" depends="wavefront" description="Jar wavefront module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/wavefront.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/wavefront/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.wavefront.WaveFront"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <target name="jar_circular" depends="circular" description="Jar circular module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/circular.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/circular/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.circular.Circular"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jar_fabryperot" depends="fabryperot" description="Jar fabryperot module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/fabryperot.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/fabryperot/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.fabryperot.FabryPerot"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<target name="jar_grating" depends="grating" description="Jar grating module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/grating.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/grating/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.grating.Grating"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+<target name="jar_nslit" depends="nslit" description="Jar nslit module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/nslit.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/nslit/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.nslit.NSlit"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<target name="jar_photoelectric" depends="photoelectric" description="Jar photoelectric module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/photoelectric.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/photoelectric/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.photoelectric.Photoelectric"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<target name="jar_rayleigh" depends="rayleigh" description="Jar rayleigh module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/rayleigh.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/rayleigh/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.rayleigh.Rayleigh"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<target name="jar_rectangularslit" depends="rectangularslit" description="Jar rectangular module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/rectangularslit.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/rectangularslit/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.rectangularslit.RectangularSlit"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jar_singleslit" depends="singleslit" description="Jar singleslit module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/singleslit.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/singleslit/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.singleslit.SingleSlit"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jar_twomedia" depends="twomedia" description="Jar TwoMedia module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/twomedia.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/twomedia/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.twomedia.TwoMedia"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+
+	<target name="jar_threemedia" depends="threemedia" description="Jar ThreeMedia module.">
+    <mkdir dir="${basedir}/temp/module_jars/"/>
+    <jar destfile="${basedir}/temp/module_jars/threemedia.jar" basedir="${basedir}/classes"
+         includes="org/webtop/module/threemedia/**">
+      <manifest>
+        <attribute name="Main-Class" value="org.webtop.module.threemedia.ThreeMedia"/>
+        <attribute name="Class-Path" value="${libs.project} ${jars.project}"/>
+      </manifest>
+    </jar>
+  </target>
+  
+  <taskdef name="izpack" classpath="${basedir}/installer/izpack/lib/compiler.jar" classname="com.izforge.izpack.ant.IzPackTask"/>
+  
+  <target name="win_installer" depends="jar_wavefront,jar_circular" description="Make windows installer.">
+    <izpack input="${basedir}/installer/installer.xml"
+            output="${basedir}/installer/win/InstallWebTOP.jar"
+            installerType="standard" basedir="${basedir}"
+            izPackDir="${basedir}/installer/izpack/"/>  
+  </target>
+  
+  
+  
+  <target name="sign_lib" depends="init" description="Sign library jars and put them in webstart directory.">
+    <delete dir="${basedir}/webstart/lib"/>
+    <copy todir="${basedir}/webstart/lib">
+      <fileset dir="${basedir}/lib/" includes="*.jar" />
+    </copy>
+
+    <for param="file">
+      <path>
+        <fileset dir="${basedir}/webstart/lib" includes="**/*.jar"/>
+      </path>
+      <sequential>
+        <unsignjar jar="@{file}"/>
+   
+      </sequential>
+    </for>
+
+    <signjar
+      alias="webtop" keystore="${basedir}/keys/wtKeystore"
+      storepass="!webtop"
+      lazy="false">
+      <path>
+        <fileset dir="${basedir}/webstart/lib/" includes="*.jar" />
+      </path>
+    </signjar>
+  </target>
+  
+  <target name="sign_wt" depends="init,init_webstart" description="Sign webtop jars and put them in webstart directory.">
+ 
+    <delete>
+      <fileset dir="${basedir}/webstart/jars" includes="*.jar"/>
+    </delete>
+    <copy todir="${basedir}/webstart/jars">
+      <fileset dir="${basedir}/jars/" includes="*.jar" />
+    </copy>
+
+    <signjar
+      alias="webtop" keystore="${basedir}/keys/wtKeystore"
+      storepass="!webtop"
+      lazy="false">
+      
+      <path>
+        <fileset dir="${basedir}/webstart/jars/" includes="*.jar" />
+      </path>
+    </signjar>
+  </target>    
+  
+  <target name="sign_modules" depends="jar_modules" description="Sign modules.">
+    <delete dir="${basedir}/webstart/modules"/>
+    <copy todir="${basedir}/webstart/modules">
+      <fileset dir="${basedir}/temp/module_jars/" includes="*.jar"/>
+    </copy>
+    <signjar
+      alias="webtop" keystore="${basedir}/keys/wtKeystore"
+      storepass="!webtop"
+      lazy="false">
+      
+      <path>
+        <fileset dir="${basedir}/webstart/modules/" includes="*.jar" />
+      </path>
+    </signjar>
+  </target>  
+
+  <target name="webstart" depends="sign_wt, sign_modules" description="Rebuild webtop jars.">
+	</target>
+  
+</project>

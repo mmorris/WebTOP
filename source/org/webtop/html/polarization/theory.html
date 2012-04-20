@@ -1,0 +1,193 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<head><title>Polarization: Theory</title>
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+
+<center><table width="90%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+<br><br>
+<p><big><font color="#800000"><big><b>Polarization: Theory</b></big></font></big><br>
+<p><big><font color="#008040"><b>Introduction</b></font></big></p>
+<p>In this module the propagation of a monochromatic, completely
+polarized, plane wave of light, or of an unpolarized plane wave of light is
+simulated. Specifically, the appropriate electric field vectors are displayed
+at a set of observation points in the direction of propagation (along the
+z-axis in Fig. 1 below), and are made to vary in time in the appropriate way.
+In addition, the user may place one or more filters (linear polarizers and/or
+wave plates) into the path of the propagating beam in order to see the effects
+they have on the polarization of the light.</p>
+<p><span style='color:#993300'></span></p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=355 height=370 src="images/image002.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><SMALL>Figure 1 The Polarization module. Circularly polarized traveling in the positive z-direction.</SMALL></P>
+    </td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Completely Polarized Electric Field</b></font></big></p>
+<p>When the Polarized tab is selected, as it is in the main figure
+above, the incident field is a monochromatic plane wave of wavelength <font face=symbol>l</font>
+traveling in the positive z-direction, and the corresponding electric field
+vectors at selected observation points on the z-axis are displayed as yellow lines.
+The incident electric field at position z on the z-axis at time t is given by
+the expression:</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="90%">
+  <tr>
+    <td width="80%" class=tablemain><center><img width=319 height=30 src="images/image004.gif"></center></td>
+    <td width="20%" class=tablemain><center>(<a name="1">1</a>)</td>
+  </tr>
+  <tr>
+    <td width="80%" class=tablemain><center></td>
+    <td width="20%" class=tablemain><center><a href="javascript:history.go(-1)"><img src="../images/back.gif" alt="click to go to previous location" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table></center></div>
+<p>where E<sub>0x</sub> is the amplitude of the x-component of the
+electric field, E<sub>0y</sub> is the amplitude of the y-component of the
+electric field, <font face=symbol>e</font>&nbsp; is the phase difference between the two
+components, k = 2<font face=symbol>p</font>/<font face=symbol>l</font> is
+the angular wave number, and <font face=symbol>w</font> = 2<font face=symbol>p</font>c/<font face=symbol>l</font> is
+the angular frequency of the light.&nbsp;Here c is the speed of light in vacuum. </p>
+<p>The parameters are taken to have the following values: 0 <u>&lt;</u>
+E<sub>0x</sub> <u>&lt;</u> 1, 0 <u>&lt;</u> E<sub>0y</sub> <u>&lt;</u> 1, 0 <u>&lt;
+</u><font face=symbol>e</font> <u>&lt;</u>
+360 degrees, and ­400 nm <u>&lt;</u> <font face=symbol>l</font> <u>&lt;</u> 700 nm. The polarization of the electric
+field specified by Eq. (1) will be either linear, circular, or elliptical,
+depending upon the values of E<sub>0x</sub>, E<sub>0y</sub>, and <font face=symbol>e</font>. By
+varying these four parameters, the user can generate any type of completely
+polarized light. For examples see: <a href=examples.html#Ex1>Example 1</a>,
+<a href=examples.html#Ex2>Example 2</a>, <a href=examples.html#Ex3>Example 3</a>, <a href=examples.html#Ex4>Example 4</a>, and <a href=examples.html#Ex5>Example 5</a>.</p>
+<p><big><font color="#008040"><b>Unpolarized Electric Field</b></font></big></p>
+<p>When the Unpolarized tab is selected WebTOP generates an electric
+field propagating in the positive z-direction that is, to a good approximation,
+unpolarized, i.e., the direction of the electric field varies randomly and
+rapidly in time. Fig. 2 below shows a snapshot of one such electric field. When
+the unpolarized option is chosen, there are no parameters to be varied. For an
+example, see <a href=examples.html#Ex6>Example 6</a>.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=382 height=267 src="images/image006.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><small>Figure 2 Unpolarized incident electric field.</small></P>
+    </td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Linear Polarizer</b></font></big></p>
+<p>Suppose an electric field, <b>E</b><sub>i</sub>(z,t),
+is propagating in the positive z-direction and is incident upon an ideal linear
+polarizer that is perpendicular to the z-axis and whose position on this axis
+is specified by the variable z. When light is incident upon such a polarizer,
+the component of the electric field vector that is parallel to the transmission
+axis (TA) of the polarizer passes through the polarizer undiminished in
+amplitude, and the component perpendicular to the TA is completely absorbed.
+This is depicted in the Fig. 3 below.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=353 height=180 src="images/image008.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><small>Figure 3 The effect of an ideal linear polarizer on an incident field.</small></P>
+    </td>
+  </tr>
+</table></center></div>
+<p>There are two parameters that characterize such a polarizer: z,
+the position of the polarizer along the z-axis, and <font face=symbol>f</font>, the angle that the polarizer's
+TA makes with the positive x-direction. In this module these parameters take on
+the values 0 <u>&lt;</u> z <u>&lt;</u> 20 and 0 <u>&lt;</u> <font face=symbol>f</font> &lt; 360 degrees. </p>
+<p>Figure 4 below is a snapshot from the WebTOP Polarization module
+depicting linearly polarized light incident upon a linear polarizer.&nbsp; <a href=examples.html#Ex7>Example 7</a>
+depicts a similar situation for several different incident field
+polarizations.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=351 height=183 src="images/image010.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><small>Figure 4&nbsp; Light linearly
+polarized at an angle of 60 degrees with respect to the positive x-axis
+incident upon a linear polarizer whose transmission axis is parallel to the x-axis.
+The dotted lines in the input and output planes depict the path traversed by
+the tip of the electric field vector as a function of time.</small></P>
+    </td>
+  </tr>
+</table></center></div>
+<p>Figure 5 below is a snapshot from the WebTOP Polarization module
+depicting unpolarized light incident upon a linear polarizer.&nbsp; In this
+example, since unpolarized light is being turned into polarized light, this
+phenomenon is sometimes referred to as <span style='color:blue;font-weight=bold;'>polarization by absorption</span>. <a href=examples.html#Ex8>Example 8</a> depicts a similar situation for several different incident field
+polarizations. <a href=examples.html#Ex9>Example 9</a> depicts <span style='color:blue;font-weight=bold;'>polarization by reflection</span>, and <a href=examples.html#Ex10>Example 10</a> depicts <span style='color:blue;font-weight=bold;'>polarization by scattering</span>.</p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=370 height=196 src="images/image012.gif"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><small>Figure 5&nbsp; Unpolarized light
+incident upon a linear polarizer. The dots in the input and output denote past
+locations of the tip of the electric field vector at previous equally spaced
+times.</small></P>
+    </td>
+  </tr>
+</table></center></div>
+<p><big><font color="#008040"><b>Wave Plates</b></font></big></p>
+<p>A wave plate is a sheet of birefringent material, i.e., it has
+different indices of refraction in two orthogonal directions in the plane of
+its faces (the x- and y-directions in Fig. 6 below). This causes the optical
+path lengths travelled by the x- and y-components of the electric field to be
+different which, in general, causes a change in the polarization of the light. </p>
+<div align="center"><center><table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><center><img width=335 height=315 src="images/image014.jpg"></center></td>
+  </tr>
+  <tr>
+    <td width="100%">
+    <P align="center"><small>Figure 6 Linearly polarized light incident upon a half-wave plate.</small></P>
+    </td>
+  </tr>
+</table></center></div>
+<p>There are three parameters that characterize a wave plate in this
+module: z, the position of the wave plate along the z-axis, <font face=symbol>f</font>, the
+angle that the wave plate's fast axis makes with the positive x-direction, and
+N, the number of waves of optical path length difference (between the two
+electric field components) that the plate provides. In this module these
+parameters take on the values 0 <u>&lt;</u> z <u>&lt;</u> 20 and 0 <u>&lt;</u> <font face=symbol>f</font> <u>&lt;</u>
+360 degrees, and 0 <u>&lt;</u> N <u>&lt;</u> 1. For a <span style='color:blue;font-weight=bold;'>half-wave plate</span> N = 0.50, and for a <span style='color:blue;font-weight=bold;'>quarter-wave plate</span>
+N =0.25.</p>
+<p>For an example in which linearly polarized light is incident upon
+a half-wave plate, see <a href=examples.html#Ex11>Example 11</a>. For an example in which linearly polarized
+light is incident upon a quarter-wave plate, see <a href=examples.html#Ex12>Example 12</a>.</p>
+
+
+
+
+
+
+<hr>
+<div align="center"><center>
+
+<a href="theory/index.html">More in Depth</a>
+</center></div>
+<hr>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>
+

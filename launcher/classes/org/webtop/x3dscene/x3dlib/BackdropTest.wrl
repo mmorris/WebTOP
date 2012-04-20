@@ -1,0 +1,82 @@
+#VRML V2.0 utf8
+
+EXTERNPROTO Backdrop [
+    #Positioning
+	eventIn	SFFloat	set_position
+	eventOut SFFloat position_changed
+	field SFFloat position 
+    field SFInt32 axisOfMotion
+    field SFInt32 directionOfMotion
+	#Sizing/appearance
+	field SFVec3f size 
+	field SFColor diffuseColor 
+	field SFFloat transparency 
+	eventIn	SFFloat	set_transparency
+]
+"Screens.wrl#RectangularScreenBackdrop"
+
+EXTERNPROTO Red2ConeXDragger [
+	exposedField SFVec3f coneScale
+	exposedField SFVec3f translation
+	exposedField SFRotation rotation
+	field SFFloat position
+	eventIn SFFloat set_position
+	eventOut SFFloat position_changed
+	field SFFloat minPosition
+	eventIn SFFloat set_minPosition
+	field SFFloat maxPosition
+	eventIn SFFloat set_maxPosition
+	field SFFloat value
+	eventIn SFFloat set_value
+	eventOut SFFloat value_changed
+	field SFFloat minValue
+	eventIn SFFloat set_minValue
+	field SFFloat maxValue
+	eventIn SFFloat set_maxValue
+	field SFBool positionAsValue
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out
+	eventIn SFBool set_isActive
+	exposedField SFBool enabled
+	field SFString debugName
+	eventOut SFBool initialized
+]
+"Widgets.wrl#Red2ConeXDragger"
+
+Viewpoint {
+    position 3000 500 0
+    orientation 0 1 0 1.5707963267949
+}
+
+DEF Dragger Red2ConeXDragger {
+    translation 0 150 0
+    rotation 0 1 0 1.5707963267949
+    enabled TRUE
+    coneScale 25 25 25
+    position 0
+    minPosition 0
+    maxPosition 1000
+}
+
+DEF Box Backdrop {
+#    axisOfMotion 1
+#    directionOfMotion 1
+    diffuseColor 1 1 0
+    size 1000 300 10
+    transparency 0
+}
+
+#DEF Worker Script {
+#    eventIn SFFloat drag_in
+#    eventOut SFFloat pos_out
+
+#    url "javascript:
+#    function drag_in(value, time) {
+#        pos_out = -value*10;
+#    }
+#    "
+#}
+
+#ROUTE Dragger.position_changed TO Worker.drag_in
+#ROUTE Worker.pos_out TO Box.set_position
+ROUTE Dragger.position_changed TO Box.set_position

@@ -1,0 +1,12 @@
+<wsl>
+  <michelson wavelength="500.0" tiltAngle="0.0" pathLengthDifference="0.0070" axes="visible" widgets="visible">
+    <view value="0.0 0.0 0.0 -0.0367 -0.4663 -10.0" />
+  </michelson>
+  <script>
+    <actionPerformed param="tiltAngle" value="0.0010" timeStamp="3625" />
+    <actionPerformed param="tiltAngle" value="0.0020" timeStamp="5888" />
+    <actionPerformed param="tiltAngle" value="0.0030" timeStamp="6259" />
+    <actionPerformed param="tiltAngle" value="0.0040" timeStamp="6449" />
+    <scriptEnded timeStamp="4457" />
+  </script>
+</wsl>

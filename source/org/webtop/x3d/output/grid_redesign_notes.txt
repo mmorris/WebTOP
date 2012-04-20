@@ -1,0 +1,67 @@
+
+The Grid hierarchy shall represent a common API for interacting with X3D objects composed of or equvilent in 
+interface to IndexedFaceSet (IFS) and ElevationGrid (EG) nodes.
+-------------------------------------------------------------------------------------------------------------
+ISO 19775 Specifications for IFS and EG:
+
+IndexedFaceSet : X3DComposedGeometryNode {
+  MFInt32 [in]     set_colorIndex
+  MFInt32 [in]     set_coordIndex
+  MFInt32 [in]     set_normalIndex
+  MFInt32 [in]     set_texCoordIndex
+  SFNode  [in,out] color             NULL [X3DColorNode]
+  SFNode  [in,out] coord             NULL [X3DCoordinateNode]
+  SFNode  [in,out] metadata          NULL [X3DMetadataObject]
+  SFNode  [in,out] normal            NULL [X3DNormalNode]
+  SFNode  [in,out] texCoord          NULL [X3DTextureCoordinateNode]
+  SFBool  []       ccw               TRUE
+  MFInt32 []       colorIndex        []   [0,8) or -1
+  SFBool  []       colorPerVertex    TRUE
+  SFBool  []       convex            TRUE
+  MFInt32 []       coordIndex        []   [0,8) or -1
+  SFFloat []       creaseAngle       0    [0,8)
+  MFInt32 []       normalIndex       []   [0,8) or -1
+  SFBool  []       normalPerVertex   TRUE
+  SFBool  []       solid             TRUE
+  MFInt32 []       texCoordIndex     []   [-1,8)
+}
+
+
+ElevationGrid : X3DGeometryNode {
+  MFFloat [in]     set_height
+  SFNode  [in,out] color           NULL [X3DColorNode]
+  SFNode  [in,out] metadata        NULL [X3DMetadataObject]
+  SFNode  [in,out] normal          NULL [X3DNormalNode]
+  SFNode  [in,out] texCoord        NULL [X3DTextureCoordinateNode]
+  SFBool  []       ccw             TRUE  
+  SFBool  []       colorPerVertex  TRUE
+  SFFloat []       creaseAngle     0    [0,8)
+  MFFloat []       height          []   (-8,8)
+  SFBool  []       normalPerVertex TRUE
+  SFBool  []       solid           TRUE
+  SFInt32 []       xDimension      0    [0,8)
+  SFFloat []       xSpacing        1.0  (0,8)
+  SFInt32 []       zDimension      0    [0,8)
+  SFFloat []       zSpacing        1.0  (0,8)
+}
+
+-------------------------------------------------------------------------------------------------------------
+Interface Comparison.
+
+Similarities in Interface:
+1. Color of the object is accessed via a inputOutput node named "color."
+2. The following fields we have the same procedure for access as "color": "texCoord," "normal".
+
+Interface specifics of IndexedFaceSet:
+1. "coord" field specifies the verticies of the IFS.
+2. Cannot directly set the dimensions/shape of an IFS.  Must use "coord" along with other parameters
+   to determine the final shape.  This must be done within the Java.
+
+Interface specifics of ElevationGrid:
+1. "set_heights" field used to dynamically change the heights of individual tiles.
+1. Cannot dynamically modify the dimensions of an EG at all.  Must create a new dynamic node every time
+   there's a change in dimensions.  This could be a problem, considering the memory consumption problems 
+   witnessed with the dynamically created PhotoElectron objects in the PhotoElectric module.
+   ** Note that this will only affect the ElevationGrid when changes are made to the actual width and height
+   of the object, not the heights.  Currently, no modules need to dynamically alter the "footprint" of an
+   EG, so this is not an issue as of yet.  I believe, however, that VRML also did not allow this functionality.  [PC] 

@@ -1,0 +1,49 @@
+<wsl>
+  <geometrical quality="100" source="3" selected="0">
+    <elements>
+      <diverginglens id="37" diameter="5.0" focus="-20.0" position="40.0" />
+      <observationscreen id="0" width="25.0" height="30.0" position="43.0" transparency="0.0" />
+    </elements>
+    <view value="-0.208 2.414 0.0 15.986 5.596 -76.98" />
+  </geometrical>
+  <script>
+    <actionPerformed target="ObservationScreen0" param="position" value="44.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="45.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="46.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="47.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="48.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="49.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="50.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="51.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="52.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="53.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="54.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="55.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="56.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="57.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="58.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="59.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="60.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="61.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="62.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="63.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="64.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="65.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="66.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="67.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="68.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="69.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="70.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="71.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="72.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="73.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="74.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="75.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="76.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="77.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="78.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="79.0" timeStamp="100" />
+    <actionPerformed target="ObservationScreen0" param="position" value="80.0" timeStamp="100" />
+    <scriptEnded timeStamp="10" />
+  </script>
+</wsl>

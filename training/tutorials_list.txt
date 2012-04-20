@@ -1,0 +1,12 @@
+* About the Tutorials  -- introduction to the tutorials
+* X3D Crash Course     -- covers concept of the Scene Graph (nodes, etc.), basic syntax, access types, data types, relation to OOP, encodings, why we use Classic
+* Your First Scene     -- introduction to Xj3D Browser, make a box, color the box, translate the box, make a sphere, color the sphere, translate the sphere
+* Events               -- covers event model, ROUTEs, create an example with Senors to drag the box
+* Script Node Basics   -- explain how to use Script nodes (i/o), intro ecmascript & syntax, create color changer, recreate Events example
+* Basic Interaction    -- Jeremy's cube-and-sphere tutorial, make two draggable objects move together (both must cause interaction)
+* SAI                  -- Original SAI tutorial
+
+================
+For the future
+================
+* Your first WebTOP Module -- recreate SAI tutorial with Widgets, NumberBoxes, and Couplers

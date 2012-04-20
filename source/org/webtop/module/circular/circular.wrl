@@ -1,0 +1,251 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+		##########################################################
+		# Warning text
+		##########################################################
+		DEF WarningSwitch Switch {
+			whichChoice 0
+			choice [
+				Billboard {
+					axisOfRotation 0 0 0
+					children [
+						Transform {
+							translation -400 350 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0		# black
+											ambientIntensity 0.0	# black
+											shininess 0.0					# none
+											emissiveColor 1 0 0
+										}
+									}
+									geometry Text {
+										string "Loading... Please wait."
+										fontStyle FontStyle {
+											size 120
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+		##########################################################
+
+		Transform {
+			scale 1 3.333333 1
+			children Inline {
+				url				 "../vrmllib/BoundingBox.wrl"
+				bboxSize				1000 1000 1000
+				bboxCenter				0 0 -500
+			}
+		}
+
+		DEF WidgetsSwitch Switch {
+			whichChoice 0
+			choice Group {
+				children [
+					Transform {
+						scale 100 100 100
+						translation 0 -30 220
+						children DEF WavelengthWidget WheelWidget {
+							value 500
+						}
+					}
+					Transform {
+						translation 0 500 0
+						scale 5 5 5
+						rotation 0 1 0 1.5707963
+						children [
+							DEF ScreenDragger RedConeXDragger {
+								coneScale 5 5 5
+								minPosition 20
+								maxPosition 200
+								position 50
+							}
+						]
+					}
+					Transform {
+						# translation 0 500 0
+						scale 500 500 500
+						children [
+							DEF DiameterDragger RedConeXDragger {
+								coneScale 0.05 0.05 0.05
+								minPosition 0.0001
+								maxPosition 1
+								position 0.70710678
+							}
+						]
+					}
+				]
+			}
+		}
+		#Transform {
+		#	translation 0 50 300
+		#	rotation 0 1 0  1.57079632679
+		#	children Inline { url "../vrmllib/Wave.wrl" }
+		#}
+		DEF moveScreen Transform {
+			translation 0 0 -500
+			children [
+				#The box that is the screen
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 1 1 0
+							emissiveColor 1 1 0
+						}
+					}
+					geometry IndexedFaceSet {
+						coord Coordinate {
+							point [
+								500 -500 -10,
+								-500 -500 -10,
+								-500 500 -10,
+								500 500 -10,
+								500 -500 0,
+								-500 -500 0,
+								-500 500 0,
+								500 500 0,
+							]
+						}
+						coordIndex [
+							0, 1, 2, 3, -1, # back
+							1, 5, 6, 2, -1, # left
+							0, 3, 7, 4, -1, # right
+							3, 2, 6, 7, -1, # top
+							0, 4, 5, 1, -1, # bottom
+						]
+					}
+				}
+				Group {
+					children [
+						#To allow intensity readouts
+						DEF ScreenTouch TouchSensor {}
+						DEF ResolutionSwitch Switch {
+							whichChoice 0
+							choice [
+								Group {
+									children [
+										Transform {
+											translation 0 530 0
+											scale 1 70 1
+											children [
+												DEF HiLine Shape {
+													appearance DEF LineAppearance Appearance { material Material { emissiveColor 1 1 1 } }
+													geometry DEF ilsNode IndexedLineSet {
+														coord DEF ilsCoord Coordinate {}
+													}
+												}
+												Transform {
+													rotation 0 1 0 3.14159265
+													children USE HiLine
+												}
+											]
+										}
+										DEF HiQuad Shape {
+											geometry DEF ifsNode IndexedFaceSet {
+												coord DEF coordinateNode Coordinate {}
+												color DEF colorNode Color {}
+												creaseAngle 3.14159
+												normalPerVertex FALSE
+											}
+										}
+										Transform {
+											rotation 0 0 1 1.57079632679
+											children USE HiQuad
+										}
+										Transform {
+											rotation 0 0 1 3.14159265359
+											children USE HiQuad
+										}
+										Transform {
+											rotation 0 0 1 -1.57079632679
+											children USE HiQuad
+										}
+									]
+								}
+								Group {
+									children [
+										Transform {
+											translation 0 530 0
+											scale 1 70 1
+											children [
+												DEF LoLine Shape {
+													appearance USE LineAppearance
+													geometry DEF ilsNodeLowRes IndexedLineSet {
+														coord DEF ilsCoordLowRes Coordinate {}
+													}
+												}
+												Transform {
+													rotation 0 1 0 3.14159265
+													children USE LoLine
+												}
+											]
+										}
+										DEF LoQuad Shape {
+											geometry
+											DEF ifsNodeLowRes IndexedFaceSet {
+												coord DEF coordinateNodeLowRes Coordinate {}
+												color DEF colorNodeLowRes Color {}
+												creaseAngle 3.14159
+												normalPerVertex FALSE
+											}
+										}
+										Transform {
+											rotation 0 0 1 1.57079632679
+											children USE LoQuad
+										}
+										Transform {
+											rotation 0 0 1 3.14159265359
+											children USE LoQuad
+										}
+										Transform {
+											rotation 0 0 1 -1.57079632679
+											children USE LoQuad
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+		Transform {
+			scale 1000 1000 1000
+			children [
+				# Shape { appearance Appearance { material Material { diffuseColor 1 0 0 } } geometry Box {} }
+				Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor		0.3 0.6 0.9
+							#diffuseColor 1 0 0
+							transparency		0.6
+						}
+					}
+					geometry DEF apertureIFSNode IndexedFaceSet {
+						#ccw FALSE
+						coord DEF apertureCoordNode Coordinate {}
+						solid FALSE
+						creaseAngle 0.5
+					}
+				}
+			]
+		}
+
+		DEF SCALE_TRANSLATE_SENSOR Script {
+			eventIn	 SFFloat translation_in
+			eventOut SFVec3f screen_translation_out
+
+			url "javascript:function translation_in(value, time) {screen_translation_out[2] = -value*5;}"
+		}
+
+ROUTE ScreenDragger.position_changed TO SCALE_TRANSLATE_SENSOR.translation_in
+ROUTE SCALE_TRANSLATE_SENSOR.screen_translation_out TO moveScreen.set_translation

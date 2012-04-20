@@ -1,0 +1,694 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+EXTERNPROTO XDragWidget [
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	inputOutput MFNode geometry
+	inputOutput MFNode activeGeometry
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#XDragWidget"
+EXTERNPROTO WheelWidget [
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	#inputOutput SFRotation rotation
+	inputOutput SFVec3f scale
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+####################
+# END EXTERNPROTOS #
+####################
+
+NavLight { navigationType "NONE" }
+
+NavigationInfo {
+	type "NONE"
+}
+
+#Module units:VRML units scale: 100
+DEF NavPanel NavigationPanel {
+	translation_speed 2
+	
+	views [  
+       -0.176 0.733 0.0 -2.364 -0.1 -0.234
+       -0.306 1.162 0.0 -0.695 -0.434 -0.234
+       -0.0982 0.438 0.0 -1.435 -0.0334 0.0
+       #-0.34	0.34	0	-5 0 -10,
+		#0	0.34	0	0 0 0, 
+		#-5	0	-10	0 0 0 ,
+		# 0	0	0	0 0 0,  
+		#-5	0	-15	0 0 0
+        ]
+
+    
+	#	Y    Z
+	#	|   /
+	#	|  /
+	#	| /
+	#_______|/_________ X
+	#      /|
+	#     /	|
+	#    /	|
+	#   /	|
+	#For future refrence, this is what each of the values in the view [ ] field correspond to
+	#1st - how much to rotate along the x axis
+	#2nd - how much to rotate along the y axis
+	#3rd - how much to rotate along the z axis (although I couldn't get it to do anything in photoelectric)
+	#4th - how far to move along the x axis (how far left or right to move the camera) Negative = Right Positive = Left
+	#5th - how far to move along the y axis(how far up or down to move the camera)
+	#6th - how far to move along the z axis (how far into or out of the screen to move the camera) Negative=Back, Positive=Forward
+
+	# NSlit Views
+	#views[
+	#-.53 -.5 0 -.5 -.5 -20
+	#-.17 0 0 0 -1 -15
+	#-.23 -.5 0 -1.5 -1 -12
+	# -.5 0 0 0 -3 -15
+	#]
+
+	children [
+		DEF WidgetsHolder Switch {
+			whichChoice 0
+			choice Group {
+				children [
+					Transform {
+						scale 1.5 1.5 1.5
+						translation 4 -3 4
+						rotation 1 0 0 -1.570796
+						children DEF WavelengthWidget WheelWidget {
+							maxRotations 3
+						}
+					}
+
+					DEF ScreenWidget XDragWidget {
+						translation 0 3.75 3.75
+						minPosition 7
+						maxPosition 20
+						position 20
+						geometry DEF RedCyl Transform {
+							rotation 0 0 1 1.570796
+							children Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor .85 0 0
+									}
+								}
+								geometry DEF Cyl Cylinder {
+									radius 0.2
+									height 0.5
+								}
+							}
+						}
+						activeGeometry DEF ActiveRedCyl Transform {
+							rotation 0 0 1 1.570796
+							children Shape {
+								appearance Appearance	{
+									material Material	{
+										diffuseColor 1 .2 .1
+									}
+								}
+								geometry USE Cyl
+							}
+						}
+					}
+					DEF LengthWidget XDragWidget {
+						translation 0 2 2
+						minPosition 2.5
+						maxPosition 18
+						position 5
+						geometry USE RedCyl
+						activeGeometry USE ActiveRedCyl
+					}
+				]
+			}
+		}
+
+		# This group is the box (with beam and mirrors)
+		Group {
+			children [
+				# DRAWS THE BOX WIREFRAME
+				DEF WireTransform Transform {
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									emissiveColor 0 1 1
+									diffuseColor 0 1 1
+									emissiveColor 0 1 1
+								}
+							}
+							geometry DEF WIREFRAME-ILS IndexedLineSet {
+								coord DEF WIREFRAME-COORD Coordinate { point [0 2 2, 0 -2 2, 0 -2 -2, 0 2 -2, 1 2 2, 1 -2 2, 1 -2 -2, 1 2 -2]}
+								coordIndex [0 1 2 3 0 -1
+									4 5 6 7 4 -1
+									3 7 -1, 2 6 -1
+									0 4 -1, 1 5 -1]
+							}
+						}
+					]
+				}
+
+				Transform {
+					children DEF BeamSwitch Switch {
+						whichChoice 0
+						choice [
+							# laserbeam cavity
+							Transform {
+								children DEF BeamModeSwitch Switch {
+									whichChoice 0
+									choice [
+										# choice 0 -- 00,low
+										DEF BeamLowG Shape {
+											geometry DEF BeamFacesLowG IndexedFaceSet {
+												solid FALSE
+												coord DEF BeamCoordsLowG Coordinate {}
+												colorPerVertex FALSE
+												color DEF BeamColorsLowG Color { }
+											}
+										}
+
+										# choice 1 -- 00,high
+										DEF BeamHighG Shape {
+											geometry DEF BeamFacesHighG IndexedFaceSet {
+												solid FALSE
+												coord DEF BeamCoordsHighG Coordinate {}
+												colorPerVertex FALSE
+												color DEF BeamColorsHighG Color { }
+											}
+										}
+
+										# choice 2 -- 10,low
+										Transform {
+											children [
+												DEF BeamLow Shape {
+													geometry DEF BeamFacesLow IndexedFaceSet {
+														solid FALSE
+														coord DEF BeamCoordsLow Coordinate {}
+														colorPerVertex FALSE
+														color DEF BeamColorsLow Color { }
+													}
+												}
+												Transform {
+													rotation 1 0 0 3.14159265358979
+													children USE BeamLow
+												}
+											]
+										}
+
+										# choice 3 -- 10,high
+										Transform {
+											children [
+												DEF BeamHigh Shape {
+													geometry DEF BeamFacesHigh IndexedFaceSet {
+														solid FALSE
+														coord DEF BeamCoordsHigh Coordinate {}
+														colorPerVertex FALSE
+														color DEF BeamColorsHigh Color { }
+													}
+												}
+												Transform {
+													rotation 1 0 0 3.14159265358979
+													children USE BeamHigh
+												}
+											]
+										}
+
+										# choice 4 -- 01,low
+										Transform {
+											children [
+												Transform {
+													rotation 1 0 0 1.5707963267949
+													children USE BeamLow
+												}
+												Transform {
+													rotation 1 0 0 -1.5707963267949
+													children USE BeamLow
+												}
+											]
+										}
+
+										# choice 5 -- 01,high
+										Transform {
+											children [
+												Transform {
+													rotation 1 0 0 1.5707963267949
+													children USE BeamHigh
+												}
+												Transform {
+													rotation 1 0 0 -1.5707963267949
+													children USE BeamHigh
+												}
+											]
+										}
+
+										# choice 6 -- 11,low
+										Transform {
+											children [
+												USE BeamLow
+												Transform {
+													rotation 1 0 0 1.5707963267949
+													children USE BeamLow
+												}
+												Transform {
+													rotation 1 0 0 -1.5707963267949
+													children USE BeamLow
+												}
+												Transform {
+													rotation 1 0 0 3.14159265358979
+													children USE BeamLow
+												}
+											]
+										}
+
+										# choice 7 -- 11,high
+										Transform {
+											children [
+												USE BeamHigh
+												Transform {
+													rotation 1 0 0 -1.5707963267949
+													children USE BeamHigh
+												}
+												Transform {
+													rotation 1 0 0 1.5707963267949
+													children USE BeamHigh
+												}
+												Transform {
+													rotation 1 0 0 3.14159265358979
+													children USE BeamHigh
+												}
+											]
+										}# end choice 7
+									]
+								} # end switch
+							} # end transfomr for laserbeam cavity
+
+							# DRAWS THE CIRCLES FOR THE BEAM PAST MIRROR2
+							Transform {
+								children [
+									Shape {
+										appearance Appearance {
+											material DEF FarBeamMaterial Material {
+												diffuseColor 1 0 0
+												transparency 0.8
+											}
+										}
+										geometry DEF FarFaces IndexedFaceSet {
+											solid TRUE
+											coord DEF FarCoords Coordinate {}
+										}
+									}
+								]
+							}
+						] #end choice 0
+					}
+				}
+
+				#It seems likely that these mirrors could be re-done with Extrusion
+				#code similar to the Geometrical Optics module's lenses'. [Davis]
+
+				DEF Mirror1Transform Transform {
+					translation -.05 0 0
+					children DEF Mirror1 Shape {
+						appearance DEF MirrorAppearance Appearance {
+							material Material {
+								diffuseColor .7 .7 .7
+							}
+						}
+						geometry DEF Mirror1-IFS IndexedFaceSet {
+							solid FALSE
+							coord DEF Mirror1-COORD Coordinate {}
+						}
+					}
+				}
+
+				Transform {
+					translation .05 0 0
+					children DEF Mirror2Transform Transform {
+						translation 10 0 0
+						children Transform {
+							rotation 0 1 0 3.14159265359
+							children USE Mirror1
+						}
+					}
+				}
+			]
+		} # End Group node for box, laser and mirrors
+
+		DEF ApertureTransform Transform {
+			translation 0 0 0
+			children DEF ApertureSwitch Switch {
+				whichChoice -1
+				choice [
+					# choice 0 -- for the Circular Aperature
+					# I'm not sure what it is supposed to look like
+					Group {}
+
+					# choice 1 -- for the Horizontal Aperature
+					Shape {
+						geometry IndexedLineSet {
+							coord Coordinate {
+								point [ 0 2 -2, 0 2 2, 0 -2 2, 0 -2 -2, 0 2 0, 0 -2 0 ]
+							}
+							coordIndex [ 0 1 2 3 0 -1 4 5]
+						}
+						appearance Appearance {
+							material Material {
+								diffuseColor 1 0 0
+								emissiveColor 1 0 0
+							}
+						}
+					}
+
+					# choice 2 -- for the Vertical Aperature
+					Shape {
+						geometry IndexedLineSet {
+							coord Coordinate {
+								point [ 0 2 -2, 0 2 2, 0 -2 2, 0 -2 -2, 0 0 -2, 0 0 2]
+							}
+							coordIndex [ 0 1 2 3 0 -1 4 5 ]
+						}
+						appearance Appearance {
+							material Material {
+								diffuseColor 1 0 0
+								emissiveColor 1 0 0
+							}
+						}
+					}
+
+					# choice 3 -- for Both Aperatures
+					Shape {
+						geometry IndexedLineSet {
+							coord Coordinate {
+								point [ 0 2 -2, 0 2 2, 0 -2 2, 0 -2 -2, 0 0 -2, 0 0 2, 0 2 0, 0 -2 0]
+							}
+							coordIndex [ 0 1 2 3 0 -1 4 5 -1 6 7 ]
+						}
+						appearance Appearance {
+							material Material {
+								diffuseColor 1 0 0
+								emissiveColor 1 0 0
+							}
+						}
+					}
+				]
+			}
+		}
+
+		DEF ScreenTranslation Transform {
+			children [
+				DEF LineSwitch Switch {
+					whichChoice 0
+					choice Transform {
+						translation 0 3.75 0
+						rotation 0 1 0 -1.5707963267949
+						scale 1 5 1
+						children Shape {
+							appearance Appearance {
+								material Material {
+									emissiveColor 1 1 1
+								}
+							}
+							geometry DEF ilsNode IndexedLineSet {
+								 coord Coordinate {}
+								 }
+						}
+					}
+				}
+
+				Shape {
+					geometry Box { size 0.25 7.5 7.5 }
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.15 0.15 0.15
+							emissiveColor 0.15 0.15 0.15
+						}
+					}
+				}
+
+				Transform {
+					translation -.2 0 0
+					rotation 0 0 1 1.5707963267949
+					children DEF ResSwitch Switch {
+						whichChoice 0
+						choice [
+							# choice 0 -- high resolution
+							Group {
+								children [
+									DEF IFSShapeHigh Shape {
+										geometry DEF IFSHigh IndexedFaceSet {
+										color Color {}
+										coord Coordinate {}
+										coordIndex []
+										solid FALSE
+										}
+#										geometry DEF IFSHigh ElevationGrid {
+#											colorPerVertex TRUE
+#											xDimension 51
+#											xSpacing .075
+#											zDimension 51
+#											zSpacing .075
+#											solid FALSE
+#											color DEF IFSColorHigh Color { }
+#										}
+									}
+									Transform {
+										rotation 1 0 0 3.14159265358979
+										children USE IFSShapeHigh
+									}
+									Transform {
+										rotation 0 1 0 3.14159265358979
+										children USE IFSShapeHigh
+									}
+									Transform {
+										rotation 0 0 1 3.14159265358979
+										children USE IFSShapeHigh
+									}
+								]
+							} # end choice 0
+
+							# choice 1 -- low resolution
+							Group {
+								children [
+									DEF IFSShapeLow Shape {
+										geometry DEF IFSLow IndexedFaceSet {
+											color Color {}
+											coord Coordinate {}
+											coordIndex []
+											solid FALSE
+										}
+#										geometry DEF IFSLow ElevationGrid {
+#											xDimension 11
+#											xSpacing .375
+#											zDimension 11
+#											zSpacing .375
+#											solid FALSE
+#											color DEF IFSColorLow Color { }
+#										}
+									}
+									Transform {
+										rotation 1 0 0 3.14159265358979
+										children USE IFSShapeLow
+									}
+									Transform {
+										rotation 0 1 0 3.14159265358979
+										children USE IFSShapeLow
+									}
+									Transform {
+										rotation 0 0 1 3.14159265358979
+										children USE IFSShapeLow
+									}
+								]
+							} # end choice 1
+
+							# choice 2 -- laser does not lase
+							Transform {
+								translation -3.75 0 -3.75
+								rotation 0 1 0 0
+								children Shape {
+									geometry ElevationGrid {
+										xDimension 2
+										xSpacing 7.5
+										zDimension 2
+										zSpacing 7.5
+										height [0 0 0 0]
+									}
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+										}
+									}
+								}
+							} # end choice 2
+						]
+					}
+				}
+			]
+		}
+	]
+} # end navigationPanel
+
+DEF Shuffle Script {
+	inputOnly SFFloat cavityLength_in
+	outputOnly SFVec3f wireScale_out
+	outputOnly SFVec3f apTrans_out
+	outputOnly SFVec3f m2Trans_out
+
+	inputOnly SFFloat screenPosition_in
+	outputOnly SFVec3f screenTrans_out
+
+	url "ecmascript:
+		function initialize() {
+			wireScale_out=new SFVec3f(wireScale_out[0],1,1);
+			apTrans_out=new SFVec3f(apTrans_out[0],0,0);
+			m2Trans_out=new SFVec3f(m2Trans_out[0],0,0);
+			screenTrans_out=new SFVec3f(screenTrans_out[0],0,0);
+		}
+		function cavityLength_in(value,time) {
+			wireScale_out[0]=m2Trans_out[0]=value;
+			apTrans_out[0]=value/2;
+		}
+		function screenPosition_in(value,time) {
+			screenTrans_out[0]=value;
+		}"
+}
+
+ROUTE LengthWidget.position_changed TO Shuffle.cavityLength_in
+ROUTE Shuffle.wireScale_out TO WireTransform.set_scale
+ROUTE Shuffle.apTrans_out TO ApertureTransform.set_translation
+ROUTE Shuffle.m2Trans_out TO Mirror2Transform.set_translation
+
+ROUTE ScreenWidget.position_changed TO Shuffle.screenPosition_in
+ROUTE Shuffle.screenTrans_out TO ScreenTranslation.set_translation
+
+#This is something to rewrite later -- should probably be a PROTO with a mirror and flipability.
+#And a shape from Shapes.wrl while we're at it.  [Davis]
+DEF Mirror1Flip Script {
+	inputOnly SFBool flip
+	outputOnly SFRotation rotation_out
+
+	url "ecmascript:
+		function flip(value,time) {
+			if(value) rotation_out=new SFRotation(0,1,0,Math.PI);
+			else rotation_out=new SFRotation(0,1,0,0);
+		}"
+}
+
+ROUTE Mirror1Flip.rotation_out TO Mirror1Transform.set_rotation
+
+DEF Mirror2Flip Script {
+	inputOnly SFBool flip
+	outputOnly SFRotation rotation_out
+
+	url "ecmascript:
+		function flip(value,time) {
+			if(value) rotation_out=new SFRotation(0,1,0,Math.PI);
+			else rotation_out=new SFRotation(0,1,0,0);
+		}"
+}
+
+ROUTE Mirror2Flip.rotation_out TO Mirror2Transform.set_rotation
+
+ROUTE BeamSwitch.whichChoice_changed TO LineSwitch.set_whichChoice

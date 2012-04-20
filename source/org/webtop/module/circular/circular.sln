@@ -1,0 +1,13 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "circular", "circular.vjp", "{C435BEC1-1EF4-4306-96B9-9353D693B822}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {C435BEC1-1EF4-4306-96B9-9353D693B822}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {C435BEC1-1EF4-4306-96B9-9353D693B822}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

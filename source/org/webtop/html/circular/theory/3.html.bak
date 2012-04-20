@@ -1,0 +1,197 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+
+<head>
+<title>Fresnel Diffraction, Circular Aperture-Fresnel Zones</title>
+
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<script language="JavaScript">
+document.write(stdMenu(1,'Fresnel Circular',2,true));
+document.write(moduleList(2,true));
+</script>
+
+<div class=module id=vrml></div><p>&nbsp;
+<center>
+<table width="95%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="tablemain" id="tablemain">
+<p><big><font color="#800000"><big><b>Fresnel Diffraction, Circular Aperture: Theory</b> </big></font></big><br>
+<big><font color="#008040"><b>Fresnel Zones</b></font></big></p>
+
+<p>The stunning nature of the above results seems to imply that there is something
+physically significant about the Fresnel number. The Fig. 2 below shows a side view of the
+system. The point <i>O</i> is the origin (it is at the center of the aperture), <i>P</i>
+is the observation point, and <i>Q</i> is a point in the aperture which is a distance <font FACE="Symbol">r</font> <font FACE="Symbol">¢</font> from <i>O</i>. </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/figure2.gif" alt="figure2.gif (1258 bytes)" WIDTH="338" HEIGHT="237"></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Fig. 2 Geometry for an on-axis observation point.</small></td>
+  </tr>
+</table>
+</center></div>
+
+<p>The path length difference between the spherical wave arriving at <i>P</i> from <i>Q</i>
+and the spherical wave arriving at <i>P</i> from <i>O</i> is</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory13.gif" WIDTH="128" HEIGHT="53"></td>
+    <td width="20%"><p align="right">(<a name="3.1">3.1</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>where <i>d</i> is the distance from <i>Q</i> to <i>P.</i></p>
+
+<p>Let us now draw circles inside the aperture (and centered about <i>O</i>) of radii <i><font FACE="Symbol">r</font>'</i><sub>1</sub>, <i><font FACE="Symbol">r</font>'</i><sub>2</sub>,
+<i><font FACE="Symbol">r</font>'</i><sub>3</sub>, &#133;such that the spherical wave from
+the nth circle travels a distance <i>n<font FACE="Symbol">l</font></i>/2 further than the
+spherical wave emanating from <i>O</i> (in order to get to the point <i>P</i>), i.e.,</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory14.gif" WIDTH="249" HEIGHT="32"></td>
+    <td width="20%"><p align="right">(<a name="3.2">3.2</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>We have now divided the aperture into a particular set of annuli (except for the first
+region which is a disk): its <font color="#0000FF"><b>Fresnel zones</b></font>. An
+approximate formula for the radius of the m<sup>th</sup> Fresnel zone can be obtained in
+the following way. It follows from Eq. (3.2) that</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory16.gif" WIDTH="190" HEIGHT="26"></td>
+    <td width="20%"><p align="right">(<a name="3.3">3.3</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>For reasonable values of <i>z</i>, <i>n</i>, and <font FACE="Symbol">l</font> the third
+term on the right hand side of Eq. (3.3 ) is negligibly small compared to the other two
+terms on that side, and we find that to a good approximation,</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory17.gif" WIDTH="73" HEIGHT="26"></td>
+    <td width="20%"><p align="right">(<a name="3.4">3.4</a>)</td>
+  </tr>
+</table>
+</center></div><div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>It follows from Eqs. (<a href="2.html#2.2">2.2</a>) and (3.4) that the
+Fresnel number, <font color="#0000FF"><b>N tells us the number of Fresnel zones that are
+contributing to the field at <i>P</i></b></font>. Fig. 3 below shows twelve Fresnel zones
+whose radii were calculated with Eq. (3.4).</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="100%"><p align="center"><img src="../images/fresnel-s.gif" WIDTH="245" HEIGHT="244"><a onmouseover="window.status='Enlarge Figure'; return true" href="javascript:imageWindow('../images/fresnel.gif')"><img src="../images/mag2.gif" border="0" WIDTH="20" HEIGHT="20"></a></td>
+  </tr>
+  <tr>
+    <td width="100%"><small>Fig. 3 The first twelve Fresnel zones.</small></td>
+  </tr>
+</table>
+</center></div>
+
+<p>We are now in a position to understand the results (a) and (b) above. Let us calculate
+the electric field, call it <i>E<sub>n</sub></i>(0,z), at the point P due to the nth
+Fresnel zone. It follows from Eq. (<a href="2.html#2.1">2.1</a>) that</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td width="80%"><p align="center"><img src="../images/cir-theory19.gif" WIDTH="334" HEIGHT="53"></td>
+    <td width="20%"><p align="right">(<a name="3.5">3.5</a>)</td>
+  </tr>
+  <tr>
+    <td width="80%"></td>
+    <td width="20%"><p align="right"><a href="javascript:history.go(-1)"><img src="../../images/back.gif" alt="back2.gif (135 bytes)" hspace="5" border="0" WIDTH="35" HEIGHT="10"></a></td>
+  </tr>
+</table>
+</center></div>
+
+<p>This result shows that <font color="#0000FF"><b>each Fresnel zone contributes, at <i>P</i>,
+an electric field of the same amplitude (</b>2<i>E<sub>0i</sub></i>) <b>and the fields
+from consecutive zones are <font FACE="Symbol">p</font> out of phase with each other</font>.</b>
+That is the reason why an even number of zones gives us zero intensity at P, and an odd
+number of zones gives us an intensity of 4<i>I<sub>i</sub></i>.</p>
+
+<hr>
+<div align="center"><center>
+
+<table border="1" cellpadding="0" cellspacing="0" width="80%">
+  <tr>
+    <td rowspan="2" class="tablemain" id="tablemain"><font color="#FF0000"><strong>Navigate:</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="1.html">Basic Equations</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="2.html">On-Axis Intensity; Fresnel Number</a></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#008040">Fresnel Zones</font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><a href="4.html">Off-axis Intensity</a></td>
+  </tr>
+  <tr>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Start</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Previous</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>&nbsp;</strong></font></td>
+    <td width="25%" class="tablemain" id="tablemain"><p align="center"><font color="#FF0000"><strong>Next</strong></font></td>
+  </tr>
+</table>
+</center></div>
+
+<hr>
+
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

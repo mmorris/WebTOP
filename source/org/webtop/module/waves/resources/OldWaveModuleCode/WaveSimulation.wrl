@@ -1,0 +1,2390 @@
+#VRML V2.0 utf8
+
+# -------------------------------------------------------------------
+# PROTOs that are part of Chi's NavigationPanel [v3.01]
+# -------------------------------------------------------------------
+
+#A prototype for the viewpoint objects
+PROTO NavigationPanel_ViewPointPROTO [ exposedField SFBool enabled TRUE
+	field SFInt32 num 0
+	eventOut SFInt32 selected
+	eventOut SFBool isOver_out
+	eventOut SFBool isActive_out ]
+{
+	DEF T Transform {
+		scale 0.1 0.1 0.1
+		children [
+			DEF TS TouchSensor {
+				enabled IS enabled
+				isActive IS isActive_out
+				isOver IS isOver_out
+			}
+			Transform {
+				rotation 0 1 0 0.4
+				children Transform {
+					rotation 1 0 0 0.6
+					children Transform {
+						translation 0 0 0.5
+						children [
+							Shape {
+								appearance Appearance { material Material { diffuseColor 0 0 1 } }
+								geometry Sphere { radius 0.1 }
+							}
+							Transform {
+								rotation -0.7071 0.7071 0 -0.5236
+								children DEF Rod Transform {
+									translation 0 0 -0.5
+									rotation 1 0 0 -1.5707963
+									children Shape {
+										appearance Appearance { material Material { diffuseColor 0.6 0.6 0.6 } }
+										geometry Cylinder { radius 0.025 height 1 }
+									}
+								}
+							}
+							Transform {
+								rotation -0.7071 0.7071 0 0.5236
+								children USE Rod }
+							Transform {
+								rotation 0.7071 0.7071 0 -0.5236
+								children USE Rod }
+							Transform {
+								rotation 0.7071 0.7071 0 0.5236
+								children USE Rod }
+							Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 1 1 0.2
+										transparency 0.5
+									}
+								}
+								geometry IndexedFaceSet {
+									coord Coordinate {
+										point [ 0 0 0, 0.3536 0.3536 -0.866, -0.3536 0.3536 -0.866, -0.3536 -0.3536 -0.866, 0.3536 -0.3536 -0.866 ]
+									}
+									coordIndex [ 0 1 2 -1, 0 2 3 -1, 0 3 4 -1, 0 4 1 -1 ]
+								}
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+	DEF Worker Script {
+		field SFInt32 n IS num
+		eventIn SFBool active
+		eventOut SFInt32 selected IS selected
+		eventOut SFVec3f trans_out
+		url "javascript:
+		function initialize() {trans_out=new SFVec3f(-.7+n*.1,-0.75,-2);}
+		function active(value,time) {if(!value)selected=n;}"
+	}
+	ROUTE TS.isActive TO Worker.active
+	ROUTE Worker.trans_out TO T.set_translation
+}
+
+PROTO NavigationPanel [
+	exposedField SFBool enabled						 TRUE
+
+	field			SFBool visible							 TRUE
+	eventIn		SFBool set_visible
+	eventOut	SFBool visible_changed
+
+	exposedField MFNode children					 []
+
+	exposedField SFVec3f center							0 0 0
+
+	field		 MFFloat		views							 [0 0 0 0 0 0]
+	field		 SFInt32		activeView				 0
+
+	field		 SFFloat		rotation_speed		 1
+	field		 SFFloat		translation_speed	 20
+
+	#External (EAI) control of the view
+	eventIn	 SFVec2f		set_angles
+	eventIn	 SFVec2f		set_pan
+	eventIn	 SFFloat		set_zoom
+	eventIn	 MFFloat		set_view
+	eventIn	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	eventOut SFBool			isActive_out
+	eventOut SFBool			isOver_out
+	eventOut SFBool			rotation_isOver_out
+	eventOut SFBool			rotation_isActive_out
+	eventOut SFBool			pan_isOver_out
+	eventOut SFBool			pan_isActive_out
+	eventOut SFBool			zoom_isOver_out
+	eventOut SFBool			zoom_isActive_out
+	eventOut SFBool			switch_isOver_out
+	eventOut SFBool			switch_isActive_out
+	eventOut SFVec2f		angles_changed
+	eventOut SFVec2f		pan_changed
+	eventOut SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	eventOut MFFloat		view_changed
+	eventOut SFInt32		activeView_changed ]
+{
+	PROTO RotateIcon [
+		field	 SFVec2f	angles 0 0
+		field	 SFFloat	speed	 1
+		eventIn SFVec2f set_angles ]
+	{
+		DEF PitchTransform Transform {
+			children DEF YawTransform Transform {
+				children Shape {
+					appearance Appearance {
+						texture ImageTexture { url [ "../images/checker.jpg" "checker.jpg" ] }
+						material Material { diffuseColor 0.5 0.5 0.5 }
+					}
+					geometry Sphere { radius 0.5 }
+				}
+			}
+		}
+
+		DEF Worker Script {
+			field SFVec2f angles IS angles
+			field SFFloat speed IS speed
+
+			eventIn SFVec2f set_angles IS set_angles
+
+			eventOut SFRotation yawRotation_changed
+			eventOut SFRotation pitchRotation_changed
+
+			url "javascript:
+			function initialize() {
+				yawRotation_changed = new SFRotation(0, 1, 0, angles[1]*speed);
+				pitchRotation_changed = new SFRotation(1, 0, 0, -angles[0]*speed);}
+
+			function set_angles(value, time) {
+				yawRotation_changed[3] = value[1] * speed;
+				pitchRotation_changed[3] = -value[0] * speed;}
+			"
+		}
+
+		ROUTE Worker.yawRotation_changed TO YawTransform.set_rotation
+		ROUTE Worker.pitchRotation_changed TO PitchTransform.set_rotation
+	}
+
+	PROTO ZoomIcon [ ]
+	{
+		Transform {
+			scale 1 0.5 1
+			rotation 1 0 0 -1.0
+			children Shape {
+				appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+				geometry IndexedFaceSet {
+					coord Coordinate {
+						point [
+							0 1 0.1,	 0.4 0.25 0.1,		0.175 0.25 0.1,		 0.35 -0.5 0.1,	 0.5 -0.5 0.1,
+							0 -1 0.1,	 -0.5 -0.5 0.1,	 -0.35 -0.5 0.1,	-0.175 0.25 0.1,	-0.4 0.25 0.1,
+							0 1 -0.1,	 0.4 0.25 -0.1,		0.175 0.25 -0.1,	 0.35 -0.5 -0.1, 0.5 -0.5 -0.1,
+							0 -1 -0.1, -0.5 -0.5 -0.1, -0.35 -0.5 -0.1, -0.175 0.25 -0.1, -0.4 0.25 -0.1 ]
+					}
+					coordIndex [
+						0 9 1 -1, 8 7 3 2 -1, 4 6 5 -1,
+						10 11 19 -1, 18 12 13 17 -1, 16 14 15 -1,
+						10 0 1 11 -1, 11 1 2 12 -1, 12 2 3 13 -1, 13 3 4 14 -1, 14 4 5 15 -1,
+						0 10 19 9 -1, 9 19 18 8 -1, 8 18 17 7 -1, 7 17 16 6 -1, 6 16 15 5 -1 ]
+				}
+			}
+		}
+	}
+
+	PROTO PanIcon [ ]
+	{
+		Transform {
+			scale 0.5 0.5 1
+			children Shape {
+				appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 } }
+				geometry IndexedFaceSet {
+					coord Coordinate {
+						point [
+							0 1 0.1,	0.5 0.6 0.1,	 0.3 0.6 0.1,		0.3 0.3 0.1,		0.6 0.3 0.1,	 0.6 0.5 0.1,
+							1 0 0.1,	0.6 -0.5 0.1,	 0.6 -0.3 0.1, 0.3 -0.3 0.1,	 0.3 -0.6 0.1,	0.5 -0.6 0.1,
+							0 -1 0.1, -0.5 -0.6 0.1, -0.3 -0.6 0.1,	 -0.3 -0.3, 0.1, -0.6 -0.3 0.1, -0.6 -0.5 0.1,
+							-1 0 0.1, -0.6 0.5 0.1,	 -0.6 0.3 0.1,	-0.3 0.3 0.1,		-0.3 0.6 0.1,	 -0.5 0.6 0.1,
+
+							0 1 -0.1,	 0.5 0.6 -0.1,	 0.3 0.6 -0.1,	 0.3 0.3 -0.1,		0.6 0.3 -0.1,		0.6 0.5 -0.1,
+							1 0 -0.1,	 0.6 -0.5 -0.1,	 0.6, -0.3 -0.1, 0.3 -0.3 -0.1,		0.3 -0.6 -0.1,	0.5 -0.6 -0.1,
+							0 -1 -0.1, -0.5 -0.6 -0.1, -0.3 -0.6 -0.1,	-0.3 -0.3, -0.1, -0.6 -0.3 -0.1, -0.6 -0.5 -0.1,
+							-1 0 -0.1, -0.6 0.5 -0.1,	 -0.6 0.3 -0.1,	 -0.3 0.3 -0.1,		-0.3 0.6 -0.1,	-0.5 0.6 -0.1 ]
+					}
+					coordIndex [
+						0 23 1 -1, 2 22 14 10 -1, 6 5 7 -1, 4 3 9 8 -1, 11 13 12 -1, 19 18 17 -1, 21 20 16 15 -1,
+						24 25 47 -1, 46 26 34 38 -1, 29 30 31 -1, 27 28 32 33 -1, 35 36 37 -1, 39 33 34 38 -1, 41 42 43 -1, 44 45 39 40 -1,
+
+						24 0 1 25 -1, 25 1 2 26 -1, 26 2 3 27 -1, 27 3 4 28 -1, 28 4 5 29 -1, 29 5 6 30 -1,
+						30 6 7 31 -1, 31 7 8 32 -1, 32 8 9 33 -1, 33 9 10 34 -1, 34 10 11 35 -1, 35 11 12 36 -1,
+						36 12 13 37 -1, 37 13 14 38 -1, 38 14 15 39 -1, 39 15 16 40 -1, 40 16 17 41 -1, 41 17 18 42 -1,
+						42 18 19 43 -1, 43 19 20 44 -1, 44 20 21 45 -1, 45 21 22 46 -1, 46 22 23 47 -1, 47 23 0 24 -1 ]
+				}
+			}
+		}
+	}
+
+	PROTO SwitchIcon [ field SFBool on TRUE
+										 eventIn SFBool set_on ]
+	{
+		DEF OnOff Switch {
+			whichChoice 0
+			choice [
+				Transform {
+					rotation 1 0 0 1.5707963
+					children [
+						Shape {
+							appearance DEF OnAppearance Appearance {
+								material Material { diffuseColor 0.8 0.2 0.2 }
+							}
+							geometry DEF C1 Cylinder { radius 0.15 height 0.3 }
+						}
+						Shape {
+							appearance USE OnAppearance
+							geometry DEF C2 Cylinder { radius 0.25 height 0.2 }
+						}
+					]
+				}
+				Transform {
+					rotation 1 0 0 1.5707963
+					children [
+						Shape {
+							appearance DEF OffAppearance Appearance {
+								material Material { diffuseColor 0.4 0.0 0.0 }
+							}
+							geometry USE C1
+						}
+						Shape {
+							appearance USE OffAppearance
+							geometry USE C2
+						}
+					]
+				}
+			]
+		}
+		DEF Worker Script {
+			field SFBool on IS on
+			eventIn SFBool set_on IS set_on
+			eventOut SFInt32 whichChoice_changed
+			url "javascript:
+			function initialize() {if(!on) whichChoice_changed = 1;}
+			function set_on(value, time) {whichChoice_changed = value ? 0 : 1;}"
+		}
+		ROUTE Worker.whichChoice_changed TO OnOff.whichChoice
+	}
+	#END OF INTERIOR PROTOs
+
+	Group {
+		children [
+			DEF TranslationTransform Transform {
+				children DEF VerticalTransform Transform {
+					children DEF HorizontalTransform Transform {
+						center IS center
+						children IS children #This is where the scene goes
+					}
+				}
+			}
+
+			DEF	PanelTransform Transform {
+				children [
+					DEF PanelSwitch Switch {
+						whichChoice 0
+						choice DEF PanelGroup Group {
+							children [
+
+								#Here shall be inserted (at initialize time) the viewpoint-selection icons.
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation 0.15 -0.75 -2
+									children [
+										DEF RotationTS TouchSensor {
+											enabled IS enabled
+											isOver	IS rotation_isOver_out
+										}
+										DEF RotationPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS rotation_isActive_out
+										}
+										DEF RotationIcon RotateIcon { speed IS rotation_speed }
+									]
+								}
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation 0.0 -0.75 -2
+									children [
+										DEF PanTS TouchSensor {
+											enabled IS enabled
+											isOver	IS pan_isOver_out
+										}
+										DEF PanPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS pan_isActive_out
+										}
+										PanIcon { }
+									]
+								}
+
+								Transform {
+									scale 0.1 0.1 0.1
+									translation -0.15 -0.75 -2
+									children [
+										DEF ZoomTS TouchSensor {
+											enabled IS enabled
+											isOver	IS zoom_isOver_out
+										}
+										DEF ZoomPS PlaneSensor {
+											enabled	 IS enabled
+											isActive IS zoom_isActive_out
+										}
+										ZoomIcon { }
+									]
+								}
+							]
+						}
+					}
+
+					Transform {
+						scale 0.1 0.1 0.1
+						translation 0.85 -0.75 -2
+						children [
+							DEF SwitchTS TouchSensor {
+								enabled IS enabled
+								isOver IS switch_isOver_out
+								isActive IS switch_isActive_out
+							}
+							DEF SwitchIcon SwitchIcon {
+								on IS visible
+								set_on IS set_visible
+							}
+						]
+					}
+				]
+			}
+
+			DEF ProxSensor ProximitySensor {
+				size 1e10 1e10 1e10
+				ROUTE ProxSensor.orientation_changed TO PanelTransform.set_rotation
+				ROUTE ProxSensor.position_changed TO PanelTransform.set_translation
+			}
+
+			DEF NPViewpoint Viewpoint { position 0 0 0 }
+		]
+	}
+
+	# --------------------------------------------------------------- #
+	# Script node that processes and transforms all internal/					#
+	# external events.																								#
+	# --------------------------------------------------------------- #
+	DEF Worker Script {
+		#views is never changed and holds the pre-defined viewpoints.
+		field			MFFloat	 views IS views
+		field			SFInt32	 nViews 0					# count of predefined views
+		#activeView holds the current view, or -1 if the viewpoint has been
+		#modified since last predefined-view selection.
+		field			SFInt32	 activeView IS activeView
+		field			MFFloat	 currentView [ 0 0 0 0 0 0 ]
+
+		field			SFFloat	 rotation_speed IS rotation_speed
+		field			SFFloat	 translation_speed IS translation_speed
+
+		field			SFBool visible IS visible
+		eventIn		SFBool set_visible IS set_visible
+		eventOut	SFBool visible_out IS visible_changed
+
+		eventIn		SFVec2f	 set_angles IS set_angles
+		eventIn		SFVec2f	 set_pan		IS set_pan
+		eventIn		SFFloat	 set_zoom		IS set_zoom
+		eventIn		MFFloat	 set_view		IS set_view
+		eventIn		SFInt32	 set_activeView IS set_activeView
+
+		eventOut	SFBool	 isOver_out			IS isOver_out
+		eventOut	SFBool	 isActive_out		IS isActive_out
+
+		eventOut	SFVec2f	 angles_out IS angles_changed
+		eventOut	SFVec2f	 pan_out		IS pan_changed
+		eventOut	SFFloat	 zoom_out		IS zoom_changed
+		eventOut	MFFloat	 view_out		IS view_changed
+
+		eventOut	SFInt32	 activeView_out IS activeView_changed
+
+		#The other parts of NavigationPanel use these events:
+		eventIn		SFBool	 isOver_in
+		eventIn		SFBool	 isActive_in
+
+		eventIn		SFInt32	 vpActive_in
+		eventIn		SFBool	 switchActive_in
+
+		eventIn		SFVec3f		 rotationTrans_in
+		eventIn		SFVec3f		 panTrans_in
+		eventIn		SFVec3f		 zoomTrans_in
+
+		eventOut	SFRotation horizontalRotation_int
+		eventOut	SFRotation verticalRotation_int
+		eventOut	SFVec3f		 translation_int
+
+		eventOut	SFVec2f rotationAngles_int
+		eventOut	SFVec3f rotationOffset_int
+		eventOut	SFVec3f panOffset_int
+		eventOut	SFVec3f zoomOffset_int
+
+		#This will be routed to the switch holding the motion controls
+		eventOut	SFInt32 whichChoice_int
+
+		#This is used to add the viewpoint objects
+		eventOut	MFNode addChildren_int
+		field			SFNode This USE Worker
+		field			SFNode enabledSource USE RotationTS
+
+		url "javascript:
+		function initialize() {
+			var i,VPstr='',VPnodes;
+			nViews = views.length / 6;
+			if(nViews==0) {
+				views = new MFFloat(0,0,0,0,0,0);
+				nViews = 1;
+			}
+			if(nViews > 5) nViews=5;
+			if(activeView >= nViews) activeView = nViews - 1;
+			if(activeView < 0) activeView = 0;
+
+			//Initialize data: set_all_internal assumes
+			//zoomOffset_int has been initialized, so:
+			zoomOffset_int = new SFVec3f(0, 0, 0);
+			set_all_internal(views,activeView*6);
+
+			set_visible(visible,0);
+
+			for(i=0;i<nViews;i++) VPstr+='NavigationPanel_ViewPointPROTO{num '+i+'}';
+
+			VPnodes=Browser.createVrmlFromString(VPstr);
+
+			for(i=0;i<nViews;i++) {
+				Browser.addRoute(VPnodes[i],'selected',This,'vpActive_in');
+				Browser.addRoute(VPnodes[i],'isOver_out',This,'isOver_in');
+				Browser.addRoute(VPnodes[i],'isActive_out',This,'isActive_in');
+				Browser.addRoute(enabledSource,'enabled_changed',VPnodes[i],'set_enabled');
+			}
+
+			//Add nodes to panel
+			addChildren_int=VPnodes;
+		}
+
+		function set_visible(value, time) { whichChoice_int = value ? 0 : -1; }
+
+		function set_angles(value, time) {
+			rotationOffset_int = new SFVec3f(value[1],value[0]);
+			horizontalRotation_int[3] = value[1];
+			verticalRotation_int[3] = -value[0];
+
+			currentView[0] = value[0];
+			currentView[1] = value[1];
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_pan(value, time) {
+			panOffset_int[0] = value[0];
+			panOffset_int[1] = value[1];
+			translation_int[0] = value[0];
+			translation_int[1] = value[1];
+
+			currentView[3] = value[0];
+			currentView[4] = value[1];
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_zoom(value, time) {
+			zoomOffset_int[1] = value;
+			translation_int[2] = value;
+
+			currentView[5] = value;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function set_view(value,time) {
+			activeView_out=activeView=-1;
+			set_all_internal(value,0);
+		}
+
+		function set_activeView(value,time) {
+			if(value>=nViews || value<0) print('NavigationPanel::set_activeView: invalid view');
+			else set_all_internal(views,(activeView=value)*6);
+		}
+
+		function vpActive_in(value,time) {
+			//Only need to bother if changing
+			if(activeView!=value) {
+				activeView_out=activeView=value;
+				set_all_internal(views,value*6);
+			}
+		}
+
+		function set_all_internal(value,offset,setviewchanged) {
+			var i;
+
+			rotationAngles_int=new SFVec2f(value[offset],value[offset+1]);
+			rotationOffset_int=new SFVec3f(value[offset+1],value[offset]);
+			horizontalRotation_int=new SFRotation(0,1,0,value[offset+1] * rotation_speed);
+			verticalRotation_int=new SFRotation(1,0,0,-value[offset] * rotation_speed);
+
+			panOffset_int=new SFVec3f(value[offset+3],value[offset+4]);
+			zoomOffset_int[1] = value[offset+5];
+
+			translation_int=panOffset_int.multiply(translation_speed);
+			translation_int[2] = value[offset+5] * translation_speed;
+
+			for(i=0; i<6; i++) currentView[i] = value[offset+i];
+
+			angles_out=new SFVec2f(value[offset],value[offset+1]);
+			pan_out=new SFVec2f(value[offset+3],value[offset+4]);
+			zoom_out=value[offset+5];
+			view_out=currentView;
+		}
+
+		function rotationTrans_in(value, time) {
+			value=new SFVec2f(value[1],value[0]); // swap components/reduce to 2D
+			angles_out = value;
+			currentView[0] = value[0];
+			currentView[1] = value[1];
+
+			rotationAngles_int=value;
+
+			horizontalRotation_int[3] = value[1] * rotation_speed;
+			verticalRotation_int[3] = -value[0] * rotation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function panTrans_in(value, time) {
+			value=new SFVec2f(value[0],value[1]);		// reduce to 2D
+			pan_out=value;
+			currentView[3] = value[0];
+			currentView[4] = value[1];
+
+			translation_int[0] = value[0] * translation_speed;
+			translation_int[1] = value[1] * translation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function zoomTrans_in(value, time) {
+			value=value[1];												// reduce to scalar
+			zoom_out = value;
+			currentView[5] = value;
+
+			translation_int[2] = value * translation_speed;
+
+			activeView_out=activeView=-1;
+			view_out=currentView;
+		}
+
+		function isOver_in(value, time) { isOver_out = value; }
+		function isActive_in(value, time) { isActive_out = value; }
+
+		function switchActive_in(value, time) {
+			if(!value) {
+				visible = !visible;
+				visible_out = visible;
+				whichChoice_int = visible ? 0 : -1;
+			}
+		}"
+	}
+
+	ROUTE RotationTS.isOver TO Worker.isOver_in
+	ROUTE RotationPS.isActive TO Worker.isActive_in
+	ROUTE PanTS.isOver TO Worker.isOver_in
+	ROUTE PanPS.isActive TO Worker.isActive_in
+	ROUTE ZoomTS.isOver TO Worker.isOver_in
+	ROUTE ZoomPS.isActive TO Worker.isActive_in
+
+	ROUTE RotationPS.translation_changed TO Worker.rotationTrans_in
+	ROUTE PanPS.translation_changed TO Worker.panTrans_in
+	ROUTE ZoomPS.translation_changed TO Worker.zoomTrans_in
+
+	ROUTE Worker.rotationOffset_int TO RotationPS.set_offset
+	ROUTE Worker.panOffset_int TO PanPS.set_offset
+	ROUTE Worker.zoomOffset_int TO ZoomPS.set_offset
+
+	ROUTE Worker.horizontalRotation_int TO HorizontalTransform.set_rotation
+	ROUTE Worker.verticalRotation_int TO VerticalTransform.set_rotation
+	ROUTE Worker.translation_int TO TranslationTransform.set_translation
+
+	ROUTE Worker.rotationAngles_int TO RotationIcon.set_angles
+
+	ROUTE Worker.addChildren_int TO PanelGroup.addChildren
+
+	ROUTE Worker.whichChoice_int TO PanelSwitch.whichChoice
+	ROUTE Worker.visible_out TO SwitchIcon.set_on
+
+	ROUTE SwitchTS.isActive TO Worker.switchActive_in
+}
+# -------------------------------------------------------------------
+# End of NavigationPanel
+# -------------------------------------------------------------------
+
+
+#Proto for augmentation/replacement for headlight/navinfo:
+PROTO NavLight [ exposedField SFFloat ambientIntensity 0.1
+	exposedField SFFloat intensity 1
+	exposedField SFColor color 1 1 1
+	exposedField SFVec3f attenuation 1 0 0
+	exposedField SFBool headlight FALSE
+	exposedField MFFloat avatarSize [ .25 1.6 .75 ]
+	exposedField SFFloat navigationSpeed 1
+	exposedField MFString navigationType ["WALK" "ANY"]
+	exposedField SFFloat visibilityLimit 0 ]
+{
+	DEF Fixture Transform {
+		children [
+			PointLight {
+				ambientIntensity IS ambientIntensity
+				intensity IS intensity
+				color IS color
+				attenuation IS attenuation
+				radius 1e10
+				location 0 0 0
+			}
+			NavigationInfo {
+				avatarSize IS avatarSize
+				type IS navigationType
+				speed IS navigationSpeed
+				visibilityLimit IS visibilityLimit
+				headlight IS headlight
+			}
+		]
+	}
+	DEF PS ProximitySensor { size 1e10 1e10 1e10 }
+	ROUTE PS.position_changed TO Fixture.set_translation
+	ROUTE PS.orientation_changed TO Fixture.set_rotation
+}
+
+#PROTO NEW_RadialWidget [ field		SFFloat amplitude	 1
+#										 field		SFFloat wavelength 1
+#										 field		SFFloat phase			 0
+#										 field		SFFloat x					 0
+#										 field		SFFloat y					 0
+#										 exposedField SFBool enabled TRUE
+#										 eventIn	SFFloat set_amplitude
+#										 eventIn	SFFloat set_wavelength
+#										 eventIn	SFFloat set_phase
+#										 eventIn	SFVec3f set_position
+#										 eventIn	SFBool	set_widgetVisible
+#										 eventOut SFFloat amplitude_changed
+#										 eventOut SFFloat wavelength_changed
+#										 eventOut SFFloat phase_changed
+#										 eventOut SFVec3f position_changed
+#										 eventOut SFBool	mouseClicked
+#										 eventOut SFBool	mouseOver
+#										 eventOut SFBool	mouseOverAmplitude
+#										 eventOut SFBool	mouseOverWavelength
+#										 eventOut SFBool	mouseOverPhase
+#										 eventOut SFBool	mouseOverPosition		]
+#{
+#	Group {
+#		children [
+#			Shape {
+#				appearance Appearance { material Material { diffuseColor 1 0.2 0.2 } }
+#				geometry Sphere { }
+#			}
+#			Transform {
+#				translation 0 -0.5 0
+#				scale 1.1 1 1.1
+#				rotation 1 0 0 1.5707963267949
+#				children Shape {
+#					appearance DEF ClearGray Appearance {
+#						material Material {
+#							diffuseColor 0.2 0.2 0.2
+#							transparency 0.25
+#						}
+#					}
+#					geometry Cylinder	{
+#						height 1
+#						radius 1
+#						bottom FALSE
+#						top FALSE
+#					}
+#				}
+#			}
+#			DEF WidgetSwitch Switch {
+#				choice [
+#					Transform {
+#						rotation 1 0 0 -1.5707963267949  #For PlaneSensor's benefit
+#						children [
+#							TouchSensor {
+#								isOver IS mouseOverPosition
+#								enabled IS enabled
+#							}
+#							DEF PositionPS PlaneSensor {
+#								minPosition -50 -50
+#								maxPosition 50 50
+#								offset 0 0 0
+#								isActive IS mouseClicked
+#								enabled IS enabled
+#							}
+#							Transform {
+#								rotation 1 0 0 1.5707963
+#								translation 0 5.5 0  #To have base of Cylinder at 0
+#								children Shape {
+#									appearance DEF Cobalt Appearance {
+#										material Material { diffuseColor 0.4 0.4 0.8 }
+#									}
+#									geometry Cylinder {
+#										radius 0.6
+#										height 11
+#									}
+#								}
+#							}
+#							Group {
+#								children [
+#									TouchSensor {
+#										isOver IS mouseOverAmplitude
+#										enabled IS enabled
+#									}
+#									DEF AmplitudePS PlaneSensor {
+#										minPosition 0 15
+#										maxPosition 0 25
+#										offset 0 16 0
+#										isActive IS mouseClicked
+#										enabled IS enabled
+#									}
+#									Transform {
+#										rotation 1 0 0 -1.5707963
+#										children DEF Amplitude-TRANSFORM2 Transform {
+#											children Transform {
+#												rotation 1 0 0 1.5707963
+#												children DEF Amplitude-TRANSFORM Transform {
+#													translation 0 16.50 0
+#													children [
+#														Shape {
+#															appearance DEF PoolWidget-APPEARANCE5 Appearance {
+#																material Material {
+#																	diffuseColor 0.6 0.6 0.5
+#																}
+#															}
+#															geometry Cone {
+#																height 2.4
+#																bottomRadius 1.2
+#															}
+#														}
+#													]
+#												}
+#											}
+#										}
+#									}
+#								] }
+
+#						]
+#					}
+
+#				]
+#			}
+#				]
+
+#			}
+#		]
+#	}
+#}}}}}}}}}}}}}}}
+
+PROTO ToArrow [
+	exposedField SFVec3f center 0 0 0
+	exposedField SFRotation rotation 0 0 1 0
+]
+{
+	DEF From Transform
+	{
+		translation IS center
+		rotation IS rotation
+
+		children
+		[
+			Transform
+			{
+				rotation 0 1 0 0.7
+				translation 0 0 -0.7
+				scale 3 3 4
+
+				children Shape
+				{
+					geometry Box
+					{
+						size .15 .35 .7
+					}
+
+					appearance DEF Arrow-APP Appearance
+					{
+						material Material
+						{
+							diffuseColor 0.8 0.8 0.8
+							emissiveColor 0.2 0.2 0.2
+						}
+					}
+				}
+			}
+
+			Transform
+			{
+				rotation 0 1 0 -0.7
+				translation 0 0 0.7
+				scale 3 3 4
+
+				children Shape
+				{
+					geometry Box
+					{
+						size .15 .35 .7
+					}
+
+					appearance USE Arrow-APP
+				}
+			}
+
+			Shape
+			{
+				geometry IndexedLineSet
+				{
+					coord Coordinate
+					{
+						point [0 0 0, -25 0 0]
+					}
+
+					coordIndex [0 1 -1]
+				}
+
+				appearance USE Arrow-APP
+			}
+		]
+	}
+
+	#DEF NormalXForm Transform {
+	#	translation	-15 10 0
+	#	children Shape {
+	#			geometry IndexedLineSet{
+	#				coord Coordinate {
+	#					point [-8.5 0 0, -6.5 0 0, -4.5 0 0,
+	#						   -2.5 0 0, -0.5 0 0, 1.5 0 0,
+	#						   3.5 0 0, 5.5 0 0, 7.5 0 0, 9.5 0 0]
+	#				}
+	#				coordIndex [0 1 -1 2 3 -1 4 5 -1 6 7 -1 8 9 -1]
+	#			}
+	#		}
+	#	}
+		#ROUTE From.translation TO NormalXForm.translation
+}
+
+PROTO RadialWidget2 [ field		SFFloat amplitude	 1
+											field		SFFloat wavelength 1
+											field		SFFloat phase			 0
+											field		SFFloat x					 0
+											field		SFFloat y					 0
+											exposedField SFBool enabled TRUE
+											eventIn	SFFloat set_amplitude
+											eventIn	SFFloat set_wavelength
+											eventIn	SFFloat set_phase
+											eventIn	SFVec3f set_position
+											eventIn	SFBool	set_widgetVisible
+											eventOut SFFloat amplitude_changed
+											eventOut SFFloat wavelength_changed
+											eventOut SFFloat phase_changed
+											eventOut SFVec3f position_changed
+											eventOut SFBool	mouseClicked
+											eventOut SFBool	mouseOver
+											eventOut SFBool	mouseOverAmplitude
+											eventOut SFBool	mouseOverWavelength
+											eventOut SFBool	mouseOverPhase
+											eventOut SFBool	mouseOverPosition		]
+{
+	DEF Widget-SWITCH Switch {
+		whichChoice 0
+		choice [
+			Transform {
+				children [
+					DEF Icon0-SENSOR TouchSensor {
+						isOver IS mouseOver
+						enabled IS enabled
+					}
+					Transform {
+						rotation 1 0 0 -1.5707963
+						children DEF Icon0-TRANSFORM Transform {
+							rotation 1 0 0 1.5707963
+							children DEF Icon-SHAPE Group { children [
+									Shape {
+										appearance DEF PoolWidget-APPEARANCE2 Appearance {
+											material Material {
+												diffuseColor 1 0.2 0.2
+											}
+										}
+										geometry Sphere {
+											radius 1
+										}
+									}
+									DEF Tube1-TRANSFORM Transform {
+										translation 0 -0.5 0
+										scale 1.1 1 1.1
+										children [
+											DEF Tube1-SHAPE Shape {
+												appearance DEF PoolWidget-APPEARANCE3 Appearance {
+													material Material {
+														diffuseColor 0.2 0.2 0.2
+														transparency 0.25
+													}
+												}
+												geometry DEF Tube1-FACES IndexedFaceSet {
+													ccw TRUE
+													solid TRUE
+													coord DEF Tube1-COORD Coordinate { point [
+															0 0 -1, 0 1 -1, 0 1 -0.98, 0 0 -0.98, 0.309017 0 -0.951057,
+															0.309017 1 -0.951057, 0.302837 1 -0.932035, 0.302837 0 -0.932035,
+															0.587785 0 -0.809017, 0.587785 1 -0.809017, 0.57603 1 -0.792837,
+															0.57603 0 -0.792837, 0.809017 0 -0.587785, 0.809017 1 -0.587785,
+															0.792837 1 -0.57603, 0.792837 0 -0.57603, 0.951057 0 -0.309017,
+															0.951057 1 -0.309017, 0.932035 1 -0.302837, 0.932035 0 -0.302837,
+															1 0 0, 1 1 0, 0.98 1 0, 0.98 0 0, 0.951057 0 0.309017,
+															0.951057 1 0.309017, 0.932035 1 0.302837, 0.932035 0 0.302837,
+															0.809017 0 0.587785, 0.809017 1 0.587785, 0.792837 1 0.57603,
+															0.792837 0 0.57603, 0.587785 0 0.809017, 0.587785 1 0.809017,
+															0.57603 1 0.792837, 0.57603 0 0.792837, 0.309017 0 0.951057,
+															0.309017 1 0.951057, 0.302837 1 0.932035, 0.302837 0 0.932035,
+															0 0 1, 0 1 1, 0 1 0.98, 0 0 0.98, -0.309017 0 0.951056,
+															-0.309017 1 0.951056, -0.302837 1 0.932035, -0.302837 0 0.932035,
+															-0.587785 0 0.809017, -0.587785 1 0.809017, -0.57603 1 0.792837,
+															-0.57603 0 0.792837, -0.809017 0 0.587785, -0.809017 1 0.587785,
+															-0.792837 1 0.576029, -0.792837 0 0.576029, -0.951057 0 0.309017,
+															-0.951057 1 0.309017, -0.932035 1 0.302837, -0.932035 0 0.302837,
+															-1 0 0, -1 1 0, -0.98 1 0, -0.98 0 0, -0.951056 0 -0.309017,
+															-0.951056 1 -0.309017, -0.932035 1 -0.302837, -0.932035 0 -0.302837,
+															-0.809017 0 -0.587785, -0.809017 1 -0.587785, -0.792837 1 -0.57603,
+															-0.792837 0 -0.57603, -0.587785 0 -0.809017, -0.587785 1 -0.809017,
+															-0.576029 1 -0.792837, -0.576029 0 -0.792837, -0.309017 0 -0.951057,
+															-0.309017 1 -0.951057, -0.302837 1 -0.932035, -0.302837 0 -0.932035]
+													}
+													coordIndex [
+														0, 5, 4, -1, 0, 1, 5, -1, 1, 6, 5, -1, 1, 2, 6, -1, 2, 7, 6, -1,
+														2, 3, 7, -1, 3, 4, 7, -1, 3, 0, 4, -1, 4, 9, 8, -1,
+														4, 5, 9, -1, 5, 10, 9, -1, 5, 6, 10, -1, 6, 11, 10, -1,
+														6, 7, 11, -1, 7, 8, 11, -1, 7, 4, 8, -1, 8, 13, 12, -1,
+														8, 9, 13, -1, 9, 14, 13, -1, 9, 10, 14, -1, 10, 15, 14, -1,
+														10, 11, 15, -1, 11, 12, 15, -1, 11, 8, 12, -1, 12, 17, 16, -1,
+														12, 13, 17, -1, 13, 18, 17, -1, 13, 14, 18, -1, 14, 19, 18, -1,
+														14, 15, 19, -1, 15, 16, 19, -1, 15, 12, 16, -1, 16, 21, 20, -1,
+														16, 17, 21, -1, 17, 22, 21, -1, 17, 18, 22, -1, 18, 23, 22, -1,
+														18, 19, 23, -1, 19, 20, 23, -1, 19, 16, 20, -1, 20, 25, 24, -1,
+														20, 21, 25, -1, 21, 26, 25, -1, 21, 22, 26, -1, 22, 27, 26, -1,
+														22, 23, 27, -1, 23, 24, 27, -1, 23, 20, 24, -1, 24, 29, 28, -1,
+														24, 25, 29, -1, 25, 30, 29, -1, 25, 26, 30, -1, 26, 31, 30, -1,
+														26, 27, 31, -1, 27, 28, 31, -1, 27, 24, 28, -1, 28, 33, 32, -1,
+														28, 29, 33, -1, 29, 34, 33, -1, 29, 30, 34, -1, 30, 35, 34, -1,
+														30, 31, 35, -1, 31, 32, 35, -1, 31, 28, 32, -1, 32, 37, 36, -1,
+														32, 33, 37, -1, 33, 38, 37, -1, 33, 34, 38, -1, 34, 39, 38, -1,
+														34, 35, 39, -1, 35, 36, 39, -1, 35, 32, 36, -1, 36, 41, 40, -1,
+														36, 37, 41, -1, 37, 42, 41, -1, 37, 38, 42, -1, 38, 43, 42, -1,
+														38, 39, 43, -1, 39, 40, 43, -1, 39, 36, 40, -1, 40, 45, 44, -1,
+														40, 41, 45, -1, 41, 46, 45, -1, 41, 42, 46, -1, 42, 47, 46, -1,
+														42, 43, 47, -1, 43, 44, 47, -1, 43, 40, 44, -1, 44, 49, 48, -1,
+														44, 45, 49, -1, 45, 50, 49, -1, 45, 46, 50, -1, 46, 51, 50, -1,
+														46, 47, 51, -1, 47, 48, 51, -1, 47, 44, 48, -1, 48, 53, 52, -1,
+														48, 49, 53, -1, 49, 54, 53, -1, 49, 50, 54, -1, 50, 55, 54, -1,
+														50, 51, 55, -1, 51, 52, 55, -1, 51, 48, 52, -1, 52, 57, 56, -1,
+														52, 53, 57, -1, 53, 58, 57, -1, 53, 54, 58, -1, 54, 59, 58, -1,
+														54, 55, 59, -1, 55, 56, 59, -1, 55, 52, 56, -1, 56, 61, 60, -1,
+														56, 57, 61, -1, 57, 62, 61, -1, 57, 58, 62, -1, 58, 63, 62, -1,
+														58, 59, 63, -1, 59, 60, 63, -1, 59, 56, 60, -1, 60, 65, 64, -1,
+														60, 61, 65, -1, 61, 66, 65, -1, 61, 62, 66, -1, 62, 67, 66, -1,
+														62, 63, 67, -1, 63, 64, 67, -1, 63, 60, 64, -1, 64, 69, 68, -1,
+														64, 65, 69, -1, 65, 70, 69, -1, 65, 66, 70, -1, 66, 71, 70, -1,
+														66, 67, 71, -1, 67, 68, 71, -1, 67, 64, 68, -1, 68, 73, 72, -1,
+														68, 69, 73, -1, 69, 74, 73, -1, 69, 70, 74, -1, 70, 75, 74, -1,
+														70, 71, 75, -1, 71, 72, 75, -1, 71, 68, 72, -1, 72, 77, 76, -1,
+														72, 73, 77, -1, 73, 78, 77, -1, 73, 74, 78, -1, 74, 79, 78, -1,
+														74, 75, 79, -1, 75, 76, 79, -1, 75, 72, 76, -1, 76, 1, 0, -1,
+														76, 77, 1, -1, 77, 2, 1, -1, 77, 78, 2, -1, 78, 3, 2, -1,
+														78, 79, 3, -1, 79, 0, 3, -1, 79, 76, 0, -1]
+												}
+											}
+										]
+									}
+								] }
+						}
+					}
+				]
+			}
+			Group { 
+				 children [
+						Transform {
+							 rotation 1 0 0 -1.5707963
+							 translation 0 0 0
+							 children [
+									DEF Icon1-TRANSFORM Transform {
+										 rotation 1 0 0 1.5707963
+										 children USE Icon-SHAPE
+									}
+							 ]
+						}
+						DEF Amplitude-WIDGET Transform {
+							 rotation 1 0 0 -1.5707963
+							 children [
+									TouchSensor {
+										 isOver IS mouseOverPosition
+										 enabled IS enabled
+									}
+									DEF Icon1-SENSOR PlaneSensor {
+										 minPosition -50 -50
+										 maxPosition 50 50
+										 offset 0 0 0
+										 isActive IS mouseClicked
+										 enabled IS enabled
+										 translation_changed IS position_changed
+									}
+									DEF Amplitude-TRANSFORM3 Transform {
+										 children Transform {
+												rotation 1 0 0 1.5707963
+												children DEF Amplitude-TRANSFORM4 Transform {
+													 scale 0 11 0
+													 children Transform {
+															translation 0 0.5 0
+															children [
+																 Shape {
+																		appearance DEF PoolWidget-APPEARANCE Appearance {
+																			 material Material {
+																					diffuseColor 0.4 0.4 0.8
+																			 }
+																		}
+																		geometry Cylinder {
+																			 radius 0.6
+																			 height 1
+																		}
+																 }
+															]
+													 }
+												}
+										 }
+									}
+							 ]
+						}
+						Transform {
+							 children [
+									TouchSensor {
+										 isOver IS mouseOverAmplitude
+										 enabled IS enabled
+									}
+									DEF Amplitude-SENSOR PlaneSensor {
+										 minPosition 0 -20
+										 maxPosition 0 56
+										 offset 0 16 0
+										 isActive IS mouseClicked
+										 enabled IS enabled
+										 
+									}
+									Transform {
+										 rotation 1 0 0 -1.5707963
+										 children DEF Amplitude-TRANSFORM2 Transform {
+												children Transform {
+													 rotation 1 0 0 1.5707963
+													 children DEF Amplitude-TRANSFORM Transform {
+															translation 0 16.50 0
+															children [
+																 Shape {
+																		appearance DEF PoolWidget-APPEARANCE5 Appearance {
+																			 material Material {
+																					diffuseColor 0.6 0.6 0.5
+																			 }
+																		}
+																		geometry Cone {
+																			 height 2.4
+																			 bottomRadius 1.2
+																		}
+																 }
+															]
+													 }
+												}
+										 }
+									}
+							 ]
+						}
+						
+						Group { children [
+							 Transform {
+								  translation 0 10 0
+									rotation 1 0 0 -1.5707963
+									children [
+										 DEF Wavelength-TRANSFORM-01 Transform {
+												children [
+													 DEF Wavelength-SENSOR-01 PlaneSensor {
+															minPosition 0 -41.2
+															maxPosition 0 -1.2
+															offset 0 -1.2 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0101 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance DEF Tube-APPEARANCE Appearance {
+																		material Material {
+																			 diffuseColor 0.2 0.2 0.8
+																		}
+																 }
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 -0.70711 0.50000 0.70711, -0.45399 0.50000 0.89101, -0.15643 0.50000 0.98769,
+																		 0.15643 0.50000 0.98769, 0.45399 0.50000 0.89101, 0.70711 0.50000 0.70711,
+																		 -0.67175 0.5000 0.67175, -0.43129 0.5000 0.84646, -0.14861 0.5000 0.93830,
+																		 0.14861 0.5000 0.93830, 0.43129 0.5000 0.84646, 0.67175 0.5000 0.67175,
+																		 -0.70711 -0.50000 0.70711, -0.45399 -0.50000 0.89101, -0.15643 -0.50000 0.98769,
+																		 0.15643 -0.50000 0.98769, 0.45399 -0.50000 0.89101, 0.70711 -0.50000 0.70711,
+																		 -0.67175 -0.5000 0.67175, -0.43129 -0.5000 0.84646, -0.14861 -0.5000 0.93830,
+																		 0.14861 -0.5000 0.93830, 0.43129 -0.5000 0.84646, 0.67175 -0.5000 0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-02 Transform {
+												children [
+													 DEF Wavelength-SENSOR-02 PlaneSensor {
+															minPosition 1.2 0
+															maxPosition 41.2 0
+															offset 1.2 0 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0201 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 0.70711 0.50000 0.70711, 0.89101 0.50000 0.45399, 0.98769 0.50000 0.15643,
+																		 0.98769 0.50000 -0.15643, 0.89101 0.50000 -0.45399, 0.70711 0.50000 -0.70711,
+																		 0.67175 0.5000 0.67175, 0.84646 0.5000 0.43129, 0.93830 0.5000 0.14861,
+																		 0.93830 0.5000 -0.14861, 0.84646 0.5000 -0.43129, 0.67175 0.5000 -0.67175,
+																		 0.70711 -0.50000 0.70711, 0.89101 -0.50000 0.45399, 0.98769 -0.50000 0.15643,
+																		 0.98769 -0.50000 -0.15643, 0.89101 -0.50000 -0.45399, 0.70711 -0.50000 -0.70711,
+																		 0.67175 -0.5000 0.67175, 0.84646 -0.5000 0.43129, 0.93830 -0.5000 0.14861,
+																		 0.93830 -0.5000 -0.14861, 0.84646 -0.5000 -0.43129, 0.67175 -0.5000 -0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-03 Transform {
+												children [
+													 DEF Wavelength-SENSOR-03 PlaneSensor {
+															minPosition 0 1.2
+															maxPosition 0 41.2
+															offset 0 1.2 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0301 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 0.70711 0.50000 -0.70711, 0.45399 0.50000 -0.89101, 0.15643 0.50000 -0.98769,
+																		 -0.15643 0.50000 -0.98769, -0.45399 0.50000 -0.89101, -0.70711 0.50000 -0.70711,
+																		 0.67175 0.5000 -0.67175, 0.43129 0.5000 -0.84646, 0.14861 0.5000 -0.93830,
+																		 -0.14861 0.5000 -0.93830, -0.43129 0.5000 -0.84646, -0.67175 0.5000 -0.67175,
+																		 0.70711 -0.50000 -0.70711, 0.45399 -0.50000 -0.89101, 0.15643 -0.50000 -0.98769,
+																		 -0.15643 -0.50000 -0.98769, -0.45399 -0.50000 -0.89101, -0.70711 -0.50000 -0.70711,
+																		 0.67175 -0.5000 -0.67175, 0.43129 -0.5000 -0.84646, 0.14861 -0.5000 -0.93830,
+																		 -0.14861 -0.5000 -0.93830, -0.43129 -0.5000 -0.84646, -0.67175 -0.5000 -0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-04 Transform {
+												children [
+													 DEF Wavelength-SENSOR-04 PlaneSensor {
+															minPosition -41.2 0
+															maxPosition -1.2 0
+															offset -1.2 0 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0401 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 -0.70711 0.50000 -0.70711, -0.89101 0.50000 -0.45399, -0.98769 0.50000 -0.15643,
+																		 -0.98769 0.50000 0.15643, -0.89101 0.50000 0.45399, -0.70711 0.50000 0.70711,
+																		 -0.67175 0.5000 -0.67175, -0.84646 0.5000 -0.43129, -0.93830 0.5000 -0.14861,
+																-0.93830 0.5000 0.14861, -0.84646 0.5000 0.43129, -0.67175 0.5000 0.67175,
+																-0.70711 -0.50000 -0.70711, -0.89101 -0.50000 -0.45399, -0.98769 -0.50000 -0.15643,
+																-0.98769 -0.50000 0.15643, -0.89101 -0.50000 0.45399, -0.70711 -0.50000 0.70711,
+																-0.67175 -0.5000 -0.67175, -0.84646 -0.5000 -0.43129, -0.93830 -0.5000 -0.14861,
+																-0.93830 -0.5000 0.14861, -0.84646 -0.5000 0.43129, -0.67175 -0.5000 0.67175
+															] }
+														coordIndex [
+															0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+															1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+															2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+															3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+															4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+														]
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+							DEF Wavelength-SCRIPT Script {
+								field SFFloat wavelength IS wavelength
+								eventIn SFFloat set_wavelength IS set_wavelength
+								eventIn SFVec3f set_translation1
+								eventIn SFVec3f set_translation2
+								eventIn SFVec3f set_translation3
+								eventIn SFVec3f set_translation4
+								eventOut SFVec3f scale_changed
+								eventOut SFVec3f offset1_changed
+								eventOut SFVec3f offset2_changed
+								eventOut SFVec3f offset3_changed
+								eventOut SFVec3f offset4_changed
+								eventOut SFFloat wavelength_changed IS wavelength_changed
+								url "javascript:
+								function initialize() {
+									scale_changed = new SFVec3f(wavelength+1.2, 8, wavelength+1.2);
+									offset1_changed = new SFVec3f(0, -wavelength-1.2, 0);
+									offset2_changed = new SFVec3f(wavelength+1.2, 0, 0);
+									offset3_changed = new SFVec3f(0, wavelength+1.2, 0);
+									offset4_changed = new SFVec3f(-wavelength-1.2, 0, 0);
+								}
+								function set_translation1(value, time) {
+									wavelength_changed = wavelength = -value[1] - 1.2;
+									scale_changed[0] = scale_changed[2] = -value[1];
+									offset2_changed[0] = -value[1];
+									offset3_changed[1] = -value[1];
+									offset4_changed[0] = value[1];
+								}
+								function set_translation2(value, time) {
+									wavelength_changed = wavelength = value[0] - 1.2;
+									scale_changed[0] = scale_changed[2] = value[0];
+									offset1_changed[1] = -value[0];
+									offset3_changed[1] = value[0];
+									offset4_changed[0] = -value[0];
+								}
+								function set_translation3(value, time) {
+									wavelength_changed = wavelength = value[1] - 1.2;
+									scale_changed[0] = scale_changed[2] = value[1];
+									offset1_changed[1] = -value[1];
+									offset2_changed[0] = value[1];
+									offset4_changed[0] = -value[1];
+								}
+								function set_translation4(value, time) {
+									wavelength_changed = wavelength = -value[0] - 1.2;
+									scale_changed[0] = scale_changed[2] = -value[0];
+									offset1_changed[1] = value[0];
+									offset2_changed[0] = -value[0];
+									offset3_changed[1] = -value[0];
+								}
+								function set_wavelength(value, time) {
+									wavelength = value;
+									scale_changed[0] = scale_changed[2] = value;
+									offset1_changed[1] = -wavelength-1.2;
+									offset2_changed[0] = wavelength+1.2;
+									offset3_changed[1] = wavelength+1.2;
+									offset4_changed[0] = -wavelength-1.2;
+								}
+								"
+							}
+						] }
+					Transform {
+						rotation 1 0 0 -1.5707963
+						children DEF Phase-TRANSFORM1 Transform {
+							children Transform {
+								rotation 1 0 0 1.5707963
+								children [
+									DEF Phase-TRANSFORM2 Transform {
+										children [
+											TouchSensor {
+												isOver IS mouseOverPhase
+												enabled IS enabled
+											}
+											DEF Phase-SENSOR PlaneSensor {
+												minPosition 0 1
+												maxPosition 0 13
+												offset 0 13 0
+												isActive IS mouseClicked
+												enabled IS enabled
+											}
+											DEF Phase-TRANSFORM3 Transform {
+												translation 0 13 0
+												children Shape {
+													appearance USE PoolWidget-APPEARANCE5
+													geometry Cylinder {
+														radius 1.2
+														height 2
+													}
+												}
+											}
+										]
+									}
+									Transform {
+										translation 0 14 0
+										children Shape {
+											appearance USE PoolWidget-APPEARANCE3
+											geometry Cylinder {
+												height 0.1
+												radius 1
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				] }
+		]
+	}
+	DEF Radial-SCRIPT Script {
+		field SFFloat amplitude		IS amplitude
+		field SFFloat phase				IS phase
+		field SFFloat x						IS x
+		field SFFloat y						IS y
+		field SFFloat direction		1
+		eventIn SFFloat set_amplitude	 IS set_amplitude
+		eventIn SFFloat set_phase			 IS set_phase
+		eventIn SFVec3f set_position	 IS set_position
+		eventIn SFBool	set_widgetVisible IS set_widgetVisible
+		eventIn SFBool	show_widgets
+		eventIn SFVec3f set_translation1
+		eventIn SFVec3f set_translation3
+		eventIn SFVec3f set_translation5
+		eventOut SFFloat amplitude_changed	IS amplitude_changed
+		eventOut SFFloat phase_changed			IS phase_changed
+		eventOut SFVec3f translation1_changed
+		eventOut SFVec3f translation3_changed
+		eventOut SFVec3f translation4_changed
+		eventOut SFVec3f translation5_changed
+		eventOut SFVec3f scale1_changed
+		eventOut SFVec3f offset1_changed
+		eventOut SFVec3f offset3_changed
+		eventOut SFVec3f offset4_changed
+		eventOut SFVec3f offset5_changed
+		eventOut SFInt32 whichChoice
+		url "vrmlscript:
+		function initialize() {
+			translation1_changed = new SFVec3f(0, amplitude+6, 0);
+			offset1_changed = new SFVec3f(0, amplitude+6, 0);
+			scale1_changed = new SFVec3f(1, amplitude+6, 1);
+			translation3_changed = new SFVec3f(0, 13.0-phase*12.0/Math.PI, 0);
+			offset3_changed = new SFVec3f(0, 13.0-phase*12.0/Math.PI, 0);
+			translation4_changed = new SFVec3f(x, y, 0);
+			offset4_changed = new SFVec3f(x, y, 0);
+			//position_changed = new SFVec3f(x, y, 0);
+		}
+		function set_amplitude(value, time) {
+			amplitude = value;
+			translation1_changed[1] = value+6;
+			scale1_changed[1] = value+6;
+			offset1_changed[1] = value+6;
+		}
+		function set_translation1(value, time) {
+			amplitude = value[1]-6;
+			amplitude_changed = value[1]-6;
+			scale1_changed[1] = value[1];
+			translation1_changed[1] = value[1]+0.5;
+		}
+		function set_translation3(value, time) {
+			phase = (13.0-value[1])*Math.PI/12.0;
+			phase_changed = phase;
+		}
+		function set_phase(value, time) {
+			phase = value;
+			translation3_changed[1] = 13.0-phase*12.0/Math.PI;
+			offset3_changed[1] = 13.0-phase*12.0/Math.PI;
+		}
+		function set_position(value, time) {	//Z of value should be 0
+			offset4_changed=translation4_changed=value;
+		}
+		function set_widgetVisible(value, time) {
+			if(value) whichChoice = 1;
+			else whichChoice = 0;
+		}
+		function show_widgets(value, time) {
+			whichChoice = 1;
+		}"
+	}
+	ROUTE Icon0-SENSOR.isOver TO Radial-SCRIPT.show_widgets
+	ROUTE Icon1-SENSOR.translation_changed TO Icon0-TRANSFORM.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Icon1-TRANSFORM.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Amplitude-TRANSFORM2.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Amplitude-TRANSFORM3.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-01.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-02.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-03.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-04.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Phase-TRANSFORM1.translation
+	ROUTE Amplitude-SENSOR.translation_changed TO Radial-SCRIPT.set_translation1
+	ROUTE Phase-SENSOR.translation_changed TO Phase-TRANSFORM3.set_translation
+	ROUTE Phase-SENSOR.translation_changed TO Radial-SCRIPT.set_translation3
+	ROUTE Radial-SCRIPT.translation1_changed TO Amplitude-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.scale1_changed TO Amplitude-TRANSFORM4.scale
+	ROUTE Radial-SCRIPT.offset1_changed TO Amplitude-SENSOR.offset
+	ROUTE Radial-SCRIPT.translation3_changed TO Phase-TRANSFORM3.set_translation
+	ROUTE Radial-SCRIPT.offset3_changed TO Phase-SENSOR.offset
+	ROUTE Radial-SCRIPT.translation4_changed TO Icon0-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Icon1-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Amplitude-TRANSFORM2.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Amplitude-TRANSFORM3.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-01.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-02.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-03.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-04.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Phase-TRANSFORM1.translation
+	ROUTE Radial-SCRIPT.offset4_changed TO Icon1-SENSOR.offset
+	ROUTE Radial-SCRIPT.whichChoice TO Widget-SWITCH.whichChoice
+	ROUTE Wavelength-SENSOR-01.translation_changed TO Wavelength-SCRIPT.set_translation1
+	ROUTE Wavelength-SENSOR-02.translation_changed TO Wavelength-SCRIPT.set_translation2
+	ROUTE Wavelength-SENSOR-03.translation_changed TO Wavelength-SCRIPT.set_translation3
+	ROUTE Wavelength-SENSOR-04.translation_changed TO Wavelength-SCRIPT.set_translation4
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0101.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0201.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0301.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0401.scale
+	ROUTE Wavelength-SCRIPT.offset1_changed TO Wavelength-SENSOR-01.offset
+	ROUTE Wavelength-SCRIPT.offset2_changed TO Wavelength-SENSOR-02.offset
+	ROUTE Wavelength-SCRIPT.offset3_changed TO Wavelength-SENSOR-03.offset
+	ROUTE Wavelength-SCRIPT.offset4_changed TO Wavelength-SENSOR-04.offset
+}
+
+PROTO RadialWidget [ field		SFFloat amplitude	 1
+											field		SFFloat wavelength 1
+											field		SFFloat phase			 0
+											field		SFFloat x					 0
+											field		SFFloat y					 0
+											exposedField SFBool enabled TRUE
+											eventIn	SFFloat set_amplitude
+											eventIn	SFFloat set_wavelength
+											eventIn	SFFloat set_phase
+											eventIn	SFVec3f set_position
+											eventIn	SFBool	set_widgetVisible
+											eventOut SFFloat amplitude_changed
+											eventOut SFFloat wavelength_changed
+											eventOut SFFloat phase_changed
+											eventOut SFVec3f position_changed
+											eventOut SFBool	mouseClicked
+											eventOut SFBool	mouseOver
+											eventOut SFBool	mouseOverAmplitude
+											eventOut SFBool	mouseOverWavelength
+											eventOut SFBool	mouseOverPhase
+											eventOut SFBool	mouseOverPosition		]
+{
+	DEF Widget-SWITCH Switch {
+		whichChoice 0
+		choice [
+			Transform {
+				children [
+					DEF Icon0-SENSOR TouchSensor {
+						isOver IS mouseOver
+						enabled IS enabled
+					}
+					Transform {
+						rotation 1 0 0 -1.5707963
+						children DEF Icon0-TRANSFORM Transform {
+							rotation 1 0 0 1.5707963
+							children DEF Icon-SHAPE Group { children [
+									Shape {
+										appearance DEF PoolWidget-APPEARANCE2 Appearance {
+											material Material {
+												diffuseColor 1 0.2 0.2
+											}
+										}
+										geometry Sphere {
+											radius 1
+										}
+									}
+									DEF Tube1-TRANSFORM Transform {
+										translation 0 -0.5 0
+										scale 1.1 1 1.1
+										children [
+											DEF Tube1-SHAPE Shape {
+												appearance DEF PoolWidget-APPEARANCE3 Appearance {
+													material Material {
+														diffuseColor 0.2 0.2 0.2
+														transparency 0.25
+													}
+												}
+												geometry DEF Tube1-FACES IndexedFaceSet {
+													ccw TRUE
+													solid TRUE
+													coord DEF Tube1-COORD Coordinate { point [
+															0 0 -1, 0 1 -1, 0 1 -0.98, 0 0 -0.98, 0.309017 0 -0.951057,
+															0.309017 1 -0.951057, 0.302837 1 -0.932035, 0.302837 0 -0.932035,
+															0.587785 0 -0.809017, 0.587785 1 -0.809017, 0.57603 1 -0.792837,
+															0.57603 0 -0.792837, 0.809017 0 -0.587785, 0.809017 1 -0.587785,
+															0.792837 1 -0.57603, 0.792837 0 -0.57603, 0.951057 0 -0.309017,
+															0.951057 1 -0.309017, 0.932035 1 -0.302837, 0.932035 0 -0.302837,
+															1 0 0, 1 1 0, 0.98 1 0, 0.98 0 0, 0.951057 0 0.309017,
+															0.951057 1 0.309017, 0.932035 1 0.302837, 0.932035 0 0.302837,
+															0.809017 0 0.587785, 0.809017 1 0.587785, 0.792837 1 0.57603,
+															0.792837 0 0.57603, 0.587785 0 0.809017, 0.587785 1 0.809017,
+															0.57603 1 0.792837, 0.57603 0 0.792837, 0.309017 0 0.951057,
+															0.309017 1 0.951057, 0.302837 1 0.932035, 0.302837 0 0.932035,
+															0 0 1, 0 1 1, 0 1 0.98, 0 0 0.98, -0.309017 0 0.951056,
+															-0.309017 1 0.951056, -0.302837 1 0.932035, -0.302837 0 0.932035,
+															-0.587785 0 0.809017, -0.587785 1 0.809017, -0.57603 1 0.792837,
+															-0.57603 0 0.792837, -0.809017 0 0.587785, -0.809017 1 0.587785,
+															-0.792837 1 0.576029, -0.792837 0 0.576029, -0.951057 0 0.309017,
+															-0.951057 1 0.309017, -0.932035 1 0.302837, -0.932035 0 0.302837,
+															-1 0 0, -1 1 0, -0.98 1 0, -0.98 0 0, -0.951056 0 -0.309017,
+															-0.951056 1 -0.309017, -0.932035 1 -0.302837, -0.932035 0 -0.302837,
+															-0.809017 0 -0.587785, -0.809017 1 -0.587785, -0.792837 1 -0.57603,
+															-0.792837 0 -0.57603, -0.587785 0 -0.809017, -0.587785 1 -0.809017,
+															-0.576029 1 -0.792837, -0.576029 0 -0.792837, -0.309017 0 -0.951057,
+															-0.309017 1 -0.951057, -0.302837 1 -0.932035, -0.302837 0 -0.932035]
+													}
+													coordIndex [
+														0, 5, 4, -1, 0, 1, 5, -1, 1, 6, 5, -1, 1, 2, 6, -1, 2, 7, 6, -1,
+														2, 3, 7, -1, 3, 4, 7, -1, 3, 0, 4, -1, 4, 9, 8, -1,
+														4, 5, 9, -1, 5, 10, 9, -1, 5, 6, 10, -1, 6, 11, 10, -1,
+														6, 7, 11, -1, 7, 8, 11, -1, 7, 4, 8, -1, 8, 13, 12, -1,
+														8, 9, 13, -1, 9, 14, 13, -1, 9, 10, 14, -1, 10, 15, 14, -1,
+														10, 11, 15, -1, 11, 12, 15, -1, 11, 8, 12, -1, 12, 17, 16, -1,
+														12, 13, 17, -1, 13, 18, 17, -1, 13, 14, 18, -1, 14, 19, 18, -1,
+														14, 15, 19, -1, 15, 16, 19, -1, 15, 12, 16, -1, 16, 21, 20, -1,
+														16, 17, 21, -1, 17, 22, 21, -1, 17, 18, 22, -1, 18, 23, 22, -1,
+														18, 19, 23, -1, 19, 20, 23, -1, 19, 16, 20, -1, 20, 25, 24, -1,
+														20, 21, 25, -1, 21, 26, 25, -1, 21, 22, 26, -1, 22, 27, 26, -1,
+														22, 23, 27, -1, 23, 24, 27, -1, 23, 20, 24, -1, 24, 29, 28, -1,
+														24, 25, 29, -1, 25, 30, 29, -1, 25, 26, 30, -1, 26, 31, 30, -1,
+														26, 27, 31, -1, 27, 28, 31, -1, 27, 24, 28, -1, 28, 33, 32, -1,
+														28, 29, 33, -1, 29, 34, 33, -1, 29, 30, 34, -1, 30, 35, 34, -1,
+														30, 31, 35, -1, 31, 32, 35, -1, 31, 28, 32, -1, 32, 37, 36, -1,
+														32, 33, 37, -1, 33, 38, 37, -1, 33, 34, 38, -1, 34, 39, 38, -1,
+														34, 35, 39, -1, 35, 36, 39, -1, 35, 32, 36, -1, 36, 41, 40, -1,
+														36, 37, 41, -1, 37, 42, 41, -1, 37, 38, 42, -1, 38, 43, 42, -1,
+														38, 39, 43, -1, 39, 40, 43, -1, 39, 36, 40, -1, 40, 45, 44, -1,
+														40, 41, 45, -1, 41, 46, 45, -1, 41, 42, 46, -1, 42, 47, 46, -1,
+														42, 43, 47, -1, 43, 44, 47, -1, 43, 40, 44, -1, 44, 49, 48, -1,
+														44, 45, 49, -1, 45, 50, 49, -1, 45, 46, 50, -1, 46, 51, 50, -1,
+														46, 47, 51, -1, 47, 48, 51, -1, 47, 44, 48, -1, 48, 53, 52, -1,
+														48, 49, 53, -1, 49, 54, 53, -1, 49, 50, 54, -1, 50, 55, 54, -1,
+														50, 51, 55, -1, 51, 52, 55, -1, 51, 48, 52, -1, 52, 57, 56, -1,
+														52, 53, 57, -1, 53, 58, 57, -1, 53, 54, 58, -1, 54, 59, 58, -1,
+														54, 55, 59, -1, 55, 56, 59, -1, 55, 52, 56, -1, 56, 61, 60, -1,
+														56, 57, 61, -1, 57, 62, 61, -1, 57, 58, 62, -1, 58, 63, 62, -1,
+														58, 59, 63, -1, 59, 60, 63, -1, 59, 56, 60, -1, 60, 65, 64, -1,
+														60, 61, 65, -1, 61, 66, 65, -1, 61, 62, 66, -1, 62, 67, 66, -1,
+														62, 63, 67, -1, 63, 64, 67, -1, 63, 60, 64, -1, 64, 69, 68, -1,
+														64, 65, 69, -1, 65, 70, 69, -1, 65, 66, 70, -1, 66, 71, 70, -1,
+														66, 67, 71, -1, 67, 68, 71, -1, 67, 64, 68, -1, 68, 73, 72, -1,
+														68, 69, 73, -1, 69, 74, 73, -1, 69, 70, 74, -1, 70, 75, 74, -1,
+														70, 71, 75, -1, 71, 72, 75, -1, 71, 68, 72, -1, 72, 77, 76, -1,
+														72, 73, 77, -1, 73, 78, 77, -1, 73, 74, 78, -1, 74, 79, 78, -1,
+														74, 75, 79, -1, 75, 76, 79, -1, 75, 72, 76, -1, 76, 1, 0, -1,
+														76, 77, 1, -1, 77, 2, 1, -1, 77, 78, 2, -1, 78, 3, 2, -1,
+														78, 79, 3, -1, 79, 0, 3, -1, 79, 76, 0, -1]
+												}
+											}
+										]
+									}
+								] }
+						}
+					}
+				]
+			}
+			Group { 
+				 children [
+						Transform {
+							 rotation 1 0 0 -1.5707963
+							 translation 0 0 0
+							 children [
+									DEF Icon1-TRANSFORM Transform {
+										 rotation 1 0 0 1.5707963
+										 children USE Icon-SHAPE
+									}
+							 ]
+						}
+						DEF Amplitude-WIDGET Transform {
+							 rotation 1 0 0 -1.5707963
+							 children [
+									TouchSensor {
+										 isOver IS mouseOverPosition
+										 enabled IS enabled
+									}
+									DEF Icon1-SENSOR PlaneSensor {
+										 minPosition -50 -50
+										 maxPosition 50 50
+										 offset 0 0 0
+										 isActive IS mouseClicked
+										 enabled IS enabled
+										 translation_changed IS position_changed
+									}
+									DEF Amplitude-TRANSFORM3 Transform {
+										 children Transform {
+												rotation 1 0 0 1.5707963
+												children DEF Amplitude-TRANSFORM4 Transform {
+													 scale 0 11 0
+													 children Transform {
+															translation 0 0.5 0
+															children [
+																 Shape {
+																		appearance DEF PoolWidget-APPEARANCE Appearance {
+																			 material Material {
+																					diffuseColor 0.4 0.4 0.8
+																			 }
+																		}
+																		geometry Cylinder {
+																			 radius 0.6
+																			 height 1
+																		}
+																 }
+															]
+													 }
+												}
+										 }
+									}
+							 ]
+						}
+						Transform {
+							 children [
+									TouchSensor {
+										 isOver IS mouseOverAmplitude
+										 enabled IS enabled
+									}
+									DEF Amplitude-SENSOR PlaneSensor {
+										 minPosition 0 15
+										 maxPosition 0 25
+										 offset 0 16 0
+										 isActive IS mouseClicked
+										 enabled IS enabled
+										 
+									}
+									Transform {
+										 rotation 1 0 0 -1.5707963
+										 children DEF Amplitude-TRANSFORM2 Transform {
+												children Transform {
+													 rotation 1 0 0 1.5707963
+													 children DEF Amplitude-TRANSFORM Transform {
+															translation 0 16.50 0
+															children [
+																 Shape {
+																		appearance DEF PoolWidget-APPEARANCE5 Appearance {
+																			 material Material {
+																					diffuseColor 0.6 0.6 0.5
+																			 }
+																		}
+																		geometry Cone {
+																			 height 2.4
+																			 bottomRadius 1.2
+																		}
+																 }
+															]
+													 }
+												}
+										 }
+									}
+							 ]
+						}
+						
+						Group { children [
+							 Transform {
+									rotation 1 0 0 -1.5707963
+									children [
+										 DEF Wavelength-TRANSFORM-01 Transform {
+												children [
+													 DEF Wavelength-SENSOR-01 PlaneSensor {
+															minPosition 0 -41.2
+															maxPosition 0 -1.2
+															offset 0 -1.2 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0101 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance DEF Tube-APPEARANCE Appearance {
+																		material Material {
+																			 diffuseColor 0.2 0.2 0.8
+																		}
+																 }
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 -0.70711 0.50000 0.70711, -0.45399 0.50000 0.89101, -0.15643 0.50000 0.98769,
+																		 0.15643 0.50000 0.98769, 0.45399 0.50000 0.89101, 0.70711 0.50000 0.70711,
+																		 -0.67175 0.5000 0.67175, -0.43129 0.5000 0.84646, -0.14861 0.5000 0.93830,
+																		 0.14861 0.5000 0.93830, 0.43129 0.5000 0.84646, 0.67175 0.5000 0.67175,
+																		 -0.70711 -0.50000 0.70711, -0.45399 -0.50000 0.89101, -0.15643 -0.50000 0.98769,
+																		 0.15643 -0.50000 0.98769, 0.45399 -0.50000 0.89101, 0.70711 -0.50000 0.70711,
+																		 -0.67175 -0.5000 0.67175, -0.43129 -0.5000 0.84646, -0.14861 -0.5000 0.93830,
+																		 0.14861 -0.5000 0.93830, 0.43129 -0.5000 0.84646, 0.67175 -0.5000 0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-02 Transform {
+												children [
+													 DEF Wavelength-SENSOR-02 PlaneSensor {
+															minPosition 1.2 0
+															maxPosition 41.2 0
+															offset 1.2 0 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0201 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 0.70711 0.50000 0.70711, 0.89101 0.50000 0.45399, 0.98769 0.50000 0.15643,
+																		 0.98769 0.50000 -0.15643, 0.89101 0.50000 -0.45399, 0.70711 0.50000 -0.70711,
+																		 0.67175 0.5000 0.67175, 0.84646 0.5000 0.43129, 0.93830 0.5000 0.14861,
+																		 0.93830 0.5000 -0.14861, 0.84646 0.5000 -0.43129, 0.67175 0.5000 -0.67175,
+																		 0.70711 -0.50000 0.70711, 0.89101 -0.50000 0.45399, 0.98769 -0.50000 0.15643,
+																		 0.98769 -0.50000 -0.15643, 0.89101 -0.50000 -0.45399, 0.70711 -0.50000 -0.70711,
+																		 0.67175 -0.5000 0.67175, 0.84646 -0.5000 0.43129, 0.93830 -0.5000 0.14861,
+																		 0.93830 -0.5000 -0.14861, 0.84646 -0.5000 -0.43129, 0.67175 -0.5000 -0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-03 Transform {
+												children [
+													 DEF Wavelength-SENSOR-03 PlaneSensor {
+															minPosition 0 1.2
+															maxPosition 0 41.2
+															offset 0 1.2 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0301 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 0.70711 0.50000 -0.70711, 0.45399 0.50000 -0.89101, 0.15643 0.50000 -0.98769,
+																		 -0.15643 0.50000 -0.98769, -0.45399 0.50000 -0.89101, -0.70711 0.50000 -0.70711,
+																		 0.67175 0.5000 -0.67175, 0.43129 0.5000 -0.84646, 0.14861 0.5000 -0.93830,
+																		 -0.14861 0.5000 -0.93830, -0.43129 0.5000 -0.84646, -0.67175 0.5000 -0.67175,
+																		 0.70711 -0.50000 -0.70711, 0.45399 -0.50000 -0.89101, 0.15643 -0.50000 -0.98769,
+																		 -0.15643 -0.50000 -0.98769, -0.45399 -0.50000 -0.89101, -0.70711 -0.50000 -0.70711,
+																		 0.67175 -0.5000 -0.67175, 0.43129 -0.5000 -0.84646, 0.14861 -0.5000 -0.93830,
+																		 -0.14861 -0.5000 -0.93830, -0.43129 -0.5000 -0.84646, -0.67175 -0.5000 -0.67175
+																		] }
+																		coordIndex [
+																		 0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+																		 1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+																		 2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+																		 3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+																		 4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+																		]
+																 }
+															}
+													 }
+												]
+										 }
+										 DEF Wavelength-TRANSFORM-04 Transform {
+												children [
+													 DEF Wavelength-SENSOR-04 PlaneSensor {
+															minPosition -41.2 0
+															maxPosition -1.2 0
+															offset -1.2 0 0
+															isActive IS mouseClicked
+															enabled IS enabled
+													 }
+													 DEF Wavelength-TRANSFORM-0401 Transform {
+															rotation 1 0 0 1.5707963
+															children Shape {
+																 appearance USE Tube-APPEARANCE
+																 geometry IndexedFaceSet {
+																		ccw TRUE
+																		solid TRUE
+																		coord Coordinate { point [
+																		 -0.70711 0.50000 -0.70711, -0.89101 0.50000 -0.45399, -0.98769 0.50000 -0.15643,
+																		 -0.98769 0.50000 0.15643, -0.89101 0.50000 0.45399, -0.70711 0.50000 0.70711,
+																		 -0.67175 0.5000 -0.67175, -0.84646 0.5000 -0.43129, -0.93830 0.5000 -0.14861,
+																-0.93830 0.5000 0.14861, -0.84646 0.5000 0.43129, -0.67175 0.5000 0.67175,
+																-0.70711 -0.50000 -0.70711, -0.89101 -0.50000 -0.45399, -0.98769 -0.50000 -0.15643,
+																-0.98769 -0.50000 0.15643, -0.89101 -0.50000 0.45399, -0.70711 -0.50000 0.70711,
+																-0.67175 -0.5000 -0.67175, -0.84646 -0.5000 -0.43129, -0.93830 -0.5000 -0.14861,
+																-0.93830 -0.5000 0.14861, -0.84646 -0.5000 0.43129, -0.67175 -0.5000 0.67175
+															] }
+														coordIndex [
+															0 1 7 6 -1, 12 13 1 0 -1, 6 7 19 18 -1, 18 19 13 12 -1
+															1 2 8 7 -1, 13 14 2 1 -1, 7 8 20 19 -1, 19 20 14 13 -1
+															2 3 9 8 -1, 14 15 3 2 -1, 8 9 21 20 -1, 20 21 15 14 -1
+															3 4 10 9 -1, 15 16 4 3 -1, 9 10 22 21 -1, 21 22 16 15 -1
+															4 5 11 10 -1, 16 17 5 4 -1, 10 11 23 22 -1, 22 23 17 16 -1
+														]
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+							DEF Wavelength-SCRIPT Script {
+								field SFFloat wavelength IS wavelength
+								eventIn SFFloat set_wavelength IS set_wavelength
+								eventIn SFVec3f set_translation1
+								eventIn SFVec3f set_translation2
+								eventIn SFVec3f set_translation3
+								eventIn SFVec3f set_translation4
+								eventOut SFVec3f scale_changed
+								eventOut SFVec3f offset1_changed
+								eventOut SFVec3f offset2_changed
+								eventOut SFVec3f offset3_changed
+								eventOut SFVec3f offset4_changed
+								eventOut SFFloat wavelength_changed IS wavelength_changed
+								url "javascript:
+								function initialize() {
+									scale_changed = new SFVec3f(wavelength+1.2, 8, wavelength+1.2);
+									offset1_changed = new SFVec3f(0, -wavelength-1.2, 0);
+									offset2_changed = new SFVec3f(wavelength+1.2, 0, 0);
+									offset3_changed = new SFVec3f(0, wavelength+1.2, 0);
+									offset4_changed = new SFVec3f(-wavelength-1.2, 0, 0);
+								}
+								function set_translation1(value, time) {
+									wavelength_changed = wavelength = -value[1] - 1.2;
+									scale_changed[0] = scale_changed[2] = -value[1];
+									offset2_changed[0] = -value[1];
+									offset3_changed[1] = -value[1];
+									offset4_changed[0] = value[1];
+								}
+								function set_translation2(value, time) {
+									wavelength_changed = wavelength = value[0] - 1.2;
+									scale_changed[0] = scale_changed[2] = value[0];
+									offset1_changed[1] = -value[0];
+									offset3_changed[1] = value[0];
+									offset4_changed[0] = -value[0];
+								}
+								function set_translation3(value, time) {
+									wavelength_changed = wavelength = value[1] - 1.2;
+									scale_changed[0] = scale_changed[2] = value[1];
+									offset1_changed[1] = -value[1];
+									offset2_changed[0] = value[1];
+									offset4_changed[0] = -value[1];
+								}
+								function set_translation4(value, time) {
+									wavelength_changed = wavelength = -value[0] - 1.2;
+									scale_changed[0] = scale_changed[2] = -value[0];
+									offset1_changed[1] = value[0];
+									offset2_changed[0] = -value[0];
+									offset3_changed[1] = -value[0];
+								}
+								function set_wavelength(value, time) {
+									wavelength = value;
+									scale_changed[0] = scale_changed[2] = value;
+									offset1_changed[1] = -wavelength-1.2;
+									offset2_changed[0] = wavelength+1.2;
+									offset3_changed[1] = wavelength+1.2;
+									offset4_changed[0] = -wavelength-1.2;
+								}
+								"
+							}
+						] }
+					Transform {
+						rotation 1 0 0 -1.5707963
+						children DEF Phase-TRANSFORM1 Transform {
+							children Transform {
+								rotation 1 0 0 1.5707963
+								children [
+									DEF Phase-TRANSFORM2 Transform {
+										children [
+											TouchSensor {
+												isOver IS mouseOverPhase
+												enabled IS enabled
+											}
+											DEF Phase-SENSOR PlaneSensor {
+												minPosition 0 1
+												maxPosition 0 13
+												offset 0 13 0
+												isActive IS mouseClicked
+												enabled IS enabled
+											}
+											DEF Phase-TRANSFORM3 Transform {
+												translation 0 13 0
+												children Shape {
+													appearance USE PoolWidget-APPEARANCE5
+													geometry Cylinder {
+														radius 1.2
+														height 2
+													}
+												}
+											}
+										]
+									}
+									Transform {
+										translation 0 14 0
+										children Shape {
+											appearance USE PoolWidget-APPEARANCE3
+											geometry Cylinder {
+												height 0.1
+												radius 1
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				] }
+		]
+	}
+	DEF Radial-SCRIPT Script {
+		field SFFloat amplitude		IS amplitude
+		field SFFloat phase				IS phase
+		field SFFloat x						IS x
+		field SFFloat y						IS y
+		field SFFloat direction		1
+		eventIn SFFloat set_amplitude	 IS set_amplitude
+		eventIn SFFloat set_phase			 IS set_phase
+		eventIn SFVec3f set_position	 IS set_position
+		eventIn SFBool	set_widgetVisible IS set_widgetVisible
+		eventIn SFBool	show_widgets
+		eventIn SFVec3f set_translation1
+		eventIn SFVec3f set_translation3
+		eventIn SFVec3f set_translation5
+		eventOut SFFloat amplitude_changed	IS amplitude_changed
+		eventOut SFFloat phase_changed			IS phase_changed
+		eventOut SFVec3f translation1_changed
+		eventOut SFVec3f translation3_changed
+		eventOut SFVec3f translation4_changed
+		eventOut SFVec3f translation5_changed
+		eventOut SFVec3f scale1_changed
+		eventOut SFVec3f offset1_changed
+		eventOut SFVec3f offset3_changed
+		eventOut SFVec3f offset4_changed
+		eventOut SFVec3f offset5_changed
+		eventOut SFInt32 whichChoice
+		url "vrmlscript:
+		function initialize() {
+			translation1_changed = new SFVec3f(0, amplitude+15.50, 0);
+			offset1_changed = new SFVec3f(0, amplitude+15.0, 0);
+			scale1_changed = new SFVec3f(1, amplitude+15.0, 1);
+			translation3_changed = new SFVec3f(0, 13.0-phase*12.0/Math.PI, 0);
+			offset3_changed = new SFVec3f(0, 13.0-phase*12.0/Math.PI, 0);
+			translation4_changed = new SFVec3f(x, y, 0);
+			offset4_changed = new SFVec3f(x, y, 0);
+			//position_changed = new SFVec3f(x, y, 0);
+		}
+		function set_amplitude(value, time) {
+			amplitude = value;
+			translation1_changed[1] = value+15.50;
+			scale1_changed[1] = value+15.0;
+			offset1_changed[1] = value+15.0;
+		}
+		function set_translation1(value, time) {
+			amplitude = value[1]-15.0;
+			amplitude_changed = value[1]-15.0;
+			scale1_changed[1] = value[1];
+			translation1_changed[1] = value[1]+0.5;
+		}
+		function set_translation3(value, time) {
+			phase = (13.0-value[1])*Math.PI/12.0;
+			phase_changed = phase;
+		}
+		function set_phase(value, time) {
+			phase = value;
+			translation3_changed[1] = 13.0-phase*12.0/Math.PI;
+			offset3_changed[1] = 13.0-phase*12.0/Math.PI;
+		}
+		function set_position(value, time) {	//Z of value should be 0
+			offset4_changed=translation4_changed=value;
+		}
+		function set_widgetVisible(value, time) {
+			if(value) whichChoice = 1;
+			else whichChoice = 0;
+		}
+		function show_widgets(value, time) {
+			whichChoice = 1;
+		}"
+	}
+	ROUTE Icon0-SENSOR.isOver TO Radial-SCRIPT.show_widgets
+	ROUTE Icon1-SENSOR.translation_changed TO Icon0-TRANSFORM.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Icon1-TRANSFORM.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Amplitude-TRANSFORM2.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Amplitude-TRANSFORM3.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-01.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-02.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-03.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Wavelength-TRANSFORM-04.translation
+	ROUTE Icon1-SENSOR.translation_changed TO Phase-TRANSFORM1.translation
+	ROUTE Amplitude-SENSOR.translation_changed TO Radial-SCRIPT.set_translation1
+	ROUTE Phase-SENSOR.translation_changed TO Phase-TRANSFORM3.set_translation
+	ROUTE Phase-SENSOR.translation_changed TO Radial-SCRIPT.set_translation3
+	ROUTE Radial-SCRIPT.translation1_changed TO Amplitude-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.scale1_changed TO Amplitude-TRANSFORM4.scale
+	ROUTE Radial-SCRIPT.offset1_changed TO Amplitude-SENSOR.offset
+	ROUTE Radial-SCRIPT.translation3_changed TO Phase-TRANSFORM3.set_translation
+	ROUTE Radial-SCRIPT.offset3_changed TO Phase-SENSOR.offset
+	ROUTE Radial-SCRIPT.translation4_changed TO Icon0-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Icon1-TRANSFORM.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Amplitude-TRANSFORM2.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Amplitude-TRANSFORM3.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-01.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-02.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-03.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Wavelength-TRANSFORM-04.translation
+	ROUTE Radial-SCRIPT.translation4_changed TO Phase-TRANSFORM1.translation
+	ROUTE Radial-SCRIPT.offset4_changed TO Icon1-SENSOR.offset
+	ROUTE Radial-SCRIPT.whichChoice TO Widget-SWITCH.whichChoice
+	ROUTE Wavelength-SENSOR-01.translation_changed TO Wavelength-SCRIPT.set_translation1
+	ROUTE Wavelength-SENSOR-02.translation_changed TO Wavelength-SCRIPT.set_translation2
+	ROUTE Wavelength-SENSOR-03.translation_changed TO Wavelength-SCRIPT.set_translation3
+	ROUTE Wavelength-SENSOR-04.translation_changed TO Wavelength-SCRIPT.set_translation4
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0101.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0201.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0301.scale
+	ROUTE Wavelength-SCRIPT.scale_changed TO Wavelength-TRANSFORM-0401.scale
+	ROUTE Wavelength-SCRIPT.offset1_changed TO Wavelength-SENSOR-01.offset
+	ROUTE Wavelength-SCRIPT.offset2_changed TO Wavelength-SENSOR-02.offset
+	ROUTE Wavelength-SCRIPT.offset3_changed TO Wavelength-SENSOR-03.offset
+	ROUTE Wavelength-SCRIPT.offset4_changed TO Wavelength-SENSOR-04.offset
+}
+
+PROTO SamplingStick [ field SFFloat x 0
+											field SFFloat y 0
+											exposedField SFBool enabled TRUE
+											eventIn SFVec3f set_position
+											eventIn SFFloat set_ballHeight
+											eventIn SFBool set_widgetVisible
+											eventOut SFVec3f position_changed
+											eventOut SFBool mouseClicked
+											eventOut SFBool mouseOver
+											eventOut SFBool mouseOverPosition
+										]
+{
+	Transform {
+		rotation 1 0 0 -1.5707963267949
+		children [
+			#This is a bit silly, but hey
+#			TouchSensor {
+#				enabled IS enabled
+#				isOver IS mouseOverPosition
+#			}
+			TouchSensor {
+				enabled IS enabled
+				isOver IS mouseOver
+				isOver IS mouseOverPosition
+			}
+			DEF PS PlaneSensor {
+				minPosition -50 -50
+				maxPosition 50 50
+				isActive IS mouseClicked
+				enabled IS enabled
+				set_offset IS set_position
+				translation_changed IS position_changed
+			}
+
+			DEF T Transform {
+				rotation 1 0 0 1.5707963267949
+				children [
+					DEF Sw Switch {
+						whichChoice -1
+						choice Group {
+							children [
+								Transform {
+									translation 0 13 0
+									children Shape {
+										geometry Cone { }
+										appearance Appearance {
+											material Material {
+												diffuseColor 0 0 0
+												specularColor 0 .92 1
+												emissiveColor 0 0 1
+												ambientIntensity 0
+												shininess .03
+											}
+										}
+									}
+								}
+								Transform {
+									translation 0 3 0
+									children Shape {
+										geometry Cylinder {
+											height 20
+											radius .5
+											top FALSE
+											bottom FALSE
+										}
+										appearance Appearance {
+											material Material {
+												diffuseColor 0 .49 0
+												specularColor .5 .5 .5
+												emissiveColor 0 .15 0
+												ambientIntensity 0
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+					DEF BallT Transform {
+						children Shape {
+							geometry Sphere { }
+							appearance Appearance { material Material { diffuseColor 1 .2 .2 } }
+						}
+					}
+				]
+			}
+		]
+	}
+	DEF S Script {
+		field SFFloat x IS x
+		field SFFloat y IS y
+		eventIn SFVec3f set_position IS set_position
+		eventIn SFBool set_widgetVisible IS set_widgetVisible
+		eventIn SFFloat set_ballHeight IS set_ballHeight
+		eventIn SFVec3f position_in
+		eventOut SFInt32 choice
+		eventOut SFVec3f translation
+		eventOut SFVec3f offset
+		eventOut SFVec3f ball_translation
+
+		url "javascript:
+		function initialize() {
+			set_position(new SFVec3f(x,y,0),0);
+		}
+		//This is for input from the PlaneSensor
+		function position_in(value,time) {
+			translation=value;
+		}
+		function set_position(value,time) {
+			position_in(value,time);
+			offset=value;
+		}
+		function set_widgetVisible(value,time) {
+			choice=value?0:-1;
+		}
+		function set_ballHeight(value,time) {
+			ball_translation[1]=value;
+		}"
+	}
+	ROUTE PS.translation_changed TO S.position_in
+	ROUTE S.choice TO Sw.set_whichChoice
+	ROUTE S.translation TO T.set_translation
+	ROUTE S.offset TO PS.set_offset
+	ROUTE S.ball_translation TO BallT.set_translation
+}
+
+NavLight {
+	navigationType "NONE"
+}
+
+
+DEF NavPanel NavigationPanel {
+	views [ -0.87 0 0 0 0 -7.5, -1.5707963 0 0 0 0 -7.5, -0.464 -0.608 0.0 1.49E-8 0.415 -7.5  ]
+	children [
+
+		#This transform holds the pool
+		DEF World Transform {
+			children [
+				DEF Widget-SWITCH Switch {
+					whichChoice 0
+					#This transform holds all the pool's widgets
+					choice DEF Widget-TRANSFORM Transform { }
+				}
+			]
+		}
+
+		DEF Grid-SWITCH Switch {
+			whichChoice 0
+			choice [
+				Group {
+					children [
+						DEF View-SENSOR ProximitySensor { size 1000 1000 1000 }
+						#This group holds the coordinate labels
+						Group {
+							children [
+								DEF Text-TRANSFORM1 Transform {
+									translation -50 10 -50
+									scale 5 5 1
+									children Shape {
+										appearance DEF Text-APPEARANCE Appearance {
+											material Material {
+												diffuseColor 0 0 0
+												specularColor 0 0 0
+												ambientIntensity 0
+												emissiveColor 1 1 1
+											}
+										}
+										geometry Text {
+											fontStyle DEF Text-FONTSTYLE FontStyle {
+												justify "MIDDLE"
+											}
+											string [ "(-50, 50)" ]
+										}
+									}
+								}
+
+								DEF Text-TRANSFORM2 Transform {
+									translation -50 10 50
+									scale 5 5 1
+									children Shape {
+										appearance USE Text-APPEARANCE
+										geometry Text {
+											fontStyle USE Text-FONTSTYLE
+											string [ "(-50, -50)" ]
+										}
+									}
+								}
+
+								DEF Text-TRANSFORM3 Transform {
+									translation 50 10 -50
+									scale 5 5 1
+									children Shape {
+										appearance USE Text-APPEARANCE
+										geometry Text {
+											fontStyle USE Text-FONTSTYLE
+											string [ "(50, 50)" ]
+										}
+									}
+								}
+
+								DEF Text-TRANSFORM4 Transform {
+									translation 50 10 50
+									scale 5 5 1
+									children Shape {
+										appearance USE Text-APPEARANCE
+										geometry Text {
+											fontStyle USE Text-FONTSTYLE
+											string [ "(50, -50)" ]
+										}
+									}
+								}
+							]
+						}
+						Transform {
+							translation 0 -10 0
+							children Shape {
+								appearance Appearance {
+									material Material {
+										diffuseColor 1 1 1
+										emissiveColor 1 1 1
+									}
+								}
+								geometry IndexedLineSet {
+									coord Coordinate {
+										point [ -50 0 -50, 50 0 -50, 50 0 50, -50 0 50,
+											-25 0 -50, -25 0 50, 0 0 -50, 0 0 50, 25 0 -50, 25 0 50,
+											-50 0 -25, 50 0 -25, -50 0 0, 50 0 0, -50 0 25, 50 0 25
+											-50 20 -50, 50 20 -50, 50 20 50, -50 20 50 ]
+									}
+									colorPerVertex FALSE
+									coordIndex [ 0 1 2 3 0 -1, 4 5 -1, 6 7 -1, 8 9 -1, 10 11 -1, 12 13 -1, 14 15 -1 0 16 -1 1 17 -1 2 18 -1 3 19 -1 ]
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+
+		DirectionalLight {
+			direction 0 -1 0
+			color 1 1 1
+			intensity 1.5
+		}
+
+		#DirectionalLight {
+		#	 direction 0 -1 0
+		#	 intensity 1
+		#	 color 1 1 1
+		#}
+
+		#DirectionalLight {
+		#	 direction 0.5774 -0.5774 0.5774
+		#	 intensity 0.5
+		#	 color 1 1 1
+		#}
+
+		#DirectionalLight {
+		#	 direction -0.5774 -0.5774 0.5774
+		#	 intensity 0.5
+		#	 color 1 1 1
+		#}
+
+		#DirectionalLight {
+		#	 direction -0.5774 -0.5774 -0.5774
+		#	 intensity 0.5
+		#	 color 1 1 1
+		#}
+
+		#DirectionalLight {
+		#	 direction 0.5774 -0.5774 -0.5774
+		#	 intensity 0.5
+		#	 color 1 1 1
+		#}
+	]
+}
+
+ROUTE View-SENSOR.orientation_changed TO Text-TRANSFORM1.rotation
+ROUTE View-SENSOR.orientation_changed TO Text-TRANSFORM2.rotation
+ROUTE View-SENSOR.orientation_changed TO Text-TRANSFORM3.rotation
+ROUTE View-SENSOR.orientation_changed TO Text-TRANSFORM4.rotation

@@ -1,0 +1,12 @@
+<wsl>
+  <wavesimulation mode="animation" grid="hidden" linearLayout="1" resolution="3" animation="play">
+    <sources>
+      <linesource id="line1" amplitude="3.0" wavelength="6.0" phase="0.0" angle="0.0" />
+      <linesource id="line2" amplitude="3.0" wavelength="6.75" phase="0.0" selected="true" angle="0.0" />
+    </sources>
+    <view value="-0.87 0.0 0.0 0.0 0.0 -7.5" />
+  </wavesimulation>
+  <script>
+    <scriptEnded timeStamp="12748" />
+  </script>
+</wsl>

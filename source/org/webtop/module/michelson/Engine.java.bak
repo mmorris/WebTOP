@@ -1,0 +1,647 @@
+//Notes:
+//Should refactor entire module -- applet class gets GUI/spawns objects,
+//engine just calculation; widget classes replaced by standard widget objects
+
+//New rendering methods have made this faster; perhaps up resolution?
+//If so, perhaps up maximum path difference/phi?
+
+package webtop.michelson;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import vrml.external.field.*;
+
+import webtop.component.*;
+import webtop.wsl.client.*;
+import webtop.wsl.script.*;
+import webtop.wsl.event.*;
+
+import webtop.util.*;
+import webtop.vrml.widget.*;
+
+import sdl.gui.numberbox.*;
+import sdl.math.FPRound;
+
+public class Engine extends Panel implements ActionListener, NumberBox.Listener,
+        WSLScriptListener, WSLPlayerListener, SpatialWidget.Listener {
+    // == Named constants ==
+    //Color model
+    private static final float _BLUE_WAVELENGTH_ = 400.0f;
+    private static final float _RED_WAVELENGTH_ = 700.0f;
+    private static final float _COLORMODEL_RED_WAVELENGTH_ = 630.0f;
+    private static final float _SATURATION_ = 1.0f;
+    private static final float _HUE_SCALE_ = 240.0f;
+
+    //Resolutions
+    private static final int HIGH_RES = 151;
+    private static final int SUPER_HIGH_RES = 351;
+    private static final int LOW_RES = 61;
+
+    //Math constants
+    private static final double TILT_MIRROR_RADIUS = 3, //cm
+            L = 10, //cm
+                L_O = 50, //cm
+                      PSI = Math.atan(TILT_MIRROR_RADIUS / (2 * L)),
+                            CONE_R1 = (3 * L + L_O) * Math.tan(PSI), //cm
+                                      //We assume that alpha is zero... it's at most 1/100
+                                      ALPHA = 0;
+
+    //Normalization bounds for intensity values
+    private static final float MIN_I = 0,
+                                       MAX_I = 9e-4f;
+
+    //Default values for the DoubleBoxen
+    private static final double DEF_PHI = 0,
+                                          DEF_PATH_DIFF = 0.007,
+            DEF_WAVELENGTH = 500;
+
+    // == Other Java objects... ==
+    private Michelson parent;
+
+    private Screen observationScreen;
+    private MichelsonLinePlot observationLine;
+
+    private WavelengthWheelWidget myWavelengthWheelWidget;
+    private PathDiffWheelWidget myDWheelWidget;
+    private PhiTrackWidget myPhiWheelWidget;
+
+    //EAI stuff
+    //private EventOutSFVec3f screen_translation_out;
+    //private EventInSFVec3f	screen_translation_in;
+
+    private EventInSFInt32 axisPicker;
+    private EventInSFInt32 pathDiffWidgetPicker;
+    private EventInSFInt32 phiWidgetPicker;
+    private EventInSFInt32 wavelengthWidgetPicker;
+    private int axisChoice, widgetsChoice;
+
+    //Math variables
+    private double intensityCache[]; //Array of precalculated values for circularly-symmetric case
+    private double beta; //Intermediate value for position of off-axis virtual source
+    private double cone_R2; //Radius of light-cone from (possibly) off-axis virtual source
+    private double cone_R2Squared;
+    private double Cx; //Displacement of light-cone from off-axis virtual source
+    private double k; //Current angular wavenumber (in radian-Kaysers)
+
+    //GUI
+    //The DoubleBoxen start with subtly 'off' values to trigger numChanged() upon setDefaults()
+    private DoubleBox pathDiffField = new DoubleBox( -0.02, 0.02,
+            DEF_PATH_DIFF + 1e-9, 5), //units: cm
+                                      phiField = new DoubleBox( -0.005, 0.005,
+            DEF_PHI + 1e-9, 5), //degrees
+                                                 wavelengthField = new
+            DoubleBox(400, 700, DEF_WAVELENGTH + 1e-9, 5); //nm
+    private Button resetButton = new Button("Reset"),
+                                 toggleAxisButton = new Button("Toggle Axis"),
+            toggleWidgetsButton = new Button("Toggle Widgets");
+    //private Choice		resolution_choice;
+    private StatusBar status_bar;
+
+    //Module status variables
+    private int high_res = HIGH_RES, low_res = LOW_RES;
+    private int x_cells = high_res, y_cells = high_res;
+    private double intensity_dx;
+
+
+    private boolean draggingWidget = false;
+    private boolean massChange;
+
+    //WSL
+    private WSLPanel wslPanel;
+    private WSLPlayer wslPlayer;
+
+    //Panels
+    private Panel first = new Panel(new FlowLayout()),
+                          second = new Panel(new FlowLayout());
+
+    public Engine(Michelson applet) {
+        parent = applet;
+
+        intensityCache = new double[3 * SUPER_HIGH_RES];
+
+        //Create GUI
+        setBackground(Color.darkGray);
+        setForeground(Color.white);
+
+        toggleWidgetsButton.addActionListener(this);
+        resetButton.addActionListener(this);
+        toggleAxisButton.addActionListener(this);
+
+        status_bar = new StatusBar("Welcome to Michelson Interferometer Module");
+        status_bar.setPreferredSize(new Dimension(parent.getSize().width, 20));
+        status_bar.setMinimumSize(new Dimension(parent.getSize().width, 20));
+        status_bar.setForeground(Color.yellow);
+        status_bar.setFont(new Font("Helvetica", Font.PLAIN, 11));
+
+        setLayout(new VerticalLayout());
+        //Panel first=new Panel(new FlowLayout());
+        //Panel second=new Panel(new FlowLayout());
+
+        wslPlayer = new WSLPlayer(parent);
+        wslPlayer.addListener(this);
+        wslPanel = new WSLPanel(wslPlayer);
+
+        first.add(new Label("Phi:", Label.RIGHT));
+        first.add(phiField);
+        first.add(new Label("deg"));
+        phiField.addNumberListener(this);
+
+        first.add(new Label(" Path Difference:", Label.RIGHT));
+        first.add(pathDiffField);
+        first.add(new Label("cm"));
+        pathDiffField.addNumberListener(this);
+
+        first.add(new Label("Wavelength:", Label.RIGHT));
+        first.add(wavelengthField);
+        first.add(new Label("nm"));
+        wavelengthField.addNumberListener(this);
+
+        /*resolution_choice=new Choice();
+           resolution_choice.addItem("Regular");
+           resolution_choice.addItem("High Quality");*/
+
+        second.add(resetButton);
+        second.add(toggleAxisButton);
+        second.add(toggleWidgetsButton);
+        //second.add(resolution_choice);
+
+        add(first);
+        add(second);
+        add(status_bar);
+        add(wslPanel);
+
+        //Init screen and graph
+        observationScreen = new Screen(this);
+        observationLine = new MichelsonLinePlot(this);
+
+        axisPicker = (EventInSFInt32) getWorld().getEI("AxisToggle",
+                "whichChoice");
+
+        //The old phi widget (a wheel) is still in the VRML file; it was ungainly, and a
+        //different widget has been implemented
+        phiWidgetPicker = (EventInSFInt32) getWorld().getEI("PhiTrackToggle",
+                "whichChoice");
+        pathDiffWidgetPicker = (EventInSFInt32) getWorld().getEI(
+                "PathDiffWheelToggle", "whichChoice");
+        wavelengthWidgetPicker = (EventInSFInt32) getWorld().getEI(
+                "WavelengthWheelToggle", "whichChoice");
+
+        myWavelengthWheelWidget = new WavelengthWheelWidget(this, status_bar);
+        myDWheelWidget = new PathDiffWheelWidget(this, status_bar);
+        myPhiWheelWidget = new PhiTrackWidget(this, status_bar);
+
+        new TouchSensor(getWorld(), getWorld().getNode("TS"), (short) - 1, null).
+                addListener(this);
+
+        setDefaults(); //Now that everyone's listening, start the cascade.
+    }
+
+    private void setDefaults() {
+        massChange = true;
+        phiField.setValue(DEF_PHI);
+        pathDiffField.setValue(DEF_PATH_DIFF);
+        wavelengthField.setValue(DEF_WAVELENGTH);
+        massChange = false;
+        evaluate();
+    }
+
+    public void evaluate() {
+        if (false && phiField.getValue() == 0) {
+            long s = System.currentTimeMillis();
+            evaluateIntensity();
+            System.out.println("eI: " +
+                               (System.currentTimeMillis() - s) / 1000f);
+        }
+        observationScreen.evaluate(x_cells, x_cells);
+        observationLine.evaluate(x_cells * 3);
+        //status_bar.setText("done");
+    }
+
+    public void evaluate(int x, int y) {
+        x_cells = x;
+        y_cells = y;
+
+        evaluate();
+    }
+
+    //Calculates and caches normalized intensity values for the phi=0 case
+    private void evaluateIntensity() {
+        intensity_dx = Screen.SIZE / x_cells;
+
+        for (int i = 0; i < 3 * x_cells; i++) {
+            intensityCache[i] = (trueIntensity(i * intensity_dx, 0) - MIN_I) /
+                                (MAX_I - MIN_I);
+        }
+
+        double dx = Screen.SIZE / (x_cells - 1);
+        double dy = Screen.SIZE / (y_cells - 1);
+
+        long s = System.currentTimeMillis();
+        for (int x = 0; x < x_cells; x++) {
+            for (int y = 0; y <= y_cells / 2; y++) {
+                intensity( -Screen.SIZE / 2 + x * dx, y * dy);
+            }
+        }
+        //System.out.println("i: "+(System.currentTimeMillis()-s)/1000f);
+
+        //s=System.currentTimeMillis();
+        for (int x = 0; x < x_cells; x++) {
+            for (int y = 0; y <= y_cells / 2; y++) {
+                trueIntensity( -Screen.SIZE / 2 + x * dx, y * dy);
+            }
+        }
+        //System.out.println("tI: "+(System.currentTimeMillis()-s)/1000f);
+    }
+
+    private float trueIntensity(final double X, final double Z) {
+        //final long start=System.currentTimeMillis();
+        //++ticount;
+
+        //if(ticount % 9253 == 0) System.out.println("tIp: "+(float)tiprof/ticount);
+
+        final double xSquared = X * X;
+        final double zSquared = Z * Z;
+
+        final double r = Math.sqrt(xSquared + zSquared +
+                                   (3 * L + L_O) * (3 * L + L_O));
+
+        final double A1 = ((X - Cx) * (X - Cx) + zSquared) <= CONE_R1 * CONE_R1 ?
+                          1 : 0,
+                          A2 = (xSquared + zSquared) <= cone_R2Squared ? 1 : 0,
+                               r1 = Math.sqrt((X - beta) * (X - beta) +
+                                              (3 * L + L_O - ALPHA) *
+                                              (3 * L + L_O - ALPHA) + Z * Z),
+                                    r2 = Math.sqrt(X * X +
+                (3 * L + 2 * pathDiffField.getValue() + L_O) *
+                (3 * L + 2 * pathDiffField.getValue() + L_O) + Z * Z);
+
+        return
+                /*final float ret= */ (float) ((A1 + A2 -
+                                                2 * A1 * A2 *
+                                                Math.cos(k * (r2 - r1))) /
+                                               (r * r));
+    }
+
+    //private long icount,iprof[]=new long[6],ticount,tiprof;
+    //Externally-visible intensity function (used for rendering)
+    //Optimizes intensity calculations for circularly-symmetric phi=0 case
+    public float intensity(final double X, final double Z) {
+        if (true || phiField.getValue() != 0) {
+            return trueIntensity(X, Z) / MAX_I;
+        }
+
+        //++icount;
+
+        /*if(icount % 7227 == 0) {
+         for(int i=1;i<6;++i)
+         System.out.println("["+i+"]: "+((float)(iprof[i]-iprof[i-1])/icount));
+           }*/
+
+        //final long start=System.currentTimeMillis();
+        //final long[] iprof=this.iprof;
+        //final double[] intensityCache=this.intensityCache;
+
+        //The following is in theory an optimization, but is rather the opposite.
+        //For now, we are just not using it (note the '|| true' above).  [Davis]
+
+        //Explanation for the slowness: This accesses arrays and class variables
+        //and things; trueIntensity can be optimize-compiled to what is pretty
+        //much native code (which can then be further optimized by a JIT
+        //compiler).  These references and array indexings are really slow.
+
+        //Linear interpolation between intensityCache points
+        final double radius = Math.sqrt(X * X + Z * Z) / intensity_dx;
+
+        //iprof[1]+=System.currentTimeMillis()-start;
+
+        //If we hit something (like 0!) exactly, use it
+        final double f = Math.floor(radius);
+
+        //iprof[2]+=System.currentTimeMillis()-start;
+
+        if (radius == f) {
+            return (float) intensityCache[(int) radius];
+        }
+
+        //iprof[3]+=System.currentTimeMillis()-start;
+
+        final double c = Math.ceil(radius);
+
+        //iprof[4]+=System.currentTimeMillis()-start;
+
+        final float ret = (float) (intensityCache[(int) f] * (c - radius) +
+                                   intensityCache[(int) c] * (radius - f));
+
+        //iprof[5]+=System.currentTimeMillis()-start;
+
+        throw new RuntimeException("Read this code; don't run it!");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        //status_bar.setText("working");
+
+        if (e.getSource() == resetButton) {
+            setDefaults();
+            wslPlayer.recordActionPerformed("action", "reset");
+        }
+        /*else if(e.getSource() == resolution_choice) {
+         switch (resolution_choice.getSelectedIndex()) {
+         case 0:
+          high_res=HIGH_RES;
+          if(record) wslPlayer.recordActionPerformed("resolution", "high");
+          break;
+         case 1:
+          high_res=SUPER_HIGH_RES;
+          if(record) wslPlayer.recordActionPerformed("resolution", "normal");
+          break;
+         }
+
+         status_bar.setText("changing resolution... ");
+         evaluate(high_res,high_res);
+         status_bar.setText("resolution changed.");
+           }*/
+        else if (e.getSource() == toggleWidgetsButton) {
+            widgetsChoice = -1 - widgetsChoice; // -1 <=> 0
+            pathDiffWidgetPicker.setValue(widgetsChoice);
+            phiWidgetPicker.setValue(widgetsChoice);
+            wavelengthWidgetPicker.setValue(widgetsChoice);
+            wslPlayer.recordActionPerformed("widgets",
+                                            widgetsChoice == 0 ? "visible" :
+                                            "hidden");
+
+            //status_bar.setText("done");
+        } else if (e.getSource() == toggleAxisButton) {
+            axisChoice = -1 - axisChoice;
+            axisPicker.setValue(axisChoice);
+            wslPlayer.recordActionPerformed("axes",
+                                            axisChoice == 0 ? "visible" : "hidden");
+            //status_bar.setText("done");
+        }
+    }
+
+    public void numChanged(NumberBox src, Number nuVal) {
+        double val = nuVal.doubleValue();
+
+        status_bar.reset();
+
+        if (src == pathDiffField) {
+            cone_R2 = (3.0 * L + 2.0 * pathDiffField.getValue() + L_O) *
+                      Math.tan(PSI);
+            cone_R2Squared = cone_R2 * cone_R2;
+
+            if (!draggingWidget) {
+                myDWheelWidget.updateWidget((float) val);
+                wslPlayer.recordActionPerformed("pathLengthDifference",
+                                                String.valueOf(val));
+            }
+        } else if (src == phiField) {
+            beta = -2.0 * L * Math.sin(2.0 * WTMath.toRads(phiField.getValue()));
+            //alpha=4.0*L*Math.sin(WTMath.toRads(phiField.getValue()))*Math.sin(WTMath.toRads(phiField.getValue()));
+            Cx = (3.0 * L + L_O - ALPHA) *
+                 Math.tan(2.0 * WTMath.toRads(phiField.getValue())) - beta;
+
+            if (!draggingWidget) {
+                myPhiWheelWidget.updateWidget((float) val);
+                wslPlayer.recordActionPerformed("tiltAngle", String.valueOf(val));
+            }
+        } else if (src == wavelengthField) {
+            k = (2.0 * Math.PI / (wavelengthField.getValue() / 1e7)); //k needs to be 2pi/cm
+
+            if (!draggingWidget) {
+                myWavelengthWheelWidget.updateWidget((float) val);
+                wslPlayer.recordActionPerformed("wavelength",
+                                                String.valueOf(val));
+            }
+        }
+
+        if (!massChange) {
+            evaluate();
+        }
+    }
+
+    //Print warnings when the user gives bad values
+    public void invalidEntry(NumberBox src, Number badVal) {
+        DebugPrinter.once();
+        DebugPrinter.println(src.toString() + "; " + badVal);
+        if (src == pathDiffField) {
+            status_bar.setWarningText(
+                    "Path difference must be no larger than 0.02 cm.");
+        } else if (src == phiField) {
+            status_bar.setWarningText(
+                    "Mirror tilt angle must be no larger than 0.005 degree.");
+        } else if (src == wavelengthField) {
+            status_bar.setWarningText(
+                    "Wavelength must be in visible range (400-700 nm).");
+        }
+    }
+
+    public void boundsForcedChange(NumberBox src, Number oldVal) {} //never will happen
+
+    public float[] getRGB(float light) {
+        //THE FOLLOWING SECTION OF CODE DETERMINES HUE FOR THE HLS TO RGB COLOR
+        //CONVERSION
+        //{SECTION OF CODE DESIGNED AND IMPLEMENTED BY KIRIL VIDIMCE, 1996/11/22}
+
+        // * Modified for WebTOP by Rhett Maxwell, 2000/03/03
+
+        //float hue = (float) (wavelength*1E5 - _BLUE_WAVELENGTH_) / (_RED_WAVELENGTH_ - _BLUE_WAVELENGTH_);
+
+        float hue = (float) (wavelengthField.getValue() - _BLUE_WAVELENGTH_) /
+                    (_COLORMODEL_RED_WAVELENGTH_ - _BLUE_WAVELENGTH_);
+
+        hue *= _HUE_SCALE_;
+        if (hue > _HUE_SCALE_) {
+            hue = _HUE_SCALE_;
+        } else if (hue < 0) {
+            hue = 0;
+        }
+        hue = _HUE_SCALE_ - hue;
+        float saturation = _SATURATION_; //we use a const. saturation
+        //{END SECTION OF CODE DESIGNED AND IMPLEMENTED BY KIRIL VIDIMCE, 1996/11/22}
+
+        //return HLS_2_RGB(hue,light,saturation);
+        float[] rgb = new float[3];
+        WTMath.hls2rgb(rgb, hue, light, saturation);
+        return rgb;
+    }
+
+    public void wavelengthWidgetUpdate(float value) {
+        wavelengthField.setFixValue(value, 4);
+
+        wslPlayer.recordMouseDragged("wavelength", String.valueOf(value));
+    }
+
+    public void phiWidgetUpdate(float value) {
+        phiField.setFixValue(value, 4);
+
+        wslPlayer.recordMouseDragged("tiltAngle", String.valueOf(value));
+    }
+
+    public void pathDiffWidgetUpdate(float value) {
+        pathDiffField.setFixValue(value, 5);
+
+        wslPlayer.recordMouseDragged("pathLengthDifference",
+                                     String.valueOf(value));
+    }
+
+    public void valueChanged(SpatialWidget sw, float x, float y, float z) {
+        status_bar.setText("\u03C1=" +
+                           FPRound.toSigVal(Math.sqrt(x * x + y * y), 4) +
+                           "; intensity=" + FPRound.toSigVal(intensity(x, y), 4));
+    }
+
+    public void beginWidgetDrag() {
+        y_cells = x_cells = low_res;
+        draggingWidget = true;
+        if (!massChange) {
+            evaluate();
+        }
+    }
+
+    public void endWidgetDrag() {
+        y_cells = x_cells = high_res;
+        draggingWidget = false;
+        if (!massChange) {
+            evaluate();
+        }
+    }
+
+    public boolean widgetsActive() {
+        return draggingWidget;
+    }
+
+    public webtop.vrml.EAI getWorld() {
+        return parent.getEAI();
+    }
+
+    public WSLPlayer getWSLPlayer() {
+        return wslPlayer;
+    }
+
+    // -------------------------------------------------------------------------------
+    // WSL Methods
+    // -------------------------------------------------------------------------------
+
+    public WSLNode toWSLNode() {
+        WSLNode node = new WSLNode("michelson");
+        final WSLAttributeList atts = node.getAttributes();
+
+        atts.add("wavelength", String.valueOf(wavelengthField.getValue()));
+        atts.add("tiltAngle", String.valueOf(phiField.getValue()));
+        atts.add("pathLengthDifference", String.valueOf(pathDiffField.getValue()));
+        atts.add("axes", axisChoice == 0 ? "visible" : "hidden");
+        atts.add("widgets", widgetsChoice == 0 ? "visible" : "hidden");
+        //atts.add("resolution", high_res==SUPER_HIGH_RES ? "high" : "low");
+
+        return node;
+    }
+
+    private void setParameter(String param, String value) {
+        if (param == null || value == null) {
+            return;
+        }
+
+        double d;
+        try {
+            d = new Double(value).doubleValue();
+        } catch (NumberFormatException e) {
+            d = Double.NaN;
+        }
+
+        if ("wavelength".equals(param)) {
+            wavelengthField.setValue(d);
+        } else if ("tiltAngle".equals(param)) {
+            phiField.setValue(d);
+        } else if ("pathLengthDifference".equals(param)) {
+            pathDiffField.setValue(d);
+        } else if ("axes".equals(param)) {
+            axisPicker.setValue(axisChoice = ("visible".equals(value) ? 0 : -1));
+        } else if ("widgets".equals(param)) {
+            widgetsChoice = ("visible".equals(value) ? 0 : -1);
+            pathDiffWidgetPicker.setValue(widgetsChoice);
+            phiWidgetPicker.setValue(widgetsChoice);
+            wavelengthWidgetPicker.setValue(widgetsChoice);
+        }
+        /*else if("resolution".equals(param)) {
+         if("high".equals(value))
+          endWidgetDrag();
+         else if("low".equals(value))
+          beginWidgetDrag();
+           }*/
+
+        if (!massChange) {
+            evaluate();
+        }
+    }
+
+    public void initialize(WSLScriptEvent event) {
+        WSLNode node = event.getNode();
+        WSLAttributeList atts = node.getAttributes();
+
+        if (!"michelson".equals(node.getName())) {
+            return;
+        }
+
+        massChange = true;
+
+        for (int i = 0; i < atts.getLength(); i++) {
+            setParameter(atts.getName(i), atts.getValue(i));
+        }
+
+        massChange = false;
+        evaluate();
+    }
+
+    public void scriptActionFired(WSLScriptEvent event) {
+        int id = event.getID();
+        String param = event.getParameter();
+        String value = event.getValue();
+
+        switch (event.getID()) {
+        case WSLScriptEvent.ACTION_PERFORMED:
+            setParameter(param, value);
+            break;
+        case WSLScriptEvent.MOUSE_PRESSED:
+            beginWidgetDrag();
+            break;
+        case WSLScriptEvent.MOUSE_RELEASED:
+            endWidgetDrag();
+            break;
+        case WSLScriptEvent.MOUSE_DRAGGED:
+            float f;
+            try {
+                f = new Float(value).floatValue();
+            } catch (NumberFormatException e) {
+                f = Float.NaN;
+            }
+
+            if ("wavelength".equals(param)) {
+                myWavelengthWheelWidget.updateWidget(f);
+            } else if ("tiltAngle".equals(param)) {
+                myPhiWheelWidget.updateWidget(f);
+            } else if ("pathLengthDifference".equals(param)) {
+                myDWheelWidget.updateWidget(f);
+            }
+        }
+    }
+
+    public void playerStateChanged(WSLPlayerEvent event) {
+        switch (event.getID()) {
+        case WSLPlayerEvent.PLAYER_STARTED:
+            first.setEnabled(false);
+            second.setEnabled(false);
+            myWavelengthWheelWidget.setEnabled(false);
+            myPhiWheelWidget.setEnabled(false);
+            myDWheelWidget.setEnabled(false);
+            break;
+        case WSLPlayerEvent.PLAYER_STOPPED:
+            first.setEnabled(true);
+            second.setEnabled(true);
+            myWavelengthWheelWidget.setEnabled(true);
+            myPhiWheelWidget.setEnabled(true);
+            myDWheelWidget.setEnabled(true);
+            break;
+        }
+    }
+}

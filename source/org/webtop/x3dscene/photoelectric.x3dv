@@ -1,0 +1,819 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+EXTERNPROTO WheelWidget [
+	inputOutput SFVec3f scale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat value
+  inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+
+	inputOutput SFNode	 material
+	inputOutput SFNode	 activeMaterial
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized ]
+"x3dlib/Widgets.x3dv#WheelWidget"
+
+EXTERNPROTO CylinderXDragger [ inputOutput SFVec3f cylScale
+												 inputOutput SFVec3f translation
+												 inputOutput SFRotation rotation
+
+												 initializeOnly SFFloat position
+												 inputOnly SFFloat set_position
+												 outputOnly SFFloat position_changed
+
+												 initializeOnly SFFloat minPosition
+												 inputOnly SFFloat set_minPosition
+												 initializeOnly SFFloat maxPosition
+												 inputOnly SFFloat set_maxPosition
+												initializeOnly SFFloat value
+												inputOnly SFFloat set_value
+												outputOnly SFFloat value_changed
+												initializeOnly SFFloat minValue
+												inputOnly SFFloat set_minValue
+												initializeOnly SFFloat maxValue
+												inputOnly SFFloat set_maxValue
+												initializeOnly SFBool positionAsValue
+
+												 outputOnly SFBool isOver_out
+												 outputOnly SFBool isActive_out
+												 inputOnly SFBool set_isActive
+
+												 inputOutput SFBool enabled
+												 initializeOnly SFString debugName
+												 outputOnly SFBool initialized ]
+"x3dlib/Widgets.x3dv#CylinderXDragger"
+
+
+EXTERNPROTO NavLight[ inputOutput SFFloat ambientIntensity
+								 inputOutput SFFloat intensity
+								 inputOutput SFColor color
+								 inputOutput SFVec3f attenuation
+								 inputOutput SFBool headlight
+								 inputOutput MFFloat avatarSize
+								 inputOutput SFFloat navigationSpeed
+								 inputOutput MFString navigationType
+								 inputOutput SFFloat visibilityLimit ]
+"x3dlib/NavPanel.x3dv#NavLight"
+
+EXTERNPROTO NavigationPanel [
+	inputOutput SFBool enabled
+
+	initializeOnly			SFBool visible
+	inputOnly		SFBool set_visible
+	outputOnly	SFBool visible_changed
+
+	inputOutput MFNode children
+
+	inputOutput SFVec3f center
+
+	initializeOnly		 MFFloat		views
+	initializeOnly		 SFInt32		activeView
+
+	initializeOnly		 SFFloat		rotation_speed
+	initializeOnly		 SFFloat		translation_speed
+
+	#External (EAI) control of the view
+	inputOnly	 SFVec2f		set_angles
+	inputOnly	 SFVec2f		set_pan
+	inputOnly	 SFFloat		set_zoom
+	inputOnly	 MFFloat		set_view
+	inputOnly	 SFInt32		set_activeView
+
+	#External (EAI) information on the view
+	outputOnly SFBool			isActive_out
+	outputOnly SFBool			isOver_out
+	outputOnly SFBool			rotation_isOver_out
+	outputOnly SFBool			rotation_isActive_out
+	outputOnly SFBool			pan_isOver_out
+	outputOnly SFBool			pan_isActive_out
+	outputOnly SFBool			zoom_isOver_out
+	outputOnly SFBool			zoom_isActive_out
+	outputOnly SFBool			switch_isOver_out
+	outputOnly SFBool			switch_isActive_out
+	outputOnly SFVec2f		angles_changed
+	outputOnly SFVec2f		pan_changed
+	outputOnly SFFloat		zoom_changed
+
+	#activeView_changed events are always sent before the corresponding
+	#view_changed events to allow a client to determine the reason for a
+	#viewpoint change.
+	outputOnly MFFloat		view_changed
+	outputOnly SFInt32		activeView_changed ]
+"x3dlib/NavPanel.x3dv#NavigationPanel"
+
+
+PROTO Photoelectron [
+	inputOnly			SFFloat set_x_position
+	inputOnly			SFFloat set_y_position
+	inputOnly			SFFloat set_z_position
+	inputOnly			SFFloat transparency_in
+	inputOnly SFFloat x_position_in
+	inputOnly SFFloat set_transparency
+]
+{
+	DEF SphereHolder Transform {
+		translation	-10000 -10000 -10000
+		children [
+
+			Shape {
+				appearance Appearance {
+					material Material {
+						diffuseColor 1 0 0
+						transparency IS	set_transparency
+					}
+				}
+				geometry Sphere	{
+					radius 8
+				}
+			}
+		]
+	}
+	DEF Worker Script {
+		inputOnly SFFloat x_position_in IS set_x_position
+		inputOnly	SFFloat y_position_in IS set_y_position
+		inputOnly	SFFloat	z_position_in IS set_z_position
+		outputOnly SFVec3f translation
+
+		url "ecmascript:
+
+		function x_position_in(value, time) {
+			translation[0] = value;
+		}
+
+		function y_position_in(value, time) {
+			translation[1] = value;
+		}
+
+		function z_position_in(value, time) {
+			translation[2] = value;
+		}"
+	}
+	ROUTE Worker.translation TO SphereHolder.set_translation
+}
+
+
+PROTO CylinderFrustum [
+	initializeOnly SFFloat radius 1
+	inputOnly SFFloat set_radius
+	initializeOnly SFFloat tiltAngle .5
+	inputOnly SFFloat set_tiltAngle
+	initializeOnly SFBool doTilt FALSE
+	initializeOnly SFFloat planeDistance 5
+	inputOnly SFFloat set_planeDistance
+	initializeOnly SFFloat extraLength 10
+	inputOnly SFFloat set_extraLength
+	initializeOnly SFInt32 resolution 32
+	initializeOnly SFBool endCap TRUE
+	initializeOnly SFBool solid TRUE
+]
+{
+	DEF IFS IndexedFaceSet {
+		coord DEF Coord Coordinate {}
+		solid IS solid
+		#ccw TRUE
+	}
+	DEF S Script {
+		initializeOnly SFFloat r IS radius
+		inputOnly SFFloat r_in IS set_radius
+		initializeOnly SFFloat theta IS tiltAngle
+		inputOnly SFFloat theta_in IS set_tiltAngle
+		initializeOnly SFBool tilt IS doTilt
+		initializeOnly SFFloat d IS planeDistance
+		inputOnly SFFloat d_in IS set_planeDistance
+		initializeOnly SFFloat eLen IS extraLength
+		inputOnly SFFloat e_in IS set_extraLength
+		initializeOnly SFInt32 res IS resolution
+		initializeOnly SFBool cap IS endCap
+		outputOnly MFVec3f coord_out
+		outputOnly MFInt32 indices_out
+
+		url	"ecmascript:
+		function initialize() {render();}
+
+		function r_in(value,time) {r=value; render();}
+		function theta_in(value,time) {theta=value; render();}
+		function d_in(value,time) {d=value; render();}
+		function e_in(value,time) {eLen=value; render();}
+
+		function render() {
+			//print('render(r,t,d,e): '+r+' '+theta+' '+d+' '+eLen);
+			var i,phi,tiltVec,baseVec,k;
+			if(tilt)
+			tiltVec=new SFVec3f(Math.sin(theta),0,-Math.cos(theta));
+			else
+			tiltVec=new SFVec3f(0,0,-1);
+			for(i=0;i<res;i++) {
+				phi=2*Math.PI*i/(res-1);
+				k=(d+r*Math.sin(theta)*Math.cos(phi))/Math.cos(theta);		//eLen is used later
+				if(tilt) baseVec=new SFVec3f(r*Math.cos(theta)*Math.cos(phi),
+				r*Math.sin(phi),
+				r*Math.sin(theta)*Math.cos(phi));
+				else baseVec=new SFVec3f(r*Math.cos(phi),r*Math.sin(phi),0);
+				coord_out[i]=baseVec.subtract(tiltVec.multiply(eLen));
+				/*print(*/coord_out[i+res]=baseVec.add(tiltVec.multiply(k))/*)*/;
+				indices_out[5*i]=i;
+				indices_out[5*i+1]=(i+res-1)%res;
+				indices_out[5*i+2]=(i+res-1)%res+res;
+				indices_out[5*i+3]=i+res;
+				indices_out[5*i+4]=-1;
+				indices_out[5*res+i]=i;
+				if(cap)
+				indices_out[5*res+(res+1)+i]=(res-i-1)+res;
+			}
+			indices_out[5*res+res]=-1;
+			if(cap) indices_out[5*res+(res+1)+res]=-1;
+		}"
+	}
+	ROUTE S.coord_out TO Coord.set_point
+	ROUTE S.indices_out TO IFS.set_coordIndex
+}
+
+#Viewpoint { 
+#  position -260 -350 1100 
+#  description "Start"
+#  centerOfRotation -260 -450 0
+#}
+#
+#NavigationInfo {
+#	speed 100
+#}
+
+#Navigation Panel Items
+
+NavLight { navigationType "NONE" }
+
+NavigationInfo {
+	type "NONE"
+}
+
+DEF NavPanel NavigationPanel {
+
+#For future refrence, this is what each of the values in the view [ ] field correspond to -- JD
+	#1st - how much to rotate along the x axis
+	#2nd - how much to rotate along the y axis
+	#3rd - how much to rotate along the z axis (although I couldn't get it to do anything in photoelectric)
+	#4th - how far to move along the x axis (how far left or right to move the camera)
+	#5th - how far to move along the y axis(how far up or down to move the camera)
+	#6th - how far to move along the z axis (how far into or out of the screen to move the camera)
+	views[ 
+	0 0 0 10 17 -60 #initial view
+	 0 .75 0 10 20 -60 #secondary view
+	 -.15 -1.57 0 0 13 -5 #third view
+	 ]
+	 children[ #everything is a child of the navigation panel.
+Transform {
+	translation -260 -450 0
+	children [
+
+DEF VoltageMeter Group {
+	children [
+
+		DEF	Scaler Transform {
+			scale 10 10 10
+			translation	0 -220 0
+			children [
+
+		DEF	Box Transform {
+			translation	0 0 0
+			rotation 0 0 0 0
+			scale 20 12 4
+			children [
+				DEF BoxPiece Shape {
+					appearance Appearance {
+						material Material {
+							diffuseColor 0.7 0.7 0.7
+							ambientIntensity 1
+						}
+					}
+					geometry Box	{
+						size 1 1 1
+					}
+				}
+			]
+		}
+
+		DEF BoxFront Transform {
+			translation	0 0 2.5
+			rotation 0 0 0 0
+			children [
+
+				DEF	BoxTop Transform {
+					translation	0 5.5 0
+					rotation 0 0 0 0
+					scale 20 1 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxBottom Transform {
+					translation	0 -5.5 0
+					rotation 0 0 0 0
+					scale 20 1 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxLeft Transform {
+					translation	-9.5 0 0
+					rotation 0 0 0 0
+					scale 1 12 1
+					children USE BoxPiece
+				}
+
+				DEF	BoxRight Transform {
+					translation	9.5 0 0
+					rotation 0 0 0 0
+					scale 1 12 1
+					children USE BoxPiece
+				}
+
+				DEF	Face Transform {
+					translation	0 0 -.5
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 1 1 1
+									ambientIntensity 1
+								}
+							}
+							geometry Box	{
+								size 19 11 .5
+							}
+						}
+					]
+				}
+
+				DEF	Text Transform {
+					translation	-4 -2.5 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "VOLTAGE"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 2
+								}
+								length 8
+							}
+						}
+					]
+				}
+
+				DEF	Text0 Transform {
+					translation	-8.5 5.2 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "0"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+				DEF	Text5 Transform {
+					translation	7.5 5.2 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									diffuseColor 0 0 0
+									ambientIntensity 1
+								}
+							}
+							geometry Text	{
+								string "5"
+								fontStyle FontStyle	{
+									family "ARIAL"
+									style "BOLD"
+									size 3
+								}
+								length 2
+							}
+						}
+					]
+				}
+
+
+				DEF	NeedleHolder Transform {
+					translation 0 -10 0
+					rotation 0 0 1 .6
+					children [
+		   
+						DEF RotationPS PlaneSensor {
+							enabled	TRUE
+							autoOffset TRUE
+						}	   
+
+						DEF	Needle Transform {
+							translation	0 10.3 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .8 5 .1
+									}
+								}
+							]
+						}
+
+						DEF	NeedleTip Transform	{
+							translation	0 12 0
+							rotation 1 0 0 3.14159265
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 1 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry IndexedFaceSet {
+										coord Coordinate {
+											point [ -1.5 0 0, 0 -2 0, 1.5 0 0 ]
+										}
+										coordIndex [ 2 1 0 2 ]
+									}
+								}
+							]
+						}
+								
+					]
+				}
+
+
+				DEF	OneNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .36
+					children [
+
+						DEF	OneNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .4 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	TwoNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .12 
+					children USE OneNeedle
+				}
+
+				DEF	ThreeNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.12 
+					children USE OneNeedle
+				}
+
+				DEF	FourNeedleHolder Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.36 
+					children USE OneNeedle
+				}
+
+				DEF	Min Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 .6 
+					children [
+
+						DEF	MinNeedle Transform {
+							translation	0 11 0
+							rotation 0 0 0 0
+							children [
+								Shape {
+									appearance Appearance {
+										material Material {
+											diffuseColor 0 0 0
+											ambientIntensity 1
+										}
+									}
+									geometry Box	{
+										size .6 6.5 .1
+									}
+								}
+							]
+						}
+					]
+				}
+
+				DEF	Max Transform {
+					translation 0 -10 -.1
+					rotation 0 0 1 -.6 
+					children USE MinNeedle
+				}
+
+			]
+		}
+
+		DEF Worker5 Script {
+			inputOnly		SFRotation rotationIn
+			inputOnly		SFVec3f	transIn
+			inputOnly		SFFloat	voltageIn
+			outputOnly  SFVec3f tester
+			outputOnly	SFRotation rotationOut
+			outputOnly	SFFloat	voltageOut
+			outputOnly	SFVec3f	offsetOut
+			url [ "ecmascript:
+			function transIn(value) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				if (value[0]<6 && value[0]>-6) {
+					rotationOut[3]=-value[0]/10;
+					voltageOut = -25/6*rotationOut[3]+5/2;
+				}
+				else if (value[0]>6) {
+					rotationOut[3]=-3/5;
+					voltageOut=5;
+				}
+				else if (value[0]<-6) {
+					rotationOut[3]=3/5;
+					voltageOut=0;
+				}
+
+
+				/*rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+
+				//Browser.println('values: ' + value[0] + ' ' + value[1] + ' ' + value[2]);
+
+				rotationOut[3] = -Math.atan(value[0]/value[1]);
+				
+				if (rotationOut[3]>0.6) {
+					rotationOut[3]=0.6
+					voltageOut=0;
+				}
+				else if (rotationOut[3]<-0.6) {
+					rotationOut[3]=-0.6
+					voltageOut=5;
+				}
+				else {
+				voltageOut=rotationOut[3]*-5.0/1.2 + 2.5; 
+				}
+				
+				//voltageOut=0;*/
+			}
+			function voltageIn(value) {
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				rotationOut[3]=-6*(value-5/2)/25;
+				offsetOut[1]=0;
+				offsetOut[2]=0;
+				offsetOut[0]=rotationOut[3]*-10;
+
+				/*
+				rotationOut[0]=0;
+				rotationOut[1]=0;
+				rotationOut[2]=1;
+				rotationOut[3]=-value*1.2/5.0 + 0.6;
+				offsetOut[1]=0;
+				offsetOut[2]=0;
+				offsetOut[0]=rotationOut[3];
+				*/
+			}
+			" ]
+		}
+	]
+}
+
+		]
+
+	ROUTE RotationPS.translation_changed TO	Worker5.transIn
+	ROUTE Worker5.rotationOut TO	NeedleHolder.rotation
+	ROUTE Worker5.offsetOut	TO	RotationPS.offset
+}
+
+		Group {
+			children [
+
+				Transform {
+					rotation 0 1 0 1.5707963267949
+					children [
+						DEF	ElectronHolder Transform {
+							translation	0 0 -350
+						}
+						Transform {
+            				translation 0 285 0
+							rotation 0 0 1 1.5707963267949
+            				children [
+								Shape {
+									appearance Appearance {
+										material DEF LightPencilMaterial Material {
+											diffuseColor 1 1 1
+											transparency 0.6
+										}
+									}
+									geometry DEF LightPencilGeo CylinderFrustum {
+										solid FALSE
+										radius 120
+										doTilt TRUE
+										tiltAngle -.7
+										endCap TRUE
+										planeDistance 340
+										extraLength 200
+										resolution 64
+									}
+								}
+							]
+        				}
+
+					]
+				}
+				
+				Transform {
+					translation	0 122 0
+					rotation 0 0 1 -0.870796326
+					children [				
+				DEF intensityDraggerSwitch Switch {
+					whichChoice 0
+					choice
+						Transform {
+							translation	 0 0 0
+							#translation	 0 122 0
+							#rotation 1 0 0 0.870796326
+							rotation 0 1 0 3.14159
+							children [
+								DEF IntensityDragger CylinderXDragger {
+									rotation 0 0 1 1.570796
+									minPosition 100
+									maxPosition 290
+									minValue 0
+									maxValue 100
+									value 50
+									positionAsValue FALSE
+									enabled TRUE
+									cylScale 20 20 20
+								}
+							]
+						}
+					}
+				]
+			}
+
+				DEF workFunctionDraggerSwitch Switch {
+					whichChoice 0
+					choice
+				Transform {
+					translation	-350 -175 175
+					rotation 0 1 0 3.14159
+					children [
+						DEF	WorkFunctionDragger CylinderXDragger {
+							rotation 0 0 1 1.570796
+							minPosition 0
+							maxPosition 350
+							minValue 2
+							maxValue 6
+							value 2.3
+							positionAsValue FALSE
+							enabled TRUE
+							cylScale 30 30 30
+						}
+					]
+				}
+			}
+				Transform {
+					translation	363 0 0
+					rotation 0 0 1 1.5707963267949
+					children [
+						DEF PositivePlate Shape	{
+							appearance Appearance {
+								material Material	{
+									diffuseColor .6 .6 .6
+									specularColor .9 .9 .9
+									shininess .1
+								}
+							}
+							geometry DEF Plate Box { size 350 10 350 }#Cylinder { radius 200 height 4 }
+						}
+					]
+				}
+				Transform {
+					translation	-350 0 0 
+					rotation 0 0 1 1.5707963267949
+					children [
+						DEF NegativePlate Shape	{
+							appearance Appearance {
+								material DEF PlateMaterial Material	{
+									diffuseColor .6 .6 .6
+									specularColor .9 .9 .9
+									shininess .1
+								}
+							}
+							geometry USE Plate
+						}
+					]
+				}
+				Transform {
+					translation	0 25 0
+					rotation 0 0 0 0
+					children [
+						Shape {
+							appearance Appearance {
+								material Material {
+									emissiveColor 0 0.7 0.7
+								}
+							}
+							geometry IndexedLineSet {
+								coord Coordinate {
+									point [ -350 -200 0,
+										-350 -250 0,
+										363 -250 0,
+										363 -200 0]
+								}
+								coordIndex [ 0, 1, 2, 3]
+							}
+						}
+
+					]
+				}
+			]
+		}		
+
+		]
+	}
+
+
+				DEF wavelengthWidgetSwitch Switch {
+				whichChoice 0
+				choice Transform {
+					#translation 220 -30 0
+					#rotation 1 0 0 1.5707963267949
+					#rotation 1 0 0 1.570796
+					#scale 75 75 75
+					#scale 70 70 70
+					children [
+						DEF WavelengthWidget WheelWidget	{
+							#translation 250 -450 0
+							scale 80 80 80
+							minValue 200
+							maxValue 700
+							value 400
+							maxRotations 3
+						}
+					]
+				}
+			}
+]#end navPanel Children and navPanel
+}

@@ -1,0 +1,125 @@
+<html>
+<!------              WebTOP: The Optics Project on the Web                ------>
+<!------  (C) 1994-2004 Mississippi State University     ------>
+<HEAD>
+<TITLE>WebTOP-Scattering Module Directions</TITLE>
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+ <meta name="description" content="WebTOP is a 3D interactive computer graphics system that can be used to help teach or learn  optics">
+ <meta name="keywords" content="optics,WebTOP,TOP,nslit,n-slit,two-slit,2-slit,single,convergent,divergent,convex,concave,diffraction, interference, michelson, fabry, perot,lens,lenses,mirror,total,refraction,reflection,incidence,transmission,eye,fraunhofer,fresnel,interferometer,reflection,refraction,laser,brewster,critical,angle,transmission,axis,polarization,polarizer,polarized,unpolarized,wave,simulation,waves,waveplate,waveguide,fiber optics,wavefront,rayleigh,scattering,vrml,3D,three,computer aided instruction,Teaching,learning,teachers,faculty,professors,school,college,university,Education,Utilities,Distance, Education,scripts,sessions,students,online">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/webtopmain.css">
+<link rel="stylesheet" type="text/css" href="../webtopstyles/modulemenu2.css">
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+</head>
+<body bgcolor="#FFFFFF">
+<center><table width="95%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td class=tablemain>
+  <h1 align="center"><font color="#800000"><a name="top"></a>Scattering	: Directions<br>
+  </font></h1>
+  <p>Under normal operation, your WebTOP window should look like the following:</p>
+  <p align="center"><img border="0" src="images/controls1.jpg" width="485" height="481"></p>
+  <p>The WebTOP window has four parts. The top portion is the active WebTOP scene. 
+  The second portion is the VRML Navigation controls.
+  The third portion, the console, contains a message line that provides help on the operation of the Widgets and keyboard entry boxes.
+  The fourth portion is the recording panel that allows you to record and replay WebTOP sessions. You may scroll down to read on, or 
+  select the appropriate link from the following items:</p>
+  <div align="center">
+    <table border="0" cellpadding="0" cellspacing="0" width="80%">
+      <tr>
+        <td align="center" class=tablemain><a href="#Module">How to Change  Parameters</a></td>
+        <td align="center" class=tablemain><a href="../dashboard/manipulate.html">How to Manipulate the Scene</a></td>
+        <td align="center" class=tablemain><a href="../dashboard/record.html">How to Record Sessions</A></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <p><a name="Module"><font color="#800000"><strong><big>How To Change
+  Parameters</big></strong></font></a></p>
+  <p>During normal operation of the module, you should see a figure similar to this:</p>
+  <p align="center"><IMG border="0" src="images/controls2.jpg" alt="Wiggets for the Scattering Module" width="485" height="365"></p>
+  <p>In this module you can change the properties of light incident on an
+  electrical dipole moment and observe the scattered light&nbsp; . The parameters that you can change 
+are the wavelength of the incident light, and the <font color="#0000FF"> magnitudes</font> of the x and y components of
+  its electric field
+  (<font color="#0000FF">E0x</font> and <font color="#0000FF">E0z</font>), and the
+  <FONT color="#0000FF">position</FONT> of the movable screen (<FONT
+  color="#0000FF">theta</FONT> and <FONT color="#0000FF">Phi.</FONT>) These parameters can 
+be changed by&nbsp; manipulating the <font color="#0000FF"> widgets</font> in the scene or by using the
+  <font color="#0000FF">WebTOP Console</font>.</p>
+  <p>
+This module includes five widgets:  two are cubes, one is a wheel, and the
+last two are slider widgets.</p>
+  <DIV align="center">
+  <TABLE border="1" cellpadding="0" cellspacing="0" width="50%">
+  <TR>
+  <TD width="33.3%" align="center" class="tablemain"><IMG border="0"
+  src="images/controls4.jpg" alt="Cube Widget" width="51" height="51"> <IMG border="0"
+  src="images/controls5.jpg" alt="Cube Widget" width="52" height="51"></TD>
+  <TD width="33.3%" align="center" class="tablemain"><IMG border="0"
+  src="images/wheel.jpg" width="61" height="41"></TD>
+  <TD width="33.3%" align="center" class="tablemain"><IMG border="0"
+  src="images/control6.jpg" alt="Slider Widget" width="56" height="81"></TD></TR>
+  <TR>
+  <TD width="33.3%" align="center" class="tablemain"><STRONG>Cube Widgets</STRONG></TD>
+  <TD width="33.3%" align="center" class="tablemain"><STRONG>Wheel Widget</STRONG></TD>
+  <TD width="33.3%" align="center" class="tablemain"><STRONG>Slider Widget</STRONG></TD></TR></TABLE>
+  </DIV>
+  <p>To change a parameter, you need to position your cursor over the proper
+  widget. Labels on the module figure, shown above, identify the function of
+  each of the widgets. Once you have placed the cursor over the widget, the cursor changes shape. If you click on the left mouse button, a message explaining the operation
+of the widget appears at the help portion of the WebTOP console.</p>
+  <p>Note that the wave becomes static when the widget is engaged. The animation is restored after you release the widget. Note also that
+  while changing a parameter with a widget, the corresponding value is updated in the corresponding
+  keyboard entry box.</p>
+  <p><strong>Changing a Parameter with the Cube Widget:<br>
+  </strong>This widget can be used to change the orientation of the movable
+  screen. The red cube changes theta and the blue cube changes phi. Just grab
+  the cube and drag it along the direction of increase/decrease of the angle.</p>
+  <p><strong>Changing a Parameter with the Wheel Widget:<br>
+  </strong>Once you select the wheel, drag and rotate the cursor to the left if you want to
+  decrease the wavelength or the right if you want to increase it. Note that the
+  color of the wave is not representative of the wavelength of the light used. You may need&nbsp; to repeat dragging in the same
+  direction until you obtain the desired wavelength.</p>
+  <p><strong>Changing a Parameter with the Slider Widget:<br>
+  </strong>The slider can be used to change E0x or E0z. Select the desired
+  slider and move it along the axis until you obtain the desired value.</p>
+  <p><strong>Changing Parameter With the WebTOP Console:<br>
+  </strong>The Controls and Parameters Panel provides two interfaces one for
+  polarized light and one for unpolarized light. You might switch between the
+  interface by clicking on the appropriate Tab. In either interface, you may change the parameters by typing the values in the &quot;Keyboard
+  Entry Boxes&quot; then pressing the &quot;Enter&quot; key. You may
+  hide all widgets and display them again by using the <font color="#0000FF">Hide
+  Widgets</font>/<font color="#0000FF">Show Widgets</font> button. The <font color="#0000FF">Stop</font>/<font color="#0000FF">Play</font>
+  button allows you stop and restart the simulation. <font color="#FF0000">It is
+  recommended that you Stop the simulation before exiting or moving to
+  another page</font>.</p>
+  <p>The following figures show different setting of the WebTOP Console:</p>
+  <div align="center">
+    <table border="0" cellpadding="0" cellspacing="0" width="50%">
+      <tr>
+        <td width="100%" class=tablemain><IMG border="0"
+        src="images/controls7.jpg" alt="WebTOP Scattering Module Console for Polarized light" width="642" height="144"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>WebTOP Console: Polarized light is
+          selected.&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>
+          <P align="center"><IMG border="0"
+        src="images/controls8.jpg" alt="WebTOP Scattering Module Console for UnPolarized light" width="640" height="138"></td>
+      </tr>
+      <tr>
+        <td width="100%" class=tablemain>WebTOP Console: Unpolarized light is
+          selected. </td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <p>&nbsp;</p>
+</td></tr></table></center>
+
+</BODY>
+</HTML>

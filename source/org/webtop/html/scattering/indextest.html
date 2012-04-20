@@ -1,0 +1,103 @@
+<html>
+<head>  
+  <title>Scattering Module</title>
+  <script> LANGUAGE="JavaScript"
+  <!--
+    wlValue = 0.0;
+    exValue = 0.0;
+    ezValue = 0.0;
+    thetaValue = 0.0;
+    phiValue = 0.0;
+    var theScript = "not a script yet";
+    
+		function apInit(){
+			document.ScatteringApplet.externInit(wlValue,exValue,ezValue,thetaValue,phiValue);
+		}
+	
+		function apPlay(){
+			document.ScatteringApplet.externPlay();
+		}
+	
+		function apPause(){
+			document.ScatteringApplet.externPause();
+		}
+	
+		function apReset(){
+			document.ScatteringApplet.externReset();
+		} 
+
+		function apScript(){
+		    return document.ScatteringApplet.externScript();
+		}
+		
+		function getValues(){
+			wlValue = document.wslform.wavelength.value;
+			exValue = document.wslform.E0x.value;
+			ezValue = document.wslform.E0z.value;
+			thetaValue = document.wslform.theta.value;
+			phiValue = document.wslform.Phi.value;
+		}
+		
+		function getState(){
+			return document.ScatteringApplet.externGetState();
+		}
+		
+		function loadScript(){
+		 document.ScatteringApplet.externLoadScript(document.wslform.thescript.value);
+		}
+
+		function openScript(){
+		 document.ScatteringApplet.externOpenScript();
+		}
+  -->
+  </script>
+<script language="JavaScript" src="../webtopscripts/menucode.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulemenu.js"></script>
+<script language="JavaScript" src="../webtopscripts/modulelist.js"></script>
+<script language="JavaScript" src="../webtopscripts/module.js"></script>
+</head>
+<body bgcolor="#000000" text="#ffffff">
+<!---
+<center>
+  <embed src="scattering.wrl" width="740" height="510"></embed><br>
+<APPLET align=top code=webtop.scattering.Scattering.class
+  codebase="../jars/" height=165 name=ScatteringApplet
+  style="HEIGHT: 165px; LEFT: 0px; TOP: 0px; WIDTH: 640px"
+  width=640 archive="wsl.jar, component.jar, scatteringtest.jar"
+  mayscript alt="Scattering Module">
+	</APPLET>
+</center>
+-->
+<div class=module id=module>
+<script language="JavaScript">
+document.write(moduleHTML(720,340,990,510,1230,760,640,165,'scattering.wrl','webtop.scattering.Scattering.class','ScatteringApplet','scatteringtest.jar',getScriptName()));
+</script>
+</div>
+
+<!--
+		Form with various webTop controls
+-->
+<FORM NAME="wslform">
+
+	    Wavelength:<INPUT TYPE="TEXT" NAME=wavelength>
+	<BR>E0x:<INPUT TYPE="TEXT" NAME=E0x>
+	<BR>E0z:<INPUT TYPE="TEXT" NAME=E0z>
+	<BR>Theta:<INPUT TYPE="TEXT" NAME=theta>
+	<BR>Phi:<INPUT TYPE="TEXT" NAME=Phi>
+	<BR><INPUT TYPE="BUTTON" VALUE="SetState" onClick="getValues();apInit()">
+	<BR><BR>
+	
+<INPUT TYPE="BUTTON" VALUE="Play" onClick="apPlay()">
+<INPUT TYPE="BUTTON" VALUE="Pause" onClick="apPause()">
+<INPUT TYPE="BUTTON" VALUE="Reset Module" onClick="apReset()">
+<INPUT TYPE="BUTTON" VALUE="Display Script" onClick="document.wslform.thescript.value=apScript()">
+<INPUT TYPE="BUTTON" VALUE="Get State" onClick="document.wslform.thescript.value=getState()">
+<INPUT TYPE="BUTTON" VALUE="Load Script" onclick="loadScript()">
+<INPUT TYPE="BUTTON" VALUE="Open Script" onclick="openScript()">
+<BR>
+<textarea NAME="thescript" ROWS=20 COLS=150></textarea>
+</FORM>
+
+</body>
+</html>
+

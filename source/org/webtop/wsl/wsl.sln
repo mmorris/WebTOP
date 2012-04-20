@@ -1,0 +1,16 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "WSL", "WSL.vjp", "{85148771-3F47-49F8-A3CB-A60D6E2374CD}"
+EndProject
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "TrustLib", "client\TrustLib.vjp", "{E26EF5A1-EEAF-42C9-876B-F47EAB24CA57}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {85148771-3F47-49F8-A3CB-A60D6E2374CD}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {85148771-3F47-49F8-A3CB-A60D6E2374CD}
+		1 = {E26EF5A1-EEAF-42C9-876B-F47EAB24CA57}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

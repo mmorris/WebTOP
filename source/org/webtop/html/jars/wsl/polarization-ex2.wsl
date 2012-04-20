@@ -1,0 +1,25 @@
+<wsl>
+  <polarization history1="on" history2="on" animation="play" widgets="hidden" fieldMode="composite">
+    <source sourceType="polarized" wavelength="700.0" amplitudex="0.865" amplitudey="0.0" phaseDifference="0.0" />
+    <filters />
+    <view value="-0.19530833 -0.7540441 0.0 4.2737546 1.3486795 -15.924015" />
+  </polarization>
+  <script>
+    <actionPerformed param="wavelength" value="700.0" timeStamp="11437" />
+    <actionPerformed param="amplitudex" value="0.865" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.5" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="0.0" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="27199" />
+    <actionPerformed param="amplitudex" value="0.5" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.5" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="0.0" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="24055" />
+    <actionPerformed param="amplitudex" value="0.5" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.867" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="0.0" timeStamp="0" />
+    <actionPerformed param="wavelength" value="700.0" timeStamp="29071" />
+    <actionPerformed param="amplitudex" value="0.0" timeStamp="0" />
+    <actionPerformed param="amplitudey" value="0.866" timeStamp="0" />
+    <actionPerformed param="phaseDifference" value="0.0" timeStamp="0" />
+  </script>
+</wsl>

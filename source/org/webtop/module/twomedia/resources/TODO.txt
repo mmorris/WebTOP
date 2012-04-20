@@ -1,0 +1,30 @@
+Figure out how to print out the viewpoint from the xj3d console window.  Look at www.web3d.org.  
+
+In Engine.java, need to get rid of all of the direct accesses to the sai.  
+Same for LinerSource.java, Pool.java, and WaveSource.java
+
+WaveSource.java:
+There is no direct access to the x3d file.  No changes necessary. 
+
+Engine.java:
+1. Hide Widgets and show widgets works properly, but the show markers choice isn't working. Will save for last
+2.
+
+
+Pool.java:
+
+LinearSource.java:
+
+ 
+
+Need to convert one class at a time. Will have to remove all of the buttons and make them either toggle or 
+state buttons.  The JLabels should be fine, just move them over.  Be sure and get all of the event handling stuff
+from the files.  Create JLabel that holds both critical angle and the number value. 
+
+
+
+ADD THE REST OF THE CONTROL PANEL BEFORE THE RESET BUTTON.  THE RESET BUTTON IS WORKING PROPERLY.  ADD THE OTHER
+PARTS OF THE CONTROL PANEL NOW. (BE SURE TO LEAVE IN THE SOURCE PANEL DECLARATION OR THE POOL WILL NOT LOAD).
+
+MOVE THE OTHER BUTTONS FROM THE CONTROL PANEL OVER NEXT. MOVE THE LISTENERS ALONG WITH THEM.  MAKE SURE THAT THE
+ENGINE CALLS ARE TO THE PROPER ENGINE.

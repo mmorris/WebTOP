@@ -1,0 +1,665 @@
+#X3D V3.0 utf8
+
+PROFILE Immersive
+
+### Imports ###
+
+EXTERNPROTO Red2ConeXDragger [
+	inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	initializeOnly SFFloat position
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#Red2ConeXDragger"
+
+EXTERNPROTO BlueConeXDragger [ 
+    inputOutput SFVec3f coneScale
+	inputOutput SFVec3f translation 
+	inputOutput SFRotation rotation 
+
+	initializeOnly SFFloat position 
+	inputOnly SFFloat set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat minPosition 
+	inputOnly SFFloat set_minPosition
+	initializeOnly SFFloat maxPosition 
+	inputOnly SFFloat set_maxPosition
+	initializeOnly SFFloat value 
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+	initializeOnly SFFloat minValue 
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue 
+	inputOnly SFFloat set_maxValue
+	initializeOnly SFBool positionAsValue 
+
+	outputOnly SFBool isOver_out
+	outputOnly SFBool isActive_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized 
+]
+"../../x3dlib/Widgets.x3dv#BlueConeXDragger"
+
+EXTERNPROTO GreyNYCone [ 
+    inputOutput SFVec3f coneScale 
+]
+"../../x3dlib/Widgets.x3dv#GreyNYCone"
+
+
+EXTERNPROTO ScreenBackdrop [
+    #Positioning
+	inputOnly	SFFloat	set_position
+	outputOnly SFFloat position_changed
+	initializeOnly SFFloat position
+	#Sizing/appearance
+	initializeOnly SFVec3f size
+	initializeOnly SFColor diffuseColor
+	initializeOnly SFFloat transparency
+	inputOnly	SFFloat	set_transparency
+]
+"../../x3dlib/Screens.x3dv#RectangularScreenBackdrop"
+
+
+EXTERNPROTO WheelWidget [
+	inputOutput SFVec3f translation
+	inputOutput SFRotation rotation
+	#inputOutput SFRotation rotation
+	inputOutput SFVec3f scale
+	initializeOnly SFFloat value
+	inputOnly SFFloat set_value
+	outputOnly SFFloat value_changed
+
+	initializeOnly SFFloat minValue
+	inputOnly SFFloat set_minValue
+	initializeOnly SFFloat maxValue
+	inputOnly SFFloat set_maxValue
+
+	initializeOnly SFFloat maxRotations
+	inputOnly SFFloat set_maxRotations
+
+	initializeOnly SFBool angleAsValue
+
+	outputOnly SFBool isActive_out
+	outputOnly SFBool isOver_out
+	inputOnly SFBool set_isActive
+
+	inputOutput SFBool enabled
+
+	initializeOnly SFString debugName
+	outputOnly SFBool initialized
+]
+"../../x3dlib/Widgets.x3dv#WheelWidget"
+
+
+
+#### NSlitDragger Definition ####
+PROTO NSlitDragger [
+	#Oddly enough, this file doesn't use the following three values.
+	#classes FraunNSlit and NSlitDragger do, though, to talk to each other.
+	inputOutput SFInt32 n 3
+	inputOutput SFFloat width 40
+	inputOutput SFFloat distance 220
+
+	inputOutput SFInt32 dd_on 0
+
+    inputOutput SFBool wd_enabled TRUE
+    inputOutput SFBool dd_enabled TRUE
+
+	inputOnly SFFloat set_max_wd_position
+	initializeOnly   SFFloat max_wd_position 499
+
+	inputOnly SFFloat set_min_wd_position
+	initializeOnly   SFFloat min_wd_position 0
+
+	inputOnly SFFloat set_max_dd_position
+	initializeOnly   SFFloat max_dd_position 499
+
+	inputOnly SFFloat set_min_dd_position
+	initializeOnly   SFFloat min_dd_position 0
+
+	initializeOnly    SFFloat wd_position 240
+	inputOnly  SFFloat set_wd_position
+	outputOnly SFFloat wd_position_changed
+
+	initializeOnly    SFFloat dd_position 220
+	inputOnly  SFFloat set_dd_position
+	outputOnly SFFloat dd_position_changed
+
+    inputOnly SFBool wd_set_isActive
+	outputOnly SFBool  wd_isOver_changed
+	outputOnly SFBool  wd_isActive_changed
+
+    inputOnly SFBool dd_set_isActive
+	outputOnly SFBool  dd_isOver_changed
+	outputOnly SFBool  dd_isActive_changed 
+
+    #Paul's additions
+    #Widget for the width dragger
+#    inputOutput    SFVec3f wd_coneScale 1 1 1     #alias for 'coneScale' initializeOnly of 'wd'
+#    inputOutput    SFVec3f dd_coneScale 1 1 1     #alias for 'coneScale' initializeOnly of 'dd'
+#    inputOutput    SFNode  wd DEF wd Red2ConeXDragger {
+#    }
+#    #Widget for the distance draggers
+#    initializeOnly    SFNode  dd BlueConeXDragger {} 
+]
+{
+
+	Group {
+		children [
+			########################################################################
+			# Width Draggers
+#Old way
+#			#This is the one on the right
+
+            DEF wd Red2ConeXDragger {
+                debugName "WidthDragger"
+                enabled IS wd_enabled
+                coneScale 25 25 25
+				position IS wd_position
+				set_position IS set_wd_position
+				position_changed IS wd_position_changed
+				isOver_out IS wd_isOver_changed
+                set_isActive IS wd_set_isActive
+				isActive_out IS wd_isActive_changed
+			}
+            
+#            #Cheat cheat cheat!  The one on the left is actually the same dragger.
+			Transform {
+				rotation 0 1 0 3.14159265
+				children USE wd
+			}
+#end old way
+            
+
+			########################################################################
+			# Distance Draggers
+			DEF dd_SWITCH Switch {
+				whichChoice IS dd_on
+				choice [
+					Group {
+						children [
+							#This is the one on the right.
+							DEF dd BlueConeXDragger {
+							    debugName "DistDragger"
+								enabled IS wd_enabled
+                                coneScale 25 25 25
+								position IS	dd_position
+								set_position IS set_dd_position
+								position_changed IS dd_position_changed
+								isOver_out IS dd_isOver_changed
+                                set_isActive IS dd_set_isActive
+								isActive_out IS dd_isActive_changed
+							}
+
+							#Cheating again
+							Transform {
+								rotation 0 1 0 3.14159265
+								children USE dd
+							}
+						]
+					}
+				]
+			}
+
+			DEF CONTROL_MIN_MAX Script {
+				initializeOnly    SFFloat minWidth IS min_wd_position
+				inputOnly  SFFloat set_minWidth IS set_min_wd_position
+				outputOnly SFFloat minWidth_changed
+
+				initializeOnly    SFFloat maxWidth IS max_wd_position
+				inputOnly  SFFloat set_maxWidth IS set_max_wd_position
+				outputOnly SFFloat maxWidth_changed
+
+				initializeOnly    SFFloat minDistance IS min_dd_position
+				inputOnly  SFFloat set_minDistance IS set_min_dd_position
+				outputOnly SFFloat minDistance_changed
+
+				initializeOnly    SFFloat maxDistance IS max_dd_position
+				inputOnly  SFFloat set_maxDistance IS set_max_dd_position
+				outputOnly SFFloat maxDistance_changed
+
+				url "ecmascript:
+				function initialize() {
+					minWidth_changed = minWidth;
+					maxWidth_changed = maxWidth;
+					minDistance_changed = minDistance;
+					maxDistance_changed = maxDistance;
+				}
+
+				function set_minWidth(value, time) {
+					minWidth_changed = value;
+				}
+
+				function set_maxWidth(value, time) {
+					maxWidth_changed = value;
+				}
+
+				function set_minDistance(value, time) {
+					minDistance_changed = value;
+				}
+
+				function set_maxDistance(value, time) {
+					maxDistance_changed = value;
+				}"
+			}
+		]
+	}
+
+	############################################################################
+	# The minimums and maximums for the widgets
+	############################################################################
+	ROUTE CONTROL_MIN_MAX.minWidth_changed TO wd.set_minPosition
+	ROUTE CONTROL_MIN_MAX.maxWidth_changed TO wd.set_maxPosition
+
+	ROUTE CONTROL_MIN_MAX.minDistance_changed TO dd.set_minPosition
+	ROUTE CONTROL_MIN_MAX.maxDistance_changed TO dd.set_maxPosition
+}
+
+
+
+
+
+
+###############################################
+###############  MODULE MODELS  ###############
+###############################################
+NavigationInfo {
+	speed 100
+}
+DEF MainVP Viewpoint {
+    position 0 300 2000
+    orientation 1 0 0 2.3561944901923449288469825374596
+}
+
+
+######################
+#### Bounding Box ####
+######################
+Transform {
+    scale 1000 300 1000
+    children
+    Inline {
+        bboxCenter 0 0 0
+        bboxSize 1000 300 1000
+        url "../../x3dlib/BoundingBox.x3dv"
+    }
+}
+
+#######################
+#### Incoming Wave ####
+#######################
+Transform {
+    translation 0 0 750
+    rotation 0 1 0 1.5707963267949
+    children
+    Inline {
+        url "../../x3dlib/Wave.x3dv"
+    }
+}
+
+
+#########################
+#### Aperture Screen ####
+#########################
+Transform {
+	translation 0 0 500
+	children
+		Shape {
+			appearance Appearance {
+				material Material {
+					diffuseColor 0.5 0.6 0.7
+					transparency 0.6
+				}
+			}
+			geometry DEF ApertureScreen IndexedFaceSet {
+				coord DEF ApertureCoordinateNode Coordinate {
+					point []
+				}
+				# normal DEF slitNormalNode Normal { vector [] }
+				#solid       FALSE
+				#normalPerVertex FALSE
+				coordIndex  []
+				normalIndex []
+			}
+		}
+}
+
+################################
+#### Switch to hide widgets ####
+################################
+DEF WidgetsSwitch Switch {
+    whichChoice 0
+    choice 
+        Group {
+            children [
+                ####################################
+                #### Observation screen dragger ####
+                ####################################
+                DEF ZDistWidget Red2ConeXDragger {
+                    debugName "ZDistWidget"
+                    coneScale 25 25 25
+                    rotation 0 1 0 1.5707963267949
+                    enabled TRUE
+                    translation 0 150 0
+                    minPosition 0
+                    maxPosition 500
+                    position 50
+                }
+                ##########################
+                #### Wavelength Wheel ####
+                ##########################
+				Transform {
+					translation 0 -75 725
+					rotation 1 0 0 1.570796326
+					children 
+						DEF WavelengthWidget WheelWidget {
+							scale 75 75 75
+						}
+				}
+
+                ########################
+                #### N-Slit Dragger ####
+                ########################
+		        #DEF nslitDragger NSlitDragger {}
+				Transform {
+					translation 0 0 500
+					children [
+						#Width dragger and clone
+						DEF SlitWidthWidget Red2ConeXDragger {
+							debugName "SlitWidthWidget"
+							enabled TRUE
+							coneScale 25 25 25
+							minPosition 0
+							maxPosition 499
+							position 240
+							positionAsValue FALSE
+							minValue 0
+							maxValue 1
+						}
+						#Cheat cheat cheat!  The one on the left is actually the same dragger.
+						Transform {
+							rotation 0 1 0 3.14159265
+							children USE SlitWidthWidget
+						}
+
+						#Distance dragger switch for hiding distance draggers when N==1
+						DEF DistWidgetSwitch Switch {
+							whichChoice 0
+							choice [
+								Group {
+									children [
+										#This is the one on the right.
+										DEF SlitDistWidget BlueConeXDragger {
+											debugName "DistDragger"
+											enabled TRUE
+											coneScale 25 25 25
+											minPosition 0
+											maxPosition 499
+											position 220
+											positionAsValue FALSE
+											minValue 0
+											maxValue 1
+										}
+
+										#Cheating again
+										Transform {
+											rotation 0 1 0 3.14159265
+											children USE SlitDistWidget
+										}
+									]
+								}
+							]
+						}				
+					]
+				}#End NSlitDragger transform
+            ]
+        }
+}
+
+
+########################################################
+#### OBSEREVATION SCREEN MOVER:                     ####
+#### This transform includes the observation screen ####
+#### surface, screen backdrop, pole, line plot,     ####
+#### and text. All of these elements move together, ####
+#### so they need to be in the same transform       ####
+########################################################
+DEF OBSERVATION_SCREEN_MOVER Transform {
+    translation 0 0 0
+    children [
+
+        ###################
+        #### Line plot ####
+        ###################
+        Transform {
+	        translation 0 150 0
+	        children [
+		        Shape {
+			        appearance Appearance {
+				        material DEF graphMaterial Material {
+					        #emissiveColor       0.6 0 0
+					        emissiveColor       0.8 0.8 0.8
+				        }
+			        }
+			        geometry DEF LinePlot IndexedLineSet {
+				        coord DEF plotCoordinateNode Coordinate {
+					        point []
+				        }
+				        coordIndex  []
+			        }
+		        }
+	        ]
+        }
+
+
+        ##############
+        #### Text ####
+        ##############
+        Transform {
+	        translation -730 200 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry Text {
+				        string "-10 mm"
+				        fontStyle FontStyle {
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+
+
+        Transform {
+	        translation -570 680 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry DEF NSQUARE_TEXT Text {
+				        string "9"
+				        fontStyle FontStyle {
+					        justify "END"
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+
+        Transform {
+	        translation 520 200 0
+	        children [
+		        Shape {
+			        # appearance Appearance { material Material { diffuseColor 1 1 0 } }
+			        appearance Appearance { material Material { diffuseColor 0.8 0.8 0.8 emissiveColor 0.8 0.8 0.8 } }
+			        geometry Text {
+				        string "10 mm"
+				        fontStyle FontStyle {
+					        family "SANS"
+					        size 60
+				        }
+			        }
+		        }
+	        ]
+        }
+        ##################
+        #### End Text ####
+        ##################
+
+
+        ##############
+        #### Pole ####
+        ##############
+        Transform {
+	        translation -520 400 0
+	        children [
+		        Shape {
+			        appearance Appearance { material Material { diffuseColor 0.4 0.4 0.4 } }
+			        geometry Cylinder {
+				        height 500
+				        radius 6
+			        }
+		        }
+		        Transform {
+			        translation 0 410 0
+			        rotation 0 0 1 3.14159
+			        children GreyNYCone { coneScale 25 25 25 }
+		        }
+
+		        Transform {
+			        translation 0 150 0
+			        rotation 0 0 1 1.5707963
+			        children [
+				        Shape {
+					        appearance Appearance { material Material { diffuseColor 0.4 0.4 0.4 } }
+					        geometry Cylinder {
+						        height 50
+						        radius 6
+					        }
+				        }
+			        ]
+		        }
+	        ]
+        }
+
+        #####################################
+        #### Observation screen backdrop ####
+        #####################################
+        DEF screenBackdrop ScreenBackdrop {
+            position 0
+            size 1000 300 10
+        }
+
+        ####################################
+        #### Observation screen surface ####
+        ####################################
+        DEF IFSMover Transform {
+            translation 0 0 0  #Make first quadrant the bottom-right
+			rotation 1 0 0 1.5707963267949 
+            children [
+                DEF ScreenSensor TouchSensor {}
+                DEF ScreenSwitch Switch {
+                    whichChoice 0
+                    choice [
+                        DEF HiResGroup Group {
+                            children [
+                                ### Hi-res base quad ###
+                                DEF IFSHighQuad Shape {
+                                    geometry DEF IFSHigh IndexedFaceSet {
+                                        color Color {}
+                                        coord Coordinate {}
+										coordIndex []
+                                        solid FALSE
+                                    }
+                                }
+                                ### Hi-res clone quads###
+                                Transform {
+                                    rotation 0 0 1 3.14159265358979
+                                    children USE IFSHighQuad
+                                }
+								Transform {
+                                    rotation 1 0 0 3.14159265358979
+                                    children USE IFSHighQuad
+                                }
+								Transform {
+                                    rotation 0 1 0 3.14159265358979
+                                    children USE IFSHighQuad
+                                }
+                            ]
+                        }#end hi-res group
+                        DEF LowResGroup Group {
+                            children [
+                                ### Low-res top half ###
+                                DEF IFSLowQuad Shape {
+                                    geometry DEF IFSLow IndexedFaceSet {
+                                        color Color {}
+                                        coord Coordinate {}
+										coordIndex []
+                                        solid FALSE
+                                    }
+                                }
+                                ### Low-res bottom half ###
+                                Transform {
+                                    rotation 0 1 0 3.14159265358979
+                                    children USE IFSLowQuad
+                                }
+								Transform {
+                                    rotation 1 0 0 3.14159265358979
+                                    children USE IFSLowQuad
+                                }
+								Transform {
+                                    rotation 0 1 0 3.14159265358979
+                                    children USE IFSLowQuad
+                                }
+                            ]
+                        }#end low-res group
+                    ]
+                }#end IFSSwitch
+            ]
+        }
+
+    ]
+}#End OBSERVATION_SCREEN_MOVER
+
+DEF ScreenDragWorker Script {
+    inputOnly SFFloat pos_in
+    outputOnly SFVec3f trans_out
+    url "ecmascript:
+    function pos_in(value, time) {
+        trans_out[2] = -value;
+    }
+    "
+}
+
+
+#### Screen ROUTEs ####
+ROUTE ZDistWidget.position_changed TO ScreenDragWorker.pos_in
+ROUTE ScreenDragWorker.trans_out TO OBSERVATION_SCREEN_MOVER.translation

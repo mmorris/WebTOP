@@ -1,0 +1,182 @@
+#
+# An unexpected error has been detected by HotSpot Virtual Machine:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x0e3cac51, pid=308, tid=1852
+#
+# Java VM: Java HotSpot(TM) Client VM (1.5.0_03-b07 mixed mode)
+# Problematic frame:
+# C  0x0e3cac51
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0aea5198):  JavaThread "AWT-EventQueue-0" [_thread_in_native, id=1852]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0x0af2a000
+
+Registers:
+EAX=0x0f658140, EBX=0x0d8fc040, ECX=0x00000400, EDX=0x00000051
+ESP=0x0daff670, EBP=0x3ed46858, ESI=0x0af2a000, EDI=0x00000c00
+EIP=0x0e3cac51, EFLAGS=0x00010202
+
+Top of Stack: (sp=0x0daff670)
+0x0daff670:   00000055 0d8fc040 000003fc 00000f37
+0x0daff680:   0d0a5765 0d8fc040 0f6580dc 000003fc
+0x0daff690:   00000055 0aea5198 0d8fc040 0daff6d4
+0x0daff6a0:   0729ba60 00000055 0e3cac00 0cefed87
+0x0daff6b0:   00000006 00000000 00000000 00001388
+0x0daff6c0:   0729ba60 10003a55 00000000 00000000
+0x0daff6d0:   00001388 0daff70c 00a3826f 0aea5254
+0x0daff6e0:   0daff728 00000000 00000000 00001388 
+
+Instructions: (pc=0x0e3cac51)
+0x0e3cac41:   08 8b 35 f4 57 90 0d 8b 76 54 8d 3c 49 8d 34 be
+0x0e3cac51:   8b 3e 8b 6e 04 89 78 0c 89 68 10 8b 7e 08 89 78 
+
+
+Stack: [0x0dac0000,0x0db00000),  sp=0x0daff670,  free space=253k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  0x0e3cac51
+
+[error occurred during error reporting, step 120, id 0xc0000005]
+
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  net.java.games.jogl.impl.windows.WindowsGLImpl.glDrawArrays(III)V+0
+j  org.j3d.aviatrix3d.PointArray.render(Lnet/java/games/jogl/GL;Lnet/java/games/jogl/GLU;)V+24
+J  org.j3d.aviatrix3d.surface.BaseRenderingProcessor.display(Lnet/java/games/jogl/GLDrawable;)V
+v  ~RuntimeStub::alignment_frame_return Runtime1 stub
+j  net.java.games.jogl.impl.GLDrawableHelper.display(Lnet/java/games/jogl/GLDrawable;)V+29
+j  net.java.games.jogl.GLCanvas$DisplayAction.run()V+11
+j  net.java.games.jogl.impl.GLContext.invokeGL(Ljava/lang/Runnable;ZLjava/lang/Runnable;)V+419
+j  net.java.games.jogl.impl.windows.WindowsOnscreenGLContext.invokeGL(Ljava/lang/Runnable;ZLjava/lang/Runnable;)V+45
+j  net.java.games.jogl.GLCanvas$DisplayOnEventDispatchThreadAction.run()V+22
+J  java.awt.event.InvocationEvent.dispatch()V
+J  java.awt.EventQueue.dispatchEvent(Ljava/awt/AWTEvent;)V
+J  java.awt.EventDispatchThread.pumpOneEventForHierarchy(ILjava/awt/Component;)Z
+j  java.awt.EventDispatchThread.pumpEventsForHierarchy(ILjava/awt/Conditional;Ljava/awt/Component;)V+26
+j  java.awt.EventDispatchThread.pumpEvents(ILjava/awt/Conditional;)V+4
+j  java.awt.EventDispatchThread.pumpEvents(Ljava/awt/Conditional;)V+3
+j  java.awt.EventDispatchThread.run()V+9
+v  ~StubRoutines::call_stub
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x0b7c1378 JavaThread "TimerQueue" daemon [_thread_blocked, id=1872]
+  0x00739588 JavaThread "DestroyJavaVM" [_thread_blocked, id=1752]
+=>0x0aea5198 JavaThread "AWT-EventQueue-0" [_thread_in_native, id=1852]
+  0x0b452578 JavaThread "AWT-Shutdown" [_thread_blocked, id=1896]
+  0x0b492240 JavaThread "AV3D Runtime" [_thread_blocked, id=1888]
+  0x0af167d0 JavaThread "Thread-17" [_thread_in_native, id=1952]
+  0x0aed2b38 JavaThread "Thread-15" [_thread_blocked, id=1664]
+  0x0b4505f0 JavaThread "Asynchronous World Loader" [_thread_blocked, id=1960]
+  0x0aea1d30 JavaThread "Asynchronous World Loader" [_thread_blocked, id=1908]
+  0x0b47f090 JavaThread "Asynchronous World Loader" [_thread_blocked, id=1884]
+  0x0b42e558 JavaThread "Asynchronous World Loader" [_thread_blocked, id=1608]
+  0x0adc39b8 JavaThread "Asynchronous World Loader" [_thread_blocked, id=1936]
+  0x0b485600 JavaThread "Thread-13" [_thread_blocked, id=1632]
+  0x0b48e008 JavaThread "Thread-12" [_thread_blocked, id=1940]
+  0x0b44a728 JavaThread "Thread-11" [_thread_blocked, id=1796]
+  0x0b493198 JavaThread "Thread-10" [_thread_blocked, id=1780]
+  0x0b487b58 JavaThread "Thread-9" [_thread_blocked, id=288]
+  0x0b48e8c0 JavaThread "Thread-8" [_thread_blocked, id=1932]
+  0x0b42c288 JavaThread "Thread-7" [_thread_blocked, id=1684]
+  0x0b4224d8 JavaThread "Thread-6" [_thread_blocked, id=1756]
+  0x0b2ce9c0 JavaThread "Thread-5" [_thread_blocked, id=1556]
+  0x0b29d7b0 JavaThread "Thread-4" [_thread_blocked, id=1928]
+  0x0b29db38 JavaThread "AWT-Windows" daemon [_thread_in_native, id=1848]
+  0x0b299b50 JavaThread "Java2D Disposer" daemon [_thread_blocked, id=1612]
+  0x009f5cf0 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=884]
+  0x009f47f8 JavaThread "CompilerThread0" daemon [_thread_blocked, id=1648]
+  0x009f3ab8 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=1836]
+  0x009eaec8 JavaThread "Finalizer" daemon [_thread_blocked, id=1868]
+  0x009e99d8 JavaThread "Reference Handler" daemon [_thread_blocked, id=1900]
+
+Other Threads:
+  0x009e7028 VMThread [id=128]
+  0x009f7288 WatcherThread [id=1644]
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+Heap
+ def new generation   total 1472K, used 1138K [0x02ab0000, 0x02c40000, 0x02f90000)
+  eden space 1344K,  79% used [0x02ab0000, 0x02bba968, 0x02c00000)
+  from space 128K,  56% used [0x02c20000, 0x02c32040, 0x02c40000)
+  to   space 128K,   0% used [0x02c00000, 0x02c00000, 0x02c20000)
+ tenured generation   total 17652K, used 10589K [0x02f90000, 0x040cd000, 0x06ab0000)
+   the space 17652K,  59% used [0x02f90000, 0x039e74a8, 0x039e7600, 0x040cd000)
+ compacting perm gen  total 16896K, used 16674K [0x06ab0000, 0x07b30000, 0x0aab0000)
+   the space 16896K,  98% used [0x06ab0000, 0x07af8ae0, 0x07af8c00, 0x07b30000)
+No shared spaces configured.
+
+Dynamic libraries:
+0x00400000 - 0x0040c000 	C:\Borland\JBuilder2006\jdk1.5\bin\javaw.exe
+0x77f80000 - 0x77ffc000 	C:\WINNT\system32\ntdll.dll
+0x7c2d0000 - 0x7c335000 	C:\WINNT\system32\ADVAPI32.dll
+0x7c570000 - 0x7c623000 	C:\WINNT\system32\KERNEL32.dll
+0x77d30000 - 0x77d9f000 	C:\WINNT\system32\RPCRT4.dll
+0x77e10000 - 0x77e79000 	C:\WINNT\system32\USER32.dll
+0x77f40000 - 0x77f7c000 	C:\WINNT\system32\GDI32.dll
+0x78000000 - 0x78045000 	C:\WINNT\system32\MSVCRT.dll
+0x6d6b0000 - 0x6d836000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\client\jvm.dll
+0x77570000 - 0x775a0000 	C:\WINNT\system32\WINMM.dll
+0x6d2f0000 - 0x6d2f8000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\hpi.dll
+0x690a0000 - 0x690ab000 	C:\WINNT\system32\PSAPI.DLL
+0x6d680000 - 0x6d68c000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\verify.dll
+0x6d370000 - 0x6d38d000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\java.dll
+0x6d6a0000 - 0x6d6af000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\zip.dll
+0x6d070000 - 0x6d1d7000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\awt.dll
+0x77800000 - 0x7781e000 	C:\WINNT\system32\WINSPOOL.DRV
+0x76620000 - 0x76631000 	C:\WINNT\system32\MPR.DLL
+0x75e60000 - 0x75e7a000 	C:\WINNT\system32\IMM32.dll
+0x7ce20000 - 0x7cf0f000 	C:\WINNT\system32\ole32.dll
+0x51000000 - 0x51050000 	C:\WINNT\system32\ddraw.dll
+0x728a0000 - 0x728a6000 	C:\WINNT\system32\DCIMAN32.dll
+0x5c000000 - 0x5c0c8000 	C:\WINNT\system32\D3DIM700.DLL
+0x6d2b0000 - 0x6d2ed000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\fontmanager.dll
+0x7cf30000 - 0x7d176000 	C:\WINNT\system32\shell32.dll
+0x70a70000 - 0x70ad6000 	C:\WINNT\system32\SHLWAPI.dll
+0x71710000 - 0x71794000 	C:\WINNT\system32\COMCTL32.dll
+0x6d530000 - 0x6d543000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\net.dll
+0x75030000 - 0x75044000 	C:\WINNT\system32\WS2_32.dll
+0x75020000 - 0x75028000 	C:\WINNT\system32\WS2HELP.DLL
+0x6d550000 - 0x6d559000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\nio.dll
+0x6d3d0000 - 0x6d3d6000 	C:\Borland\JBuilder2006\jdk1.5\jre\bin\jawt.dll
+0x10000000 - 0x10065000 	C:\Program Files\Xj3D\bin\jogl.dll
+0x69510000 - 0x695d7000 	C:\WINNT\system32\OPENGL32.dll
+0x6fac0000 - 0x6fadf000 	C:\WINNT\system32\GLU32.dll
+0x0c3d0000 - 0x0c440000 	C:\Program Files\Xj3D\bin\odejava.dll
+0x0c650000 - 0x0c672000 	C:\Program Files\Xj3D\bin\dxinput.dll
+0x0c680000 - 0x0c72e000 	C:\WINNT\system32\dinput8.dll
+0x6f9a0000 - 0x6f9a8000 	C:\WINNT\system32\HID.DLL
+0x77880000 - 0x7790e000 	C:\WINNT\system32\SETUPAPI.DLL
+0x7c0f0000 - 0x7c154000 	C:\WINNT\system32\USERENV.DLL
+0x61220000 - 0x6122e000 	C:\Program Files\Microsoft Hardware\Mouse\MSH_ZWF.dll
+0x30000000 - 0x30017000 	C:\Program Files\Iomega\DriveIcons\IMGHOOK.DLL
+0x0cde0000 - 0x0cdf1000 	C:\WINNT\system32\ATKOGL.dll
+0x0ce10000 - 0x0d2fd000 	C:\WINNT\system32\nvoglnt.dll
+
+VM Arguments:
+java_command: x3dwebtop.geometrical.Geometrical
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.5.0_05\
+CLASSPATH=.;C:\Program Files\Java\jdk1.5.0_05\bin;C:\Program Files\GeoVRML\1.0\classes\geovrml.jar;./;c:\winnt\java\classes;c:\Program Files\WebTOP\parser.jar;c:\Program Files\WebTOP\wsl_trustlib.jar;C:\WINNT\JAVA\JContact.jar
+PATH=.;C:\Borland\JBuilder2006\bin;C:\Borland\JBuilder2006\jdk1.5\bin;C:\Perl\bin\;C:\WINNT\system32;C:\WINNT;C:\WINNT\System32\Wbem;c:\;c:\dell;C:\Program Files\Dell\Resolution Assistant\Common\bin;c:\masm613\bin;c:\masm613\binr;c:\Program Files\Java\jdk1.5.0_05\bin;C:\Program Files\Java\jdk1.5.0_05\jre\bin;C:\Program Files\Microsoft Visual Studio\VC98\Bin;C:\Program Files\Microsoft Visual Studio\VB98;C:\Program Files\Xj3D\bin;C:\Program Files\Microsoft Visual Studio\Common\Tools\WinNT;C:\Program Files\Microsoft Visual Studio\Common\MSDev98\Bin;C:\Program Files\Microsoft Visual Studio\Common\Tools;C:\Program Files\Microsoft Visual Studio\VC98\bin;C:\Borland\JBuilder2006\debug\sa;C:\Borland\JBuilder2006\lib
+USERNAME=Administrator
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 8 Stepping 6, GenuineIntel
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 2000 Build 2195 Service Pack 4
+
+CPU:total 1 family 6, cmov, cx8, fxsr, mmx, sse
+
+Memory: 4k page, physical 523568k(7496k free), swap 883416k(374224k free)
+
+vm_info: Java HotSpot(TM) Client VM (1.5.0_03-b07) for windows-x86, built on Apr 13 2005 02:07:01 by "java_re" with MS VC++ 6.0
+

@@ -1,0 +1,164 @@
+package webtop.polarization;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+
+import webtop.wsl.client.*;
+import webtop.wsl.event.*;
+
+public class EventManager implements EventOutObserver {
+	private Polarization applet;
+	private Engine engine;
+	private SourcePanel sourcePanel;
+	private ControlPanel controlPanel;
+	private FilterPanel filterPanel;
+
+	private WSLPlayer wslPlayer;
+
+	private boolean wasPlaying;
+	private boolean widgetActive = false;
+
+	private Filter activeFilter;
+
+	public EventManager(Polarization applet_) {
+		applet = applet_;
+
+		webtop.vrml.EAI eai = applet.getEAI();
+
+		wslPlayer = applet.getWSLPlayer();
+
+		eai.getEO("XAMPDragger","position_changed",this, new VRMLEvent("XAMP_CHANGED", null));
+		eai.getEO("XAMPDragger","isActive_out",this, new VRMLEvent("XAMP_ACTIVE", null));
+		eai.getEO("XAMPDragger","isOver_out",this, new VRMLEvent("XAMP_ISOVER", null));
+
+		eai.getEO("YAMPDragger","position_changed",this, new VRMLEvent("YAMP_CHANGED", null));
+		eai.getEO("YAMPDragger","isActive_out",this, new VRMLEvent("YAMP_ACTIVE", null));
+		eai.getEO("YAMPDragger","isOver_out",this, new VRMLEvent("YAMP_ISOVER", null));
+
+		eai.getEO("WavelengthWidget","value_changed",this, new VRMLEvent("WAVELENGTH_CHANGED", null));
+		eai.getEO("WavelengthWidget","isActive_out",this, new VRMLEvent("WAVELENGTH_ACTIVE", null));
+		eai.getEO("WavelengthWidget","isOver_out",this, new VRMLEvent("WAVELENGTH_ISOVER", null));
+
+		eai.getEO("PhaseDragger","phaseDifference_changed",this, new VRMLEvent("PHASE_CHANGED", null));
+		eai.getEO("PhaseDragger","isActive_out",this, new VRMLEvent("PHASE_ACTIVE", null));
+		eai.getEO("PhaseDragger","isOver_out",this, new VRMLEvent("PHASE_ISOVER", null));
+	}
+
+	public void setEngine(Engine engine_) {engine = engine_;}
+
+	public void setSourcePanel(SourcePanel sp) {sourcePanel = sp;}
+	public void setControlPanel(ControlPanel cp) {controlPanel = cp;}
+	public void setFilterPanel(FilterPanel fp) {filterPanel = fp;}
+
+	public void setActiveFilter(Filter p) {activeFilter = p;}
+
+	public void callback(EventOut e, double timestamp, Object data) {
+		final String param = ((VRMLEvent) data).getName();
+		if(param.endsWith("ACTIVE")) {
+			Filter filter = (Filter) ((VRMLEvent) data).getFilter();
+			if(((EventOutSFBool) e).getValue()) {
+				engine.setPaused(true);
+				widgetActive = true;
+
+				if(param.startsWith("WAVELENGTH")) wslPlayer.recordMousePressed("wavelength");
+				else if(param.startsWith("PHASE")) wslPlayer.recordMousePressed("phaseDifference");
+				else if(param.startsWith("XAMP")) wslPlayer.recordMousePressed("amplitudex");
+				else if(param.startsWith("YAMP")) wslPlayer.recordMousePressed("amplitudey");
+				else if(param.startsWith("ANGLE")) wslPlayer.recordMousePressed(filter.getID(), "angle");
+				else if(param.startsWith("Z")) wslPlayer.recordMousePressed(filter.getID(), "z");
+				else if(param.startsWith("THICKNESS")) wslPlayer.recordMousePressed(filter.getID(), "thickness");
+			} else {
+				widgetActive = false;
+				engine.setPaused(false);
+
+				if(param.startsWith("WAVELENGTH")) wslPlayer.recordMouseReleased("wavelength");
+				else if(param.startsWith("PHASE")) wslPlayer.recordMouseReleased("phaseDifference");
+				else if(param.startsWith("XAMP")) wslPlayer.recordMouseReleased("amplitudex");
+				else if(param.startsWith("YAMP")) wslPlayer.recordMouseReleased("amplitudey");
+				else if(param.startsWith("ANGLE")) wslPlayer.recordMouseReleased(filter.getID(), "angle");
+				else if(param.startsWith("Z")) wslPlayer.recordMouseReleased(filter.getID(), "z");
+				else if(param.startsWith("THICKNESS")) wslPlayer.recordMouseReleased(filter.getID(), "thickness");
+			}
+		} else if(param.endsWith("ISOVER")) {
+			if(((EventOutSFBool)e).getValue()) {
+				if(param.equals("WAVELENGTH_ISOVER")) applet.setStatusText("Rotate widget to change wavelength of light.");
+				else if(param.equals("XAMP_ISOVER")) applet.setStatusText("Drag widget left or right to change amplitude in the X direction.");
+				else if(param.equals("YAMP_ISOVER")) applet.setStatusText("Drag widget up or down to change amplitude in the Y direction.");
+				else if(param.equals("PHASE_ISOVER")) applet.setStatusText("Drag widget to change phase difference.");
+				else if(param.equals("ANGLE_ISOVER"))
+					if(((VRMLEvent)data).getFilter() instanceof Polarizer)
+						applet.setStatusText("Use this widget to change the angle of the transmission axis for the filter.");
+					else applet.setStatusText("Use this widget to change the angle of the fast axis for the filter.");
+				else if(param.equals("Z_ISOVER")) applet.setStatusText("Drag on widget to move filter to a new location.");
+				else if(param.equals("THICKNESS_ISOVER")) applet.setStatusText("Use this widget to change the thickness of the active wave plate.");
+			} else applet.resetStatus();
+		} else if(param.equals("WAVELENGTH_CHANGED")) {
+			float w = (float) ((EventOutSFFloat)e).getValue();
+			engine.setWavelength(w);
+			engine.update();
+			if(widgetActive) sourcePanel.setWavelength(w);
+
+			wslPlayer.recordMouseDragged("wavelength", String.valueOf(w));
+		} else if(param.equals("PHASE_CHANGED")) {
+			float phase = ((EventOutSFFloat)e).getValue();
+			engine.setEpsilon(phase);
+			if(widgetActive) sourcePanel.setEpsilon(phase);
+
+			wslPlayer.recordMouseDragged("phaseDifference", String.valueOf(phase));
+		} else if(param.equals("XAMP_CHANGED")) {
+			float v = ((EventOutSFFloat)e).getValue();
+			//Draggers now output/input in our own [0,1] interval
+			//temp = v / Engine.xScale;
+			engine.setEx(v);
+			if(widgetActive) sourcePanel.setEx(v);
+
+			wslPlayer.recordMouseDragged("amplitudex", String.valueOf(v));
+		} else if(param.equals("YAMP_CHANGED")) {
+			float v = ((EventOutSFFloat)e).getValue();
+			//Draggers now output/input in our own [0,1] interval
+			//temp = v / Engine.yScale;
+			engine.setEy(v);
+			if(widgetActive) sourcePanel.setEy(v);
+
+			wslPlayer.recordMouseDragged("amplitudey", String.valueOf(v));
+		} else if(param.equals("ANGLE_CHANGED")) {
+			Filter filter = (Filter) ((VRMLEvent) data).getFilter();
+			float angle = ((EventOutSFFloat)e).getValue();
+			engine.setFilterAngle(filter, angle, false);
+			engine.update();
+			if(widgetActive) filterPanel.setAngle(angle);
+
+			wslPlayer.recordMouseDragged(filter.getID(), "angle", String.valueOf(angle));
+		} else if(param.equals("Z_CHANGED")) {
+			Filter filter = (Filter) ((VRMLEvent) data).getFilter();
+			float z = ((EventOutSFFloat)e).getValue();
+			engine.moveFilter(filter, z, false);
+			engine.update();
+			if(widgetActive) filterPanel.setZ(z);
+
+			wslPlayer.recordMouseDragged(filter.getID(), "z", String.valueOf(z));
+		} else if(param.equals("THICKNESS_CHANGED")) {
+			WavePlate filter = (WavePlate) ((VRMLEvent) data).getFilter();
+			float thickness = ((EventOutSFFloat)e).getValue();
+
+			engine.setWavePlateThickness(filter, thickness, false);
+			engine.update();
+			if(widgetActive) filterPanel.setThickness(thickness);
+
+			wslPlayer.recordMouseDragged(filter.getID(), "thickness", String.valueOf(thickness));
+		} else if(param.equals("MOUSE_OVER")) {
+			if(widgetActive) return;
+			Filter filter = (Filter) ((VRMLEvent) data).getFilter();
+			if(((EventOutSFBool)e).getValue()) {
+				if(activeFilter!=null) activeFilter.setActive(false);
+				activeFilter = (Filter) ((VRMLEvent) data).getFilter();
+				filterPanel.showFilter(activeFilter);
+				activeFilter.setActive(true);
+				wslPlayer.recordMouseEntered(filter.getID());
+			} else wslPlayer.recordMouseExited(filter.getID());
+		}
+	}
+
+	public boolean isWidgetActive() {return widgetActive;}
+}

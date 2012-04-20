@@ -1,0 +1,1111 @@
+//Updated August 26 2003
+
+package webtop.wsl.client;
+
+import java.applet.Applet;
+import java.net.*;
+import java.io.*;
+import java.util.*;
+import org.xml.sax.*;
+
+import vrml.external.field.*;
+
+import webtop.util.*;
+import webtop.wsl.script.*;
+import webtop.wsl.event.*;
+
+/**
+ * <code>WSLPlayer</code> is the central class of WSLAPI.	 Most of the features
+ * provided by WSLAPI are handled in this class.	In essence, it provides
+ * methods to record, load, and playback scripts, plus other methods to set and
+ * get certain attributes.	The methods that deal with recording, loading, and
+ * playing are listed as follow:
+ *
+ * <ul>
+ *	 <li> <a href="#Load"><code>Load()</code></a>
+ *				-- Loads a script from an InputStream object
+ *	 <li> <a href="#LoadURL"><code>LoadURL()</code></a>
+ *				-- Loads a script from the give URL
+ *	 <li> <a href="#Play"><code>Play()</code></a>
+ *				-- Start playing the loaded script
+ *	 <li> <a href="#Pause"><code>Pause()</code></a>
+ *				-- Pause the playback of a script
+ *	 <li> <a href="Stop"><code>Stop()</code></a>
+ *				-- Stop playing or recording of a script
+ *	 <li> <a href="Reset"><code>Reset()</code></a>
+ *				-- Reset the playback to the beginning of a script
+ *	 <li> <a href="Unload"><code>Unload()</code></a>
+ *				-- Unloads a script
+ * </ul>
+ *
+ * <p><code>WSLPlayer</code> is a state machine.	In other words, at any given
+ * point of time, it is in either state of <code>UNINITIALIZED</code>,
+ * <code>INITIALIZED</code>, <code>LOADED</code>, <code>PLAYING</code>,
+ * <code>PAUSING</code>, or <code>RECORDING</code>.	 Calls to different
+ * methods in <code>WSLPlayer</code> cause it to change from one state to
+ * another.	 For example, a call to <code>Load()</code> causes
+ * <code>WSLPlayer</code> to change from state <code>INITIALIZED</code> to
+ * <code>LOADED</code> upon successful loading of a script.
+ *
+ * <p>Not all methods are accessible in a state that <code>WSLPlayer</code>
+ * might be in.	 For example, when <code>WSLPlayer</code> is in the
+ * <code>PLAYING</code> state, <code>Record()</code> should not be called;
+ * <strong>such calls will raise an
+ * <code>IllegalStateException</code></strong>.	 However, for convenience, the
+ * <code>record</code>* methods return silently when not recording.	 Figure 1
+ * shows the possible state transitions in <code>WSLPlayer</code>, and the
+ * method calls that cause the transitions.	 (Click to enlarge the image.)
+ *
+ * <p align="center"><a href="doc-files/WSLPlayer-1.gif"><img border="0"
+ * src="doc-files/WSLPlayer-1.gif" width="400" height="337"></a><br>
+ * <b>Figure 1</b>.	 State transitions in WSLPlayer.</p>
+ *
+ * <p><code>WSLPlayer</code> uses an event model that is similar to the one
+ * used in Java's Abstract Windowing Toolkit (AWT) package.	 In WSLAPI,
+ * <code>WSLPlayer</code> generates events during state transitions, and
+ * during playback of a script.	 Objects interested in responding to these
+ * events can register themselves through the <code>addListener()</code>
+ * method.	In addition, those objects should implement one or more of these
+ * interfaces: <code>WSLScriptListener</code>, <code>WSLPlayerListener</code>,
+ * and <code>WSLProgressListener</code>.	These interfaces correspond to the
+ * three types of events that <code>WSLPlayer</code> generates:
+ * <code>WSLScriptEvent</code>, <code>WSLPlayerEvent</code>, and
+ * <code>WSLProgressEvent</code>.	 These classes contain various constants
+ * used as event-type identifiers.
+ *
+ * <p>Note that there is no specialized
+ * <code>add</code><i>Event</i><code>Listener()</code> method for each
+ * different type of event.	 Instead, the generalized
+ * <code>addListener()</code> method is used.	 <code>WSLPlayer</code>
+ * determines which types of events to fire to which objects based on the
+ * interfaces that the objects implement.</p>
+ *
+ * <p>There are ten types of WebTOP user interactions that can be recorded
+ * using WSLPlayer: <code>OBJECT_ADDED</code>, <code>OBJECT_REMOVED</code>,
+ * <code>MOUSE_ENTERED</code>, <code>MOUSE_EXITED</code>,
+ * <code>MOUSE_PRESSED</code>, <code>MOUSE_RELEASED</code>,
+ * <code>MOUSE_DRAGGED</code>, <code>ACTION_PERFORMED</code>,
+ * <code>VIEWPOINT_CHANGED</code>, and <code>VIEWPOINT_SELECTED</code>.	 There
+ * is a corresponding <code>record<i>&lt;Interaction&gt;</i>()</code> method
+ * for each type of user interaction.</p>
+ *
+ * <p>A WebTOP module does not explicitly create an instance of
+ * <code>WSLPlayer</code> for its use.	Instead, the WebTOP module creates an
+ * instance of <code>WSLPanel</code>, which in turn creates an instance of
+ * <code>WSLPlayer</code>.	The WebTOP module can then access the
+ * <code>WSLPlayer</code> instance created inside <code>WSLPanel</code> by
+ * calling the {@link WSLPanel#getWSLPlayer()} method.</p>
+ *
+ * @author Yong Tze Chi
+ * @author Davis Herring
+ */
+public class WSLPlayer implements Runnable,EventOutObserver {
+	public static final int MAJOR_VERSION=3,MINOR_VERSION=1,REVISION=7;
+	public static final String VERSION=webtop.component.WApplet.versionString(MAJOR_VERSION,MINOR_VERSION,REVISION);
+
+	//The maximum amount of time to wait before posting progress, etc. (ms)
+	private static final long progressUpdateInterval = 20;
+
+	public static final String DEFAULT_APPLET_PARAMETER="wslscript";
+
+	//Action names
+	private static final String VIEWPOINT_CHANGED="viewpointChanged",
+		VIEWPOINT_SELECTED="viewpointSelected",
+		OBJECT_ADDED="objectAdded",
+		OBJECT_REMOVED="objectRemoved",
+		ACTION_PERFORMED="actionPerformed",
+		MOUSE_IN="mouseEntered",
+		MOUSE_OUT="mouseExited",
+		MOUSE_DOWN="mousePressed",
+		MOUSE_UP="mouseReleased",
+		MOUSE_DRAG="mouseDragged";
+
+	private WSLScript script;
+	private WSLNode moduleNode;
+	private WSLNode scriptNode;
+
+	private long currScriptTime;	// where we are in the script
+	private long totalScriptTime; // length of script(?)
+	private int currScriptAction;
+
+	private long startPlaybackTime;	// when we started playing
+	private long pausePlaybackTime;	// when we started pausing
+	private long currPlaybackTime; // where we are in the script(?)
+	private long pauseTime;				// how long we've paused(?)
+	private long preDispatchTime;	// when we last sent a script event
+	private long totalPlaybackTime;	// length of script(?)
+
+	private long startRecordTime;	// when we started recording
+	private long prevRecordTime;	// when we last recorded something
+
+	private final Vector listeners=new Vector();
+
+	//There can exist no references to a WSLPlayer before it's in the
+	//INITIALIZED state.	The two states before it are thus meaningless.
+
+	//Similarly, the LOADING state was only visible while a script was being
+	//parsed.	 What one could do with a player that was obviously being
+	//concurrently used is unclear; this is a synchronization issue, not a state
+	//issue.
+
+	//public static final int UNINITIALIZED = 0;
+	//public static final int INITIALIZING = 1;
+	public static final int INITIALIZED = 2;
+	//public static final int LOADING = 3;
+	public static final int LOADED = 4;
+	public static final int PLAYING = 5;
+	public static final int PAUSING = 6;
+	public static final int RECORDING = 7;
+	private volatile int state;// = UNINITIALIZED;
+
+	private static WSLPlayer player;
+
+	private Thread thread;
+
+	private final WSLModule module;
+
+	private EventInSFBool		navPanel_setEnabled;
+	private EventInMFFloat	set_view;
+	private EventInSFInt32	set_activeView;
+	private EventInSFBool		query_view;
+	private EventOutMFFloat view_changed;
+	private EventOutSFInt32 activeView_changed;
+	private EventOutMFFloat queryView_changed;
+	private final float view[] = new float[6];
+
+	private static final int VIEW_CHANGED = 1;
+	private static final int ACTIVEVIEW_CHANGED = 2;
+	private static final int QUERYVIEW_CHANGED = 3;
+
+	private boolean viewpointEventEnabled = true;
+
+	/**
+	 * The constructor of <code>WSLPlayer</code>, requires a reference of
+	 * <code>WSLModule</code> it is tied to during runtime.
+	 *
+	 * @param module reference to a class that implements the
+	 *							 <code>WSLModule</code> interface.
+	 */
+	public WSLPlayer(WSLModule module) {
+		//state = INITIALIZING;
+
+		this.module = module;
+
+		state = INITIALIZED;
+	}
+
+	//===========================
+	// Principal control methods
+	//===========================
+
+	//Loads script; does not post state changed event, as more may need
+	//to be done before that event can be reasonably generated.	 Nor does
+	//it use the title of the loaded script.
+	private boolean loadScript(InputStream is) throws WSLParser.InvalidScriptException {
+		if(state!=INITIALIZED && state!=LOADED) throw new IllegalStateException("wrong player state");;
+		//state = LOADING;
+
+		WSLParser parser = new WSLParser(module.getWSLModuleName());
+
+		WSLScript newScript;
+		newScript = parser.parse(is);
+
+		script = newScript;
+		scriptNode = script.getScriptNode();
+		moduleNode = script.getModuleNode();
+
+		state = LOADED;
+
+		totalScriptTime = currScriptTime = 0;
+		currScriptAction = 0;
+		if(scriptNode!=null) {
+			for (int i=0; i<scriptNode.getChildCount(); i++) {
+				totalScriptTime += scriptNode.getChild(i).getTimeStamp();
+			}
+		}
+
+		initNavigationPanelInfo();
+
+		postInitialize();
+		return true;
+	}
+
+	/**
+	 * Tries to load a script specified by the default applet parameter.
+	 *
+	 * @see #LoadParameter(Applet,String)
+	 */
+	public boolean LoadParameter(Applet app) {
+		return LoadParameter(app,DEFAULT_APPLET_PARAMETER);
+	}
+
+	/**
+	 * Tries to load a script specified by the given applet parameter.	Unlike
+	 * other <code>Load</code>*<code>()</code> methods,
+	 * <code>LoadParameter()</code> throws no exceptions; if there is no
+	 * parameter by the given name, or if no valid script can be read from the
+	 * location it specifies, an error message is printed to standard error and
+	 * the call returns false.
+	 *
+	 * @param app the applet whose parameters to examine.
+	 * @param param the parameter to read.
+	 * @return true if the script was successfully loaded; false if there was no
+	 *				 script or if it could not be loaded.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#SCRIPT_LOADED
+	 */
+	public boolean LoadParameter(Applet app,String param) {
+		final String epfx="WSLPlayer::LoadParameter: ";
+		String script=app.getParameter(param);
+		if(script==null || script.length()==0)
+			System.err.println(epfx+"No '"+param+"' parameter specified.");
+		else {
+			try {
+				LoadURL(new URL(app.getCodeBase(),script));
+				return true;
+			}
+			catch(Exception e) {
+				System.err.print(epfx+"could not load '"+script+"'; encountered ");
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Loads a script from the given URL.	 If this call returns normally the
+	 * script was successfully loaded.
+	 *
+	 * @param	 url	location of the script file to be loaded.
+	 *
+	 * @exception IOException if the given URL was invalid or could not be read.
+	 * @exception WSLParser.InvalidScriptException if the given URL did not
+	 *																						 contain a WSL script valid
+	 *																						 for the current module.
+	 * @exception SecurityException if access to the given URL was denied by
+	 *															Java.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#SCRIPT_LOADED
+	 */
+	public void LoadURL(URL url) throws IOException,WSLParser.InvalidScriptException {
+		loadScript(url.openStream());
+		final String str=url.toString();
+		int index = Math.max(str.lastIndexOf('/'), str.lastIndexOf('\\'));
+		script.setTitle(index>=0 ? str.substring(index+1) : str);
+
+		postPlayerStateChanged(WSLPlayerEvent.SCRIPT_LOADED);
+	}
+
+	/**
+	 * Loads a script from the file whose name is given.	If this call returns
+	 * normally the script was successfully loaded.
+	 *
+	 * @param	 filename	 the name of the file from which to read a script.
+	 *
+	 * @exception IOException if the file could not be read.
+	 * @exception WSLParser.InvalidScriptException
+	 *	 if the file did not contain a WSL script valid for the current module.
+	 * @exception SecurityException if access to the file was denied by Java.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#SCRIPT_LOADED
+	 */
+	public void Load(String filename)
+		throws IOException,WSLParser.InvalidScriptException {
+		FileInputStream fin = new FileInputStream(filename);
+
+		if(!loadScript(fin)) return;
+		int index = Math.max(filename.lastIndexOf('/'), filename.lastIndexOf('\\'));
+		if(index>=0)
+			filename = filename.substring(index+1);
+		script.setTitle(filename);
+
+		postPlayerStateChanged(WSLPlayerEvent.SCRIPT_LOADED);
+	}
+
+	/**
+	 * Loads a script from the specified <code>InputStream</code>.	If this call
+	 * returns normally the script was successfully loaded.
+	 *
+	 * @param	 in	 the stream from which the script is to be loaded.
+	 * @exception WSLParser.InvalidScriptException
+	 *	 if problems are encountered reading the stream as a script.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#SCRIPT_LOADED
+	 */
+	public void Load(InputStream in) throws WSLParser.InvalidScriptException {
+		if(loadScript(in))
+			postPlayerStateChanged(WSLPlayerEvent.SCRIPT_LOADED);
+	}
+
+	/**
+	 * Unloads the script that's kept in <code>WSLPlayer</code>.	This method
+	 * may be called while a script is playing, but not while it is being
+	 * recorded.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#SCRIPT_UNLOADED
+	 */
+	public void Unload() {
+		if(state!=LOADED && state!=PLAYING && state!=PAUSING) throw new IllegalStateException("wrong player state");
+		if(state!=LOADED) Stop();
+		state = INITIALIZED;
+		thread = null;
+		script = null;
+		scriptNode = null;
+		currScriptTime = totalScriptTime = 0;
+		currScriptAction = 0;
+		postPlayerStateChanged(WSLPlayerEvent.SCRIPT_UNLOADED);
+	}
+
+	/**
+	 * Starts or resumes playback of a previously loaded script.	A thread is
+	 * started to play the script.	This method is only accessible in the
+	 * <code>PAUSING</code> and <code>LOADED</code> states.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#PLAYER_STARTED
+	 */
+	public void Play() {
+		if(state!=PAUSING && state!=LOADED) throw new IllegalStateException("wrong player state");
+
+		if(state==PAUSING) {
+			state = PLAYING;
+			startPlaybackTime = System.currentTimeMillis();
+			pauseTime += startPlaybackTime - pausePlaybackTime;
+			synchronized(this) {notify();}
+		}
+		else if(state==LOADED) {
+			if(script==null || !script.isPlayable()) return;
+
+			state = PLAYING;
+			startPlaybackTime = System.currentTimeMillis();
+
+			postInitialize();
+
+			thread = new Thread(this);
+			thread.start();
+		}
+		postPlayerStateChanged(WSLPlayerEvent.PLAYER_STARTED);
+	}
+
+	/**
+	 * Pauses the playback of a script.	 This method is only accessible in the
+	 * <code>PLAYING</code> state.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#PLAYER_PAUSED
+	 */
+	public void Pause() {
+		if(state!=PLAYING) throw new IllegalStateException("wrong player state");
+		state = PAUSING;
+		pausePlaybackTime = System.currentTimeMillis();
+
+		postPlayerStateChanged(WSLPlayerEvent.PLAYER_PAUSED);
+	}
+
+	/**
+	 * Prepares <code>WSLPlayer</code> for recording user interactions.	 It
+	 * first calls <code>WSLModule.toWSLModule()</code> and obtains the current
+	 * viewpoint to obtain the current state of the WebTOP module.	This method
+	 * is only accessible in the <code>INITIALIZED</code> and
+	 * <code>LOADED</code> states.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#RECORDER_STARTED
+	 */
+	public void Record() {
+		if(state!=INITIALIZED && state!=LOADED) throw new IllegalStateException("wrong player state");
+		if(module==null) throw new IllegalStateException("No module from which to record");
+
+		script = new WSLScript();
+		moduleNode = module.toWSLNode();
+		state = RECORDING;
+
+		initNavigationPanelInfo();
+
+		if(query_view!=null) query_view.setValue(true);
+
+		script.getRoot().addChild(moduleNode);
+		script.setModuleNode(moduleNode);
+
+		scriptNode = new WSLNode(WSLScript.SCRIPT_TAG);
+		script.addNode(scriptNode);
+		script.setScriptNode(scriptNode);
+
+		startRecordTime = prevRecordTime = System.currentTimeMillis();
+
+		postPlayerStateChanged(WSLPlayerEvent.RECORDER_STARTED);
+	}
+
+	/**
+	 * Resets the playback of a script to the beginning of the script.	This
+	 * method is only accessible in the <code>LOADED</code>,
+	 * <code>PLAYING</code>, and <code>PAUSING</code> states.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#PLAYER_RESET
+	 */
+	public void Reset() {
+		if(state!=LOADED && state!=PLAYING && state!=PAUSING) throw new IllegalStateException("wrong player state");
+
+		int prevState = state;
+		state = LOADED;
+		currScriptAction = 0;
+		preDispatchTime = currPlaybackTime = System.currentTimeMillis();
+		pauseTime = 0;
+		threadWait();
+
+		if(prevState!=PAUSING && prevState!=PLAYING)
+			postProgress();
+		postInitialize();
+		postPlayerStateChanged(WSLPlayerEvent.PLAYER_RESET);
+	}
+
+	/**
+	 * Stops the playback or recording of a script.	 This method can only be
+	 * called when <code>WSLPlayer</code> is in the <code>PLAYING</code>,
+	 * <code>PAUSING</code>, or <code>RECORDING</code> states.	In the
+	 * <code>PLAYING</code> or <code>PAUSING</code> states, the playback is
+	 * stopped, while in the <code>RECORDING</code> state, the recording is
+	 * stopped.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#PLAYER_STOPPED
+	 * @see webtop.wsl.event.WSLPlayerEvent#RECORDER_STOPPED
+	 */
+	public void Stop() {
+		if(state==PLAYING || state==PAUSING) {
+			state = LOADED;
+			threadWait();
+		} else if(state==RECORDING) {
+			currScriptAction = 0;
+			totalScriptTime = 0;
+			recordAction(WSLScript.SCRIPT_END_TAG, null, null, null);
+			for(int i=0;i<scriptNode.getChildCount();i++)
+				totalScriptTime += scriptNode.getChild(i).getTimeStamp();
+			state = LOADED;
+			postPlayerStateChanged(WSLPlayerEvent.RECORDER_STOPPED);
+		} else throw new IllegalStateException("wrong player state");
+	}
+
+	//=========
+	// Options
+	//=========
+
+	/**
+	 * Returns whether viewpoint events are posted.	 When viewpoint events are
+	 * ignored, the user is allowed to manipulate the viewpoint during the
+	 * playback of a script.	Otherwise, the navigation panel is locked during
+	 * playback.
+	 *
+	 * @return	<code>true</code> if viewpoint events are posted;
+	 *					<code>false</code> otherwise.
+	 */
+	public boolean isViewpointEventEnabled() {return viewpointEventEnabled;}
+
+	/**
+	 * Sets the option that whether viewpoint events are posted during playback.
+	 * When viewpoint events are enabled, they are posted during playback, and
+	 * the user is not allowed to manipulate the module's viewpoint themselves.
+	 * When viewpoint events are disabled, the user can use the navigation panel
+	 * to manipulate the module's viewpoint during playback.
+	 *
+	 * @param enabled <code>true</code> if viewpoint events are to be enabled;
+	 *								<code>false</code> if viewpoint events are to be disabled.
+	 */
+	public void setViewpointEventEnabled(boolean enabled) {
+		viewpointEventEnabled=enabled;
+	}
+
+	//========================
+	// Informational routines
+	//========================
+
+	/**
+	 * Returns the current state of <code>WSLPlayer</code>.	 The value returned
+	 * can be <code>UNINITIALIZED</code>, <code>INITIALIZED</code>,
+	 * <code>LOADING</code>, <code>LOADED</code>, <code>PLAYING</code>,
+	 * <code>PAUSING</code>, or <code>RECORDING</code>.
+	 *
+	 * @return an int corresponding to the current state of WSLPlayer.	Refer to
+	 *				 the description of each constant.
+	 */
+	public int getState() {return state;}
+
+	/**
+	 * Returns the WSLModule that is tied to WSLPlayer.
+	 *
+	 * @return	reference to the WSLModule instance that is tied to WSLPlayer.
+	 */
+	public WSLModule getWSLModule() {return module;}
+
+	/**
+	 * Returns the <code>WSLScript</code> instance that <code>WSLPlayer</code>
+	 * keeps in memory.
+	 *
+	 * @return	reference to this object's <code>WSLScript</code>;
+	 *					<code>null</code> if this object does not currently have a
+	 *					<code>WSLScript</code> loaded.
+	 */
+	public WSLScript getScript() {return script;}
+
+	/**
+	 * Gets the current time in the script being played back.
+	 *
+	 * @return		time of the script being played back in milliseconds.
+	 */
+	public long getCurrentScriptTime() {return currScriptTime;}
+
+	/**
+	 * Gets the total time of the script kept in <code>WSLPlayer</code>
+	 *
+	 * @return		total time of the script in milliseconds.
+	 */
+	public long getTotalScriptTime() {return totalScriptTime;}
+
+	//===================
+	// Internal routines
+	//===================
+
+	//Wakes up the thread, then waits on it to die.
+	//This will of course never return if the thread is not otherwise instructed to exit when it wakes up.
+	private void threadWait() {
+		Thread t=thread;	//local copy to prevent synchronization problems
+		if(t!=null) {
+			synchronized (this) {notify();}
+			while(true) try{t.join(); break;} catch(InterruptedException e) {}
+		}
+	}
+
+	private void initNavigationPanelInfo() {
+		NamedNode nn = module.getNavigationPanelNode();
+		if(nn!=null && navPanel_setEnabled==null) {
+			navPanel_setEnabled =
+				(EventInSFBool) nn.node.getEventIn("set_enabled");
+			set_view =
+				(EventInMFFloat) nn.node.getEventIn("set_view");
+			set_activeView =
+				(EventInSFInt32) nn.node.getEventIn("set_activeView");
+			query_view =
+				(EventInSFBool) nn.node.getEventIn("query_view");
+
+			EAI.getEO(nn,"view_changed",this,new Integer(VIEW_CHANGED),null);
+			EAI.getEO(nn,"activeView_changed",this,
+								new Integer(ACTIVEVIEW_CHANGED),null);
+			EAI.getEO(nn,"queryView_changed",this,
+								new Integer(QUERYVIEW_CHANGED),null);
+		}
+	}
+
+	private void setView(String value) {
+		if(value==null) throw new NullPointerException("null view");
+		if(set_view==null) return;
+
+		int index=0;
+		for(int i=0;i<6;i++) {
+			try {
+				//Our own tokenizer; should probably actually write a silly
+				//string-splitter class.	(StreamTokenizer doesn't handle scientific
+				//notation at all.) [Davis]
+				String next=WTString.delimited(value,index,' ');
+				index+=next.length()+1;
+				view[i]=new Float(next.trim()).floatValue();
+			} catch(NumberFormatException e) {
+				throw new IllegalArgumentException("bad view: "+value);
+			}
+		}
+
+		set_view.setValue(view);
+	}
+
+	private synchronized void dispatch() {
+		preDispatchTime = System.currentTimeMillis();
+
+		if(currScriptAction < scriptNode.getChildCount()) {
+			WSLNode action = scriptNode.getChild(currScriptAction);
+
+			if(action.getName().equals(VIEWPOINT_CHANGED)) {
+				if(viewpointEventEnabled)
+					setView(action.getAttributeValue(WSLNode.VALUE));
+			}
+			else if(action.getName().equals(VIEWPOINT_SELECTED)) {
+				if(viewpointEventEnabled && set_activeView!=null)
+					set_activeView.setValue(WTString.toInt(action.getAttributeValue(
+																									 WSLNode.VALUE),0));
+			}
+
+			if(!action.getName().equals(WSLScript.SCRIPT_END_TAG))
+				postScriptAction(new WSLScriptEvent(this, action));
+
+			currScriptAction++;
+			currScriptTime += action.getTimeStamp();
+			currPlaybackTime = System.currentTimeMillis();
+		}
+	}
+
+	private synchronized void delay() {
+		if(currScriptAction<scriptNode.getChildCount()) {
+			final long duration=scriptNode.getChild(currScriptAction).getTimeStamp() -
+				(System.currentTimeMillis() - preDispatchTime);
+			final long time=System.currentTimeMillis();
+			long elapsedTime=0;
+			while(elapsedTime<duration) {
+				while(state==PAUSING) {
+					try {
+						wait();
+						postPlayerStateChanged(WSLPlayerEvent.PLAYER_STARTED);
+					} catch (InterruptedException e) {}
+				}
+
+				try {
+					thread.sleep(Math.min(duration-elapsedTime, progressUpdateInterval));
+					//elapsedTime += progressUpdateInterval;
+				} catch (InterruptedException e) {}
+
+				currPlaybackTime = System.currentTimeMillis();
+
+				if(state!=PLAYING && state!=PAUSING) return;
+
+				postProgress();
+				elapsedTime = System.currentTimeMillis() - time - pauseTime;
+			}
+		}
+	}
+
+	/**
+	 * This method is the thread started to play the script.	It gradually scans
+	 * through the script and posts script actions at timed intervals.	When the
+	 * script is finished, a <code>PLAYER_STOPPED</code> event is posted.
+	 *
+	 * @see webtop.wsl.event.WSLPlayerEvent#PLAYER_STOPPED
+	 */
+	public synchronized void run() {
+		if(script==null || !script.isPlayable()) {
+			state = LOADED;
+			postPlayerStateChanged(WSLPlayerEvent.PLAYER_STOPPED);
+			return;
+		}
+
+		if(navPanel_setEnabled!=null && viewpointEventEnabled)
+			navPanel_setEnabled.setValue(false);
+
+		startPlaybackTime = currPlaybackTime = preDispatchTime = System.currentTimeMillis();
+		pausePlaybackTime = 0;
+		currScriptTime = 0;
+		currScriptAction = 0;
+		postPlayerStateChanged(WSLPlayerEvent.PLAYER_STARTED);
+		playLoop:
+		while((state==PLAYING || state==PAUSING) &&
+					currScriptAction < scriptNode.getChildCount()) {
+			pauseTime = 0;
+			/*while (state==PAUSING) {
+				try {wait();} catch (InterruptedException e) {}	//wait (or not)
+				switch(state) {
+				case PLAYING:
+					postPlayerStateChanged(WSLPlayerEvent.PLAYER_STARTED);
+					break;
+				case PAUSING:
+					break;
+				default:
+					break playLoop;		//we've had some major change
+				}
+			}*/
+			delay();									//This should handle pausing properly [Davis]
+			//After delaying, we could be in any kind of state; re-check!
+			if(state==PLAYING) {
+				dispatch();
+				postProgress();					//Why do we do this? [Davis]
+			}
+		}
+		pauseTime = 0;
+		currScriptTime = 0;
+		currScriptAction = 0;
+		state = LOADED;
+		thread = null;
+		postPlayerStateChanged(WSLPlayerEvent.PLAYER_STOPPED);
+
+		//This'll be wasted if viewpoint events were not enabled, but prevents
+		//a change to viewpointEventEnabled mid-script from locking the NavPanel
+		if(navPanel_setEnabled!=null/* && viewpointEventEnabled*/)
+			navPanel_setEnabled.setValue(true);
+	}
+
+	/**
+	 * This method is called by External Authoring Interface (EAI) whenever the
+	 * viewpoint is changed by the user.	It records the viewpoint changes
+	 * automatically in the <code>RECORDING</code> state.
+	 *
+	 * @param event the EventOut instance associated with the VRML event fired.
+	 * @param timestamp the time stamp that signifies when the event was fired.
+	 * @param param a custom parameter associated with the VRML event.
+	 */
+	public void callback(EventOut event, double timestamp, Object param) {
+		if(getState() != RECORDING) return;
+
+		int mode = ((Integer)param).intValue();
+
+		if(mode == VIEW_CHANGED) {
+			float view[] = ((EventOutMFFloat) event).getValue();
+			StringBuffer value = new StringBuffer();
+			for (int i=0; i<6; i++) {
+				value.append(view[i]);
+				if(i<5) value.append(' ');
+			}
+
+			recordViewpointChanged(value.toString());
+		}
+		else if(mode == ACTIVEVIEW_CHANGED) {
+			int activeView = ((EventOutSFInt32)event).getValue();
+			recordViewpointSelected(String.valueOf(activeView));
+		}
+		else if(mode == QUERYVIEW_CHANGED) {
+			if(moduleNode!=null) {
+				float view[] = ((EventOutMFFloat) event).getValue();
+				StringBuffer value = new StringBuffer();
+				for (int i=0; i<6; i++) {
+					value.append(view[i]);
+					if(i<5) value.append(' ');
+				}
+
+				WSLNode viewNode = new WSLNode("view");
+				viewNode.addAttribute(WSLNode.VALUE, value.toString());
+				moduleNode.addChild(viewNode);
+			}
+		}
+	}
+
+
+	// --------------------------------------------------------------------
+	// Event Posting Routines
+	// --------------------------------------------------------------------
+
+	/**
+	 * Adds an event listener. <code>WSLPlayer</code> only fires events to
+	 * registered event listener, and the interfaces
+	 * (<code>WSLScriptListener</code>, <code>WSLPlayerListener</code>, and/or
+	 * <code>WSLProgressListener</code>) implemented by the class determines
+	 * which types of events it receives.
+	 *
+	 * <p>It is worth noting that it is guaranteed that changes to the listeners
+	 * list of a <code>WSLPlayer</code> made during the dispatch of a
+	 * <code>WSLScriptEvent</code> will not affect the distribution of that
+	 * event.	 This is to allow the creation or destruction of objects (which
+	 * may be listening to the playback) during the handling of such an event.
+	 */
+	public void addListener(Object listener) {
+		if(listener!=null && !listeners.contains(listener))
+			listeners.addElement(listener);
+	}
+
+	/**
+	 * Removes an event listener from <code>WSLPlayer</code>'s listener list.
+	 */
+	public void removeListener(Object listener) {
+		listeners.removeElement(listener);
+	}
+
+	//Prevents reporting progress beyond the total progress
+	private WSLProgressEvent makeProgressEvent(float p,float t) {
+		return new WSLProgressEvent(this,(p>t)?t:p,t);
+	}
+
+	private void postProgress() {
+		WSLProgressEvent event;
+		if(currScriptAction == scriptNode.getChildCount()) {
+			event=makeProgressEvent(totalScriptTime, totalScriptTime);
+		} else if(state!=PLAYING) {
+			//System.out.println("Progress: " + (currScriptTime+currPlaybackTime-preDispatchTime-pauseTime));
+			event=makeProgressEvent(currScriptTime+currPlaybackTime-
+															preDispatchTime-pauseTime, totalScriptTime);
+		} else
+			event=makeProgressEvent(currScriptTime+System.currentTimeMillis()-
+															preDispatchTime-pauseTime,totalScriptTime);
+		for (int i=0; i<listeners.size(); i++)
+			if(listeners.elementAt(i) instanceof WSLProgressListener) {
+				((WSLProgressListener)listeners.elementAt(i)).progressChanged(event);
+			}
+	}
+
+	private void postScriptAction(WSLScriptEvent event) {
+		//It is a reasonable expectation that new listeners may be added during
+		//playback (as Java objects are created for module objects represented
+		//in the script tags).	Thus, we work with a copy to avoid
+		//hard-to-determine behavior with new listeners.
+		Vector listeners=(Vector)this.listeners.clone();	//shadows class variable
+		for (int i=0; i<listeners.size(); i++) {
+			if(listeners.elementAt(i) instanceof WSLScriptListener) {
+				((WSLScriptListener)listeners.elementAt(i)).scriptActionFired(event);
+			}
+		}
+	}
+
+	private void postInitialize() {
+		WSLNode viewNode = moduleNode.getNode("view");
+		if(viewNode != null) setView(viewNode.getAttributeValue(WSLNode.VALUE));
+
+		WSLScriptEvent event = new WSLScriptEvent(this, script.getModuleNode());
+		//It is a reasonable expectation that new listeners may be added during
+		//initialization (as Java objects are created for module objects stored
+		//in the inititialization tag).	 Thus, we work with a copy to avoid
+		//hard-to-determine behavior with new listeners.
+		Vector listeners=(Vector)this.listeners.clone();	//shadows class variable
+		for (int i=0; i<listeners.size(); i++) {
+			if(listeners.elementAt(i) instanceof WSLScriptListener) {
+				((WSLScriptListener)listeners.elementAt(i)).initialize(event);
+			}
+		}
+	}
+
+	private void postPlayerStateChanged(int id) {
+		WSLPlayerEvent event = new WSLPlayerEvent(this, id);
+		for (int i=0; i<listeners.size(); i++)
+			if(listeners.elementAt(i) instanceof WSLPlayerListener)
+				((WSLPlayerListener)listeners.elementAt(i)).playerStateChanged(event);
+	}
+
+	// --------------------------------------------------------------------
+	// Recording Routines
+	// --------------------------------------------------------------------
+
+	/**
+	 * Records that the user has added a new object into the WebTOP module (for
+	 * example, a new polarizer in the Polarization module).
+	 *
+	 * @param	 obj	the new object added represented as a <code>WSLNode</code>.
+	 */
+	public void recordObjectAdded(WSLNode obj) {
+		if(state != RECORDING) return;
+
+		long time = System.currentTimeMillis();
+		WSLNode node = new WSLNode(OBJECT_ADDED, null, time-prevRecordTime);
+		node.addChild(obj);
+		scriptNode.addChild(node);
+		prevRecordTime = time;
+	}
+
+	/**
+	 * Records that the user has removed an object from the WebTOP module, for
+	 * example, a polarizer in the Polarization module.
+	 *
+	 * @param	 id	 identifier of the object to be removed.
+	 */
+	public void recordObjectRemoved(String id) {
+		if(state!=RECORDING) return;
+
+		WSLAttributeList atts = new WSLAttributeList();
+		atts.add(WSLNode.TARGET, id);
+		recordAction(OBJECT_REMOVED, atts);
+	}
+
+	/**
+	 * Records that the user has performed an action with the Java applet.	This
+	 * version of <code>recordActionPerformed()</code> only records actions that
+	 * affects the module as a whole, rather than just affecting a particular
+	 * object, or parameter.	For example, when the user clicks on the Reset
+	 * button to reset the WebTOP module to its default state.
+	 *
+	 * @param	 action	 name of the action performed.
+	 */
+	public void recordActionPerformed(String action) {
+		if(state != RECORDING) return;
+
+		recordAction(ACTION_PERFORMED, null, action, null);
+	}
+
+	/**
+	 * Records that the user has entered a value for a particular parameter in
+	 * the Java applet.
+	 *
+	 * @param	 param	the parameter affected.
+	 * @param	 value	the new value of the parameter.
+	 */
+	public void recordActionPerformed(String param, String value) {
+		if(state != RECORDING) return;
+
+		recordAction(ACTION_PERFORMED, null, param, value);
+	}
+
+	/**
+	 * Records that the user has entered a value for a particular parameter of an
+	 * object in the Java applet.	 This might be the value of the angle parameter
+	 * of a polarizer in the Polarization module.
+	 *
+	 * @param	 id			identifier of the object affected.
+	 * @param	 param	the parameter affected.
+	 * @param	 value	the new value of the parameter.
+	 */
+	public void recordActionPerformed(String id, String param, String value) {
+		if(state != RECORDING) return;
+
+		recordAction(ACTION_PERFORMED, id, param, value);
+	}
+
+	/**
+	 * Records that the user has moved the mouse pointer into a VRML widget.
+	 *
+	 * @param	 id	 identifier of the object the mouse pointer moves into.
+	 */
+	public void recordMouseEntered(String id) {
+		if(state != RECORDING) return;
+
+		WSLAttributeList atts = new WSLAttributeList();
+		atts.add(WSLNode.TARGET, id);
+
+		recordAction(MOUSE_IN, atts);
+	}
+
+	/**
+	 * Records that the user has moved the mouse pointer out of a VRML widget.
+	 *
+	 * @param	 id	 identifier of the object the mouse pointer moves out of.
+	 */
+	public void recordMouseExited(String id) {
+		if(state != RECORDING) return;
+
+		WSLAttributeList atts = new WSLAttributeList();
+		atts.add(WSLNode.TARGET, id);
+
+		recordAction(MOUSE_OUT, atts);
+	}
+
+	/**
+	 * Records that the user has clicked the mouse button on a VRML widget.
+	 *
+	 * @param	 param	the parameter that the VRML widget associated with.
+	 */
+	public void recordMousePressed(String param) {
+		if(state!=RECORDING) return;
+
+		recordAction("mousePressed", null, param, null);
+	}
+
+	/**
+	 * Records that the user has clicked the mouse button on a VRML widget
+	 * associated with a particular object.
+	 *
+	 * @param	 id			the identifier of the object.
+	 * @param	 param	the parameter associated with the VRML widget.
+	 */
+	public void recordMousePressed(String id, String param) {
+		if(state!=RECORDING) return;
+
+		recordAction("mousePressed", id, param, null);
+	}
+
+	/**
+	 * Records that the user has released the mouse button from a VRML widget.
+	 *
+	 * @param	 param	the parameter that the VRML widget associated with.
+	 */
+	public void recordMouseReleased(String param) {
+		if(state!=RECORDING) return;
+
+		recordAction(MOUSE_UP, null, param, null);
+	}
+
+	/**
+	 * Records that the user has released the mouse button from a VRML widget
+	 * associated with a certain object.
+	 *
+	 * @param	 id			the identifier of the object.
+	 * @param	 param	the parameter associated with the VRML widget.
+	 */
+	public void recordMouseReleased(String id, String param) {
+		if(state!=RECORDING) return;
+
+		recordAction(MOUSE_UP, id, param, null);
+	}
+
+	/**
+	 * Records that the user has dragged a VRML widget.
+	 *
+	 * @param	 param	the parameter associated with the the VRML widget.
+	 * @param	 value	the new value of the parameter.
+	 */
+	public void recordMouseDragged(String param, String value) {
+		if(state != RECORDING) return;
+
+		recordAction(MOUSE_DRAG, null, param, value);
+	}
+
+	/**
+	 * Records that the user has dragged a VRML widget associated with a
+	 * particular object.
+	 *
+	 * @param	 id			identifier of the object affected.
+	 * @param	 param	the parameter associated with the VRML widget.
+	 * @param	 value	the new value of the parameter.
+	 */
+	public void recordMouseDragged(String id, String param, String value) {
+		if(state != RECORDING) return;
+
+		recordAction(MOUSE_DRAG, id, param, value);
+	}
+
+	/**
+	 * Records that the user has changed the viewpoint for the module.	This
+	 * method is typically only called by <code>WSLPlayer</code> since it records
+	 * all viewpoint events automatically.
+	 *
+	 * @param value the new viewpoint specified as a six-value String.	The
+	 *							first three floating-point values specify the rotation in
+	 *							each of X, Y, and Z-axis, and the last three floating-point
+	 *							values specify pan in the X, Y, and Z directions.
+	 */
+	public void recordViewpointChanged(String value) {
+		if(state != RECORDING) return;
+
+		recordAction(VIEWPOINT_CHANGED, null, null, value);
+	}
+
+	/**
+	 * Records that the user has selected a preset viewpoint.	 This method is
+	 * typically only called by <code>WSLPlayer</code> since it records all
+	 * viewpoint events automatically.
+	 *
+	 * @param	 value	the number of the preset viewpoint selected, starting at 0.
+	 */
+	public void recordViewpointSelected(String value) {
+		if(state != RECORDING) return;
+
+		recordAction(VIEWPOINT_SELECTED, null, null, value);
+	}
+
+	/**
+	 * The most general form of recording method.	 All user interactions are
+	 * abstracted as action tags with three attributes: <code>id</code>,
+	 * <code>param</code>, and <code>value</code>.	The name of the tag
+	 * signifies the type of the user interaction, while its attributes specify
+	 * the object affected (<code>id</code>), the parameter affected
+	 * (<code>param</code>), and the new value of the parameter
+	 * (<code>value</code>).	Attributes can be excluded where inapplicable.
+	 * Generally, this method is rarely used externally.	Instead, the different
+	 * versions of recording methods specific to different user interactions are
+	 * used.
+	 *
+	 * @param	 action	 name of script tag to write.
+	 * @param	 id			 target object's identifying string.
+	 * @param	 param	 name of changed value.
+	 * @param	 value	 new parameter value.
+	 */
+	//Should this be public?	It allows writing of non-existent action tags... [Davis]
+	public void recordAction(String action, String id, String param, String value) {
+		if(state != RECORDING) return;
+
+		WSLAttributeList atts = new WSLAttributeList();
+		if(!WTString.isNull(id)) atts.add(WSLNode.TARGET, id);
+		if(!WTString.isNull(param)) atts.add(WSLNode.PARAMETER, param);
+		if(!WTString.isNull(value)) atts.add(WSLNode.VALUE, value);
+
+		recordAction(action, atts);
+	}
+
+	/**
+	 * Internal generic recording function.	 Allows the specification of any
+	 * attributes.
+	 *
+	 * @param	 action	 name of script tag to write.
+	 * @param	 atts		 attributes for the tag.
+	 */
+	protected void recordAction(String action, WSLAttributeList atts) {
+		if(state != RECORDING) return;
+
+		long time = System.currentTimeMillis();
+		scriptNode.addChild(new WSLNode(action, atts, time-prevRecordTime));
+		prevRecordTime = time;
+	}
+}

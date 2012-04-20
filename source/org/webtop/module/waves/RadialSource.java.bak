@@ -1,0 +1,86 @@
+/**
+ * RadialSource.java
+ * This class creates the RadialSource widget and defines all the functionality it provides
+ * Updated by: Jeremy Davis July 1, 2008
+ */
+
+//TODO: Be sure file was converted properly...also make sure x3d fields were converted properly
+
+package org.webtop.module.waves;
+
+//import org.web3d.sai.*;
+import org.web3d.x3d.sai.*;
+
+import org.webtop.component.*;
+import org.sdl.math.*;
+import org.webtop.wsl.script.*;
+import org.webtop.wsl.client.*;
+import org.webtop.wsl.event.*;
+import org.webtop.util.*;
+
+
+public class RadialSource extends WaveSource {
+
+	public float beta; 
+	
+	public RadialSource(Engine e, WidgetsPanel widgetPanel, float A, float L, float E, float x, float y){
+		super(e, widgetPanel, A, L, E, x, y);
+		beta = k*0.01f*wavelength;
+		createX3DNode();
+	}
+	
+	public float getValue(float x, float y, float t) {
+		if(k*R(x,y) <= 6.0f){
+			return 4.0f*(float)(U1(x,y) * Math.cos(k*WAVE_SPEED*t - phase) + U2(x,y) * Math.sin(k*WAVE_SPEED*t - phase));
+		}
+		else{
+			return 4.0f*(float)((amplitude/(2*beta)) * (WTMath.j1(beta) * Math.sqrt(2/(Math.PI*k*R(x,y)))
+					* Math.cos(k*R(x,y)-WAVE_SPEED*t) + phase + (Math.PI/4)));
+		}
+	}
+	
+	public void setWavelength(float L, boolean setX3D){
+		super.setWavelength(L, setX3D);
+		beta = k*0.01f*wavelength;
+	}
+	
+	private float R(float x, float y){
+		return (float) Math.sqrt((X-x)*(X-x) + (Y-y)*(Y-y));
+	}
+	
+	private float U1(float x, float y){
+		if(R(x,y) <= 0.01){
+			return (float)(amplitude * (-1.0/(beta*beta)) * (1.0/Math.PI + 0.5*beta + WTMath.j0(k*R(x,y))
+					* WTMath.y1(beta)));
+		}
+		else{
+			return (float) (amplitude * (-1/(2*beta)) * WTMath.j1(beta) * WTMath.y0(k*R(x,y)));
+		}
+	}
+	
+	private float U2(float x, float y){
+		return (float) (amplitude/ (2*beta) * WTMath.j1(beta) * WTMath.j0(k*R(x,y)));
+	}
+	
+	protected void createX3DNode(){
+		String X3D = "RadialWidget { amplitude " + amplitude + " \n wavelength " + wavelength +
+		"\n phase " + phase + "\n x " + X + "\n y " + Y + " }\n";
+		
+		create(X3D);
+		
+		set_position = (SFVec3f) engine.getSAI().getInputField(getNode(), "set_position");
+		
+		engine.getSAI().getOutputField(getNode(), "position_changed", this, "position_changed");
+		engine.getSAI().getOutputField(getNode(), "mouseOverPosition", this, "mouseOverPosition");
+	}
+	
+	protected String getNodeName(){
+		return "<RadialWidget>";
+	}
+	
+	public String toString(){
+		return "RadialSource(Amplitude= " + amplitude + " , Wavelength= " + wavelength + 
+		" , Phase= " + phase + " , X= " + X + " , Y= " + Y + " )";
+	}
+
+}
