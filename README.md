@@ -25,3 +25,9 @@ WebTOP is a 3D interactive computer graphics system that simulates and visualize
 - Diffraction
   - Photoelectric Effect
   - Two-Slit Photon
+
+Contributors
+------------
+Karolina Sarnowska
+Peter Gilbert
+Matt Morris
