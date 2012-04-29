@@ -28,6 +28,21 @@ WebTOP is a 3D interactive computer graphics system that simulates and visualize
 
 Contributors
 ------------
-Karolina Sarnowska
-Peter Gilbert
-Matt Morris
+- Dr. John T. Foley
+- Dr. Taha Mzoughi
+- Karolina Sarnowska
+- Peter Gilbert
+- Matt Morris
+- Brian Thomas
+- Davis Herring
+- Yong-Tze Chi
+- Frances Carter
+- Paul Cleveland 
+- Sara Ford
+- Matt Hogan
+- Rhett Maxwell
+- Kirl Vidimce
+- Ben Wyser 
+- J. Lamar Barnett
+- Jeremy E. Davis
+- Shane P. Fry
